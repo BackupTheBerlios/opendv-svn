@@ -11,13 +11,13 @@ C:\wxWidgets-2.8.11.
 
 You will also need a copy of PortAudio (http://www.portaudio.com), I used the
 latest stable version which is currently 20071207 and it appears to be fine. I
-put that into the "Visual Studio 2008\Projects" folder alongside the source code
+put that into the "Visual Studio 2010\Projects" folder alongside the source code
 for Digital Voice itself.
 
-For compiling I use Visual C++ 2008 Express Edition downloaded from Microsoft
+For compiling I use Visual C++ 2010 Express Edition downloaded from Microsoft
 for free. I recommend that you use the same.
 
-To build wxWidgets, you simply need to open Visual Studio 2008 using the File ->
+To build wxWidgets, you simply need to open Visual Studio 2010 using the File ->
 Open -> Projects/Solutions and load the wx_dll.dsw file to be found in
 wxWidgets-2.8.11\build\msw directory and then go into Batch Build and select the
 DLL Unicode Debug and DLL Uncode Release entries for every one, this take a 
@@ -51,7 +51,7 @@ It is also probable that you'll need to install a copy of the latest Visual C++
 run-time libraries from Microsoft, if you are not running the Digital Voice 
 software on the same machine as the development/compilation was done on. To do 
 this you need to copy and run the Vcredist_x86.exe file which is found at 
-<http://www.microsoft.com/downloads/details.aspx?FamilyID=9b2da534-3e03-4391-8a4d-074b9f2bc1bf&displaylang=en>
+<http://www.microsoft.com/en-gb/download/details.aspx?id=5555>
 
 Linux
 -----
