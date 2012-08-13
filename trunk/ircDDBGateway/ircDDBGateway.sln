@@ -1,42 +1,21 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ircDDBGateway", "ircDDBGateway\ircDDBGateway.vcproj", "{6DDA3497-66A3-4856-BAD4-1DDCDBDFF959}"
-	ProjectSection(ProjectDependencies) = postProject
-		{276BC54D-5581-4A0C-AFD5-A5BDC947F0AD} = {276BC54D-5581-4A0C-AFD5-A5BDC947F0AD}
-		{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF} = {E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ircDDBGateway", "ircDDBGateway\ircDDBGateway.vcxproj", "{6DDA3497-66A3-4856-BAD4-1DDCDBDFF959}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ircDDB", "ircDDB\ircDDB.vcproj", "{276BC54D-5581-4A0C-AFD5-A5BDC947F0AD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ircDDB", "ircDDB\ircDDB.vcxproj", "{276BC54D-5581-4A0C-AFD5-A5BDC947F0AD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcproj", "{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StarNetServer", "StarNetServer\StarNetServer.vcproj", "{4E9989C8-80D4-4F6E-BCA1-754DCED3AF5F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{276BC54D-5581-4A0C-AFD5-A5BDC947F0AD} = {276BC54D-5581-4A0C-AFD5-A5BDC947F0AD}
-		{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF} = {E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StarNetServer", "StarNetServer\StarNetServer.vcxproj", "{4E9989C8-80D4-4F6E-BCA1-754DCED3AF5F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XReflector", "XReflector\XReflector.vcproj", "{A53D4B27-29B2-44B0-9739-47517CC4289E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{276BC54D-5581-4A0C-AFD5-A5BDC947F0AD} = {276BC54D-5581-4A0C-AFD5-A5BDC947F0AD}
-		{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF} = {E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XReflector", "XReflector\XReflector.vcxproj", "{A53D4B27-29B2-44B0-9739-47517CC4289E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteControl", "RemoteControl\RemoteControl.vcproj", "{F7756875-1F58-4006-AD55-5C963AB682C0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF} = {E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteControl", "RemoteControl\RemoteControl.vcxproj", "{F7756875-1F58-4006-AD55-5C963AB682C0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerControl", "TimerControl\TimerControl.vcproj", "{68CFAB6D-AED3-4B8A-BCB3-EE4136CA00A3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF} = {E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerControl", "TimerControl\TimerControl.vcxproj", "{68CFAB6D-AED3-4B8A-BCB3-EE4136CA00A3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimeServer", "TimeServer\TimeServer.vcproj", "{99F336A5-6E33-4919-BF75-D6D8BA26345E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E793CB8E-2AC9-431A-BBFC-3F52537BB3CF} = {E793CB8E-2AC9-431A-BBFC-3F52537BB3CF}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimeServer", "TimeServer\TimeServer.vcxproj", "{99F336A5-6E33-4919-BF75-D6D8BA26345E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
