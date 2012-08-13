@@ -1,0 +1,13 @@
+# DCS_Hosts.txt
+#
+# The format of this file is the name of the reflector followed by its
+# IP address.
+#
+
+DCS001	87.106.3.249
+DCS002	87.106.48.7
+DCS003	176.10.105.254
+DCS005	93.174.138.180
+DCS006	66.30.81.236
+DCS008	95.110.159.52
+DCS009	212.236.224.2
