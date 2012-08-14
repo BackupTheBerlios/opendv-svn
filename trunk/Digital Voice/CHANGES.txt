@@ -260,3 +260,4 @@ Sort the UR, RPT1, and RPT2 callsign lists in the GUI.
 --------
 
 Updated to Visual Studio 2010 on Windows.
+Updated DCS and DExtra hosts files.
