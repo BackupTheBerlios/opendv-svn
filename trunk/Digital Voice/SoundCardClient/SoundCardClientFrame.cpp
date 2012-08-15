@@ -294,7 +294,7 @@ void CSoundCardClientFrame::onOpen(wxCommandEvent& event)
 	CWAVFileReader* reader = new CWAVFileReader(fileName, DSTAR_RADIO_BLOCK_SIZE);
 	bool res = reader->open();
 	if (!res) {
-		wxMessageDialog dialog(this, _("Cannot find the file, or the file is corrupt."), _("D-Star Client Error"), wxICON_ERROR);
+		wxMessageDialog dialog(this, _("Cannot find the file, or the file is corrupt."), _("Sound Card Client Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		delete reader;
 		return;
@@ -302,7 +302,7 @@ void CSoundCardClientFrame::onOpen(wxCommandEvent& event)
 
 	if (reader->getSampleRate() != DSTAR_RADIO_SAMPLE_RATE) {
 		wxLogError(wxT("File %s has an invalid sample rate of %u"), fileName.c_str(), reader->getSampleRate());
-		wxMessageDialog dialog(this, _("The sound file has an invalid sample rate."), _("D-Star Client Error"), wxICON_ERROR);
+		wxMessageDialog dialog(this, _("The sound file has an invalid sample rate."), _("Sound Card Client Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		reader->close();
 		delete reader;
@@ -311,7 +311,7 @@ void CSoundCardClientFrame::onOpen(wxCommandEvent& event)
 
 	if (reader->getChannels() != 1U) {
 		wxLogError(wxT("File %s has too many channels - %u"), fileName.c_str(), reader->getChannels());
-		wxMessageDialog dialog(this, _("The sound file has too many channels."), _("D-Star Client Error"), wxICON_ERROR);
+		wxMessageDialog dialog(this, _("The sound file has too many channels."), _("Sound Card Client Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		reader->close();
 		delete reader;

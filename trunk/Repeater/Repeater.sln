@@ -5,8 +5,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnalogueRepeater", "Analogu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{3753EF20-2330-415E-B933-2560A474498B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DStarRepeater", "DStarRepeater\DStarRepeater.vcxproj", "{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParrotController", "ParrotController\ParrotController.vcxproj", "{8A88F09B-825B-4478-8263-1319377BFB6A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DExtraGateway", "DExtraGateway\DExtraGateway.vcxproj", "{AE509744-3BA3-4C94-8A2E-88F2AC36B511}"
@@ -23,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SplitRepeater", "SplitRepea
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DCSGateway", "DCSGateway\DCSGateway.vcxproj", "{B3CFFD06-2E78-4041-8785-FD37B90CCC66}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoundCardRepeater", "SoundCardRepeater\SoundCardRepeater.vcxproj", "{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,10 +37,6 @@ Global
 		{3753EF20-2330-415E-B933-2560A474498B}.Debug|Win32.Build.0 = Debug|Win32
 		{3753EF20-2330-415E-B933-2560A474498B}.Release|Win32.ActiveCfg = Release|Win32
 		{3753EF20-2330-415E-B933-2560A474498B}.Release|Win32.Build.0 = Release|Win32
-		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Debug|Win32.ActiveCfg = Debug|Win32
-		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Debug|Win32.Build.0 = Debug|Win32
-		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Release|Win32.ActiveCfg = Release|Win32
-		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Release|Win32.Build.0 = Release|Win32
 		{8A88F09B-825B-4478-8263-1319377BFB6A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{8A88F09B-825B-4478-8263-1319377BFB6A}.Debug|Win32.Build.0 = Debug|Win32
 		{8A88F09B-825B-4478-8263-1319377BFB6A}.Release|Win32.ActiveCfg = Release|Win32
@@ -73,6 +69,10 @@ Global
 		{B3CFFD06-2E78-4041-8785-FD37B90CCC66}.Debug|Win32.Build.0 = Debug|Win32
 		{B3CFFD06-2E78-4041-8785-FD37B90CCC66}.Release|Win32.ActiveCfg = Release|Win32
 		{B3CFFD06-2E78-4041-8785-FD37B90CCC66}.Release|Win32.Build.0 = Release|Win32
+		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Debug|Win32.Build.0 = Debug|Win32
+		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Release|Win32.ActiveCfg = Release|Win32
+		{96BA0B68-CB73-48FA-92F3-1A5CE2387C3B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

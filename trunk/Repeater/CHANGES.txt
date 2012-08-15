@@ -1705,3 +1705,4 @@ Allow for up to four commands.
 
 Upgraded to Visual C++ 2010 on Windows.
 Platform depending settings moved to makefile-includes.
+Changed the D-Star Repeater to the Sound Card Repeater.
