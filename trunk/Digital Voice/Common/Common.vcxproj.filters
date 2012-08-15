@@ -89,9 +89,6 @@
     <ClCompile Include="FIRFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GMSKModem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HeaderData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,6 +171,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WAVFileWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMSKModemWinUSB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -380,6 +380,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WAVFileWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMSKModemWinUSB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

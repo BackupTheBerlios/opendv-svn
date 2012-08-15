@@ -262,3 +262,4 @@ Sort the UR, RPT1, and RPT2 callsign lists in the GUI.
 Updated to Visual Studio 2010 on Windows.
 Updated DCS and DExtra hosts files.
 Renamed the D-Star Client to the Sound Card Client.
+Remove requirement for using NATools.

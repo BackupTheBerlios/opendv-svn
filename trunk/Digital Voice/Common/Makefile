@@ -3,7 +3,7 @@ all:		Common.a
 OBJS :=	AudioDelay.o Bleeper.o BleepSet.o BusyData.o BusyEvent.o CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o DCSProtocolHandler.o \
 		DExtraProtocolHandler.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o \
 		DummyController.o DVAPController.o DVDongleController.o DVDongleSet.o DVDongleThread.o DVRPTRController.o DVTOOLFileReader.o DVTOOLFileWriter.o \
-		ErrorEvent.o FIRFilter.o GMSKModem.o HeaderData.o HeaderEvent.o InversionSet.o K8055Controller.o LimitedLengthBuffer.o LimitedPatternMatcher.o \
+		ErrorEvent.o FIRFilter.o GMSKModemLibUsb.o HeaderData.o HeaderEvent.o InversionSet.o K8055Controller.o LimitedLengthBuffer.o LimitedPatternMatcher.o \
 		Logger.o MessageData.o MessageEvent.o MessageSet.o MessageTextCtrl.o PatternMatcher.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
 		RestrictedTextCtrl.o SerialController.o SerialDataController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o SoundcardSet.o \
 		Timer.o UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
@@ -90,8 +90,8 @@ ErrorEvent.o:	ErrorEvent.cpp ErrorEvent.h
 FIRFilter.o:	FIRFilter.cpp FIRFilter.h Filter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
 
-GMSKModem.o:	GMSKModem.cpp GMSKModem.h HeaderData.h DStarDefines.h node.h
-		$(CC) $(CFLAGS) -c GMSKModem.cpp
+GMSKModemLibUsb.o:	GMSKModemLibUsb.cpp GMSKModemLibUsb.h GMSKModem.h HeaderData.h DStarDefines.h Utils.h
+		$(CC) $(CFLAGS) -c GMSKModemLibUsb.cpp
 
 HeaderData.o:	HeaderData.cpp HeaderData.h DStarDefines.h CCITTChecksumReverse.h
 		$(CC) $(CFLAGS) -c HeaderData.cpp

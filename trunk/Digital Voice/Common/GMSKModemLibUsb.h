@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,37 +16,45 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	GMSKModem_H
-#define	GMSKModem_H
+#ifndef	GMSKModemLibUsb_H
+#define	GMSKModemLibUsb_H
 
 #include "HeaderData.h"
+#include "GMSKModem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
 
-const unsigned int GMSK_MODEM_DATA_LENGTH = 8U;
+#include <libusb-1.0/libusb.h>
 
 
-class IGMSKModem {
+class CGMSKModemLibUsb : public IGMSKModem {
 public:
-	virtual bool open() = 0;
+	CGMSKModemLibUsb(unsigned int address);
+	virtual ~CGMSKModemLibUsb();
 
-	virtual bool isBroken() const = 0;
+	virtual bool open();
 
-	virtual CHeaderData* readHeader() = 0;
-	virtual int readData(unsigned char* data, unsigned int length, bool& end) = 0;
+	virtual bool isBroken() const;
 
-	virtual TRISTATE getPTT() = 0;
-	virtual bool setPTT(bool on) = 0;
+	virtual CHeaderData* readHeader();
+	virtual int readData(unsigned char* data, unsigned int length, bool& end);
 
-	virtual TRISTATE hasSpace() = 0;
+	virtual TRISTATE getPTT();
+	virtual bool setPTT(bool on);
 
-	virtual bool writeHeader(const CHeaderData& header) = 0;
-	virtual int writeData(const unsigned char* data, unsigned int length) = 0;
+	virtual TRISTATE hasSpace();
 
-	virtual void close() = 0;
+	virtual bool writeHeader(const CHeaderData& header);
+	virtual int writeData(const unsigned char* data, unsigned int length);
+
+	virtual void close();
 
 private:
+	unsigned int          m_address;
+	libusb_context*       m_context;
+	libusb_device_handle* m_handle;
+	bool                  m_broken;
 };
 
 #endif

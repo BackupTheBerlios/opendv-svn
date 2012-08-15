@@ -57,7 +57,6 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\wxbase28u_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\wxmsw28u_adv_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\wxmsw28u_core_vc_custom.dll"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\node32.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\DCSClient\DCS_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\DExtraClient\DExtra_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\COPYING.txt"

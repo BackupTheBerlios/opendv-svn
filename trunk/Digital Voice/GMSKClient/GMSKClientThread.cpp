@@ -143,7 +143,7 @@ void CGMSKClientThread::setDVDongle(CDVDongleController* dongle)
 	m_dongle = new CDVDongleThread(dongle, &m_decodeAudio, &m_decodeData, &m_encodeAudio, &m_encodeData);
 }
 
-void CGMSKClientThread::setModem(CGMSKModem* modem)
+void CGMSKClientThread::setModem(IGMSKModem* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -340,28 +340,34 @@ void CGMSKClientThread::transmit()
 
 	// While transmitting and not exiting
 	while (endCount > 0U && !m_killed) {
-		unsigned char frame[DV_FRAME_LENGTH_BYTES];
-		unsigned int n = m_encodeData.getData(frame, VOICE_FRAME_LENGTH_BYTES);
+		TRISTATE space = m_modem->hasSpace();
+		if (space == STATE_TRUE) {
+			unsigned char frame[DV_FRAME_LENGTH_BYTES];
+			unsigned int n = m_encodeData.getData(frame, VOICE_FRAME_LENGTH_BYTES);
 
-		if (n == VOICE_FRAME_LENGTH_BYTES) {
-			if (frameCount == 20U) {
-				// Put in the data resync pattern
-				::memcpy(frame + VOICE_FRAME_LENGTH_BYTES, DATA_SYNC_BYTES, DATA_FRAME_LENGTH_BYTES);
-				frameCount = 0U;
-			} else {
-				// Tack the slow data on the end
-				m_slowDataEncoder.getData(frame + VOICE_FRAME_LENGTH_BYTES);
-				frameCount++;
+			if (n == VOICE_FRAME_LENGTH_BYTES) {
+				if (frameCount == 20U) {
+					// Put in the data resync pattern
+					::memcpy(frame + VOICE_FRAME_LENGTH_BYTES, DATA_SYNC_BYTES, DATA_FRAME_LENGTH_BYTES);
+					frameCount = 0U;
+				} else {
+					// Tack the slow data on the end
+					m_slowDataEncoder.getData(frame + VOICE_FRAME_LENGTH_BYTES);
+					frameCount++;
+				}
+
+				m_modem->writeData(frame, DV_FRAME_LENGTH_BYTES);
+
+				// Make transmit hang so that all the audio is flushed
+				if (m_transmit != CS_TRANSMIT)
+					endCount--;
 			}
 
-			m_modem->writeData(frame, DV_FRAME_LENGTH_BYTES);
-
-			// Make transmit hang so that all the audio is flushed
-			if (m_transmit != CS_TRANSMIT)
-				endCount--;
+			Sleep(FRAME_TIME_MS / 4UL);
+		} else {
+			// Modem is full so wait a little longer before trying again
+			Sleep(FRAME_TIME_MS / 2UL);
 		}
-
-		Sleep(FRAME_TIME_MS / 4UL);
 	}
 
 	// Send the end pattern

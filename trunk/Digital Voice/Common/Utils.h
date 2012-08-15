@@ -16,6 +16,12 @@
 
 #include <wx/wx.h>
 
+enum TRISTATE {
+	STATE_FALSE,
+	STATE_TRUE,
+	STATE_UNKNOWN
+};
+
 class CUtils {
 public:
 	static void          dump(const wxChar* title, const bool* data, unsigned int length);

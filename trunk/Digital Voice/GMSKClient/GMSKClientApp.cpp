@@ -24,6 +24,12 @@
 #include "Version.h"
 #include "Logger.h"
 
+#if defined(__WINDOWS__)
+#include "GMSKModemWinUSB.h"
+#else
+#include "GMSKModemLibUsb.h"
+#endif
+
 #include <wx/tokenzr.h>
 #include <wx/config.h>
 #include <wx/filename.h>
@@ -531,7 +537,11 @@ void CGMSKClientApp::createThread()
 	unsigned int address;
 	getModem(address);
 
-	CGMSKModem* modem = new CGMSKModem(address);
+#if defined(__WINDOWS__)
+	IGMSKModem* modem = new CGMSKModemWinUSB(address);
+#else
+	IGMSKModem* modem = new CGMSKModemLibUsb(address);
+#endif
 	bool res = modem->open();
 	if (!res) {
 		wxLogError(wxT("Cannot open the GMSK modem"));

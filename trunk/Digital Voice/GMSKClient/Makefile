@@ -5,11 +5,11 @@ CFLAGS :=		-I../Common $(CFLAGS)
 OBJS :=			GMSKClientApp.o GMSKClientCallsignSet.o GMSKClientFrame.o GMSKClientModemSet.o GMSKClientPreferences.o GMSKClientThread.o
 
 GMSKClient:	$(OBJS)
-				$(CC) $(LDFLAGS) -o GMSKClient $(OBJS) ../Common/Common.a $(INTELO) $(LIBNODE) $(LIBS)
+				$(CC) $(LDFLAGS) -o GMSKClient $(OBJS) ../Common/Common.a $(LIBS)
 
 GMSKClientApp.o:	GMSKClientApp.cpp GMSKClientApp.h GMSKClientThread.h GMSKClientFrame.h GMSKClientDefs.h ../Common/SerialController.h \
 				../Common/DStarDefines.h ../Common/MessageData.h ../Common/DVDongleSet.h ../Common/HeaderData.h ../Common/BusyData.h \
-				../Common/Logger.h ../Common/Version.h ../Common/GMSKModem.h
+				../Common/Logger.h ../Common/Version.h ../Common/GMSKModem ../Common/GMSKModemLibUsb.h
 				$(CC) $(CFLAGS) -c GMSKClientApp.cpp
 
 GMSKClientCallsignSet.o:	GMSKClientCallsignSet.cpp GMSKClientCallsignSet.h ../Common/CallsignTextCtrl.h
