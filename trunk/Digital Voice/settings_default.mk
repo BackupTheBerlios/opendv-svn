@@ -12,11 +12,7 @@ export PNGDIR := "/usr/local/share/pixmaps"
 # Change your architecture here
 #
 # export ARCH := pentium
-# export INTELO := ../i386/Intel.o
-# export LIBNODE := -lnode-i386
 export ARCH := x86-64
-export INTELO := ../AMD64/Intel.o
-export LIBNODE := -lnode-x86-64
 
 
 export CC := $(shell wx-config --cxx)
