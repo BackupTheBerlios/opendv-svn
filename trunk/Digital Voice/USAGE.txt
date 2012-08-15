@@ -2,7 +2,7 @@ Digital Voice - 20120403
 ========================
 
 The package currently consists of six programs, DCS Client, DExtra Client,
-DStarClient, DVAPClient, DVRPTRClient, DVToolReader, and GMSKClient. These all
+SoundCardClient, DVAPClient, DVRPTRClient, DVToolReader, and GMSKClient. These all
 allow different combinations of hardware, along with a DV-Dongle to access either
 the DCS or DExtra reflector system, or on-air D-Star systems.
 
@@ -187,7 +187,7 @@ described within the example file.
 DVToolReader
 ------------
 
-This program takes .dvtool files as created by either DStarClient, DExtraClient, 
+This program takes .dvtool files as created by either SoundCardClient, DExtraClient, 
 GMSKClient, DVAPClient, DVRPTRClient, or DVTOOL and plays them. It is a
 relatively simple program, which essentially allows for the replay or previously
 logged transmissions. Before it can be used, the program needs to be configured,
@@ -207,7 +207,7 @@ switched off.
 When making changes to the Sound Card or DV Dongle, you must restart the program
 before your changes take effect.
 
-Much of the information on the screen is the same as that show by DStarClient
+Much of the information on the screen is the same as that show by SoundCardClient
 (see above) and for more information, see the entry for that program.
 
 When running, the program logs some information into the DVToolReader.log file
@@ -217,7 +217,7 @@ in the users home directory.
 The Rest of the Software
 ------------------------
 
-The other programs in the software, DStarClient, DVAPClient, DVRPTRClient, and
+The other programs in the software, SoundCardClient, DVAPClient, DVRPTRClient, and
 GMSKClient, are all similar in their operation. Each allows a PC with a DV-Dongle
 and a microphone/speaker and a suitable modem to access D-Star over the radio.
 All of the programs (bar the DVAPClient) require the modem to be connected to a
@@ -285,8 +285,8 @@ the program was started. It shows a cut-down version of the information above
 it, but should still be useful for all that.
 
 
-DStarClient
------------
+SoundCardClient
+---------------
 
 The purpose of this program is to emulate a D-Star capable radio. To this end it
 requires access to a 9600Bd capable radio, connected to a sound card, a second
@@ -326,7 +326,7 @@ received D-Star transmissions are recorded to .dvtool files for playing back
 later with DVToolReader (see below). Recording does not stop the decoding of
 D-Star signals in real-time.
 
-When running, the program logs some information into the DStarClient.log file in
+When running, the program logs some information into the SoundCardClient.log file in
 the users home directory.
 
 
