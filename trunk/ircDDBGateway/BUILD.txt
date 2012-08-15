@@ -47,9 +47,10 @@ To install them from scratch, you need to get wxWidgets from
 http://www.wxwidgets.org. If you do a "make install" on both then they'll be 
 installed in the right places and nothing more needs to be done.
 
-If you aren't using an AMD 64-bit processor, then you'll probably want to change
-the target CPU type in the top level Makefile, a suitable entry for Pentium type
-CPUs is currently commented out.
+The top level Makefile includes platform specific settings from the file 
+"settings.mk". The default file is for x86 Linux systems.
+Samples for other platforms are provided by other developers, copy a required
+version to "settings.mk" when needed.
 
 To actually build the software, type "make" in the same directory as this file
 and all should build without errors, there may be a warning or two though. Once
