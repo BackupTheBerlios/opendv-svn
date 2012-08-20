@@ -50,3 +50,5 @@ clean:
 		make -C TimerControl clean
 		make -C TimeServer clean
 		make -C XReflector clean
+		
+include package.mk
