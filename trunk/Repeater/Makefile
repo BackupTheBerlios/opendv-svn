@@ -66,3 +66,5 @@ clean:
 		make -C ParrotController clean
 		make -C SoundCardRepeater clean
 		make -C SplitRepeater clean
+
+include package.mk
