@@ -15,10 +15,6 @@
 #include "SlowDataDecoder.h"
 #include "DStarDefines.h"
 
-const unsigned char SCRAMBLER_BYTE1 = 0x70;
-const unsigned char SCRAMBLER_BYTE2 = 0x4F;
-const unsigned char SCRAMBLER_BYTE3 = 0x93;
-
 const unsigned int  SLOW_DATA_BLOCK_SIZE = 6U;
 
 const unsigned int  SLOW_DATA_FULL_BLOCK_SIZE = (SLOW_DATA_BLOCK_SIZE - 1U) * 10U;

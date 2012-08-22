@@ -33,6 +33,7 @@ public:
 
 	unsigned int getRepeaterData(unsigned char* data, unsigned int length) const;
 	unsigned int getDCSData(unsigned char* data, unsigned int length) const;
+	unsigned int getData(unsigned char* data, unsigned int length) const;
 
 	unsigned int getId() const;
 	void setId(unsigned int id);
@@ -46,7 +47,17 @@ public:
 	bool isEnd() const;
 	void setEnd(bool end);
 
+	bool isSync() const;
+
+	static void initialise();
+	static void finalise();
+
+	static void setText(const wxString& text);
+
 private:
+	static char*          m_html;
+	static unsigned char* m_text;
+
 	unsigned char  m_outSeq;
 	unsigned int   m_rptSeq;
 	unsigned int   m_id;

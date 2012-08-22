@@ -4,21 +4,21 @@ CFLAGS :=		-I../Common $(CFLAGS)
 
 dcsgateway:		DCSGatewayApp.o DCSGatewayAMBEData.o DCSGatewayAudioUnit.o DCSGatewayConfig.o DCSGatewayFrame.o DCSGatewayEchoUnit.o \
 				DCSGatewayHeaderData.o DCSGatewayRepeaterProtocolHandler.o DCSGatewayDCSProtocolHandler.o DCSGatewayRepeaterSet.o \
-				DCSGatewayReflectorSet.o DCSGatewayPreferences.o DCSGatewayHostFile.o DCSGatewayStatusData.o DCSGatewayThread.o \
+				DCSGatewayReflectorSet.o DCSGatewayPreferences.o DCSGatewayHostFile.o DCSGatewayStatusData.o DCSGatewayTextCollector.o DCSGatewayThread.o \
 				../Common/Common.a
 				$(CC) $(LDFLAGS) -o dcsgateway DCSGatewayApp.o DCSGatewayAMBEData.o DCSGatewayAudioUnit.o DCSGatewayConfig.o \
 				DCSGatewayEchoUnit.o DCSGatewayFrame.o DCSGatewayHeaderData.o DCSGatewayRepeaterProtocolHandler.o \
 				DCSGatewayDCSProtocolHandler.o DCSGatewayRepeaterSet.o DCSGatewayReflectorSet.o DCSGatewayPreferences.o \
-				DCSGatewayHostFile.o DCSGatewayStatusData.o DCSGatewayThread.o ../Common/Common.a $(LIBS)
+				DCSGatewayHostFile.o DCSGatewayStatusData.o DCSGatewayTextCollector.o DCSGatewayThread.o ../Common/Common.a $(LIBS)
 
 dcsgatewayd:	DCSGatewayD.o DCSGatewayAMBEData.o DCSGatewayAudioUnit.o DCSGatewayConfig.o DCSGatewayEchoUnit.o \
 				DCSGatewayRepeaterProtocolHandler.o DCSGatewayDCSProtocolHandler.o DCSGatewayStatusData.o DCSGatewayThread.o \
-				DCSGatewayHostFile.o DCSGatewayHeaderData.o ../Common/Common.a
+				DCSGatewayHostFile.o DCSGatewayHeaderData.o DCSGatewayTextCollector.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dcsgatewayd DCSGatewayD.o DCSGatewayAMBEData.o DCSGatewayAudioUnit.o DCSGatewayConfig.o \
 				DCSGatewayEchoUnit.o DCSGatewayRepeaterProtocolHandler.o DCSGatewayDCSProtocolHandler.o DCSGatewayStatusData.o \
-				DCSGatewayThread.o DCSGatewayHostFile.o DCSGatewayHeaderData.o ../Common/Common.a $(LIBS)
+				DCSGatewayThread.o DCSGatewayHostFile.o DCSGatewayHeaderData.o DCSGatewayTextCollector.o ../Common/Common.a $(LIBS)
 
-DCSGatewayAMBEData.o:	DCSGatewayAMBEData.cpp DCSGatewayAMBEData.h ../Common/DStarDefines.h ../Common/Utils.h
+DCSGatewayAMBEData.o:	DCSGatewayAMBEData.cpp DCSGatewayAMBEData.h ../Common/DStarDefines.h ../Common/Utils.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DCSGatewayAMBEData.cpp
 
 DCSGatewayApp.o:	DCSGatewayApp.cpp DCSGatewayApp.h DCSGatewayThread.h DCSGatewayFrame.h DCSGatewayDefs.h DCSGatewayStatusData.h \
@@ -73,9 +73,12 @@ DCSGatewayRepeaterSet.o:	DCSGatewayRepeaterSet.cpp DCSGatewayRepeaterSet.h DCSGa
 DCSGatewayStatusData.o:	DCSGatewayStatusData.cpp DCSGatewayStatusData.h DCSGatewayDefs.h
 				$(CC) $(CFLAGS) -c DCSGatewayStatusData.cpp
 
+DCSGatewayTextCollector.o:	DCSGatewayTextCollector.cpp DCSGatewayTextCollector.h DCSGatewayAMBEData.h DCSGatewayDefs.h ../Common/DStarDefines.h
+				$(CC) $(CFLAGS) -c DCSGatewayTextCollector.cpp
+
 DCSGatewayThread.o:	DCSGatewayThread.cpp DCSGatewayThread.h DCSGatewayDefs.h DCSGatewayApp.h DCSGatewayStatusData.h \
 						DCSGatewayHeaderData.h DCSGatewayAMBEData.h DCSGatewayHostFile.h DCSGatewayRepeaterProtocolHandler.h \
-						DCSGatewayDCSProtocolHandler.h DCSGatewayAudioUnit.h DCSGatewayEchoUnit.h DCSGatewayCallback.h \
+						DCSGatewayDCSProtocolHandler.h DCSGatewayAudioUnit.h DCSGatewayEchoUnit.h DCSGatewayCallback.h DCSGatewayTextCollector.h \
 						../Common/DStarDefines.h ../Common/Utils.h ../Common/Timer.h
 				$(CC) $(CFLAGS) -c DCSGatewayThread.cpp
 

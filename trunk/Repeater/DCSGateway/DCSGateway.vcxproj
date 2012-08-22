@@ -103,6 +103,7 @@
     <ClCompile Include="DCSGatewayRepeaterProtocolHandler.cpp" />
     <ClCompile Include="DCSGatewayRepeaterSet.cpp" />
     <ClCompile Include="DCSGatewayStatusData.cpp" />
+    <ClCompile Include="DCSGatewayTextCollector.cpp" />
     <ClCompile Include="DCSGatewayThread.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +123,7 @@
     <ClInclude Include="DCSGatewayRepeaterProtocolHandler.h" />
     <ClInclude Include="DCSGatewayRepeaterSet.h" />
     <ClInclude Include="DCSGatewayStatusData.h" />
+    <ClInclude Include="DCSGatewayTextCollector.h" />
     <ClInclude Include="DCSGatewayThread.h" />
   </ItemGroup>
   <ItemGroup>

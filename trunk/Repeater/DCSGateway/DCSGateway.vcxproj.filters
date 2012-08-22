@@ -56,6 +56,9 @@
     <ClCompile Include="DCSGatewayThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DCSGatewayTextCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DCSGatewayAMBEData.h">
@@ -107,6 +110,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DCSGatewayThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCSGatewayTextCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

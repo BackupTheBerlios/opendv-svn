@@ -107,6 +107,10 @@ const unsigned char SLOW_DATA_LENGTH_MASK  = 0x0FU;
 
 const unsigned int  SLOW_DATA_TEXT_LENGTH  = 20U;
 
+const unsigned char SCRAMBLER_BYTE1 = 0x70U;
+const unsigned char SCRAMBLER_BYTE2 = 0x4FU;
+const unsigned char SCRAMBLER_BYTE3 = 0x93U;
+
 const unsigned char DATA_MASK           = 0x80U;
 const unsigned char REPEATER_MASK       = 0x40U;
 const unsigned char INTERRUPTED_MASK    = 0x20U;

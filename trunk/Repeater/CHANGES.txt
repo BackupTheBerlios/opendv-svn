@@ -1704,5 +1704,6 @@ Allow for up to four commands.
 --------
 
 Upgraded to Visual C++ 2010 on Windows.
-Platform depending settings moved to makefile-includes.
+Platform dependent settings moved to Makefile includes.
 Changed the D-Star Repeater to the Sound Card Repeater.
+Upgraded to the latest version of the DCS protocol.

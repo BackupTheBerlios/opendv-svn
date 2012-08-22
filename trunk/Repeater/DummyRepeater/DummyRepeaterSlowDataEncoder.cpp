@@ -15,10 +15,6 @@
 #include "CCITTChecksumReverse.h"
 #include "DStarDefines.h"
 
-const unsigned char SCRAMBLER_BYTE1 = 0x70;
-const unsigned char SCRAMBLER_BYTE2 = 0x4F;
-const unsigned char SCRAMBLER_BYTE3 = 0x93;
-
 CDummyRepeaterSlowDataEncoder::CDummyRepeaterSlowDataEncoder() :
 m_initial(),
 m_body(),

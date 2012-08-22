@@ -41,6 +41,8 @@ m_dcsHandler(),
 m_audioUnit(NULL),
 m_echoUnit(NULL),
 m_header(),
+m_textCollector(),
+m_text(),
 m_myCall(),
 m_yourCall(),
 m_rptCall1(),
@@ -80,6 +82,7 @@ void* CDCSGatewayThread::Entry()
 
 	wxFileName fileName(wxFileName::GetHomeDir(), HOSTS_FILE_NAME);
 
+	CDCSGatewayAMBEData::initialise();
 	CDCSGatewayAudioUnit::initialise();
 	CDCSGatewayAudioUnit::setLanguage(m_language);
 
@@ -138,12 +141,27 @@ void* CDCSGatewayThread::Entry()
 						if (m_echo)
 							m_echoUnit->writeHeader(*header);
 						delete header;
+
+						CDCSGatewayAMBEData::setText(wxEmptyString);
+						m_textCollector.reset();
+						m_text.Clear();
 					}
 					break;
 				case RT_DATA:
 					data = m_repeaterHandler->readData();
 					if (data != NULL) {
 						if (m_state == LINK_LINKED && !m_echo && !m_info) {
+							// Get the slow data text
+							if (m_text.IsEmpty()) {
+								m_textCollector.writeData(*data);
+
+								bool hasData = m_textCollector.hasData();
+								if (hasData) {
+									m_text = m_textCollector.getData();
+									CDCSGatewayAMBEData::setText(m_text);
+								}
+							}
+
 							data->setRptSeq(m_seq);
 							m_seq++;
 
@@ -280,6 +298,7 @@ void* CDCSGatewayThread::Entry()
 	delete m_echoUnit;
 
 	CDCSGatewayAudioUnit::finalise();
+	CDCSGatewayAMBEData::finalise();
 
 	return NULL;
 }

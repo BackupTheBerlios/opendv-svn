@@ -19,14 +19,36 @@
 #include "DCSGatewayAMBEData.h"
 
 #include "DStarDefines.h"
+#include "Version.h"
 #include "Utils.h"
 
-const char* HTML = "<table border=\"0\" width=\"95%\"><tr>"
-				   "<td width=\"4%\"><img border=\"0\" src=hotspot.jpg></td>"
-				   "<td width=\"96%\"><font size=\"2\">"
-				   "<b>HOTSPOT</b> DCS Gateway 20120706"
-				   "</font></td>"
-				   "</tr></table>";
+const wxString HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=hotspot.jpg></td><td width=\"96%%\"><font size=\"2\"><b>HOTSPOT</b> DCS Gateway %s</font></td></tr></table>");
+
+char* CDCSGatewayAMBEData::m_html = NULL;
+unsigned char* CDCSGatewayAMBEData::m_text = NULL;
+
+void CDCSGatewayAMBEData::initialise()
+{
+	wxString html;
+	html.Printf(HTML, VERSION.Left(8U).c_str());
+
+	unsigned int len = html.Len();
+
+	m_html = new char[len + 1U];
+	::memset(m_html, 0x00, len + 1U);
+
+	for (unsigned int i = 0U; i < len; i++)
+		m_html[i] = html.GetChar(i);
+
+	m_text = new unsigned char[SLOW_DATA_TEXT_LENGTH];
+	::memset(m_text, ' ', SLOW_DATA_TEXT_LENGTH);
+}
+
+void CDCSGatewayAMBEData::finalise()
+{
+	delete[] m_html;
+	delete[] m_text;
+}
 
 CDCSGatewayAMBEData::CDCSGatewayAMBEData() :
 m_outSeq(0U),
@@ -164,11 +186,34 @@ unsigned int CDCSGatewayAMBEData::getDCSData(unsigned char* data, unsigned int l
 	data[61U] = 0x01U;
 	data[62U] = 0x00U;
 
+	data[63U] = 0x00U;
+
+	data[64U] = m_text[0U];
+	data[65U] = m_text[1U];
+	data[66U] = m_text[2U];
+	data[67U] = m_text[3U];
+	data[68U] = m_text[4U];
+	data[69U] = m_text[5U];
+	data[70U] = m_text[6U];
+	data[71U] = m_text[7U];
+	data[72U] = m_text[8U];
+	data[73U] = m_text[9U];
+	data[74U] = m_text[10U];
+	data[75U] = m_text[11U];
+	data[76U] = m_text[12U];
+	data[77U] = m_text[13U];
+	data[78U] = m_text[14U];
+	data[79U] = m_text[15U];
+	data[80U] = m_text[16U];
+	data[81U] = m_text[17U];
+	data[82U] = m_text[18U];
+	data[83U] = m_text[19U];
+
 	// Send the HTML every 2 seconds
 	if ((m_rptSeq % 100U) != 0U)
 		return  100U;
 
-	::memcpy(data + 100U, HTML, ::strlen(HTML));
+	::memcpy(data + 100U, m_html, ::strlen(m_html));
 
 	return 600U;
 }
@@ -179,6 +224,16 @@ void CDCSGatewayAMBEData::setData(const unsigned char *data, unsigned int length
 	wxASSERT(length >= DV_FRAME_LENGTH_BYTES);
 
 	::memcpy(m_data, data, DV_FRAME_LENGTH_BYTES);
+}
+
+unsigned int CDCSGatewayAMBEData::getData(unsigned char *data, unsigned int length) const
+{
+	wxASSERT(data != NULL);
+	wxASSERT(length >= DV_FRAME_LENGTH_BYTES);
+
+	::memcpy(data, m_data, DV_FRAME_LENGTH_BYTES);
+
+	return DV_FRAME_LENGTH_BYTES;
 }
 
 unsigned int CDCSGatewayAMBEData::getId() const
@@ -222,4 +277,20 @@ void CDCSGatewayAMBEData::setEnd(bool end)
 		m_outSeq |= 0x40U;
 	else
 		m_outSeq &= ~0x40U;
+}
+
+bool CDCSGatewayAMBEData::isSync() const
+{
+	return (m_outSeq & 0x1FU) == 0x00U;
+}
+
+void CDCSGatewayAMBEData::setText(const wxString& text)
+{
+	::memset(m_text, ' ', SLOW_DATA_TEXT_LENGTH);
+
+	if (text.IsEmpty())
+		return;
+
+	for (unsigned int i = 0U; i < text.Len(); i++)
+		m_text[i] = text.GetChar(i);
 }

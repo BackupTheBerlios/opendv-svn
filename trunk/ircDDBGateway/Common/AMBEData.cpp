@@ -75,6 +75,7 @@ m_data(NULL),
 m_address(data.m_address),
 m_port(data.m_port),
 m_errors(data.m_errors),
+m_text(data.m_text),
 m_header(data.m_header)
 {
 	wxASSERT(m_html != NULL);

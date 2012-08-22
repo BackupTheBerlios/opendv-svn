@@ -21,6 +21,7 @@
 
 #include "DCSGatewayRepeaterProtocolHandler.h"
 #include "DCSGatewayDCSProtocolHandler.h"
+#include "DCSGatewayTextCollector.h"
 #include "DCSGatewayStatusData.h"
 #include "DCSGatewayAudioUnit.h"
 #include "DCSGatewayEchoUnit.h"
@@ -56,6 +57,8 @@ private:
 	CDCSGatewayAudioUnit*               m_audioUnit;
 	CDCSGatewayEchoUnit*                m_echoUnit;
 	CDCSGatewayHeaderData               m_header;
+	CDCSGatewayTextCollector            m_textCollector;
+	wxString                            m_text;
 	wxString                            m_myCall;
 	wxString                            m_yourCall;
 	wxString                            m_rptCall1;
