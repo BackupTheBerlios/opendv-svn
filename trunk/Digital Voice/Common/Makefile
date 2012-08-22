@@ -35,7 +35,7 @@ CCITTChecksum.o:	CCITTChecksum.cpp CCITTChecksum.h Utils.h
 CCITTChecksumReverse.o:	CCITTChecksumReverse.cpp CCITTChecksumReverse.h Utils.h
 		$(CC) $(CFLAGS) -c CCITTChecksumReverse.cpp
 
-DCSProtocolHandler.o:	DCSProtocolHandler.cpp DCSProtocolHandler.h DStarDefines.h Utils.h UDPReaderWriter.h HeaderData.h Timer.h
+DCSProtocolHandler.o:	DCSProtocolHandler.cpp DCSProtocolHandler.h DStarDefines.h Utils.h UDPReaderWriter.h HeaderData.h Timer.h Version.h
 		$(CC) $(CFLAGS) -c DCSProtocolHandler.cpp
 
 DExtraProtocolHandler.o:	DExtraProtocolHandler.cpp DExtraProtocolHandler.h DStarDefines.h Utils.h UDPReaderWriter.h HeaderData.h Timer.h

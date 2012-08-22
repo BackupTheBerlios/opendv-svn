@@ -155,6 +155,8 @@ void CDCSClientThread::setDVDongle(CDVDongleController* dongle)
 void CDCSClientThread::setMessage(const wxString& text)
 {
 	m_message = text;
+
+	m_protocol.setText(text);
 }
 
 void CDCSClientThread::setRecording(bool record)

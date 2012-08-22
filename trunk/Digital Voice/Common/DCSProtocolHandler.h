@@ -36,6 +36,7 @@ public:
 	~CDCSProtocolHandler();
 
 	void setCallsign(const wxString& callsign);
+	void setText(const wxString& text);
 
 	bool open(const wxString& reflector, const char* address, unsigned int port);
 
@@ -58,7 +59,9 @@ public:
 private:
 	CUDPReaderWriter* m_socket;
 	unsigned char*    m_callsign;
+	unsigned char*    m_text;
 	unsigned char*    m_reflector;
+	char*             m_html;
 	wxUint16          m_outId;
 	wxUint8           m_outSeq;
 	wxUint32          m_outRptSeq;

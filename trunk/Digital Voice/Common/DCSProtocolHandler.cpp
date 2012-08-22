@@ -19,23 +19,21 @@
 #include "DCSProtocolHandler.h"
 
 #include "DStarDefines.h"
+#include "Version.h"
 #include "Utils.h"
 
 // #define	DUMP_TX
 
-const char* HTML = "<table border=\"0\" width=\"95%\"><tr>"
-				   "<td width=\"4%\"><img border=\"0\" src=dvdongle.jpg></td>"
-				   "<td width=\"96%\"><font size=\"2\">"
-				   "<b>DONGLE</b> DCS Client 20120403"
-				   "</font></td>"
-				   "</tr></table>";
+const wxString HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=dvdongle.jpg></td><td width=\"96%%\"><font size=\"2\"><b>DONGLE</b> DCS Client %s</font></td></tr></table>");
 
 const unsigned int BUFFER_LENGTH = 2000U;
 
 CDCSProtocolHandler::CDCSProtocolHandler() :
 m_socket(NULL),
 m_callsign(NULL),
+m_text(NULL),
 m_reflector(NULL),
+m_html(NULL),
 m_outId(0U),
 m_outSeq(0U),
 m_outRptSeq(0U),
@@ -49,20 +47,35 @@ m_linked(false)
 {
 	m_callsign  = new unsigned char[LONG_CALLSIGN_LENGTH];
 	m_reflector = new unsigned char[LONG_CALLSIGN_LENGTH];
+	m_text      = new unsigned char[MESSAGE_LENGTH];
 
 	::memset(m_callsign,  ' ', LONG_CALLSIGN_LENGTH);
 	::memset(m_reflector, ' ', LONG_CALLSIGN_LENGTH);
+	::memset(m_text,      ' ', MESSAGE_LENGTH);
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 
 	wxDateTime now = wxDateTime::Now();
 	::srand(now.GetMillisecond());
+
+	wxString html;
+	html.Printf(HTML, VERSION.Left(8U).c_str());
+
+	unsigned int len = html.Len();
+
+	m_html = new char[len + 1U];
+	::memset(m_html, ' ', len + 1U);
+
+	for (unsigned int i = 0U; i < len; i++)
+		m_html[i] = html.GetChar(i);
 }
 
 CDCSProtocolHandler::~CDCSProtocolHandler()
 {
 	delete[] m_callsign;
 	delete[] m_reflector;
+	delete[] m_html;
+	delete[] m_text;
 	delete[] m_buffer;
 
 	if (m_socket != NULL) {
@@ -75,6 +88,12 @@ void CDCSProtocolHandler::setCallsign(const wxString& callsign)
 {
 	for (unsigned int i = 0U; i < callsign.Len(); i++)
 		m_callsign[i] = callsign.GetChar(i);
+}
+
+void CDCSProtocolHandler::setText(const wxString& text)
+{
+	for (unsigned int i = 0U; i < text.Len(); i++)
+		m_text[i] = text.GetChar(i);
 }
 
 bool CDCSProtocolHandler::open(const wxString& reflector, const char* address, unsigned int port)
@@ -180,6 +199,30 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 	buffer[61] = 0x01U;
 	buffer[62] = 0x00U;
 
+	buffer[63] = 0x21U;
+
+	// Copy the slow data text
+	buffer[64] = m_text[0];
+	buffer[65] = m_text[1];
+	buffer[66] = m_text[2];
+	buffer[67] = m_text[3];
+	buffer[68] = m_text[4];
+	buffer[69] = m_text[5];
+	buffer[70] = m_text[6];
+	buffer[71] = m_text[7];
+	buffer[72] = m_text[8];
+	buffer[73] = m_text[9];
+	buffer[74] = m_text[10];
+	buffer[75] = m_text[11];
+	buffer[76] = m_text[12];
+	buffer[77] = m_text[13];
+	buffer[78] = m_text[14];
+	buffer[79] = m_text[15];
+	buffer[80] = m_text[16];
+	buffer[81] = m_text[17];
+	buffer[82] = m_text[18];
+	buffer[83] = m_text[19];
+
 	m_outSeq++;
 	if (m_outSeq > 0x14U)
 		m_outSeq = 0U;
@@ -196,7 +239,7 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 #endif
 	}
 
-	::memcpy(buffer + 100U, HTML, ::strlen(HTML));
+	::memcpy(buffer + 100U, m_html, ::strlen(m_html));
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, 600U);
