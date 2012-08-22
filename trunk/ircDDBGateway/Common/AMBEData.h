@@ -73,6 +73,8 @@ public:
 
 	void setDestination(const in_addr& address, unsigned int port);
 
+	void setText(const wxString& text);
+
 	in_addr      getAddress() const;
 	unsigned int getPort() const;
 
@@ -96,6 +98,7 @@ private:
 	in_addr        m_address;
 	unsigned int   m_port;
 	unsigned int   m_errors;
+	wxString       m_text;
 	CHeaderData    m_header;
 };
 

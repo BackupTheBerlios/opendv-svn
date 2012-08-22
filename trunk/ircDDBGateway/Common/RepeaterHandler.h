@@ -182,7 +182,7 @@ private:
 
 	// Slow data handling
 	CTextCollector            m_textCollector;
-	bool                      m_heard;
+	wxString                  m_text;
 
 	// Cross-band repeating
 	CRepeaterHandler*         m_xBandRptr;

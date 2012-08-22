@@ -56,6 +56,7 @@ m_data(NULL),
 m_address(),
 m_port(0U),
 m_errors(0U),
+m_text(),
 m_header()
 {
 	wxASSERT(m_html != NULL);
@@ -419,6 +420,11 @@ unsigned int CAMBEData::getDCSData(unsigned char* data, unsigned int length) con
 	data[61] = 0x01U;
 	data[62] = 0x00U;
 
+	data[63] = 0x00U;
+
+	for (unsigned int i = 0U; i < m_text.Len(); i++)
+		data[64 + i] = m_text.GetChar(i);
+
 	m_header.getDCSData(data, 100U);
 
 	// Send the HTML every 2 seconds
@@ -504,6 +510,11 @@ void CAMBEData::setDestination(const in_addr& address, unsigned int port)
 {
 	m_address = address;
 	m_port    = port;
+}
+
+void CAMBEData::setText(const wxString& text)
+{
+	m_text = text;
 }
 
 in_addr CAMBEData::getAddress() const

@@ -81,7 +81,7 @@ m_frames(0U),
 m_silence(0U),
 m_errors(0U),
 m_textCollector(),
-m_heard(false),
+m_text(),
 m_xBandRptr(NULL),
 m_starNet(NULL),
 m_g2Status(G2_NONE),
@@ -511,7 +511,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 
 	// Reset the slow data text collector
 	m_textCollector.reset();
-	m_heard = false;
+	m_text.Clear();
 
 	// Reset the APRS Writer if it's enabled
 	if (m_aprsWriter != NULL)
@@ -658,20 +658,21 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 	if (m_aprsWriter != NULL)
 		m_aprsWriter->writeData(m_callsign, data);
 
-	if (!m_heard && !data.isEnd()) {
+	if (m_text.IsEmpty() && !data.isEnd()) {
 		m_textCollector.writeData(data);
 
 		bool hasText = m_textCollector.hasData();
 		if (hasText) {
-			wxString text = m_textCollector.getData();
-			sendHeard(text);
-			m_heard = true;
+			m_text = m_textCollector.getData();
+			sendHeard(m_text);
 		}
 	}
 
+	data.setText(m_text);
+
 	// If no slow data text has been received, send a heard with no text when the end of the
 	// transmission arrives
-	if (data.isEnd() && !m_heard)
+	if (data.isEnd() && m_text.IsEmpty())
 		sendHeard();
 
 	// Send the statistics after the end of the data, any stats from the repeater should have
@@ -1230,7 +1231,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 		m_watchdogTimer.stop();
 
 		if (m_id != 0x00U) {
-			if (!m_heard)
+			if (m_text.IsEmpty())
 				sendHeard();
 
 			if (m_drats != NULL)
