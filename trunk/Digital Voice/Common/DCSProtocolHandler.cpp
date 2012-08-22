@@ -64,7 +64,7 @@ m_linked(false)
 	unsigned int len = html.Len();
 
 	m_html = new char[len + 1U];
-	::memset(m_html, ' ', len + 1U);
+	::memset(m_html, 0x00, len + 1U);
 
 	for (unsigned int i = 0U; i < len; i++)
 		m_html[i] = html.GetChar(i);
@@ -199,7 +199,7 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 	buffer[61] = 0x01U;
 	buffer[62] = 0x00U;
 
-	buffer[63] = 0x21U;
+	buffer[63] = 0x00U;
 
 	// Copy the slow data text
 	buffer[64] = m_text[0];

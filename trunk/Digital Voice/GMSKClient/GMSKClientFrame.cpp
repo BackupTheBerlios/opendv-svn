@@ -561,8 +561,8 @@ void CGMSKClientFrame::onOneTouchReply(wxCommandEvent& event)
 		return;
 
 	wxString my1  = my12.Left(LONG_CALLSIGN_LENGTH);
-	wxString rpt1 = m_hrdRpt2->GetLabel();
-	wxString rpt2 = m_hrdRpt1->GetLabel();
+	wxString rpt1 = m_hrdRpt1->GetLabel();
+	wxString rpt2 = m_hrdRpt2->GetLabel();
 
 	if (rpt1.IsSameAs(DIRECT))
 		rpt1 = UNUSED;
@@ -632,11 +632,11 @@ void CGMSKClientFrame::onHeader(wxEvent& event)
 	m_hrdMy->SetLabel(myCall);
 	m_heard->SetItem(0L, 2, myCall);
 
-	wxString rpt1Call = header->getRptCall1();
+	wxString rpt1Call = header->getRptCall2();
 	m_hrdRpt1->SetLabel(rpt1Call);
 	m_heard->SetItem(0L, 3, rpt1Call);
 
-	wxString rpt2Call = header->getRptCall2();
+	wxString rpt2Call = header->getRptCall1();
 	m_hrdRpt2->SetLabel(rpt2Call);
 	m_heard->SetItem(0L, 4, rpt2Call);
 
