@@ -9,7 +9,7 @@ GMSKClient:	$(OBJS)
 
 GMSKClientApp.o:	GMSKClientApp.cpp GMSKClientApp.h GMSKClientThread.h GMSKClientFrame.h GMSKClientDefs.h ../Common/SerialController.h \
 				../Common/DStarDefines.h ../Common/MessageData.h ../Common/DVDongleSet.h ../Common/HeaderData.h ../Common/BusyData.h \
-				../Common/Logger.h ../Common/Version.h ../Common/GMSKModem ../Common/GMSKModemLibUsb.h
+				../Common/Logger.h ../Common/Version.h ../Common/GMSKModem.h ../Common/GMSKModemLibUsb.h
 				$(CC) $(CFLAGS) -c GMSKClientApp.cpp
 
 GMSKClientCallsignSet.o:	GMSKClientCallsignSet.cpp GMSKClientCallsignSet.h ../Common/CallsignTextCtrl.h

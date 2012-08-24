@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2010 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2010,2012 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -244,80 +244,78 @@ const int USB_TIMEOUT = 5000;
 CK8055Controller::CK8055Controller(unsigned int address) :
 m_address(address),
 m_state(false),
+m_context(NULL),
 m_handle(NULL)
 {
+	::libusb_init(&m_context);
 }
 
 CK8055Controller::~CK8055Controller()
 {
+	wxASSERT(m_context != NULL);
+
+	::libusb_exit(m_context);
 }
 
 bool CK8055Controller::open()
 {
+	wxASSERT(m_context != NULL);
 	wxASSERT(m_handle == NULL);
 
-	::usb_init();
-	::usb_find_busses();
-	::usb_find_devices();
+	m_handle = ::libusb_open_device_with_vid_pid(m_context, VELLEMAN_VENDOR_ID, VELLEMAN_PRODUCT_ID + m_address);
+	if (m_handle == NULL) {
+		wxLogError(wxT("Could not open the Velleman K8055"));
+		return false;
+	}
 
-	for (struct usb_bus* usb_bus = usb_busses; usb_bus != NULL; usb_bus = usb_bus->next) {
-		for (struct usb_device* usb_dev = usb_bus->devices; usb_dev != NULL; usb_dev = usb_dev->next) {
-			if (usb_dev->descriptor.idVendor == VELLEMAN_VENDOR_ID && usb_dev->descriptor.idProduct == (VELLEMAN_PRODUCT_ID + m_address)) {
-				m_handle = ::usb_open(usb_dev);
-				if (m_handle == NULL) {
-					wxString error(::usb_strerror(), wxConvLocal);
-					wxLogMessage(wxT("Error from usb_open: err=%s"), error.c_str());
-					return false;
-				}
+	int res = ::libusb_claim_interface(m_handle, VELLEMAN_HID_INTERFACE);
+	if (res != 0) {
+		res = ::libusb_detach_kernel_driver(m_handle, VELLEMAN_HID_INTERFACE);
+		if (res != 0) {
+			wxLogError(wxT("Error from libusb_detach_kernel_driver: err=%d"), res);
+			::libusb_close(m_handle);
+			m_handle = NULL;
+			return false;
+		}
 
-				int res = ::usb_claim_interface(m_handle, VELLEMAN_HID_INTERFACE);
-				if (res < 0) {
-					res = ::usb_detach_kernel_driver_np(m_handle, VELLEMAN_HID_INTERFACE);
-					if (res < 0) {
-						wxString error(::usb_strerror(), wxConvLocal);
-						wxLogMessage(wxT("Error from usb_detach_kernel_driver_np: res=%d err=%s"), res, error.c_str());
-						return false;
-					}
-
-					res = ::usb_claim_interface(m_handle, VELLEMAN_HID_INTERFACE);
-					if (res < 0) {
-						wxString error(::usb_strerror(), wxConvLocal);
-						wxLogMessage(wxT("Error from usb_claim_interface: res=%d err=%s"), res, error.c_str());
-						return false;
-					}
-				}
-
-				::usb_set_altinterface(m_handle, VELLEMAN_HID_INTERFACE);
-				::usb_set_configuration(m_handle, 1);
-
-				char buffer[USB_BUFSIZE];
-				buffer[0] = CMD_RESET;
-				buffer[1] = 0x00;
-				buffer[2] = 0x00;
-				buffer[3] = 0x00;
-				buffer[4] = 0x00;
-				buffer[5] = 0x00;
-				buffer[6] = 0x00;
-				buffer[7] = 0x00;
-				res = ::usb_interrupt_write(m_handle, USB_OUTPUT_ENDPOINT, buffer, USB_BUFSIZE, USB_TIMEOUT);
-				if (res != USB_BUFSIZE) {
-					wxString error(::usb_strerror(), wxConvLocal);
-					wxLogMessage(wxT("Error from usb_interrupt_write: res=%d err=%s"), res, error.c_str());
-				}
-
-				return true;
-			}
+		res = ::libusb_claim_interface(m_handle, VELLEMAN_HID_INTERFACE);
+		if (res != 0) {
+			wxLogError(wxT("Error from libusb_claim_interface: err=%d"), res);
+			::libusb_close(m_handle);
+			m_handle = NULL;
+			return false;
 		}
 	}
 
-	return false;
+	::libusb_set_configuration(m_handle, 1);
+
+	unsigned char buffer[USB_BUFSIZE];
+	buffer[0] = CMD_RESET;
+	buffer[1] = 0x00;
+	buffer[2] = 0x00;
+	buffer[3] = 0x00;
+	buffer[4] = 0x00;
+	buffer[5] = 0x00;
+	buffer[6] = 0x00;
+	buffer[7] = 0x00;
+	int written;
+	res = ::libusb_interrupt_transfer(m_handle, USB_OUTPUT_ENDPOINT, buffer, USB_BUFSIZE, &written, USB_TIMEOUT);
+	if (res != 0) {
+		wxLogError(wxT("Error from libusb_interrupt_transfer: err=%d"), res);
+		::libusb_release_interface(m_handle, VELLEMAN_HID_INTERFACE);
+		::libusb_close(m_handle);
+		m_handle = NULL;
+		return false;
+	}
+
+	return true;
 }
 
 bool CK8055Controller::getSquelch()
 {
 	wxASSERT(m_handle != NULL);
 
-	char buffer[USB_BUFSIZE];
+	unsigned char buffer[USB_BUFSIZE];
 	buffer[0] = 0x00;
 	buffer[1] = 0x00;
 	buffer[2] = 0x00;
@@ -327,12 +325,15 @@ bool CK8055Controller::getSquelch()
 	buffer[6] = 0x00;
 	buffer[7] = 0x00;
 
-	int res = ::usb_interrupt_read(m_handle, USB_INPUT_ENDPOINT, buffer, USB_BUFSIZE, USB_TIMEOUT);
-	if (res != USB_BUFSIZE) {
-		wxString error(::usb_strerror(), wxConvLocal);
-		wxLogMessage(wxT("Error from usb_interrupt_read: res=%d err=%s"), res, error.c_str());
+	int written;
+	int res = ::libusb_interrupt_transfer(m_handle, USB_INPUT_ENDPOINT, buffer, USB_BUFSIZE, &written, USB_TIMEOUT);
+	if (res != 0) {
+		wxLogError(wxT("Error from libusb_interrupt_transfer: err=%d"), res);
 		return false;
 	}
+
+	if (written != USB_BUFSIZE)
+		return false;
 
 	// Do we have data?
 	if (buffer[1] != 0x00)
@@ -348,7 +349,7 @@ void CK8055Controller::setTransmit(bool tx)
 	if (tx == m_state)
 		return;
 
-	char buffer[USB_BUFSIZE];
+	unsigned char buffer[USB_BUFSIZE];
 	buffer[0] = CMD_SET_ANALOG_DIGITAL;
 	buffer[1] = 0x00;
 	buffer[2] = 0x00;
@@ -361,11 +362,15 @@ void CK8055Controller::setTransmit(bool tx)
 	if (tx)
 		buffer[1] |= OUT_PORT1;
 
-	int res = ::usb_interrupt_write(m_handle, USB_OUTPUT_ENDPOINT, buffer, USB_BUFSIZE, USB_TIMEOUT);
-	if (res != USB_BUFSIZE) {
-		wxString error(::usb_strerror(), wxConvLocal);
-		wxLogMessage(wxT("Error from usb_interrupt_write: res=%d err=%s"), res, error.c_str());
+	int written;
+	int res = ::libusb_interrupt_transfer(m_handle, USB_OUTPUT_ENDPOINT, buffer, USB_BUFSIZE, &written, USB_TIMEOUT);
+	if (res != 0) {
+		wxLogError(wxT("Error from libusb_interrupt_transfer: err=%d"), res);
+		return;
 	}
+
+	if (written != USB_BUFSIZE)
+		return;
 
 	m_state = tx;
 }
@@ -374,7 +379,7 @@ void CK8055Controller::close()
 {
 	wxASSERT(m_handle != NULL);
 
-	char buffer[USB_BUFSIZE];
+	unsigned char buffer[USB_BUFSIZE];
 	buffer[0] = CMD_RESET;
 	buffer[1] = 0x00;
 	buffer[2] = 0x00;
@@ -383,10 +388,14 @@ void CK8055Controller::close()
 	buffer[5] = 0x00;
 	buffer[6] = 0x00;
 	buffer[7] = 0x00;
-	::usb_interrupt_write(m_handle, USB_OUTPUT_ENDPOINT, buffer, USB_BUFSIZE, USB_TIMEOUT);
+	int written;
+	::libusb_interrupt_transfer(m_handle, USB_OUTPUT_ENDPOINT, buffer, USB_BUFSIZE, &written, USB_TIMEOUT);
 
-	::usb_close(m_handle);
+	::libusb_release_interface(m_handle, VELLEMAN_HID_INTERFACE);
+
+	::libusb_close(m_handle);
 	m_handle = NULL;
 }
 
 #endif
+

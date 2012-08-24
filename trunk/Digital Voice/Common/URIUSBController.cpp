@@ -17,6 +17,7 @@ const unsigned int C108_VENDOR_ID     = 0x0D8CU;
 const unsigned int C108_PRODUCT_ID    = 0x000CU;
 const unsigned int C108AH_PRODUCT_ID  = 0x013CU;
 const unsigned int C119_PRODUCT_ID    = 0x0008U;
+const unsigned int C119A_PRODUCT_ID   = 0x013AU;
 
 const char REPORT_ID     = 0x00;
 
@@ -112,7 +113,8 @@ bool CURIUSBController::open()
 		if (attributes.VendorID  == C108_VENDOR_ID    &&
 		   (attributes.ProductID == C108_PRODUCT_ID   ||
 			attributes.ProductID == C108AH_PRODUCT_ID ||
-			attributes.ProductID == C119_PRODUCT_ID)) {
+			attributes.ProductID == C119_PRODUCT_ID   ||
+			attributes.ProductID == C119A_PRODUCT_ID)) {
 				count++;
 
 			// Is this the right device?
@@ -226,75 +228,103 @@ const int USB_TIMEOUT = 5000;
 CURIUSBController::CURIUSBController(unsigned int address) :
 m_address(address),
 m_state(false),
+m_context(NULL),
 m_handle(NULL)
 {
+	::libusb_init(&m_context);
 }
 
 CURIUSBController::~CURIUSBController()
 {
+	wxASSERT(m_context != NULL);
+
+	::libusb_exit(m_context);
 }
 
 bool CURIUSBController::open()
 {
+	wxASSERT(m_context != NULL);
 	wxASSERT(m_handle == NULL);
 
-	::usb_init();
-	::usb_find_busses();
-	::usb_find_devices();
+	libusb_device** list;
+	ssize_t cnt = ::libusb_get_device_list(NULL, &list);
+	if (cnt <= 0) {
+		wxLogError(wxT("Cannot find any USB devices!"));
+		return false;
+	}
 
+	int err = 0;
 	unsigned int count = 0U;
-	for (struct usb_bus* usb_bus = usb_busses; usb_bus != NULL; usb_bus = usb_bus->next) {
-		for (struct usb_device* usb_dev = usb_bus->devices; usb_dev != NULL; usb_dev = usb_dev->next) {
-			if (usb_dev->descriptor.idVendor == C108_VENDOR_ID     &&
-			   (usb_dev->descriptor.idProduct == C108_PRODUCT_ID   ||
-				usb_dev->descriptor.idProduct == C108AH_PRODUCT_ID ||
-				usb_dev->descriptor.idProduct == C119_PRODUCT_ID)) { 
-				count++;
+	for (ssize_t i = 0; i < cnt; i++) {
+		libusb_device_descriptor desc;
+		err = ::libusb_get_device_descriptor(list[i], &desc);
+		if (err < 0)
+			continue;
 
-				// Is this the correct device?
-				if (count == m_address) {
-					m_handle = ::usb_open(usb_dev);
-					if (m_handle == NULL) {
-						wxString error(::usb_strerror(), wxConvLocal);
-						wxLogMessage(wxT("usb_open failed, err=%s"), error.c_str());
-						return false;
-					}
+		if (desc.idVendor == C108_VENDOR_ID     &&
+		   (desc.idProduct == C108_PRODUCT_ID   ||
+			desc.idProduct == C108AH_PRODUCT_ID ||
+			desc.idProduct == C119_PRODUCT_ID   ||
+			desc.idProduct == C119A_PRODUCT_ID)) {
+			count++;
 
-					int res = ::usb_claim_interface(m_handle, C108_HID_INTERFACE);
-					if (res < 0) {
-						res = ::usb_detach_kernel_driver_np(m_handle, C108_HID_INTERFACE);
-						if (res < 0) {
-							wxString error(::usb_strerror(), wxConvLocal);
-							wxLogMessage(wxT("usb_detach_kernel_driver_np failed, res=%d, err=%s"), res, error.c_str());
-							return false;
-						}
-
-						res = ::usb_claim_interface(m_handle, C108_HID_INTERFACE);
-						if (res < 0) {
-							wxString error(::usb_strerror(), wxConvLocal);
-							wxLogMessage(wxT("usb_claim_interface failed, res=%d, err=%s"), res, error.c_str());
-							return false;
-						}
-					}
-
-					unsigned char buffer[USB_BUFSIZE];
-					buffer[0] = HID_OR0;
-					buffer[1] = HID_OR1;
-					buffer[2] = HID_OR2;
-					buffer[3] = HID_OR3;
-					res = ::usb_control_msg(m_handle, USB_ENDPOINT_OUT + USB_TYPE_CLASS + USB_RECIP_INTERFACE, HID_REPORT_SET, REPORT_ID + (HID_RT_OUTPUT << 8), C108_HID_INTERFACE, (char*)buffer, USB_BUFSIZE, USB_TIMEOUT);
-					if (res != USB_BUFSIZE) {
-						wxString error(::usb_strerror(), wxConvLocal);
-						wxLogMessage(wxT("Error from usb_control_msg: res=%d, err=%s"), res, error.c_str());
-					}
-
-					return true;
-				}
-			}
+			// Is this the correct device?
+			if (count == m_address) {
+				err = ::libusb_open(list[i], &m_handle);
+		        break;
+		    }
 		}
 	}
 
-	return false;
+	if (err != 0) {
+		wxLogError(wxT("libusb_open failed, err=%d"), err);
+		::libusb_free_device_list(list, 1);
+		return false;
+	}
+
+	if (m_handle == NULL) {
+		wxLogError(wxT("Could not find a suitable CM108 based device"));
+		::libusb_free_device_list(list, 1);
+		return false;
+	}
+
+	::libusb_free_device_list(list, 1);
+
+	int res = ::libusb_claim_interface(m_handle, C108_HID_INTERFACE);
+	if (res != 0) {
+		res = ::libusb_detach_kernel_driver(m_handle, C108_HID_INTERFACE);
+		if (res != 0) {
+			wxLogError(wxT("libusb_detach_kernel_driver failed, err=%d"), res);
+			::libusb_close(m_handle);
+			m_handle = NULL;
+			return false;
+		}
+
+		res = ::libusb_claim_interface(m_handle, C108_HID_INTERFACE);
+		if (res != 0) {
+			wxLogError(wxT("libusb_claim_interface failed, err=%d"), res);
+			::libusb_close(m_handle);
+			m_handle = NULL;
+			return false;
+		}
+	}
+
+	unsigned char buffer[USB_BUFSIZE];
+	buffer[0] = HID_OR0;
+	buffer[1] = HID_OR1;
+	buffer[2] = HID_OR2;
+	buffer[3] = HID_OR3;
+
+	res = ::libusb_control_transfer(m_handle, LIBUSB_ENDPOINT_OUT + LIBUSB_REQUEST_TYPE_CLASS + LIBUSB_RECIPIENT_INTERFACE, HID_REPORT_SET, REPORT_ID + (HID_RT_OUTPUT << 8), C108_HID_INTERFACE, buffer, USB_BUFSIZE, USB_TIMEOUT);
+	if (res < 0) {
+		wxLogError(wxT("Error from libusb_control_transfer: err=%d"), res);
+		::libusb_release_interface(m_handle, C108_HID_INTERFACE);
+		::libusb_close(m_handle);
+		m_handle = NULL;
+		return false;
+	}
+
+	return true;
 }
 
 bool CURIUSBController::getSquelch()
@@ -306,12 +336,14 @@ bool CURIUSBController::getSquelch()
 	buffer[1] = 0x00;
 	buffer[2] = 0x00;
 	buffer[3] = 0x00;
-	int res = ::usb_control_msg(m_handle, USB_ENDPOINT_IN + USB_TYPE_CLASS + USB_RECIP_INTERFACE, HID_REPORT_GET, REPORT_ID + (HID_RT_INPUT << 8), C108_HID_INTERFACE, (char*)buffer, USB_BUFSIZE, USB_TIMEOUT);
-	if (res != USB_BUFSIZE) {
-		wxString error(::usb_strerror(), wxConvLocal);
-		wxLogMessage(wxT("Error from usb_control_msg: res=%d, err=%s"), res, error.c_str());
+	int res = ::libusb_control_transfer(m_handle, LIBUSB_ENDPOINT_IN + LIBUSB_REQUEST_TYPE_CLASS + LIBUSB_RECIPIENT_INTERFACE, HID_REPORT_GET, REPORT_ID + (HID_RT_INPUT << 8), C108_HID_INTERFACE, buffer, USB_BUFSIZE, USB_TIMEOUT);
+	if (res < 0) {
+		wxLogError(wxT("Error from libusb_control_transfer: err=%d"), res);
 		return false;
 	}
+
+	if (res < USB_BUFSIZE)
+		return false;
 
 	return (buffer[0] & HID_IR0_VD) == HID_IR0_VD;
 }
@@ -332,11 +364,14 @@ void CURIUSBController::setTransmit(bool tx)
 	if (tx)
 		buffer[1] |= HID_OR1_GPIO3;
 
-	int res = ::usb_control_msg(m_handle, USB_ENDPOINT_OUT + USB_TYPE_CLASS + USB_RECIP_INTERFACE, HID_REPORT_SET, REPORT_ID + (HID_RT_OUTPUT << 8), C108_HID_INTERFACE, (char*)buffer, USB_BUFSIZE, USB_TIMEOUT);
-	if (res != USB_BUFSIZE) {
-		wxString error(::usb_strerror(), wxConvLocal);
-		wxLogMessage(wxT("Error from usb_control_msg: res=%d, err=%s"), res, error.c_str());
+	int res = ::libusb_control_transfer(m_handle, LIBUSB_ENDPOINT_OUT + LIBUSB_REQUEST_TYPE_CLASS + LIBUSB_RECIPIENT_INTERFACE, HID_REPORT_SET, REPORT_ID + (HID_RT_OUTPUT << 8), C108_HID_INTERFACE, buffer, USB_BUFSIZE, USB_TIMEOUT);
+	if (res < 0) {
+		wxLogError(wxT("Error from libusb_control_transfer: err=%d"), res);
+		return;
 	}
+
+	if (res < USB_BUFSIZE)
+		return;
 
 	m_state = tx;
 }
@@ -350,10 +385,13 @@ void CURIUSBController::close()
 	buffer[1] = HID_OR1;
 	buffer[2] = HID_OR2;
 	buffer[3] = HID_OR3;
-	::usb_control_msg(m_handle, USB_ENDPOINT_OUT + USB_TYPE_CLASS + USB_RECIP_INTERFACE, HID_REPORT_SET, REPORT_ID + (HID_RT_OUTPUT << 8), C108_HID_INTERFACE, (char*)buffer, USB_BUFSIZE, USB_TIMEOUT);
+	::libusb_control_transfer(m_handle, LIBUSB_ENDPOINT_OUT + LIBUSB_REQUEST_TYPE_CLASS + LIBUSB_RECIPIENT_INTERFACE, HID_REPORT_SET, REPORT_ID + (HID_RT_OUTPUT << 8), C108_HID_INTERFACE, buffer, USB_BUFSIZE, USB_TIMEOUT);
 
-	::usb_close(m_handle);
+	::libusb_release_interface(m_handle, C108_HID_INTERFACE);
+
+	::libusb_close(m_handle);
 	m_handle = NULL;
 }
 
 #endif
+
