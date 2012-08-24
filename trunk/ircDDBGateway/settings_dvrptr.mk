@@ -7,7 +7,7 @@
 	export LIBS := $(shell wx-config --libs adv,core)
 	export CC      := $(shell wx-config --cxx)
 	export LDFLAGS := -g
-	export BINDIR  := "$(DEST)/opt/opendv/bin"
+	export BINDIR  := $(DESTDIR)/usr/bin
 	export DATADIR := "/opt/opendv/data"
 #
 # Comment out the first CFLAGS entry and uncomment the second to enable the DExtra Link. For DCS Link you must comment out the first
