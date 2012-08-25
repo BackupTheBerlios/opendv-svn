@@ -933,6 +933,10 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 		return false;
 	}
 
+	// Reset the slow data text collector, used for DCS text passing
+	m_textCollector.reset();
+	m_text.Clear();
+
 	sendToOutgoing(header);
 
 	return true;
@@ -953,6 +957,17 @@ bool CRepeaterHandler::process(CAMBEData& data, AUDIO_SOURCE source)
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS)
 		return false;
+
+	// Collect the text from the slow data for DCS
+	if (m_text.IsEmpty() && !data.isEnd()) {
+		m_textCollector.writeData(data);
+
+		bool hasText = m_textCollector.hasData();
+		if (hasText)
+			m_text = m_textCollector.getData();
+	}
+
+	data.setText(m_text);
 
 	sendToOutgoing(data);
 
