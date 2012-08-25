@@ -10,5 +10,5 @@
 #
 # For a native build on ARM add -Wno-psabi to CFLAGS, to get rid of notes
 #
-	export CFLAGS := -g -O3 -mcpu=arm920t -Wall -Wno-non-virtual-dtor -Wno-strict-aliasing -Wno-psabi -DDATA_DIR='$(DATADIR)' -DBIN_DIR='$(BINDIR)' $(shell wx-config --cxxflags)
+	export CFLAGS := -g -O2 -Wall -Wno-non-virtual-dtor -Wno-strict-aliasing -Wno-psabi -DDATA_DIR='$(DATADIR)' -DBIN_DIR='$(BINDIR)' $(shell wx-config --cxxflags)
 	export LIBS := -lportaudio -lusb-1.0 $(shell wx-config --libs adv,core)
