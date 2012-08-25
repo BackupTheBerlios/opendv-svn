@@ -1,0 +1,2 @@
+IRCDDBGATEWAY_PATH=/usr/local/bin/ircddbgatewayd
+IRCDDBGATEWAY_OPTIONS="-logdir /var/log -daemon"

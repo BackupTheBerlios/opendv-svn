@@ -1,0 +1,2 @@
+REPEATER_PATH=/usr/local/bin/gmskrepeaterd
+REPEATER_OPTIONS="-daemon -logdir /var/log/dstar"

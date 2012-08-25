@@ -1,0 +1,2 @@
+REPEATER_PATH=/usr/local/bin/soundcardrepeaterd
+REPEATER_OPTIONS="-daemon -logdir /var/log/dstar"
