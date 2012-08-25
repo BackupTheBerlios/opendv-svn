@@ -43,10 +43,10 @@ ackTime=500
 #DVRPTR
 modemPort=/dev/ttyACM0
 modemRXInvert=0
-modemTXInvert=1
+modemTXInvert=0
 modemChannel=0
-modemModLevel=15
-modemTXDelay=100
+modemModLevel=20
+modemTXDelay=150
 timeout=180
 ackTime=500
 
