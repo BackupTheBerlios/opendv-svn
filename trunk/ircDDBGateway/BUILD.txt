@@ -8,10 +8,10 @@ To use the Repeater control software you will first need to build the latest
 version of wxWidgets (http://www.wxwidgets.org), the version I used was 2.8.12,
 I also installed it in the default location which is C:\wxWidgets-2.8.12.
 
-For compiling I use Visual C++ 2010 Express Edition downloaded from Microsoft
+For compiling I use Visual C++ 2008 Express Edition downloaded from Microsoft
 for free. I recommend that you use the same.
 
-To build wxWidgets, you simply need to open Visual Studio 2010 using the File ->
+To build wxWidgets, you simply need to open Visual Studio 2008 using the File ->
 Open -> Projects/Solutions and load the wx_dll.dsw file to be found in
 wxWidgets-2.8.12\build\msw directory and then go into Batch Build and select the
 DLL Unicode Debug and DLL Uncode Release entries for every one, this take a 
@@ -33,7 +33,7 @@ It is also probable that you'll need to install a copy of the latest Visual C++
 run-time libraries from Microsoft, if you are not running the Repeater software
 on the same machine as the development/compilation was done on. To do this you
 need to copy and run the Vcredist_x86.exe file which is found at
-<http://www.microsoft.com/en-gb/download/details.aspx?id=5555>
+<http://www.microsoft.com/en-gb/download/details.aspx?id=5582>
 
 Linux
 -----

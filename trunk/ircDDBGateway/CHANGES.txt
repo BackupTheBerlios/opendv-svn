@@ -1094,3 +1094,8 @@ Make the reported DCS version automatically correct.
 Upgraded to Visual C++ 2010 on Windows.
 Platform dependent settings moved to Makefile includes.
 Upgraded the DCS protocol to the latest version.
+
+20120826a
+---------
+
+Reverted to Visual C++ 2008.
