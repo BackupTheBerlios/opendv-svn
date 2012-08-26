@@ -1708,3 +1708,8 @@ Platform dependent settings moved to Makefile includes.
 Changed the D-Star Repeater to the Sound Card Repeater.
 Upgraded to the latest version of the DCS protocol.
 Increased the default TX delay in the DV-RPTR Repeater to 150ms from 30ms.
+
+20120826a
+---------
+
+Reverted to using Visual C++ 2008 on Windows.
