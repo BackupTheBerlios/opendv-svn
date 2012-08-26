@@ -53,6 +53,8 @@ do_start()
 		$DAEMON_ARGS \
 		|| return 2
 	sleep 2
+	# create a watchdog entry to the crontab
+	echo "*/10 * * * * root ps aux | grep $DAEMON | grep -vq grep || /etc/init.d/timeserver start" > /etc/cron.d/timeserver
 }
 
 #
@@ -78,6 +80,8 @@ do_stop()
 	[ "$?" = 2 ] && return 2
 	# Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
+	# remove watchdog entry from crontab
+	rm -f /etc/cron.d/timeserver
 	return "$RETVAL"
 }
 
