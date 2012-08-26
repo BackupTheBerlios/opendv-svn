@@ -23,6 +23,7 @@
 # 2012-07-10 dl5di    soundmodem configuration with alsa tools integrated
 # 2012-07-11 dl5di    bugfixes, cleanups, first beta release
 # 2012-08-22 dl5di    change dstarrepeater->soundcardrepeater
+# 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -32,7 +33,15 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120711-beta"
+rev="20120826-beta"
+
+if [ $UID -ne 0 ]; then
+	echo
+	echo "ERROR:  This script must be run as the root user!"
+	echo "        Please use 'su' or log in as root and try again."
+	echo
+	exit 1
+fi
 #
 # usage:
 # 	./repeater_conf <module> [modemtype]

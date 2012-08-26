@@ -10,10 +10,10 @@
 
 if [ $UID -ne 0 ]; then
 	echo
-	     echo "ERROR:  This script must be run as the root user!"
-	     echo "        Please use 'su' or log in as root and try again."
-	     echo
-	     exit 1
+	echo "ERROR:  This script must be run as the root user!"
+	echo "        Please use 'su' or log in as root and try again."
+	echo
+	exit 1
 fi
 
 me=repeater_3
@@ -33,7 +33,7 @@ fi
 # Check that networking is up.
 [ "${NETWORKING}" = "no" ] && exit 1
 
-# Source the $me configuration
+# Source the configuration
 [ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me
 
 RETVAL=0
@@ -51,7 +51,7 @@ start() {
     echo "PID: $1"
     echo "$1" > /var/run/$me.pid
 # create a watchdog entry to the crontab
-    echo "*/10 * * * * root ps aux | grep $REPEATER_PATH | grep -vq grep || /etc/init.d/repeater_3 start" > /etc/cron.d/repeater_3
+    echo "*/10 * * * * root ps aux | grep $REPEATER_PATH | grep -vq grep || /etc/init.d/$me start" > /etc/cron.d/$me
     return $RETVAL
 }
 
@@ -63,7 +63,7 @@ stop() {
     [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$me
     echo
 # remove watchdog entry from crontab
-    rm -f /etc/cron.d/repeater_3
+    rm -f /etc/cron.d/$me
     return $RETVAL
 }
 

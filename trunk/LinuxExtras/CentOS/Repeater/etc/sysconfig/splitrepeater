@@ -1,2 +1,2 @@
-REPEATER_PATH=/usr/local/bin/splitrepeaterd
-REPEATER_OPTIONS="-daemon -logdir /var/log"
+DAEMON_PATH=/usr/local/bin/splitrepeaterd
+DAEMON_OPTIONS="-daemon -logdir /var/log"

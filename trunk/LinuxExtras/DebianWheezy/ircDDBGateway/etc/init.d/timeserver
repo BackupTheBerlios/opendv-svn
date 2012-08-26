@@ -24,6 +24,14 @@ DAEMON_USER=opendv
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
+if [ $UID -ne 0 ]; then
+	echo
+	echo "ERROR:  This script must be run as the root user!"
+	echo "        Please use 'su' or log in as root and try again."
+	echo
+	exit 1
+fi
+
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
 

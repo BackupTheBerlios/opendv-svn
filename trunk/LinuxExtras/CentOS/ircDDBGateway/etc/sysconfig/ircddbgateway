@@ -1,2 +1,7 @@
-IRCDDBGATEWAY_PATH=/usr/local/bin/ircddbgatewayd
-IRCDDBGATEWAY_OPTIONS="-logdir /var/log -daemon"
+DAEMON_PATH=/usr/local/bin/ircddbgatewayd
+DAEMON_OPTIONS="-logdir /var/log -daemon"
+IRCDDBGATEWAY_DENABLED="yes"
+IRCDDBGATEWAY_DDDHCP="yes"
+IRCDDBGATEWAY_DDDEV="tap0"
+IRCDDBGATEWAY_DDIP="192.168.1.123"
+IRCDDBGATEWAY_DDMASK="255.255.255.0"

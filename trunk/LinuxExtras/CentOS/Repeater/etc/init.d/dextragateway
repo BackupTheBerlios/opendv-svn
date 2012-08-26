@@ -18,6 +18,8 @@ if [ $UID -ne 0 ]; then
 	     exit 1
 fi
 
+me=dextragateway
+
 # Source function library.
 if [ -f /etc/init.d/functions ] ; then
     . /etc/init.d/functions
@@ -33,29 +35,33 @@ fi
 # Check that networking is up.
 [ "${NETWORKING}" = "no" ] && exit 1
 
-# Source the dextragateway configuration
-[ -f /etc/sysconfig/dextragateway ] && . /etc/sysconfig/dextragateway
+# Source the configuration
+[ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me
 
 RETVAL=0
 
 start() {
 
-    echo -n "Starting dextragateway:"
-    daemon --pidfile /var/run/dextragateway.pid $DEXTRAGATEWAY_PATH $DEXTRAGATEWAY_OPTIONS &
+    echo -n "Starting $me:"
+    daemon --pidfile /var/run/$me.pid $DAEMON_PATH $DAEMON_OPTIONS &
     RETVAL=$?
-    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/dextragateway
-    pidofproc $DEXTRAGATEWAY_PATH > /var/run/dextragateway.pid
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$me
+    pidofproc $DAEMON_PATH > /var/run/$me.pid
     echo
+    # create a watchdog entry to the crontab
+    echo "*/10 * * * * root ps aux | grep $DAEMON_PATH | grep -vq grep || /etc/init.d/$me start" > /etc/cron.d/$me
     return $RETVAL
 }
 
 stop() {
     
-    echo -n "Stopping dextragateway "
-    killproc $DEXTRAGATEWAY_PATH
+    echo -n "Stopping $me "
+    killproc $DAEMON_PATH
     RETVAL=$?
-    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/dextragateway
+    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$me
     echo
+    # remove watchdog entry from crontab
+    rm -f /etc/cron.d/$me
     return $RETVAL
 }
 
@@ -77,15 +83,15 @@ case "$1" in
 	restart
 	;;
     status)
-	status $DEXTRAGATEWAY_PATH
+	status $DAEMON_PATH
 	;;
     *)
 	echo -e $"\nUsage: \n\t$0 {option}"
 	echo -e "\n\tOptions:\n"
-	echo -e "\trestart       - restarts dextragateway\n"
-	echo -e "\tstart         - starts dextragateway\n"
+	echo -e "\trestart       - restarts $me\n"
+	echo -e "\tstart         - starts $me\n"
 	echo -e "\tstatus        - display status\n"
-	echo -e "\tstop          - stops dextragateway\n"
+	echo -e "\tstop          - stops $me\n"
 	echo -e "\n"
 	exit 1
 esac

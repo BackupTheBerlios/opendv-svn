@@ -23,12 +23,21 @@
 # ...
 # 2012-08-12 dl5di    initial version for Debian systems
 # 2012-08-24 dl5di    fixes on ARM system/DVRPTR-NET
+# 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20120823beta"
+rev="dvrptrnet-20120826beta"
+
+if [ $UID -ne 0 ]; then
+	echo
+	echo "ERROR:  This script must be run as the root user!"
+	echo "        Please use 'su' or log in as root and try again."
+	echo
+	exit 1
+fi
 
 function write_value() {
 #
