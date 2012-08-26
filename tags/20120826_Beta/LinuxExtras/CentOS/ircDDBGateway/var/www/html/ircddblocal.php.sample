@@ -1,0 +1,9 @@
+<?php
+$logPath='/var/log';
+$callsign='';
+$registerURL = '';
+$starLogPath = $logPath . '/STARnet.log';
+$linkLogPath = $logPath . '/Links.log';
+$hdrLogPath = $logPath . '/Headers.log';
+$gatewayConfigPath = '/etc/ircddbgateway';
+?>

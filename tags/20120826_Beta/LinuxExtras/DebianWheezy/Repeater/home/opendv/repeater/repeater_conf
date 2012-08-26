@@ -1,0 +1,10 @@
+BACKUPPATH=/var/backups
+LOGPATH=/var/log/opendv
+CFGPATH=/home/opendv/repeater
+DATAPATH=/home/opendv/repeater/data
+DEFVALUES=/home/opendv/repeater/repeater.default
+#
+REPEATERCONFIG_1=/etc/default/soundcardrepeater
+REPEATERCONFIG_2=/etc/default/dvrptrrepeater
+REPEATERCONFIG_3=/etc/default/gmskrepeater
+REPEATERCONFIG_4=/etc/default/dvapnode
