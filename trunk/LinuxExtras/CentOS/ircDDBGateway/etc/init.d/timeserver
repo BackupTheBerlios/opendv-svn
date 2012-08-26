@@ -36,6 +36,8 @@ start() {
     RETVAL=$?
     [ $RETVAL -eq 0 ] && touch /var/lock/subsys/timeserver
     pidofproc $TIMESERVER_PATH > /var/run/timeserver.pid
+    # create a watchdog entry to the crontab
+    echo "*/10 * * * * root ps aux | grep $TIMESERVER_PATH | grep -vq grep || /etc/init.d/timeserver start" > /etc/cron.d/timeserver
     echo
 }
 
@@ -46,7 +48,9 @@ stop() {
     RETVAL=$?
     [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/timeserver
     echo
-
+    # remove watchdog entry from crontab
+    rm -f /etc/cron.d/timeserver
+                
 }
 
 restart() {

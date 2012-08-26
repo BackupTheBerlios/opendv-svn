@@ -38,6 +38,8 @@ start() {
     pidofproc $IRCDDBGATEWAY_PATH > /var/run/ircddbgateway.pid
     echo
     sleep 2
+    # create a watchdog entry to the crontab
+    echo "*/10 * * * * root ps aux | grep $IRCDDBGATEWAY_PATH | grep -vq grep || /etc/init.d/ircddbgateway start" > /etc/cron.d/ircddbgateway
     if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ];then
 	echo " - configure dd-mode network device $IRCDDBGATEWAY_DDDEV "
         sleep 15
@@ -61,6 +63,8 @@ stop() {
     killproc $IRCDDBGATEWAY_PATH
     RETVAL=$?
     [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/ircddbgateway
+    # remove watchdog entry from crontab
+    rm -f /etc/cron.d/ircddbgateway                
     echo
 
 }
