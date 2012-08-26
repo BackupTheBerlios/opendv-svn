@@ -28,7 +28,7 @@
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\COPYING.txt"
+  !insertmacro MUI_PAGE_LICENSE "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\COPYING.txt"
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -46,23 +46,23 @@ Section "Repeater Program Files" SecProgram
 
   SetOutPath "$INSTDIR"
   
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\DCSClient.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\DExtraClient.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\DVAPClient.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\DVRPTRClient.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\DVToolReader.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\GMSKClient.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\SoundCardClient.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\portaudio_x86.dll"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\wxbase28u_vc_custom.dll"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\wxmsw28u_adv_vc_custom.dll"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\Release\wxmsw28u_core_vc_custom.dll"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\DCSClient\DCS_Hosts.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\DExtraClient\DExtra_Hosts.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\COPYING.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\CHANGES.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\TODO.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Digital Voice\USAGE.txt"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\DCSClient.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\DExtraClient.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\DVAPClient.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\DVRPTRClient.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\DVToolReader.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\GMSKClient.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\SoundCardClient.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\portaudio_x86.dll"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\wxbase28u_vc_custom.dll"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\wxmsw28u_adv_vc_custom.dll"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\Release\wxmsw28u_core_vc_custom.dll"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\DCSClient\DCS_Hosts.txt"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\DExtraClient\DExtra_Hosts.txt"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\COPYING.txt"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\CHANGES.txt"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\TODO.txt"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\USAGE.txt"
 
   ;Create start menu entry
   CreateDirectory "$SMPROGRAMS\Digital Voice"
