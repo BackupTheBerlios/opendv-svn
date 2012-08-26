@@ -1,4 +1,4 @@
-Digital Voice - 20120403
+Digital Voice - 20120826
 ========================
 
 20090319
@@ -256,7 +256,7 @@ Better error recovery for the DV-Dongle.
 
 Sort the UR, RPT1, and RPT2 callsign lists in the GUI.
 
-2012xxxx
+20120826
 --------
 
 Updated to Visual Studio 2010 on Windows.
@@ -267,4 +267,3 @@ Updated to the latest DCS protocol.
 Swapped the RPT1 and RPT2 values in the radio clients.
 Increased the default TX delay in the DV-RPTR Client to 150ms from 30ms.
 Upgraded to libusb-1.0 on Linux.
-

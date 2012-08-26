@@ -1,4 +1,4 @@
-ircDDB Gateway - 20120805
+ircDDB Gateway - 20120826
 =========================
 
 20101010
@@ -1088,7 +1088,7 @@ Use new official APRS Ids for APRS reports :-)
 Fixed the STARnet Digital change, it was slightly wrong.
 Make the reported DCS version automatically correct.
 
-2012xxxx
+20120826
 --------
 
 Upgraded to Visual C++ 2010 on Windows.

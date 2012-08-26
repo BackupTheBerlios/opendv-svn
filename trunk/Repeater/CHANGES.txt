@@ -1,4 +1,4 @@
-Repeater - 20120802
+Repeater - 20120826
 ===================
 
 20090530
@@ -1700,7 +1700,7 @@ Fixed ARM cross compilation location of data files.
 Changed silence insertion parameter.
 Allow for up to four commands.
 
-2012xxxx
+20120826
 --------
 
 Upgraded to Visual C++ 2010 on Windows.

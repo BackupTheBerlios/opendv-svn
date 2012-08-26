@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "Repeater 20120802"
-  OutFile "Repeater-20120802.exe"
+  Name "Repeater 20120826"
+  OutFile "Repeater-20120826.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\Repeater"
@@ -49,12 +49,12 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\AnalogueRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\DCSGateway.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\DExtraGateway.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\DStarRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\DummyRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\DVAPNode.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\DVRPTRRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\GMSKRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\ParrotController.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\SoundCardRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\SplitRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\portaudio_x86.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2010\Projects\opendv\Repeater\Release\wxbase28u_vc_custom.dll"
@@ -91,12 +91,12 @@ Section "Repeater Program Files" SecProgram
   CreateShortCut "$SMPROGRAMS\Repeater\Analogue Repeater.lnk"        "$INSTDIR\AnalogueRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DCS Gateway.lnk"              "$INSTDIR\DCSGateway.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DExtra Gateway.lnk"           "$INSTDIR\DExtraGateway.exe"
-  CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater.lnk"          "$INSTDIR\DStarRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DummyRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DVAP Node.lnk"                "$INSTDIR\DVAPNode.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DV-RPTR Repeater.lnk"         "$INSTDIR\DVRPTRRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\GMSK Repeater.lnk"            "$INSTDIR\GMSKRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Parrot Controller.lnk"        "$INSTDIR\ParrotController.exe"
+  CreateShortCut "$SMPROGRAMS\Repeater\Sound Card Repeater.lnk"      "$INSTDIR\SoundCardRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Split Repeater.lnk"           "$INSTDIR\SplitRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Licence.lnk"                  "$INSTDIR\COPYING.txt"
   CreateShortCut "$SMPROGRAMS\Repeater\Changes.lnk"                  "$INSTDIR\CHANGES.txt"
@@ -122,12 +122,12 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Analogue Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DCS Gateway"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DExtra Gateway"
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\D-Star Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Dummy Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DVAP Node"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DV-RPTR Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\GMSK Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Parrot Controller"
+  DeleteRegKey /ifempty HKCU "Software\G4KLX\Sound Card Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Split Repeater"
 
 SectionEnd
