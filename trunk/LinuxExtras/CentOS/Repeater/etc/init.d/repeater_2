@@ -34,7 +34,7 @@ fi
 [ "${NETWORKING}" = "no" ] && exit 1
 
 # Source the configuration
-[ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me
+[ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me || echo "missing configuration file /etc/sysconfig/$me"
 
 RETVAL=0
 

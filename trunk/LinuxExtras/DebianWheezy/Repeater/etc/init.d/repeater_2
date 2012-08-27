@@ -11,14 +11,14 @@
 ### END INIT INFO
 
 # Author: Hans-J. Barthen DL5DI <dl5di@gmx.de>
-# (settings may be overwritten by options in /etc/default/ircddbgateway)
+# (settings may be overwritten by options in /etc/default/repeater_2)
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=repeater             # Introduce a short description here
-NAME=repeater             # Introduce the short server's name here
+NAME=repeater_2           # Introduce the short server's name here
 DAEMON_PATH=dvrptrrepeaterd
-DAEMON_ARGS=""                 # Arguments to run the daemon with
+DAEMON_ARGS=""            # Arguments to run the daemon with
 DAEMON_USER=opendv
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
@@ -32,7 +32,7 @@ if [ $UID -ne 0 ]; then
 fi
 
 # Read configuration variable file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME || echo "missing configuration file /etc/default/$NAME"
 
 # Exit if the package is not installed
 [ -x $DAEMON_PATH ] || exit 0
