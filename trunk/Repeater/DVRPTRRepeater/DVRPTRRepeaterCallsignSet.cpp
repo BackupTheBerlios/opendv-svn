@@ -62,6 +62,7 @@ m_rpt1Validation(NULL)
 	m_suffix->Append(wxT("B"));
 	m_suffix->Append(wxT("C"));
 	m_suffix->Append(wxT("D"));
+	m_suffix->Append(wxT("E"));
 	sizer->Add(m_suffix, 0, wxALL, BORDER_SIZE);
 
 	wxString suffix = callsign.Right(1U);

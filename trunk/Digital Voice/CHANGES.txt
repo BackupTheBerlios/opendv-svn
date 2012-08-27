@@ -272,3 +272,8 @@ Upgraded to libusb-1.0 on Linux.
 ---------
 
 Reverted to Visual C++ 2008 on Windows.
+
+2012xxxx
+--------
+
+Allow up to module E for linking.

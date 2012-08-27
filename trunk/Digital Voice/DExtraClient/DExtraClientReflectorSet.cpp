@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ m_module(NULL)
 	m_module->Append(wxT("B"));
 	m_module->Append(wxT("C"));
 	m_module->Append(wxT("D"));
+	m_module->Append(wxT("E"));
 	sizer->Add(m_module, 0, wxALL, BORDER_SIZE);
 
 	m_module->SetSelection(module);

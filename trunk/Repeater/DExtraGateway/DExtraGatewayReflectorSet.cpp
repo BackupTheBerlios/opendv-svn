@@ -89,6 +89,7 @@ m_language(NULL)
 	m_channel->Append(wxT("B"));
 	m_channel->Append(wxT("C"));
 	m_channel->Append(wxT("D"));
+	m_channel->Append(wxT("E"));
 	sizer->Add(m_channel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	bool res = m_channel->SetStringSelection(reflector.Right(1U));
 	if (!res)

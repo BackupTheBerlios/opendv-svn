@@ -1713,3 +1713,8 @@ Increased the default TX delay in the DV-RPTR Repeater to 150ms from 30ms.
 ---------
 
 Reverted to using Visual C++ 2008 on Windows.
+
+2012xxxx
+--------
+
+Allow module E on all of the repeaters.

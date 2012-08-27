@@ -75,10 +75,12 @@ m_agl(NULL)
 	m_band->Append(wxT("B"));
 	m_band->Append(wxT("C"));
 	m_band->Append(wxT("D"));
+	m_band->Append(wxT("E"));
 	m_band->Append(wxT("AD"));
 	m_band->Append(wxT("BD"));
 	m_band->Append(wxT("CD"));
 	m_band->Append(wxT("DD"));
+	m_band->Append(wxT("ED"));
 	sizer->Add(m_band, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	bool res = m_band->SetStringSelection(band);
 	if (!res)
@@ -448,13 +450,17 @@ wxString CRepeaterSet::getBand() const
 		case 4:
 			return wxT("D");
 		case 5:
-			return wxT("AD");
+			return wxT("E");
 		case 6:
-			return wxT("BD");
+			return wxT("AD");
 		case 7:
-			return wxT("CD");
+			return wxT("BD");
 		case 8:
+			return wxT("CD");
+		case 9:
 			return wxT("DD");
+		case 10:
+			return wxT("ED");
 		default:
 			return wxT(" ");
 	}

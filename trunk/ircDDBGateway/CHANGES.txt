@@ -1099,3 +1099,8 @@ Upgraded the DCS protocol to the latest version.
 ---------
 
 Reverted to Visual C++ 2008.
+
+2012xxxx
+--------
+
+Allow repeater module E to be set.
