@@ -41,6 +41,7 @@ Common/Common.a:
 		make -C Common
 
 install:	all
+		install -d -g bin -o root -m 0775 $(BINDIR)
 		make -C AnalogueRepeater install
 		make -C Data install
 		make -C DCSGateway install
