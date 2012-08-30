@@ -8,7 +8,7 @@
 	export CC      := $(shell wx-config --cxx)
 	export LDFLAGS := -g
 	export BINDIR  := $(DESTDIR)/usr/bin
-	export DATADIR := "/var/opendv/data"
+	export DATADIR := "/home/opendv/data"
 #
 # Comment out the first CFLAGS entry and uncomment the second to enable the DExtra Link. For DCS Link you must comment out the first
 # CFLAGS entry and uncomment the thrird entrt. You must do a "make clean" before rebuilding the software.
