@@ -119,7 +119,7 @@ class IRCDDBAppPrivate
     datePattern(wxT("^20[0-9][0-9]-((1[0-2])|(0[1-9]))-((3[01])|([12][0-9])|(0[1-9]))$")),
     timePattern(wxT("^((2[0-3])|([01][0-9])):[0-5][0-9]:[0-5][0-9]$")),
     dbPattern(wxT("^[0-9A-Z_]{8}$")),
-    modulePattern(wxT("^[ABCD]D?$"))
+    modulePattern(wxT("^[ABCDE]D?$"))
   {
     wdTimer = 0;
     wdCounter = 0;
