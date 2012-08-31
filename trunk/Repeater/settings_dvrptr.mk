@@ -6,7 +6,8 @@
 	export CC      := $(shell wx-config --cxx)
 	export LDFLAGS := -g
 	export BINDIR  := $(DESTDIR)/usr/bin
-	export DATADIR := "/opt/opendv/data"
+	export DATADIR := "/home/opendv/data"
+
 #
 # For a native build on ARM add -Wno-psabi to CFLAGS, to get rid of notes
 #
