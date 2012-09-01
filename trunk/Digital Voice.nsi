@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "Digital Voice - 20120826"
-  OutFile "Digital_Voice-20120826.exe"
+  Name "Digital Voice - 20120901"
+  OutFile "Digital_Voice-20120901.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\Digital Voice"

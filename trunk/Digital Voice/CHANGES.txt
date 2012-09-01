@@ -1,4 +1,4 @@
-Digital Voice - 20120826
+Digital Voice - 20120901
 ========================
 
 20090319
@@ -273,7 +273,7 @@ Upgraded to libusb-1.0 on Linux.
 
 Reverted to Visual C++ 2008 on Windows.
 
-2012xxxx
+20120901
 --------
 
 Allow up to module E for linking.
