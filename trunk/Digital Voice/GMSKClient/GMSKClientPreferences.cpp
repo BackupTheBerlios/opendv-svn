@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 CGMSKClientPreferences::CGMSKClientPreferences(wxWindow* parent, int id, const wxString& callsign1,
 								   const wxString& callsign2, const wxString& readDevice,
-								   const wxString& writeDevice, unsigned int modemAddress,
+								   const wxString& writeDevice, GMSK_MODEM_TYPE modemType, unsigned int modemAddress,
 								   const wxString& dvdDevice, const wxString& message, bool bleep) :
 wxDialog(parent, id, wxString(_("GMSK Client Preferences")), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER | wxDEFAULT_DIALOG_STYLE),
 m_callsign(NULL),
@@ -42,7 +42,7 @@ m_bleep(NULL)
 	m_soundcard = new CSoundcardSet(noteBook, -1, APPLICATION_NAME, readDevice, writeDevice);
 	noteBook->AddPage(m_soundcard, _("Sound Card"), false);
 
-	m_modem = new CGMSKClientModemSet(noteBook, -1, APPLICATION_NAME, modemAddress);
+	m_modem = new CGMSKClientModemSet(noteBook, -1, APPLICATION_NAME, modemType, modemAddress);
 	noteBook->AddPage(m_modem, _("Modem"), false);
 
 	m_dongle = new CDVDongleSet(noteBook, -1, APPLICATION_NAME, dvdDevice);
@@ -109,6 +109,11 @@ wxString CGMSKClientPreferences::getSoundcardReadDevice() const
 wxString CGMSKClientPreferences::getSoundcardWriteDevice() const
 {
 	return m_soundcard->getWriteDevice();
+}
+
+GMSK_MODEM_TYPE CGMSKClientPreferences::getModemType() const
+{
+	return m_modem->getType();
 }
 
 unsigned int CGMSKClientPreferences::getModemAddress() const

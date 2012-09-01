@@ -285,51 +285,6 @@ the program was started. It shows a cut-down version of the information above
 it, but should still be useful for all that.
 
 
-SoundCardClient
----------------
-
-The purpose of this program is to emulate a D-Star capable radio. To this end it
-requires access to a 9600Bd capable radio, connected to a sound card, a second
-sound card for headphones/microphone (I use a USB headset from Logitech), access
-to a DV-Dongle, and optionally a serial port for PTT control. With these items, 
-you should be ready to go.
-
-The Radio Sound Card is the sound card that will be connected to your radio to
-allow the GMSK signals to be passed in and out of the program. This will go to
-your 9600Bd modem port on your radio, otherwise you'll need a soldering iron!
-
-GMSK Inversion is for cases when the polarity of the GMSK is inverted by your
-radio. Leave these as unchecked initially, and only set them if you have
-problems, check with a local D-Star user to see where the problem lies. These
-settings take effect immediately.
-
-The Controller sets hardware device used to control the transmitter. This may 
-set to None for testing, or when the radio has VOX, or a serial port, a URI USB, 
-or a Velleman K8055. A PTT Delay can be set here to ensure that the transmitter 
-operates at exactly the same time that the D-Star audio is present. If a delay 
-is set then the PTT is delayed with respect to the audio. The PTT inversion 
-setting is for interfacing to radios that have the opposite sense. There is also 
-a transmit input for manual control of the transmitter, in addition to the 
-button on the screen.
-
-The assignments of the different pins are:
-
-Function                              Velleman  URI USB   Serial Port
-Manual Transmit                       Input 1   8         DSR or CTS
-Transmitter PTT                       Output 1  1         DTR and RTS
-
-On the File menu are the options to Open and for Recording. The Open option is
-used for playing previously recorded files of GMSK data which are used instead
-of the sound card for the duration of the file. These files must be mono WAV
-files with a sample rate of 48kHz. The recording option ensures that all
-received D-Star transmissions are recorded to .dvtool files for playing back
-later with DVToolReader (see below). Recording does not stop the decoding of
-D-Star signals in real-time.
-
-When running, the program logs some information into the SoundCardClient.log file in
-the users home directory.
-
-
 DVAPClient
 ----------
 
@@ -383,8 +338,57 @@ requires access to a 9600Bd capable radio, connected to a GMSK Modem, a sound
 card for headphones/microphone, and access to a DV-Dongle. With these items, you
 should be ready to go.
 
-The Modem sets the GMSK Modem. There is one setting, the hardware address. The 
-default value is 0x300 which will probably not need changing most of the time.
+The Modem sets the GMSK Modem. There is one setting under Linux, the hardware
+address. Under Windows there is the choice of the driver type as well as the
+address, the types available are WinUSB and LibUsb. Although WinUSB is preferred
+under Windows, LibUsb is included to support the original Satoshi drivers. The
+default address is 0x300 for both types of driver, and will probably not need
+changing most of the time.
 
 When running, the program logs some information into the GMSKClient.log file in
+the users home directory.
+
+
+SoundCardClient
+---------------
+
+The purpose of this program is to emulate a D-Star capable radio. To this end it
+requires access to a 9600Bd capable radio, connected to a sound card, a second
+sound card for headphones/microphone (I use a USB headset from Logitech), access
+to a DV-Dongle, and optionally a serial port for PTT control. With these items, 
+you should be ready to go.
+
+The Radio Sound Card is the sound card that will be connected to your radio to
+allow the GMSK signals to be passed in and out of the program. This will go to
+your 9600Bd modem port on your radio, otherwise you'll need a soldering iron!
+
+GMSK Inversion is for cases when the polarity of the GMSK is inverted by your
+radio. Leave these as unchecked initially, and only set them if you have
+problems, check with a local D-Star user to see where the problem lies. These
+settings take effect immediately.
+
+The Controller sets hardware device used to control the transmitter. This may 
+set to None for testing, or when the radio has VOX, or a serial port, a URI USB, 
+or a Velleman K8055. A PTT Delay can be set here to ensure that the transmitter 
+operates at exactly the same time that the D-Star audio is present. If a delay 
+is set then the PTT is delayed with respect to the audio. The PTT inversion 
+setting is for interfacing to radios that have the opposite sense. There is also 
+a transmit input for manual control of the transmitter, in addition to the 
+button on the screen.
+
+The assignments of the different pins are:
+
+Function                              Velleman  URI USB   Serial Port
+Manual Transmit                       Input 1   8         DSR or CTS
+Transmitter PTT                       Output 1  1         DTR and RTS
+
+On the File menu are the options to Open and for Recording. The Open option is
+used for playing previously recorded files of GMSK data which are used instead
+of the sound card for the duration of the file. These files must be mono WAV
+files with a sample rate of 48kHz. The recording option ensures that all
+received D-Star transmissions are recorded to .dvtool files for playing back
+later with DVToolReader (see below). Recording does not stop the decoding of
+D-Star signals in real-time.
+
+When running, the program logs some information into the SoundCardClient.log file in
 the users home directory.

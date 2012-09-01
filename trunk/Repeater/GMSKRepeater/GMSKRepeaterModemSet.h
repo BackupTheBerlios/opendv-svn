@@ -26,15 +26,19 @@
 
 class CGMSKRepeaterModemSet : public wxPanel {
 public:
-	CGMSKRepeaterModemSet(wxWindow* parent, int id, const wxString& title, unsigned int address);
+	CGMSKRepeaterModemSet(wxWindow* parent, int id, const wxString& title, GMSK_MODEM_TYPE type, unsigned int address);
 	virtual ~CGMSKRepeaterModemSet();
 
 	virtual bool Validate();
 
+	virtual GMSK_MODEM_TYPE getType() const;
 	virtual unsigned int getAddress() const;
 
 private:
 	wxString  m_title;
+#if defined(WIN32)
+	wxChoice* m_type;
+#endif
 	wxChoice* m_address;
 };
 

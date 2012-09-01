@@ -59,8 +59,8 @@ public:
 	virtual void getCallsign(wxString& callsign1, wxString& callsign2) const;
 	virtual void setCallsign(const wxString& callsign1, const wxString& callsign2) const;
 
-	virtual void getModem(unsigned int& address) const;
-	virtual void setModem(unsigned int address) const;
+	virtual void getModem(GMSK_MODEM_TYPE& type, unsigned int& address) const;
+	virtual void setModem(GMSK_MODEM_TYPE type, unsigned int address) const;
 
 	virtual void getSoundcard(wxString& readDevice, wxString& writeDevice) const;
 	virtual void setSoundcard(const wxString& readDevice, const wxString& writeDevice) const;

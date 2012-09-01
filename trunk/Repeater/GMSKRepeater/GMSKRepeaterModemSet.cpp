@@ -21,12 +21,26 @@
 const unsigned int BORDER_SIZE   = 5U;
 const unsigned int CONTROL_WIDTH = 100U;
 
-CGMSKRepeaterModemSet::CGMSKRepeaterModemSet(wxWindow* parent, int id, const wxString& title, unsigned int address) :
+CGMSKRepeaterModemSet::CGMSKRepeaterModemSet(wxWindow* parent, int id, const wxString& title, GMSK_MODEM_TYPE type, unsigned int address) :
 wxPanel(parent, id),
 m_title(title),
+#if defined(WIN32)
+m_type(NULL),
+#endif
 m_address(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
+
+#if defined(WIN32)
+	wxStaticText* typeLabel = new wxStaticText(this, -1, _("Type"));
+	sizer->Add(typeLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_type->Append(wxT("LibUSB"));
+	m_type->Append(wxT("WinUSB"));
+	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_type->SetSelection(int(type));
+#endif
 
 	wxStaticText* addressLabel = new wxStaticText(this, -1, _("Address"));
 	sizer->Add(addressLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -81,7 +95,26 @@ CGMSKRepeaterModemSet::~CGMSKRepeaterModemSet()
 
 bool CGMSKRepeaterModemSet::Validate()
 {
+#if defined(WIN32)
+	if (m_type->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+#endif
+
 	return m_address->GetCurrentSelection() != wxNOT_FOUND;
+}
+
+GMSK_MODEM_TYPE CGMSKRepeaterModemSet::getType() const
+{
+#if defined(WIN32)
+	int n = m_type->GetCurrentSelection();
+
+	if (n == wxNOT_FOUND)
+		return GMT_WINUSB;
+	else
+		return GMSK_MODEM_TYPE(n);
+#else
+	return GMT_LIBUSB;
+#endif
 }
 
 unsigned int CGMSKRepeaterModemSet::getAddress() const

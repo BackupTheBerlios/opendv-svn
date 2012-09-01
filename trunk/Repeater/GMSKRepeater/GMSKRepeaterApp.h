@@ -54,8 +54,8 @@ public:
 	virtual void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	virtual void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	virtual void getModem(unsigned int& address) const;
-	virtual void setModem(unsigned int address);
+	virtual void getModem(GMSK_MODEM_TYPE& type, unsigned int& address) const;
+	virtual void setModem(GMSK_MODEM_TYPE type, unsigned int address);
 
 	virtual void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);

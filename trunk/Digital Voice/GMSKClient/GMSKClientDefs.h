@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,5 +45,10 @@ const wxString LOG_FILE_NAME    = wxT("GMSKClient");
 const wxString CQCQCQ = wxT("CQCQCQ");
 const wxString DIRECT = wxT("DIRECT  ");
 const wxString UNUSED = wxT("<unused>");
+
+enum GMSK_MODEM_TYPE {
+	GMT_LIBUSB,
+	GMT_WINUSB
+};
 
 #endif

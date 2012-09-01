@@ -26,9 +26,8 @@
 
 #if defined(__WINDOWS__)
 #include "GMSKModemWinUSB.h"
-#else
-#include "GMSKModemLibUsb.h"
 #endif
+#include "GMSKModemLibUsb.h"
 
 #include <wx/tokenzr.h>
 #include <wx/config.h>
@@ -40,6 +39,7 @@ static const wxString KEY_CALLSIGN1          = wxT("/callsign1");
 static const wxString KEY_CALLSIGN2          = wxT("/callsign2");
 static const wxString KEY_MESSAGE_TYPE       = wxT("/msgType");
 static const wxString KEY_MESSAGE_TEXT       = wxT("/msgText");
+static const wxString KEY_MODEM_TYPE         = wxT("/modemType");
 static const wxString KEY_MODEM_ADDRESS      = wxT("/modemAddress");
 static const wxString KEY_SOUND_READ_DEVICE  = wxT("/readDevice");
 static const wxString KEY_SOUND_WRITE_DEVICE = wxT("/writeDevice");
@@ -55,6 +55,11 @@ static const wxString KEY_BLEEP              = wxT("/bleep");
 static const wxString   DEFAULT_CALLSIGN1          = wxEmptyString;
 static const wxString   DEFAULT_CALLSIGN2          = wxEmptyString;
 static const wxString   DEFAULT_MESSAGE_TEXT       = wxEmptyString;
+#if defined(WIN32)
+static const GMSK_MODEM_TYPE DEFAULT_MODEM_TYPE    = GMT_WINUSB;
+#else
+static const GMSK_MODEM_TYPE DEFAULT_MODEM_TYPE    = GMT_LIBUSB;
+#endif
 static const long       DEFAULT_MODEM_ADDRESS      = 0x300L;
 static const wxString   DEFAULT_SOUND_READ_DEVICE  = wxEmptyString;
 static const wxString   DEFAULT_SOUND_WRITE_DEVICE = wxEmptyString;
@@ -224,28 +229,32 @@ void CGMSKClientApp::setMessage(const wxString& message) const
 	delete profile;
 }
 
-void CGMSKClientApp::getModem(unsigned int& address) const
+void CGMSKClientApp::getModem(GMSK_MODEM_TYPE& type, unsigned int& address) const
 {
 	wxConfigBase* profile = new wxConfig(APPLICATION_NAME);
 	wxASSERT(profile != NULL);
 
 	long temp;
+	profile->Read(KEY_MODEM_TYPE, &temp, DEFAULT_MODEM_TYPE);
+	type = GMSK_MODEM_TYPE(temp);
+
 	profile->Read(KEY_MODEM_ADDRESS, &temp, DEFAULT_MODEM_ADDRESS);
 	address = (unsigned int)temp;
 
-	wxLogInfo(wxT("Modem address: 0x%03X"), address);
+	wxLogInfo(wxT("Modem type: %d, address: 0x%03X"), int(type), address);
 
 	delete profile;
 }
 
-void CGMSKClientApp::setModem(unsigned int address) const
+void CGMSKClientApp::setModem(GMSK_MODEM_TYPE type, unsigned int address) const
 {
 	wxConfigBase* profile = new wxConfig(APPLICATION_NAME);
 	wxASSERT(profile != NULL);
 
+	profile->Write(KEY_MODEM_TYPE,    long(type));
 	profile->Write(KEY_MODEM_ADDRESS, long(address));
 
-	wxLogInfo(wxT("Modem address: 0x%03X"), address);
+	wxLogInfo(wxT("Modem type: %d, address: 0x%03X"), int(type), address);
 
 	delete profile;
 }
@@ -534,20 +543,38 @@ void CGMSKClientApp::createThread()
 		}
 	}
 
+	GMSK_MODEM_TYPE type;
 	unsigned int address;
-	getModem(address);
+	getModem(type, address);
 
-#if defined(__WINDOWS__)
-	IGMSKModem* modem = new CGMSKModemWinUSB(address);
+#if defined(WIN32)
+	IGMSKModem* modem = NULL;
+	switch (type) {
+		case GMT_LIBUSB:
+			wxLogInfo(wxT("GMSK modem: type: LibUsb, address: 0x%04X"), address);
+			modem =	new CGMSKModemLibUsb(address);
+			break;
+		case GMT_WINUSB:
+			wxLogInfo(wxT("GMSK modem: type: WinUSB, address: 0x%04X"), address);
+			modem =	new CGMSKModemWinUSB(address);
+			break;
+		default:
+			wxLogError(wxT("Unknown GMSK Modem type - %d"), int(type));
+			break;
+	}
 #else
-	IGMSKModem* modem = new CGMSKModemLibUsb(address);
+	wxLogInfo(wxT("GMSK modem: type: LibUsb, address: 0x%04X"), address);
+	IGMSKModem* modem =	new CGMSKModemLibUsb(address);
 #endif
-	bool res = modem->open();
-	if (!res) {
-		wxLogError(wxT("Cannot open the GMSK modem"));
-		error(_("Cannot open the GMSK modem"));
-	} else {
-		m_thread->setModem(modem);
+
+	if (modem != NULL) {
+		bool res = modem->open();
+		if (!res) {
+			wxLogError(wxT("Cannot open the GMSK modem"));
+			error(_("Cannot open the GMSK modem"));
+		} else {
+			m_thread->setModem(modem);
+		}
 	}
 
 	bool bleep;

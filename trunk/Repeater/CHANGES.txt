@@ -1718,3 +1718,4 @@ Reverted to using Visual C++ 2008 on Windows.
 --------
 
 Allow module E on all of the repeaters.
+Re-added Windows LibUSB support to the GMSK Repeater.

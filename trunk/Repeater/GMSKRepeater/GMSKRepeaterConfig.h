@@ -41,8 +41,8 @@ public:
 	void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	void getModem(unsigned int& address) const;
-	void setModem(unsigned int address);
+	void getModem(GMSK_MODEM_TYPE& type, unsigned int& address) const;
+	void setModem(GMSK_MODEM_TYPE type, unsigned int address);
 
 	void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
 	void setTimes(unsigned int timeout, unsigned int ackTime);
@@ -84,6 +84,7 @@ private:
 	unsigned int    m_gatewayPort;
 	wxString        m_localAddress;
 	unsigned int    m_localPort;
+	GMSK_MODEM_TYPE m_modemType; 
 	unsigned int    m_modemAddress;
 	unsigned int    m_timeout;
 	unsigned int    m_ackTime;

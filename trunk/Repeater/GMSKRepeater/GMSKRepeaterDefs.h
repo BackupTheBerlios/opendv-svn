@@ -33,5 +33,10 @@ const wxString CONF_DIR = wxT("/etc");
 const wxString WHITELIST_FILE_NAME = wxT("whitelist.dat");
 const wxString BLACKLIST_FILE_NAME = wxT("blacklist.dat");
 
+enum GMSK_MODEM_TYPE {
+	GMT_LIBUSB,
+	GMT_WINUSB
+};
+
 #endif
 

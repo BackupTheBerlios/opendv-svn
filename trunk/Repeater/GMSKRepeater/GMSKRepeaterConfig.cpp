@@ -28,6 +28,7 @@ const wxString  KEY_GATEWAY_ADDRESS    = wxT("gatewayAddress");
 const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
 const wxString  KEY_LOCAL_PORT         = wxT("localPort");
+const wxString  KEY_MODEM_TYPE         = wxT("modemType");
 const wxString  KEY_MODEM_ADDRESS      = wxT("modemAddress");
 const wxString  KEY_TIMEOUT            = wxT("timeout");
 const wxString  KEY_ACK_TIME           = wxT("ackTime");
@@ -77,6 +78,11 @@ const wxString        DEFAULT_GATEWAY_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
 const unsigned int    DEFAULT_LOCAL_PORT         = 20011U;
+#if defined(WIN32)
+const GMSK_MODEM_TYPE DEFAULT_MODEM_TYPE         = GMT_WINUSB;
+#else
+const GMSK_MODEM_TYPE DEFAULT_MODEM_TYPE         = GMT_LIBUSB;
+#endif
 const unsigned int    DEFAULT_MODEM_ADDRESS      = 0x0300U;
 const unsigned int    DEFAULT_TIMEOUT            = 180U;
 const unsigned int    DEFAULT_ACK_TIME           = 500U;
@@ -132,6 +138,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
+m_modemType(DEFAULT_MODEM_TYPE),
 m_modemAddress(DEFAULT_MODEM_ADDRESS),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
@@ -201,6 +208,9 @@ m_y(DEFAULT_WINDOW_Y)
 
 	m_config->Read(m_name + KEY_LOCAL_PORT, &temp, long(DEFAULT_LOCAL_PORT));
 	m_localPort = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_MODEM_TYPE, &temp, long(DEFAULT_MODEM_TYPE));
+	m_modemType = GMSK_MODEM_TYPE(temp);
 
 	m_config->Read(m_name + KEY_MODEM_ADDRESS, &temp, long(DEFAULT_MODEM_ADDRESS));
 	m_modemAddress = (unsigned int)temp;
@@ -306,6 +316,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
+m_modemType(DEFAULT_MODEM_TYPE),
 m_modemAddress(DEFAULT_MODEM_ADDRESS),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
@@ -411,6 +422,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_LOCAL_PORT)) {
 			val.ToULong(&temp2);
 			m_localPort = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_MODEM_TYPE)) {
+			val.ToLong(&temp1);
+			m_modemType = GMSK_MODEM_TYPE(temp1);
 		} else if (key.IsSameAs(KEY_MODEM_ADDRESS)) {
 			val.ToULong(&temp2);
 			m_modemAddress = (unsigned int)temp2;
@@ -552,13 +566,15 @@ void CGMSKRepeaterConfig::setNetwork(const wxString& gatewayAddress, unsigned in
 	m_localPort      = localPort;
 }
 
-void CGMSKRepeaterConfig::getModem(unsigned int& address) const
+void CGMSKRepeaterConfig::getModem(GMSK_MODEM_TYPE& type, unsigned int& address) const
 {
+	type    = m_modemType;
 	address = m_modemAddress;
 }
 
-void CGMSKRepeaterConfig::setModem(unsigned int address)
+void CGMSKRepeaterConfig::setModem(GMSK_MODEM_TYPE type, unsigned int address)
 {
+	m_modemType    = type;
 	m_modemAddress = address;
 }
 
@@ -706,6 +722,7 @@ bool CGMSKRepeaterConfig::write()
 	m_config->Write(m_name + KEY_GATEWAY_PORT, long(m_gatewayPort));
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
 	m_config->Write(m_name + KEY_LOCAL_PORT, long(m_localPort));
+	m_config->Write(m_name + KEY_MODEM_TYPE, long(m_modemType));
 	m_config->Write(m_name + KEY_MODEM_ADDRESS, long(m_modemAddress));
 	m_config->Write(m_name + KEY_TIMEOUT, long(m_timeout));
 	m_config->Write(m_name + KEY_ACK_TIME, long(m_ackTime));
@@ -784,6 +801,7 @@ bool CGMSKRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_GATEWAY_PORT.c_str(), m_gatewayPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_LOCAL_PORT.c_str(), m_localPort); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_MODEM_TYPE.c_str(), int(m_modemType)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_MODEM_ADDRESS.c_str(), m_modemAddress); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_TIMEOUT.c_str(), m_timeout); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_ACK_TIME.c_str(), m_ackTime); file.AddLine(buffer);

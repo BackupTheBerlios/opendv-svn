@@ -284,6 +284,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GMSKModemLibUsb.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GMSKModemWinUSB.cpp"
 				>
 			</File>
@@ -598,6 +602,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GMSKModemLibUsb.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GMSKModemWinUSB.h"
 				>
 			</File>
@@ -635,6 +643,10 @@
 			</File>
 			<File
 				RelativePath=".\Logger.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lusb0_usb.h"
 				>
 			</File>
 			<File

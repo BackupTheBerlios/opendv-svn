@@ -24,9 +24,8 @@
 #include "GMSKRepeaterLogger.h"
 #if defined(WIN32)
 #include "GMSKModemWinUSB.h"
-#else
-#include "GMSKModemLibUsb.h"
 #endif
+#include "GMSKModemLibUsb.h"
 #include "GMSKRepeaterApp.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -220,14 +219,14 @@ void CGMSKRepeaterApp::setNetwork(const wxString& gatewayAddress, unsigned int g
 	m_config->setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 }
 
-void CGMSKRepeaterApp::getModem(unsigned int& address) const
+void CGMSKRepeaterApp::getModem(GMSK_MODEM_TYPE& type, unsigned int& address) const
 {
-	m_config->getModem(address);
+	m_config->getModem(type, address);
 }
 
-void CGMSKRepeaterApp::setModem(unsigned int address)
+void CGMSKRepeaterApp::setModem(GMSK_MODEM_TYPE type, unsigned int address)
 {
-	m_config->setModem(address);
+	m_config->setModem(type, address);
 }
 
 void CGMSKRepeaterApp::getTimes(unsigned int& timeout, unsigned int& ackTime) const
@@ -395,20 +394,37 @@ void CGMSKRepeaterApp::createThread()
 	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
+	GMSK_MODEM_TYPE modemType;
 	unsigned int modemAddress;
-	getModem(modemAddress);
-	wxLogInfo(wxT("GMSK modem address: 0x%04X"), modemAddress);
+	getModem(modemType, modemAddress);
 
 #if defined(WIN32)
-	IGMSKModem* modem = new CGMSKModemWinUSB(modemAddress);
+	IGMSKModem* modem = NULL;
+	switch (modemType) {
+		case GMT_LIBUSB:
+			wxLogInfo(wxT("GMSK modem: type: LibUsb, address: 0x%04X"), modemAddress);
+			modem =	new CGMSKModemLibUsb(modemAddress);
+			break;
+		case GMT_WINUSB:
+			wxLogInfo(wxT("GMSK modem: type: WinUSB, address: 0x%04X"), modemAddress);
+			modem =	new CGMSKModemWinUSB(modemAddress);
+			break;
+		default:
+			wxLogError(wxT("Unknown GMSK Modem type - %d"), int(modemType));
+			break;
+	}
 #else
-	IGMSKModem* modem = new CGMSKModemLibUsb(modemAddress);
+	wxLogInfo(wxT("GMSK modem: type: LibUsb, address: 0x%04X"), modemAddress);
+	IGMSKModem* modem =	new CGMSKModemLibUsb(modemAddress);
 #endif
-	bool res = modem->open();
-	if (!res)
-		wxLogError(wxT("Cannot open the GMSK modem"));
-	else
-		m_thread->setModem(modem);
+
+	if (modem != NULL) {
+		bool res = modem->open();
+		if (!res)
+			wxLogError(wxT("Cannot open the GMSK modem"));
+		else
+			m_thread->setModem(modem);
+	}
 
 	wxString controllerType;
 	unsigned int activeHangTime;
@@ -426,7 +442,7 @@ void CGMSKRepeaterApp::createThread()
 		controller = new CExternalController(new CDummyController, false, false);
 	}
 
-	res = controller->open();
+	bool res = controller->open();
 	if (!res)
 		wxLogError(wxT("Cannot open the hardware interface - %s"), controllerType.c_str());
 	else

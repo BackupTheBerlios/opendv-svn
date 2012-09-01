@@ -320,8 +320,9 @@ void CGMSKClientFrame::onPreferences(wxCommandEvent& event)
 	wxString oldReadDevice, oldWriteDevice;
 	::wxGetApp().getSoundcard(oldReadDevice, oldWriteDevice);
 
+	GMSK_MODEM_TYPE oldModemType;
 	unsigned int oldModemAddress;
-	::wxGetApp().getModem(oldModemAddress);
+	::wxGetApp().getModem(oldModemType, oldModemAddress);
 
 	wxString oldDVDDevice;
 	::wxGetApp().getDVDongle(oldDVDDevice);
@@ -332,7 +333,7 @@ void CGMSKClientFrame::onPreferences(wxCommandEvent& event)
 	bool oldBleep;
 	::wxGetApp().getBleep(oldBleep);
 
-	CGMSKClientPreferences dialog(this, -1, oldCallsign1, oldCallsign2, oldReadDevice, oldWriteDevice,
+	CGMSKClientPreferences dialog(this, -1, oldCallsign1, oldCallsign2, oldReadDevice, oldWriteDevice, oldModemType,
 								   oldModemAddress, oldDVDDevice, oldMessage, oldBleep);
 	if (dialog.ShowModal() != wxID_OK)
 		return;
@@ -341,6 +342,7 @@ void CGMSKClientFrame::onPreferences(wxCommandEvent& event)
 	wxString newCallsign2        = dialog.getCallsign2();
 	wxString newReadDevice       = dialog.getSoundcardReadDevice();
 	wxString newWriteDevice      = dialog.getSoundcardWriteDevice();
+	GMSK_MODEM_TYPE newModemType = dialog.getModemType();
 	unsigned int newModemAddress = dialog.getModemAddress();
 	wxString newDVDDevice        = dialog.getDVDDevice();
 	wxString newMessage          = dialog.getMessage();
@@ -356,8 +358,8 @@ void CGMSKClientFrame::onPreferences(wxCommandEvent& event)
 		changed = true;
 	}
 
-	if (newModemAddress != oldModemAddress) {
-		::wxGetApp().setModem(newModemAddress);
+	if (newModemType != oldModemType || newModemAddress != oldModemAddress) {
+		::wxGetApp().setModem(newModemType, newModemAddress);
 		changed = true;
 	}
 

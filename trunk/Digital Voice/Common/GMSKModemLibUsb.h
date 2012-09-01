@@ -24,9 +24,12 @@
 #include "Utils.h"
 
 #include <wx/wx.h>
-
+#if defined(WIN32)
+#include <wx/dynlib.h>
+#include "lusb0_usb.h"
+#else
 #include <libusb-1.0/libusb.h>
-
+#endif
 
 class CGMSKModemLibUsb : public IGMSKModem {
 public:
@@ -51,10 +54,27 @@ public:
 	virtual void close();
 
 private:
-	unsigned int          m_address;
-	libusb_context*       m_context;
-	libusb_device_handle* m_handle;
-	bool                  m_broken;
+	unsigned int             m_address;
+#if defined(WIN32)
+	usb_dev_handle*          m_dev;
+
+	static wxDynamicLibrary* m_library;
+	static bool              m_loaded;
+
+	static void            (*m_usbInit)();
+	static int             (*m_usbFindBusses)();
+	static int             (*m_usbFindDevices)();
+	static usb_bus*        (*m_usbGetBusses)();
+	static usb_dev_handle* (*m_usbOpen)(struct usb_device*);
+	static int             (*m_usbSetConfiguration)(usb_dev_handle*, int);
+	static int             (*m_usbControlMsg)(usb_dev_handle*, int, int, int, int, char*, int, int);
+	static char*           (*m_usbStrerror)();
+	static int             (*m_usbClose)(usb_dev_handle*);
+#else
+	libusb_context*          m_context;
+	libusb_device_handle*    m_handle;
+#endif
+	bool                     m_broken;
 };
 
 #endif

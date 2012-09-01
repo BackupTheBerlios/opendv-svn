@@ -38,7 +38,7 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress,
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, unsigned int address, bool enabled,
+		TEXT_LANG language, GMSK_MODEM_TYPE type, unsigned int address, bool enabled,
 		const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown,
 		const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3,
 		const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line,
@@ -70,7 +70,8 @@ public:
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
 
-	virtual unsigned int getAddress() const;
+	virtual GMSK_MODEM_TYPE getType() const;
+	virtual unsigned int    getAddress() const;
 
 	virtual bool         getEnabled() const;
 	virtual wxString     getRPT1Callsign() const;

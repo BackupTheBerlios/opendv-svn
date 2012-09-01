@@ -277,3 +277,4 @@ Reverted to Visual C++ 2008 on Windows.
 --------
 
 Allow up to module E for linking.
+Added Windows LibUSB support to the GMSK Client.

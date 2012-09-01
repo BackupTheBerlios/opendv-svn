@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 #include "GMSKClientCallsignSet.h"
 #include "GMSKClientModemSet.h"
+#include "GMSKClientDefs.h"
 #include "SoundcardSet.h"
 #include "DVDongleSet.h"
 #include "MessageSet.h"
@@ -32,7 +33,7 @@
 class CGMSKClientPreferences : public wxDialog {
 public:
 	CGMSKClientPreferences(wxWindow* parent, int id, const wxString& callsign1, const wxString& callsign2,
-								   const wxString& readDevice, const wxString& writeDevice,
+								   const wxString& readDevice, const wxString& writeDevice, GMSK_MODEM_TYPE modemType,
 								   unsigned int modemAddress, const wxString& dvdDevice,
 								   const wxString& message, bool bleep);
 	virtual ~CGMSKClientPreferences();
@@ -45,6 +46,7 @@ public:
 	virtual wxString getSoundcardReadDevice() const;
 	virtual wxString getSoundcardWriteDevice() const;
 
+	virtual GMSK_MODEM_TYPE getModemType() const;
 	virtual unsigned int getModemAddress() const;
 
 	virtual wxString getDVDDevice() const;

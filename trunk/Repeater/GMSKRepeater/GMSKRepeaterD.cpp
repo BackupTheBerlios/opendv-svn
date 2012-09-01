@@ -226,9 +226,10 @@ bool CGMSKRepeaterD::createThread()
 	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
+	GMSK_MODEM_TYPE modemType;
 	unsigned int modemAddress;
-	config.getModem(modemAddress);
-	wxLogInfo(wxT("GMSK modem address: 0x%04X"), modemAddress);
+	config.getModem(modemType, modemAddress);
+	wxLogInfo(wxT("GMSK modem: type: LibUsb, address: 0x%04X"), modemAddress);
 
 	IGMSKModem* modem = new CGMSKModemLibUsb(modemAddress);
 	bool res = modem->open();
