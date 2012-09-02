@@ -24,6 +24,7 @@
 # 2012-07-11 dl5di    bugfixes, cleanups, first beta release
 # 2012-08-22 dl5di    change dstarrepeater->soundcardrepeater
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
+# 2012-09-01 dl5di    create directory if LOGPATH does not exist
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -33,7 +34,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120826-beta"
+rev="20120901-beta"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2149,10 +2150,8 @@ function hwsetup(){
     readconfig2
     hwtype${HWTYPE}
     write_value $CFG hwtype_${MODULE} "$HWTYPE"
-    cat /etc/sysconfig/${hwname[$HWTYPE]} | grep "REPEATER_PATH" > /etc/sysconfig/repeater_$MODULE
-    cat /etc/sysconfig/${hwname[$HWTYPE]} | grep "REPEATER_OPTIONS" | sed "s/\"$/ $MODULE\"/" >> /etc/sysconfig/repeater_$MODULE
-    rm -f /etc/init.d/repeater_$MODULE
-    ln /etc/init.d/repeater /etc/init.d/repeater_$MODULE 
+    cat /etc/sysconfig/${hwname[$HWTYPE]} | grep "^DAEMON_PATH" | sed "s/DAEMON/REPEATER/" > /etc/sysconfig/repeater_$MODULE
+    cat /etc/sysconfig/${hwname[$HWTYPE]} | grep "^DAEMON_OPTIONS" | sed "s/DAEMON/REPEATER/" | sed "s/\"$/ $MODULE\"/" >> /etc/sysconfig/repeater_$MODULE
     echo "OK ($HWTYPE)"
     echo " "
     return $RET
@@ -2281,8 +2280,13 @@ readconfig(){
 	read_value $CONFIGFILE "LOGPATH"
 	LOG=$VALUE/repeater_conf-$Dat.log
 	Dat=`date +%Y%m%d%H%M`
-	echo "logging to $LOG"
 	echo "----- $Dat Program start ($rev)------" >> $LOG
+	if [ ! -d "$VALUE" ]; then
+	    mkdir -p "$VALUE"
+	    echo "Created log directory $VALUE"
+	    echo "Created log directory $VALUE >> $LOG"
+	fi
+	echo "logging to $LOG"
 
 	read_value $CONFIGFILE "CFGPATH"
 	CFG=$VALUE/repeater_conf.conf

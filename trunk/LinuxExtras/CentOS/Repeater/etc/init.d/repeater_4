@@ -34,7 +34,7 @@ fi
 [ "${NETWORKING}" = "no" ] && exit 1
 
 # Source the configuration
-[ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me || echo "missing configuration file /etc/sysconfig/$me"
+[ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me || exit 2
 
 RETVAL=0
 
@@ -73,11 +73,6 @@ restart() {
     start
 }	
 
-status_at() {
-    status -p /var/run/$me.pid $REPEATER_PATH
-    return $RETVAL
-}
-	
 # See how we were called.
 case "$1" in
     start)
@@ -90,7 +85,8 @@ case "$1" in
 	restart
 	;;
     status)
-	status_at
+	status -p /var/run/$me.pid $REPEATER_PATH
+	RETVAL=$?
 	;;
     *)
 	echo -e $"\nUsage: \n\t$me {option}"

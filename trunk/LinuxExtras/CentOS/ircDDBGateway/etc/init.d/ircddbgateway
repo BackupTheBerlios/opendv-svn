@@ -74,7 +74,7 @@ stop() {
 restart() {
     stop
     sleep 2
-    if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
+    if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
 	sleep 15
     fi
     start

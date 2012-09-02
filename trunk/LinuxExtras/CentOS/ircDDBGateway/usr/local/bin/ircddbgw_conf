@@ -42,12 +42,14 @@
 # 2012-08-05 dl5di    starNetPermanent configuration added 
 # 2012-08-17 dl5di    bugfix default callsign
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script 
+# 2012-08-27 dl5di    allow band module "E" (10m)
+# 2012-09-01 dl5di    create direcotry if LOGPATH does not exist
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20120826beta"
+rev="20120901beta"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -613,7 +615,7 @@ function valid_band()
     echo " - valid_band: $1 $2" >> $LOG
     echo ""
     echo ""
-    if [[ $band =~ ^[A-D]{1}$ ]] || [[ $band =~ ^[A-D]D$ ]]; then
+    if [[ $band =~ ^[A-E]{1}$ ]] || [[ $band =~ ^[A-E]D$ ]]; then
 	echo " - valid_band: $band" >> $LOG
 	cat $IRCDDBGWCONFIG | grep -v "$1" | grep "repeaterBand.=$2$" || stat=0
 	if [ $stat = 1 ]; then
@@ -1279,7 +1281,7 @@ function repeater_setup(){
 
 #
 # repeaterBand#=A
-# (A, B, C, D, AD, BD, CD, DD)
+# (A, B, C, D, E, AD, BD, CD, DD, ED)
 #
 	var="repeaterBand$rptr"
 	Dat=`date +%Y%m%d%H%M`
@@ -2680,9 +2682,14 @@ if [ -f $CONFIGFILE ]; then
     read_value $CONFIGFILE "LOGPATH"
     Dat=`date +%Y%m%d%H%M`
     LOG=$VALUE/ircddbgw_conf-$Dat.log
-    echo "logging to $LOG"
     echo ""
     echo "----- $Dat Program start ($rev)------" >> $LOG
+    if [ ! -d "$VALUE" ]; then
+	mkdir -p "$VALUE"
+	echo "created log directory: $VALUE"
+	echo "created log directory: $VALUE" >> $LOG
+    fi
+    echo "logging to $LOG"
 
     read_value $CONFIGFILE "CFGPATH"
     CFG=$VALUE/ircddbgw_conf.conf
