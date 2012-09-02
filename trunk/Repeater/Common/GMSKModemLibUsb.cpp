@@ -567,8 +567,6 @@ bool CGMSKModemLibUsb::isBroken() const
 
 CHeaderData* CGMSKModemLibUsb::readHeader(bool& error)
 {
-	wxASSERT(m_handle != NULL);
-
 	error = false;
 
 	unsigned char header[RADIO_HEADER_LENGTH_BYTES * 2U];
@@ -629,7 +627,6 @@ CHeaderData* CGMSKModemLibUsb::readHeader(bool& error)
 
 int CGMSKModemLibUsb::readData(unsigned char* data, unsigned int length, bool& end)
 {
-	wxASSERT(m_handle != NULL);
 	wxASSERT(length > 0U);
 
 	end = false;
@@ -663,8 +660,6 @@ int CGMSKModemLibUsb::readData(unsigned char* data, unsigned int length, bool& e
 
 bool CGMSKModemLibUsb::writeHeader(const CHeaderData& header)
 {
-	wxASSERT(m_handle != NULL);
-
 	unsigned char myCall1[LONG_CALLSIGN_LENGTH];
 	unsigned char myCall2[SHORT_CALLSIGN_LENGTH];
 	unsigned char yourCall[LONG_CALLSIGN_LENGTH];
@@ -728,8 +723,6 @@ bool CGMSKModemLibUsb::writeHeader(const CHeaderData& header)
 
 TRISTATE CGMSKModemLibUsb::hasSpace()
 {
-	wxASSERT(m_handle != NULL);
-
 	if (m_broken)
 		return STATE_TRUE;
 
@@ -748,8 +741,6 @@ TRISTATE CGMSKModemLibUsb::hasSpace()
 
 TRISTATE CGMSKModemLibUsb::getPTT()
 {
-	wxASSERT(m_handle != NULL);
-
 	unsigned char status;
 	int rc = io(0xC0, GET_AD_STATUS, 0, 0, &status, 1, USB_TIMEOUT);
 	if (rc != 1) {
@@ -765,8 +756,6 @@ TRISTATE CGMSKModemLibUsb::getPTT()
 
 bool CGMSKModemLibUsb::setPTT(bool on)
 {
-	wxASSERT(m_handle != NULL);
-
 	unsigned char c;
 	int ret = io(0x40, SET_PTT, on ? PTT_ON : PTT_OFF, 0, &c, 0, USB_TIMEOUT);
 	if (ret < 0) {
@@ -779,7 +768,6 @@ bool CGMSKModemLibUsb::setPTT(bool on)
 
 int CGMSKModemLibUsb::writeData(unsigned char* data, unsigned int length)
 {
-	wxASSERT(m_handle != NULL);
 	wxASSERT(data != NULL);
 	wxASSERT(length > 0U && length <= DV_FRAME_LENGTH_BYTES);
 

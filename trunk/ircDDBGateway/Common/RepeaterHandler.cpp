@@ -579,6 +579,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	// Reject simple cases
 	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ")) || m_yourCall.IsSameAs(wxT("       L"))) {
 		sendToOutgoing(header);
+		sendToLoopback(header);
 		return;
 	}
 
@@ -587,6 +588,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		m_g2Status = G2_ECHO;
 		m_echo->writeHeader(header);
 		sendToOutgoing(header);
+		sendToLoopback(header);
 		return;
 	}
 
@@ -594,6 +596,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	if (m_infoEnabled && m_yourCall.IsSameAs(wxT("       I"))) {
 		m_g2Status = G2_INFO;
 		sendToOutgoing(header);
+		sendToLoopback(header);
 		return;
 	}
 
@@ -601,6 +604,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	if (m_infoEnabled && m_yourCall.IsSameAs(wxT("       V"))) {
 		m_g2Status = G2_VERSION;
 		sendToOutgoing(header);
+		sendToLoopback(header);
 		return;
 	}
 
@@ -609,6 +613,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	if (m_g2Status == G2_NONE) {
 		reflectorCommandHandler(m_yourCall, m_myCall1, wxT("UR Call"));
 		sendToOutgoing(header);
+		sendToLoopback(header);
 	}
 }
 
@@ -717,6 +722,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 				m_id = 0x00;
 
 			sendToOutgoing(data);
+			sendToLoopback(data);
 			break;
 
 		case G2_XBAND:
@@ -742,6 +748,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 		case G2_ECHO:
 			m_echo->writeData(data);
 			sendToOutgoing(data);
+			sendToLoopback(data);
 
 			if (data.isEnd()) {
 				m_id       = 0x00;
@@ -751,6 +758,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 
 		case G2_INFO:
 			sendToOutgoing(data);
+			sendToLoopback(data);
 
 			if (data.isEnd()) {
 				m_audio->sendStatus(m_linkStatus, m_linkRepeater);
@@ -762,6 +770,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 
 		case G2_VERSION:
 			sendToOutgoing(data);
+			sendToLoopback(data);
 
 			if (data.isEnd()) {
 				m_version->sendVersion();
@@ -928,7 +937,7 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 
 	sendToIncoming(header);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS) {
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_LOOPBACK) {
 		wxLogMessage(wxT("Not passing UR:%s MY:%s/%s src: %d, to outgoing links"), header.getYourCall().c_str(), header.getMyCall1().c_str(), header.getMyCall2().c_str(), int(source));
 		return false;
 	}
@@ -955,7 +964,7 @@ bool CRepeaterHandler::process(CAMBEData& data, AUDIO_SOURCE source)
 
 	sendToIncoming(data);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS)
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_LOOPBACK)
 		return false;
 
 	// Collect the text from the slow data for DCS
@@ -1823,6 +1832,19 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 	}
 }
 
+void CRepeaterHandler::sendToLoopback(CHeaderData& header)
+{
+	header.setCQCQCQ();
+
+	if (m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS) {
+		for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
+			CRepeaterHandler* repeater = m_repeaters[i];
+			if (repeater != NULL && repeater != this && m_linkRepeater.IsSameAs(repeater->m_linkRepeater) && (repeater->m_linkStatus == LS_LINKED_DCS || repeater->m_linkStatus == LS_LINKED_DEXTRA || repeater->m_linkStatus == LS_LINKED_DPLUS))
+				repeater->process(header, AS_LOOPBACK);
+		}
+	}
+}
+
 void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 {
 	CHeaderData temp(header);
@@ -1873,6 +1895,17 @@ void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
 	// Incoming DCS links have RPT1 and RPT2 swapped
 	temp.setRepeaters(m_gateway, m_callsign);
 	CDCSHandler::writeHeader(m_callsign, temp, DIR_INCOMING);
+}
+
+void CRepeaterHandler::sendToLoopback(CAMBEData& data)
+{
+	if (m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS) {
+		for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
+			CRepeaterHandler* repeater = m_repeaters[i];
+			if (repeater != NULL && repeater != this && m_linkRepeater.IsSameAs(repeater->m_linkRepeater) && (repeater->m_linkStatus == LS_LINKED_DCS || repeater->m_linkStatus == LS_LINKED_DEXTRA || repeater->m_linkStatus == LS_LINKED_DPLUS))
+				repeater->process(data, AS_LOOPBACK);
+		}
+	}
 }
 
 void CRepeaterHandler::sendToIncoming(const CAMBEData& data)

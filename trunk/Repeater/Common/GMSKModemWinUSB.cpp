@@ -103,8 +103,6 @@ bool CGMSKModemWinUSB::isBroken() const
 
 CHeaderData* CGMSKModemWinUSB::readHeader(bool& error)
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-
 	error = false;
 
 	unsigned char header[RADIO_HEADER_LENGTH_BYTES * 2U];
@@ -155,7 +153,6 @@ CHeaderData* CGMSKModemWinUSB::readHeader(bool& error)
 
 int CGMSKModemWinUSB::readData(unsigned char* data, unsigned int length, bool& end)
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 	wxASSERT(data != NULL);
 	wxASSERT(length > 0U);
 
@@ -182,8 +179,6 @@ int CGMSKModemWinUSB::readData(unsigned char* data, unsigned int length, bool& e
 
 bool CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-
 	unsigned char myCall1[LONG_CALLSIGN_LENGTH];
 	unsigned char myCall2[SHORT_CALLSIGN_LENGTH];
 	unsigned char yourCall[LONG_CALLSIGN_LENGTH];
@@ -247,8 +242,6 @@ bool CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 
 TRISTATE CGMSKModemWinUSB::getPTT()
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-
 	unsigned char status;
 	int ret = io(GET_AD_STATUS, 0xC0U, 0U, &status, 1U);
 	if (ret != 1) {
@@ -264,8 +257,6 @@ TRISTATE CGMSKModemWinUSB::getPTT()
 
 bool CGMSKModemWinUSB::setPTT(bool on)
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-
 	int ret = io(SET_PTT, 0x40U, on ? PTT_ON : PTT_OFF, NULL, 0U);
 	if (ret < 0) {
 		wxLogError(wxT("SET_PTT returned %d"), -ret);
@@ -277,8 +268,6 @@ bool CGMSKModemWinUSB::setPTT(bool on)
 
 TRISTATE CGMSKModemWinUSB::hasSpace()
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-
 	if (m_broken)
 		return STATE_TRUE;
 
@@ -297,7 +286,6 @@ TRISTATE CGMSKModemWinUSB::hasSpace()
 
 int CGMSKModemWinUSB::writeData(unsigned char* data, unsigned int length)
 {
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 	wxASSERT(data != NULL);
 	wxASSERT(length > 0U && length <= DV_FRAME_LENGTH_BYTES);
 
