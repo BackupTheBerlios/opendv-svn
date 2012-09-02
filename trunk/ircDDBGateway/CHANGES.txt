@@ -1104,3 +1104,5 @@ Reverted to Visual C++ 2008.
 --------
 
 Allow repeater module E to be set.
+Added the ircddb.dstar.su test server.
+Added XRF250.

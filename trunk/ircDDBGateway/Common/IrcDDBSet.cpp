@@ -42,6 +42,7 @@ m_password(NULL)
 	m_hostname->Append(wxT("server1-ik2xyp.ods.org"));
 	m_hostname->Append(wxT("stn570.dyndns.org"));
 	m_hostname->Append(wxT("75.76.90.90"));
+	m_hostname->Append(wxT("ircddb.dstar.su"));
 	sizer->Add(m_hostname, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_hostname->SetStringSelection(hostname);
 
