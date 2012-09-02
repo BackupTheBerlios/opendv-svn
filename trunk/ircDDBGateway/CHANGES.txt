@@ -1106,4 +1106,5 @@ Reverted to Visual C++ 2008.
 Allow repeater module E to be set.
 Allow for multiple links to the same reflector module with internal loopback.
 Added the ircddb.dstar.su test server.
+More changes to the DCS protocol.
 Added XRF250.

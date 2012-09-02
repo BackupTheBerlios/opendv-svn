@@ -1860,9 +1860,9 @@ void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 	temp.setRepeaters(m_linkGateway, m_linkRepeater);
 	CDExtraHandler::writeHeader(m_callsign, temp, DIR_OUTGOING);
 
-	// Outgoing DCS links have the currently linked repeater/gateway
+	// Outgoing DCS links have the currently linked repeater and repeater callsign
 	// as the RPT1 and RPT2 values
-	temp.setRepeaters(m_linkGateway, m_linkRepeater);
+	temp.setRepeaters(m_callsign, m_linkRepeater);
 	CDCSHandler::writeHeader(m_callsign, temp, DIR_OUTGOING);
 }
 
