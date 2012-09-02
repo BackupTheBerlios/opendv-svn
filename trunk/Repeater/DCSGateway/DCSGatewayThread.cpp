@@ -440,7 +440,8 @@ bool CDCSGatewayThread::link(const wxString &reflector)
 	if (res) {
 		m_reflector = reflector;
 		m_state     = LINK_LINKING;
-		m_header.setReflector(reflector);
+		m_header.setRptCall2(reflector);
+		m_header.setRptCall1(m_repeaterCall);
 	}
 
 	return res;
