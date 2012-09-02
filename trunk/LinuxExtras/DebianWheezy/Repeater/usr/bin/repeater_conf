@@ -33,7 +33,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120826-beta"
+rev="20120901-beta"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2152,7 +2152,7 @@ function hwsetup(){
     write_value $CFG hwtype_${MODULE} "$HWTYPE"
     cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_PATH" > /etc/default/repeater_$MODULE
     cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_ARGS" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
-    cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_USER" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
+    cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_USER" >> /etc/default/repeater_$MODULE
     echo "OK ($HWTYPE)"
     echo " "
     return $RET
