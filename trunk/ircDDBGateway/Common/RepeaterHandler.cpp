@@ -1834,9 +1834,9 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 
 void CRepeaterHandler::sendToLoopback(CHeaderData& header)
 {
-	header.setCQCQCQ();
-
 	if (m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS) {
+		header.setCQCQCQ();
+
 		for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 			CRepeaterHandler* repeater = m_repeaters[i];
 			if (repeater != NULL && repeater != this && m_linkRepeater.IsSameAs(repeater->m_linkRepeater) && (repeater->m_linkStatus == LS_LINKED_DCS || repeater->m_linkStatus == LS_LINKED_DEXTRA || repeater->m_linkStatus == LS_LINKED_DPLUS))

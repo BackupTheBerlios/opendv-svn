@@ -515,6 +515,8 @@ void CDExtraHandler::finalise()
 void CDExtraHandler::processInt(CHeaderData& header)
 {
 	unsigned int id = header.getId();
+	wxString rpt1 = header.getRptCall1();
+	wxString rpt2 = header.getRptCall2();
 
 	if (m_linkState != DEXTRA_LINKED)
 		return;
@@ -522,7 +524,7 @@ void CDExtraHandler::processInt(CHeaderData& header)
 	switch (m_direction) {
 		case DIR_OUTGOING: {
 				// Always a repeater connection
-				if (!m_reflector.IsSameAs(header.getRptCall2()) && !m_reflector.IsSameAs(header.getRptCall1()))
+				if (!m_reflector.IsSameAs(rpt2) && !m_reflector.IsSameAs(rpt1))
 					return;
 
 				// If we're already processing, ignore the new header
@@ -550,7 +552,7 @@ void CDExtraHandler::processInt(CHeaderData& header)
 		case DIR_INCOMING:
 			if (!m_repeater.IsEmpty()) {
 				// A repeater connection
-				if (!m_repeater.IsSameAs(header.getRptCall2()) && !m_repeater.IsSameAs(header.getRptCall1()))
+				if (!m_repeater.IsSameAs(rpt2) && !m_repeater.IsSameAs(rpt1))
 					return;
 
 				// If we're already processing, ignore the new header
@@ -575,9 +577,9 @@ void CDExtraHandler::processInt(CHeaderData& header)
 			} else {
 				// A Dongle connection
 				// Check the destination callsign
-				m_destination = CRepeaterHandler::findDVRepeater(header.getRptCall2());
+				m_destination = CRepeaterHandler::findDVRepeater(rpt2);
 				if (m_destination == NULL) {
-					m_destination = CRepeaterHandler::findDVRepeater(header.getRptCall1());
+					m_destination = CRepeaterHandler::findDVRepeater(rpt1);
 					if (m_destination == NULL)
 						return;
 				}

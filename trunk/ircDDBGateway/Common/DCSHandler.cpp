@@ -451,13 +451,14 @@ void CDCSHandler::processInt(CAMBEData& data)
 	unsigned int id = data.getId();
 	CHeaderData& header = data.getHeader();
 	unsigned int seqNo = data.getSeq();
+	wxString rpt2 = header.getRptCall2();
 
 	if (m_linkState != DCS_LINKED)
 		return;
 
 	switch (m_direction) {
 		case DIR_OUTGOING:
-			if (!m_reflector.IsSameAs(header.getRptCall2()))
+			if (!m_reflector.IsSameAs(rpt2))
 				return;
 
 			if (m_dcsId == 0x00U && seqNo != 0U)
@@ -472,10 +473,12 @@ void CDCSHandler::processInt(CAMBEData& data)
 				m_dcsSeq = 0x00U;
 				m_inactivityTimer.start();
 
-				header.setCQCQCQ();
-				header.setFlags(0x00U, 0x00U, 0x00U);
+				CHeaderData temp(header);
 
-				m_destination->process(header, AS_DCS);
+				temp.setCQCQCQ();
+				temp.setFlags(0x00U, 0x00U, 0x00U);
+
+				m_destination->process(temp, AS_DCS);
 			}
 			
 			if (id == m_dcsId) {
@@ -485,10 +488,12 @@ void CDCSHandler::processInt(CAMBEData& data)
 
 				if (m_dcsSeq == 0U) {
 					// Send the header every 21 frames
-					header.setCQCQCQ();
-					header.setFlags(0x00U, 0x00U, 0x00U);
+					CHeaderData temp(header);
 
-					m_destination->process(header, AS_DUP);
+					temp.setCQCQCQ();
+					temp.setFlags(0x00U, 0x00U, 0x00U);
+
+					m_destination->process(temp, AS_DUP);
 				}
 
 				m_destination->process(data, AS_DCS);
@@ -499,11 +504,10 @@ void CDCSHandler::processInt(CAMBEData& data)
 					m_inactivityTimer.stop();
 				}
 			}
-
 			break;
 
 		case DIR_INCOMING:
-			if (!m_repeater.IsSameAs(header.getRptCall2()))
+			if (!m_repeater.IsSameAs(rpt2))
 				return;
 
 			if (m_dcsId == 0x00U && seqNo != 0U)
@@ -518,10 +522,12 @@ void CDCSHandler::processInt(CAMBEData& data)
 				m_dcsSeq = 0x00U;
 				m_inactivityTimer.start();
 
-				header.setCQCQCQ();
-				header.setFlags(0x00U, 0x00U, 0x00U);
+				CHeaderData temp(header);
 
-				m_destination->process(header, AS_DCS);
+				temp.setCQCQCQ();
+				temp.setFlags(0x00U, 0x00U, 0x00U);
+
+				m_destination->process(temp, AS_DCS);
 			}
 
 			if (id == m_dcsId) {
@@ -531,10 +537,12 @@ void CDCSHandler::processInt(CAMBEData& data)
 
 				if (m_dcsSeq == 0U) {
 					// Send the header every 21 frames
-					header.setCQCQCQ();
-					header.setFlags(0x00U, 0x00U, 0x00U);
+					CHeaderData temp(header);
 
-					m_destination->process(header, AS_DUP);
+					temp.setCQCQCQ();
+					temp.setFlags(0x00U, 0x00U, 0x00U);
+
+					m_destination->process(temp, AS_DUP);
 				}
 
 				m_destination->process(data, AS_DCS);
@@ -545,7 +553,6 @@ void CDCSHandler::processInt(CAMBEData& data)
 					m_inactivityTimer.stop();
 				}
 			}
-
 			break;
 	}
 }
