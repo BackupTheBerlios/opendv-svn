@@ -1724,3 +1724,4 @@ Re-added Windows LibUSB support to the GMSK Repeater.
 --------
 
 Added XRF250.
+Make LibUsb on both Windows and Linux more agressive at transferring data.
