@@ -448,9 +448,13 @@ void CDCSHandler::finalise()
 
 void CDCSHandler::processInt(CAMBEData& data)
 {
-	unsigned int id = data.getId();
-	CHeaderData& header = data.getHeader();
-	unsigned int seqNo = data.getSeq();
+	// Make a copy of the AMBE data so that any changes made here don't modify the original
+	CAMBEData temp(data);
+
+	unsigned int id = temp.getId();
+	CHeaderData& header = temp.getHeader();
+	unsigned int seqNo = temp.getSeq();
+
 	wxString rpt2 = header.getRptCall2();
 
 	if (m_linkState != DCS_LINKED)
@@ -473,12 +477,10 @@ void CDCSHandler::processInt(CAMBEData& data)
 				m_dcsSeq = 0x00U;
 				m_inactivityTimer.start();
 
-				CHeaderData temp(header);
+				header.setCQCQCQ();
+				header.setFlags(0x00U, 0x00U, 0x00U);
 
-				temp.setCQCQCQ();
-				temp.setFlags(0x00U, 0x00U, 0x00U);
-
-				m_destination->process(temp, AS_DCS);
+				m_destination->process(header, AS_DCS);
 			}
 			
 			if (id == m_dcsId) {
@@ -488,17 +490,15 @@ void CDCSHandler::processInt(CAMBEData& data)
 
 				if (m_dcsSeq == 0U) {
 					// Send the header every 21 frames
-					CHeaderData temp(header);
+					header.setCQCQCQ();
+					header.setFlags(0x00U, 0x00U, 0x00U);
 
-					temp.setCQCQCQ();
-					temp.setFlags(0x00U, 0x00U, 0x00U);
-
-					m_destination->process(temp, AS_DUP);
+					m_destination->process(header, AS_DUP);
 				}
 
-				m_destination->process(data, AS_DCS);
+				m_destination->process(temp, AS_DCS);
 
-				if (data.isEnd()) {
+				if (temp.isEnd()) {
 					m_dcsId  = 0x00U;
 					m_dcsSeq = 0x00U;
 					m_inactivityTimer.stop();
@@ -522,12 +522,10 @@ void CDCSHandler::processInt(CAMBEData& data)
 				m_dcsSeq = 0x00U;
 				m_inactivityTimer.start();
 
-				CHeaderData temp(header);
+				header.setCQCQCQ();
+				header.setFlags(0x00U, 0x00U, 0x00U);
 
-				temp.setCQCQCQ();
-				temp.setFlags(0x00U, 0x00U, 0x00U);
-
-				m_destination->process(temp, AS_DCS);
+				m_destination->process(header, AS_DCS);
 			}
 
 			if (id == m_dcsId) {
@@ -537,17 +535,15 @@ void CDCSHandler::processInt(CAMBEData& data)
 
 				if (m_dcsSeq == 0U) {
 					// Send the header every 21 frames
-					CHeaderData temp(header);
+					header.setCQCQCQ();
+					header.setFlags(0x00U, 0x00U, 0x00U);
 
-					temp.setCQCQCQ();
-					temp.setFlags(0x00U, 0x00U, 0x00U);
-
-					m_destination->process(temp, AS_DUP);
+					m_destination->process(header, AS_DUP);
 				}
 
-				m_destination->process(data, AS_DCS);
+				m_destination->process(temp, AS_DCS);
 
-				if (data.isEnd()) {
+				if (temp.isEnd()) {
 					m_dcsId  = 0x00U;
 					m_dcsSeq = 0x00U;
 					m_inactivityTimer.stop();

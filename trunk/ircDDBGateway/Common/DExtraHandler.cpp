@@ -624,9 +624,12 @@ void CDExtraHandler::processInt(CAMBEData& data)
 	if (m_dExtraSeq == 0U)
 		m_destination->process(*m_header, AS_DUP);
 
-	m_destination->process(data, AS_DEXTRA);
+	// Copy the data to ensure it remains unchanged
+	CAMBEData temp(data);
 
-	if (data.isEnd()) {
+	m_destination->process(temp, AS_DEXTRA);
+
+	if (temp.isEnd()) {
 		delete m_header;
 		m_header = NULL;
 
