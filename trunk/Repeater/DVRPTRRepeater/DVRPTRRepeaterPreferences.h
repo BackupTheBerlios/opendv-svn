@@ -38,7 +38,7 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress,
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, const wxString& port, bool rxInvert, bool txInvert, bool channel,
+		TEXT_LANG language, DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel,
 		unsigned int modLevel, unsigned int txDelay, bool enabled, const wxString& rpt1Callsign,
 		const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1,
 		const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5,
@@ -71,12 +71,13 @@ public:
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
 
-	virtual wxString     getPort() const;
-	virtual bool         getRXInvert() const;
-	virtual bool         getTXInvert() const;
-	virtual bool         getChannel() const;
-	virtual unsigned int getModLevel() const;
-	virtual unsigned int getTXDelay() const;
+	virtual DVRPTR_VERSION getVersion() const;
+	virtual wxString       getPort() const;
+	virtual bool           getRXInvert() const;
+	virtual bool           getTXInvert() const;
+	virtual bool           getChannel() const;
+	virtual unsigned int   getModLevel() const;
+	virtual unsigned int   getTXDelay() const;
 
 	virtual bool         getEnabled() const;
 	virtual wxString     getRPT1Callsign() const;

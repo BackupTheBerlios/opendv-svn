@@ -19,31 +19,9 @@
 #ifndef	DVRPTRController_H
 #define	DVRPTRController_H
 
-#include "SerialDataController.h"
-#include "RingBuffer.h"
 #include "HeaderData.h"
-#include "Utils.h"
 
 #include <wx/wx.h>
-
-enum RESP_TYPE {
-	RT_TIMEOUT,
-	RT_ERROR,
-	RT_UNKNOWN,
-	RT_GET_STATUS,
-	RT_GET_VERSION,
-	RT_GET_SERIAL,
-	RT_GET_CONFIG,
-	RT_SET_CONFIG,
-	RT_RXPREAMBLE,
-	RT_START,
-	RT_HEADER,
-	RT_RXSYNC,
-	RT_DATA,
-	RT_EOT,
-	RT_RXLOST,
-	RT_SET_TESTMDE
-};
 
 enum DATA_QUEUE_TYPE {
 	DQT_NONE,
@@ -54,70 +32,29 @@ enum DATA_QUEUE_TYPE {
 	DQT_START
 };
 
-class CDVRPTRController : public wxThread {
+class IDVRPTRController {
 public:
-	CDVRPTRController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
-	virtual ~CDVRPTRController();
+	virtual bool open() = 0;
 
-	virtual void* Entry();
+	virtual bool getPTT() const = 0;
 
-	virtual bool open();
+	virtual bool hasSpace() = 0;
 
-	virtual bool getPTT() const;
+	virtual void purgeRX() = 0;
+	virtual void purgeTX() = 0;
 
-	virtual bool hasSpace();
+	virtual DATA_QUEUE_TYPE readQueue(unsigned char* data, unsigned int& length) = 0;
 
-	virtual void purgeRX();
-	virtual void purgeTX();
+	virtual bool writeStart() = 0;
+	virtual bool writeHeader(const CHeaderData& header) = 0;
+	virtual bool writeData(const unsigned char* data, unsigned int length) = 0;
+	virtual bool writeEnd() = 0;
 
-	virtual DATA_QUEUE_TYPE readQueue(unsigned char* data, unsigned int& length);
+	virtual void close() = 0;
 
-	virtual bool writeStart();
-	virtual bool writeHeader(const CHeaderData& header);
-	virtual bool writeData(const unsigned char* data, unsigned int length);
-	virtual bool writeEnd();
-
-	virtual void close();
-
-	virtual wxString getPath() const;
-
-	static wxArrayString getDevices();
+	virtual wxString getPath() const = 0;
 
 private:
-	wxString                   m_port;
-	wxString                   m_path;
-	bool                       m_rxInvert;
-	bool                       m_txInvert;
-	bool                       m_channel;
-	unsigned int               m_modLevel;
-	unsigned int               m_txDelay;
-	CSerialDataController      m_serial;
-	unsigned char*             m_buffer;
-	CRingBuffer<unsigned char> m_rxData;
-	CRingBuffer<unsigned char> m_txData;
-	unsigned char              m_txCounter;
-	unsigned char              m_pktCounter;
-	bool                       m_ptt;
-	bool                       m_rx;
-	unsigned int               m_txSpace;
-	bool                       m_txEnabled;
-	bool                       m_checksum;
-	unsigned int               m_space;
-	bool                       m_stopped;
-	wxMutex                    m_mutex;
-
-	bool getVersion();
-	bool getStatus();
-	bool setConfig();
-	bool setEnabled(bool enable);
-
-	RESP_TYPE getResponse(unsigned char* buffer, unsigned int& length);
-
-	bool findPort();
-	bool findPath();
-
-	bool findModem();
-	bool openModem();
 };
 
 #endif

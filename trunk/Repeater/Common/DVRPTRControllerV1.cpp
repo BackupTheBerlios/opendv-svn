@@ -17,7 +17,7 @@
  */
 
 #include "CCITTChecksumReverse.h"
-#include "DVRPTRController.h"
+#include "DVRPTRControllerV1.h"
 #include "CCITTChecksum.h"
 #include "DStarDefines.h"
 #include "Timer.h"
@@ -54,7 +54,7 @@ const unsigned char DVRPTR_NAK = 0x15U;
 
 const unsigned int MAX_RESPONSES = 30U;
 
-wxArrayString CDVRPTRController::getDevices()
+wxArrayString CDVRPTRControllerV1::getDevices()
 {
 #if defined(__WINDOWS__)
 	return CSerialDataController::getDevices();
@@ -79,7 +79,7 @@ wxArrayString CDVRPTRController::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDVRPTRController::CDVRPTRController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
+CDVRPTRControllerV1::CDVRPTRControllerV1(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_port(port),
 m_path(path),
@@ -108,12 +108,12 @@ m_mutex()
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDVRPTRController::~CDVRPTRController()
+CDVRPTRControllerV1::~CDVRPTRControllerV1()
 {
 	delete[] m_buffer;
 }
 
-bool CDVRPTRController::open()
+bool CDVRPTRControllerV1::open()
 {
 	findPort();
 
@@ -130,7 +130,7 @@ bool CDVRPTRController::open()
 	return true;
 }
 
-void* CDVRPTRController::Entry()
+void* CDVRPTRControllerV1::Entry()
 {
 	wxLogMessage(wxT("Starting DV-RPTR Modem Controller thread"));
 
@@ -155,13 +155,13 @@ void* CDVRPTRController::Entry()
 		}
 
 		unsigned int length;
-		RESP_TYPE type = getResponse(m_buffer, length);
+		RESP_TYPE_V1 type = getResponse(m_buffer, length);
 
 		switch (type) {
-			case RT_TIMEOUT:
+			case RT1_TIMEOUT:
 				break;
 
-			case RT_ERROR: {
+			case RT1_ERROR: {
 					bool ret = findModem();
 					if (!ret) {
 						wxLogMessage(wxT("Stopping DV-RPTR Modem Controller thread"));
@@ -170,15 +170,15 @@ void* CDVRPTRController::Entry()
 				}
 				break;
 
-			case RT_RXPREAMBLE:
+			case RT1_RXPREAMBLE:
 				// wxLogMessage(wxT("RT_PREAMBLE"));
 				break;
 
-			case RT_START:
+			case RT1_START:
 				// wxLogMessage(wxT("RT_START"));
 				break;
 
-			case RT_HEADER:
+			case RT1_HEADER:
 				// CUtils::dump(wxT("RT_HEADER"), m_buffer, length);
 				if (length == 7U) {
 					if (m_buffer[4U] == DVRPTR_NAK)
@@ -206,11 +206,11 @@ void* CDVRPTRController::Entry()
 				}
 				break;
 
-			case RT_RXSYNC:
+			case RT1_RXSYNC:
 				// wxLogMessage(wxT("RT_RXSYNC"));
 				break;
 
-			case RT_DATA:
+			case RT1_DATA:
 				// CUtils::dump(wxT("RT_DATA"), m_buffer, length);
 				if (length == 7U) {
 					if (m_buffer[4U] == DVRPTR_NAK)
@@ -233,7 +233,7 @@ void* CDVRPTRController::Entry()
 				}
 				break;
 
-			case RT_EOT: {
+			case RT1_EOT: {
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -253,7 +253,7 @@ void* CDVRPTRController::Entry()
 				}
 				break;
 
-			case RT_RXLOST: {
+			case RT1_RXLOST: {
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -273,7 +273,7 @@ void* CDVRPTRController::Entry()
 				}
 				break;
 
-			case RT_GET_STATUS: {
+			case RT1_GET_STATUS: {
 					m_txEnabled = (m_buffer[4U] & 0x02U) == 0x02U;
 					m_checksum  = (m_buffer[4U] & 0x08U) == 0x08U;
 					m_ptt       = (m_buffer[5U] & 0x02U) == 0x02U;
@@ -285,9 +285,9 @@ void* CDVRPTRController::Entry()
 				break;
 
 			// These should not be received in this loop, but don't complain if we do
-			case RT_GET_VERSION:
-			case RT_GET_SERIAL:
-			case RT_GET_CONFIG:
+			case RT1_GET_VERSION:
+			case RT1_GET_SERIAL:
+			case RT1_GET_CONFIG:
 				break;
 
 			default:
@@ -337,21 +337,21 @@ void* CDVRPTRController::Entry()
 	return NULL;
 }
 
-void CDVRPTRController::purgeRX()
+void CDVRPTRControllerV1::purgeRX()
 {
 	wxMutexLocker locker(m_mutex);
 
 	m_rxData.clear();
 }
 
-void CDVRPTRController::purgeTX()
+void CDVRPTRControllerV1::purgeTX()
 {
 	wxMutexLocker locker(m_mutex);
 
 	m_txData.clear();
 }
 
-DATA_QUEUE_TYPE CDVRPTRController::readQueue(unsigned char* data, unsigned int& length)
+DATA_QUEUE_TYPE CDVRPTRControllerV1::readQueue(unsigned char* data, unsigned int& length)
 {
 	wxMutexLocker locker(m_mutex);
 
@@ -371,7 +371,7 @@ DATA_QUEUE_TYPE CDVRPTRController::readQueue(unsigned char* data, unsigned int& 
 	return type;
 }
 
-bool CDVRPTRController::writeStart()
+bool CDVRPTRControllerV1::writeStart()
 {
 	if (!m_txEnabled)
 		return false;
@@ -415,7 +415,7 @@ bool CDVRPTRController::writeStart()
 	return true;
 }
 
-bool CDVRPTRController::writeHeader(const CHeaderData& header)
+bool CDVRPTRControllerV1::writeHeader(const CHeaderData& header)
 {
 	if (!m_txEnabled)
 		return false;
@@ -492,7 +492,7 @@ bool CDVRPTRController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDVRPTRController::writeData(const unsigned char* data, unsigned int length)
+bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int length)
 {
 	if (!m_txEnabled)
 		return false;
@@ -544,7 +544,7 @@ bool CDVRPTRController::writeData(const unsigned char* data, unsigned int length
 	return true;
 }
 
-bool CDVRPTRController::writeEnd()
+bool CDVRPTRControllerV1::writeEnd()
 {
 	if (!m_txEnabled)
 		return false;
@@ -584,26 +584,26 @@ bool CDVRPTRController::writeEnd()
 	return true;
 }
 
-bool CDVRPTRController::getPTT() const
+bool CDVRPTRControllerV1::getPTT() const
 {
 	return m_ptt;
 }
 
-bool CDVRPTRController::hasSpace()
+bool CDVRPTRControllerV1::hasSpace()
 {
 	wxMutexLocker locker(m_mutex);
 
 	return m_txData.freeSpace() > 70U;
 }
 
-void CDVRPTRController::close()
+void CDVRPTRControllerV1::close()
 {
 	m_stopped = true;
 
 	Wait();
 }
 
-bool CDVRPTRController::getVersion()
+bool CDVRPTRControllerV1::getVersion()
 {
 	unsigned char buffer[10U];
 
@@ -631,20 +631,20 @@ bool CDVRPTRController::getVersion()
 
 	unsigned int count = 0U;
 	unsigned int length;
-	RESP_TYPE resp;
+	RESP_TYPE_V1 resp;
 	do {
 		::wxMilliSleep(10UL);
 
 		resp = getResponse(m_buffer, length);
 
-		if (resp != RT_GET_VERSION) {
+		if (resp != RT1_GET_VERSION) {
 			count++;
 			if (count >= MAX_RESPONSES) {
 				wxLogError(wxT("The DV-RPTR modem is not responding to the version command"));
 				return false;
 			}
 		}
-	} while (resp != RT_GET_VERSION);
+	} while (resp != RT1_GET_VERSION);
 
 	wxString firmware;
 	if ((m_buffer[4U] & 0x0FU) > 0x00U)
@@ -659,7 +659,7 @@ bool CDVRPTRController::getVersion()
 	return true;
 }
 
-bool CDVRPTRController::getStatus()
+bool CDVRPTRControllerV1::getStatus()
 {
 	unsigned char buffer[10U];
 
@@ -682,7 +682,7 @@ bool CDVRPTRController::getStatus()
 	return m_serial.write(buffer, 6U) == 6;
 }
 
-bool CDVRPTRController::setConfig()
+bool CDVRPTRControllerV1::setConfig()
 {
 	unsigned char buffer[20U];
 
@@ -727,21 +727,21 @@ bool CDVRPTRController::setConfig()
 
 	unsigned int count = 0U;
 	unsigned int length;
-	RESP_TYPE resp;
+	RESP_TYPE_V1 resp;
 	do {
 
 		::wxMilliSleep(10UL);
 
 		resp = getResponse(m_buffer, length);
 
-		if (resp != RT_SET_CONFIG) {
+		if (resp != RT1_SET_CONFIG) {
 			count++;
 			if (count >= MAX_RESPONSES) {
 				wxLogError(wxT("The DV-RPTR modem is not responding to the SET_CONFIG command"));
 				return false;
 			}
 		}
-	} while (resp != RT_SET_CONFIG);
+	} while (resp != RT1_SET_CONFIG);
 
 	// CUtils::dump(wxT("Response"), m_buffer, length);
 
@@ -754,7 +754,7 @@ bool CDVRPTRController::setConfig()
 	return true;
 }
 
-bool CDVRPTRController::setEnabled(bool enable)
+bool CDVRPTRControllerV1::setEnabled(bool enable)
 {
 	unsigned char buffer[10U];
 
@@ -788,20 +788,20 @@ bool CDVRPTRController::setEnabled(bool enable)
 
 	unsigned int count = 0U;
 	unsigned int length;
-	RESP_TYPE resp;
+	RESP_TYPE_V1 resp;
 	do {
 		::wxMilliSleep(10UL);
 
 		resp = getResponse(m_buffer, length);
 
-		if (resp != RT_GET_STATUS) {
+		if (resp != RT1_GET_STATUS) {
 			count++;
 			if (count >= MAX_RESPONSES) {
 				wxLogError(wxT("The DV-RPTR modem is not responding to the SET_STATUS command"));
 				return false;
 			}
 		}
-	} while (resp != RT_GET_STATUS);
+	} while (resp != RT1_GET_STATUS);
 
 	// CUtils::dump(wxT("Response"), m_buffer, length);
 
@@ -814,21 +814,21 @@ bool CDVRPTRController::setEnabled(bool enable)
 	return true;
 }
 
-RESP_TYPE CDVRPTRController::getResponse(unsigned char *buffer, unsigned int& length)
+RESP_TYPE_V1 CDVRPTRControllerV1::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
 	int ret = m_serial.read(buffer, 1U);
 	if (ret < 0) {
 		wxLogError(wxT("Error when reading from the DV-RPTR"));
-		return RT_ERROR;
+		return RT1_ERROR;
 	}
 
 	if (ret == 0)
-		return RT_TIMEOUT;
+		return RT1_TIMEOUT;
 
 	if (buffer[0U] != DVRPTR_FRAME_START) {
 		wxLogError(wxT("DV-RPTR frame start is incorrect - 0x%02X"), buffer[0U]);
-		return RT_UNKNOWN;
+		return RT1_UNKNOWN;
 	}
 
 	unsigned int offset = 1U;
@@ -837,7 +837,7 @@ RESP_TYPE CDVRPTRController::getResponse(unsigned char *buffer, unsigned int& le
 		int ret = m_serial.read(buffer + offset, DVRPTR_HEADER_LENGTH - offset);
 		if (ret < 0) {
 			wxLogError(wxT("Error when reading from the DV-RPTR"));
-			return RT_ERROR;
+			return RT1_ERROR;
 		}
 
 		if (ret > 0)
@@ -858,7 +858,7 @@ RESP_TYPE CDVRPTRController::getResponse(unsigned char *buffer, unsigned int& le
 		int ret = m_serial.read(buffer + offset + DVRPTR_HEADER_LENGTH, length - offset);
 		if (ret < 0) {
 			wxLogError(wxT("Error when reading from the DV-RPTR"));
-			return RT_ERROR;
+			return RT1_ERROR;
 		}
 
 		if (ret > 0)
@@ -874,42 +874,42 @@ RESP_TYPE CDVRPTRController::getResponse(unsigned char *buffer, unsigned int& le
 
 	switch (type) {
 		case DVRPTR_GET_STATUS:
-			return RT_GET_STATUS;
+			return RT1_GET_STATUS;
 		case DVRPTR_GET_VERSION:
-			return RT_GET_VERSION;
+			return RT1_GET_VERSION;
 		case DVRPTR_GET_SERIAL:
-			return RT_GET_SERIAL;
+			return RT1_GET_SERIAL;
 		case DVRPTR_GET_CONFIG:
-			return RT_GET_CONFIG;
+			return RT1_GET_CONFIG;
 		case DVRPTR_SET_CONFIG:
-			return RT_SET_CONFIG;
+			return RT1_SET_CONFIG;
 		case DVRPTR_RXPREAMBLE:
-			return RT_RXPREAMBLE;
+			return RT1_RXPREAMBLE;
 		case DVRPTR_START:
-			return RT_START;
+			return RT1_START;
 		case DVRPTR_HEADER:
-			return RT_HEADER;
+			return RT1_HEADER;
 		case DVRPTR_RXSYNC:
-			return RT_RXSYNC;
+			return RT1_RXSYNC;
 		case DVRPTR_DATA:
-			return RT_DATA;
+			return RT1_DATA;
 		case DVRPTR_EOT:
-			return RT_EOT;
+			return RT1_EOT;
 		case DVRPTR_RXLOST:
-			return RT_RXLOST;
+			return RT1_RXLOST;
 		case DVRPTR_SET_TESTMDE:
-			return RT_SET_TESTMDE;
+			return RT1_SET_TESTMDE;
 		default:
-			return RT_UNKNOWN;
+			return RT1_UNKNOWN;
 	}
 }
 
-wxString CDVRPTRController::getPath() const
+wxString CDVRPTRControllerV1::getPath() const
 {
 	return m_path;
 }
 
-bool CDVRPTRController::findPort()
+bool CDVRPTRControllerV1::findPort()
 {
 	if (m_path.IsEmpty())
 		return false;
@@ -961,7 +961,7 @@ bool CDVRPTRController::findPort()
 	return false;
 }
 
-bool CDVRPTRController::findPath()
+bool CDVRPTRControllerV1::findPath()
 {
 #if defined(__WINDOWS__)
 #ifdef notdef
@@ -1039,7 +1039,7 @@ bool CDVRPTRController::findPath()
 	return true;
 }
 
-bool CDVRPTRController::findModem()
+bool CDVRPTRControllerV1::findModem()
 {
 	m_serial.close();
 
@@ -1083,7 +1083,7 @@ bool CDVRPTRController::findModem()
 	return false;
 }
 
-bool CDVRPTRController::openModem()
+bool CDVRPTRControllerV1::openModem()
 {
 	bool ret = m_serial.open();
 	if (!ret)

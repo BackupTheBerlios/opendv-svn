@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,15 +17,24 @@
  */
 
 #include "DVRPTRRepeaterModemSet.h"
-#include "DVRPTRController.h"
+#include "DVRPTRControllerV1.h"
+#include "DVRPTRControllerV2.h"
 
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 150U;
 const unsigned int CONTROL_WIDTH2 = 300U;
 
-CDVRPTRRepeaterModemSet::CDVRPTRRepeaterModemSet(wxWindow* parent, int id, const wxString& title, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
+const int CHOICE_VERSION = 8749;
+
+BEGIN_EVENT_TABLE(CDVRPTRRepeaterModemSet, wxPanel)
+	EVT_CHOICE(CHOICE_VERSION, CDVRPTRRepeaterModemSet::onVersion)
+END_EVENT_TABLE()
+
+
+CDVRPTRRepeaterModemSet::CDVRPTRRepeaterModemSet(wxWindow* parent, int id, const wxString& title, DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxPanel(parent, id),
 m_title(title),
+m_version(NULL),
 m_port(NULL),
 m_rxInvert(NULL),
 m_txInvert(NULL),
@@ -35,13 +44,32 @@ m_txDelay(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
+	wxStaticText* versionLabel = new wxStaticText(this, -1, _("Version"));
+	sizer->Add(versionLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_version = new wxChoice(this, CHOICE_VERSION, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_version->Append(wxT("V1"));
+	m_version->Append(wxT("V2"));
+	sizer->Add(m_version, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_version->SetSelection(version == DVRPTR_V2 ? 1 : 0);
+
 	wxStaticText* portLabel = new wxStaticText(this, -1, _("Port"));
 	sizer->Add(portLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	m_port = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	sizer->Add(m_port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	wxArrayString ports = CDVRPTRController::getDevices();
+	wxArrayString ports;
+
+	switch (version) {
+		case DVRPTR_V2:
+			ports = CDVRPTRControllerV2::getDevices();
+			break;
+		default:
+			ports = CDVRPTRControllerV1::getDevices();
+			break;
+	}
+
 	for (unsigned int i = 0U; i < ports.GetCount(); i++)
 		m_port->Append(ports.Item(i));
 
@@ -102,6 +130,9 @@ CDVRPTRRepeaterModemSet::~CDVRPTRRepeaterModemSet()
 
 bool CDVRPTRRepeaterModemSet::Validate()
 {
+	if (m_version->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+
 	if (m_port->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
@@ -112,6 +143,16 @@ bool CDVRPTRRepeaterModemSet::Validate()
 		return false;
 
 	return m_channel->GetCurrentSelection() != wxNOT_FOUND;
+}
+
+DVRPTR_VERSION CDVRPTRRepeaterModemSet::getVersion() const
+{
+	int n = m_port->GetCurrentSelection();
+
+	if (n == wxNOT_FOUND)
+		return DVRPTR_V1;
+
+	return n == 1 ? DVRPTR_V2 : DVRPTR_V1;
 }
 
 wxString CDVRPTRRepeaterModemSet::getPort() const
@@ -162,4 +203,30 @@ unsigned int CDVRPTRRepeaterModemSet::getModLevel() const
 unsigned int CDVRPTRRepeaterModemSet::getTXDelay() const
 {
 	return (unsigned int)m_txDelay->GetValue();
+}
+
+void CDVRPTRRepeaterModemSet::onVersion(wxCommandEvent &event)
+{
+	int n = event.GetSelection();
+
+	wxString curr = m_port->GetStringSelection();
+
+	wxArrayString ports;
+
+	switch (n) {
+		case 1:
+			ports = CDVRPTRControllerV2::getDevices();
+			break;
+		default:
+			ports = CDVRPTRControllerV1::getDevices();
+			break;
+	}
+
+	m_port->Clear();
+	for (unsigned int i = 0U; i < ports.GetCount(); i++)
+		m_port->Append(ports.Item(i));
+
+	bool found = m_port->SetStringSelection(curr);
+	if (!found)
+		m_port->SetSelection(0);
 }

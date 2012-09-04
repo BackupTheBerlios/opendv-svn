@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,26 +26,32 @@
 
 class CDVRPTRRepeaterModemSet : public wxPanel {
 public:
-	CDVRPTRRepeaterModemSet(wxWindow* parent, int id, const wxString& title, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	CDVRPTRRepeaterModemSet(wxWindow* parent, int id, const wxString& title, DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDVRPTRRepeaterModemSet();
 
 	virtual bool Validate();
 
-	virtual wxString     getPort() const;
-	virtual bool         getRXInvert() const;
-	virtual bool         getTXInvert() const;
-	virtual bool         getChannel() const;
-	virtual unsigned int getModLevel() const;
-	virtual unsigned int getTXDelay() const;
+	virtual DVRPTR_VERSION getVersion() const;
+	virtual wxString       getPort() const;
+	virtual bool           getRXInvert() const;
+	virtual bool           getTXInvert() const;
+	virtual bool           getChannel() const;
+	virtual unsigned int   getModLevel() const;
+	virtual unsigned int   getTXDelay() const;
+
+	virtual void onVersion(wxCommandEvent& event);
 
 private:
 	wxString  m_title;
+	wxChoice* m_version;
 	wxChoice* m_port;
 	wxChoice* m_rxInvert;
 	wxChoice* m_txInvert;
 	wxChoice* m_channel;
 	wxSlider* m_modLevel;
 	wxSlider* m_txDelay;
+
+	DECLARE_EVENT_TABLE()
 };
 
 #endif

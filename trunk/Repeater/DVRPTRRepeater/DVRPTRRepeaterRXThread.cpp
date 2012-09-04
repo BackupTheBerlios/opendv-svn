@@ -22,6 +22,7 @@
 #include "DStarDefines.h"
 #include "HeaderData.h"
 #include "Version.h"
+#include "Utils.h"
 
 const unsigned char DTMF_MASK[] = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x82U, 0x00U, 0x00U};
 const unsigned char DTMF_SIG[]  = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U};
@@ -140,7 +141,7 @@ void CDVRPTRRepeaterRXThread::setProtocolHandler(CRepeaterProtocolHandler* handl
 	m_protocolHandler = handler;
 }
 
-void CDVRPTRRepeaterRXThread::setModem(CDVRPTRController* controller)
+void CDVRPTRRepeaterRXThread::setModem(IDVRPTRController* controller)
 {
 	wxASSERT(controller != NULL);
 

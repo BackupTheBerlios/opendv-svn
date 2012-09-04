@@ -17,9 +17,9 @@ dvrptrrepeaterd:	DVRPTRRepeaterD.o DVRPTRRepeaterConfig.o DVRPTRRepeaterTRXThrea
 
 DVRPTRRepeaterApp.o:	DVRPTRRepeaterApp.cpp DVRPTRRepeaterApp.h DVRPTRRepeaterThread.h DVRPTRRepeaterTRXThread.h DVRPTRRepeaterTXRXThread.h \
 						DVRPTRRepeaterTXThread.h DVRPTRRepeaterRXThread.h DVRPTRRepeaterFrame.h DVRPTRRepeaterDefs.h DVRPTRRepeaterStatusData.h \
-						DVRPTRRepeaterLogger.h DVRPTRRepeaterConfig.h ../Common/DVRPTRController.h ../Common/DStarDefines.h ../Common/Logger.h \
-						../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h \
-						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h
+						DVRPTRRepeaterLogger.h DVRPTRRepeaterConfig.h ../Common/DVRPTRController.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h \
+						../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h \
+						../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterApp.cpp
 
 DVRPTRRepeaterCallsignSet.o:	DVRPTRRepeaterCallsignSet.cpp DVRPTRRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -33,8 +33,8 @@ DVRPTRRepeaterControllerSet.o:	DVRPTRRepeaterControllerSet.cpp DVRPTRRepeaterCon
 
 DVRPTRRepeaterD.o:	DVRPTRRepeaterD.cpp DVRPTRRepeaterD.h DVRPTRRepeaterThread.h DVRPTRRepeaterTRXThread.h DVRPTRRepeaterTXRXThread.h \
 					DVRPTRRepeaterTXThread.h DVRPTRRepeaterRXThread.h DVRPTRRepeaterConfig.h DVRPTRRepeaterDefs.h ../Common/DStarDefines.h \
-					../Common/Logger.h ../Common/DVRPTRController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h \
-					../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h
+					../Common/Logger.h ../Common/DVRPTRController.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h ../Common/RepeaterProtocolHandler.h \
+					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterD.cpp
 
 DVRPTRRepeaterFrame.o:	DVRPTRRepeaterFrame.cpp DVRPTRRepeaterFrame.h DVRPTRRepeaterDefs.h DVRPTRRepeaterApp.h DVRPTRRepeaterStatusData.h \
@@ -44,8 +44,8 @@ DVRPTRRepeaterFrame.o:	DVRPTRRepeaterFrame.cpp DVRPTRRepeaterFrame.h DVRPTRRepea
 DVRPTRRepeaterLogger.o:	DVRPTRRepeaterLogger.cpp DVRPTRRepeaterLogger.h DVRPTRRepeaterApp.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterLogger.cpp
 
-DVRPTRRepeaterModemSet.o:	DVRPTRRepeaterModemSet.cpp DVRPTRRepeaterModemSet.h DVRPTRRepeaterDefs.h ../Common/DVRPTRController.h \
-							../Common/DStarDefines.h
+DVRPTRRepeaterModemSet.o:	DVRPTRRepeaterModemSet.cpp DVRPTRRepeaterModemSet.h DVRPTRRepeaterDefs.h ../Common/DVRPTRControllerV1.h \
+							../Common/DVRPTRControllerV2.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterModemSet.cpp
 
 DVRPTRRepeaterPreferences.o:	DVRPTRRepeaterPreferences.cpp DVRPTRRepeaterPreferences.h DVRPTRRepeaterDefs.h DVRPTRRepeaterControllerSet.h \
@@ -61,14 +61,14 @@ DVRPTRRepeaterTRXThread.o:	DVRPTRRepeaterTRXThread.cpp DVRPTRRepeaterTRXThread.h
 						../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h \
 						../Common/OutputQueue.h ../Common/Version.h ../Common/DVTOOLFileWriter.h ../Common/CallsignList.h \
 						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/BeaconUnit.h \
-						../Common/BeaconCallback.h
+						../Common/BeaconCallback.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterTRXThread.cpp
 
 DVRPTRRepeaterTXRXThread.o:	DVRPTRRepeaterTXRXThread.cpp DVRPTRRepeaterTXRXThread.h DVRPTRRepeaterThread.h DVRPTRRepeaterDefs.h DVRPTRRepeaterApp.h \
 						DVRPTRRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/DVRPTRController.h ../Common/HeaderData.h \
 						../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h \
 						../Common/OutputQueue.h ../Common/Version.h ../Common/DVTOOLFileWriter.h ../Common/CallsignList.h \
-						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h
+						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterTXRXThread.cpp
 
 DVRPTRRepeaterTXThread.o:	DVRPTRRepeaterTXThread.cpp DVRPTRRepeaterTXThread.h DVRPTRRepeaterThread.h DVRPTRRepeaterDefs.h DVRPTRRepeaterApp.h \
@@ -78,7 +78,7 @@ DVRPTRRepeaterTXThread.o:	DVRPTRRepeaterTXThread.cpp DVRPTRRepeaterTXThread.h DV
 
 DVRPTRRepeaterRXThread.o:	DVRPTRRepeaterRXThread.cpp DVRPTRRepeaterRXThread.h DVRPTRRepeaterThread.h DVRPTRRepeaterDefs.h DVRPTRRepeaterApp.h \
 						DVRPTRRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/DVRPTRController.h ../Common/HeaderData.h \
-						../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataDecoder.h ../Common/Version.h
+						../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataDecoder.h ../Common/Version.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterRXThread.cpp
 
 DVRPTRRepeaterTimesSet.o:	DVRPTRRepeaterTimesSet.cpp DVRPTRRepeaterTimesSet.h

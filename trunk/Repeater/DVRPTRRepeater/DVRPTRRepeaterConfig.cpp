@@ -28,6 +28,7 @@ const wxString  KEY_GATEWAY_ADDRESS    = wxT("gatewayAddress");
 const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
 const wxString  KEY_LOCAL_PORT         = wxT("localPort");
+const wxString  KEY_MODEM_VERSION      = wxT("modemVersion");
 const wxString  KEY_MODEM_PORT         = wxT("modemPort");
 const wxString  KEY_MODEM_PATH         = wxT("modemPath");
 const wxString  KEY_MODEM_RXINVERT     = wxT("modemRXInvert");
@@ -83,6 +84,7 @@ const wxString        DEFAULT_GATEWAY_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
 const unsigned int    DEFAULT_LOCAL_PORT         = 20011U;
+const DVRPTR_VERSION  DEFAULT_MODEM_VERSION      = DVRPTR_V1;
 const wxString        DEFAULT_MODEM_PORT         = wxEmptyString;
 const wxString        DEFAULT_MODEM_PATH         = wxEmptyString;
 const bool            DEFAULT_MODEM_RXINVERT     = false;
@@ -144,6 +146,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
+m_modemVersion(DEFAULT_MODEM_VERSION),
 m_modemPort(DEFAULT_MODEM_PORT),
 m_modemPath(DEFAULT_MODEM_PATH),
 m_rxInvert(DEFAULT_MODEM_RXINVERT),
@@ -219,6 +222,9 @@ m_y(DEFAULT_WINDOW_Y)
 
 	m_config->Read(m_name + KEY_LOCAL_PORT, &temp, long(DEFAULT_LOCAL_PORT));
 	m_localPort = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_MODEM_VERSION, &temp, long(DEFAULT_MODEM_VERSION));
+	m_modemVersion = DVRPTR_VERSION(temp);
 
 	m_config->Read(m_name + KEY_MODEM_PORT, &m_modemPort, DEFAULT_MODEM_PORT);
 
@@ -337,6 +343,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
+m_modemVersion(DEFAULT_MODEM_VERSION),
 m_modemPort(DEFAULT_MODEM_PORT),
 m_modemPath(DEFAULT_MODEM_PATH),
 m_rxInvert(DEFAULT_MODEM_RXINVERT),
@@ -448,6 +455,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_LOCAL_PORT)) {
 			val.ToULong(&temp2);
 			m_localPort = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_MODEM_VERSION)) {
+			val.ToLong(&temp1);
+			m_modemVersion = DVRPTR_VERSION(temp1);
 		} else if (key.IsSameAs(KEY_MODEM_PORT)) {
 			m_modemPort = val;
 		} else if (key.IsSameAs(KEY_MODEM_PATH)) {
@@ -605,8 +615,9 @@ void CDVRPTRRepeaterConfig::setNetwork(const wxString& gatewayAddress, unsigned 
 	m_localPort      = localPort;
 }
 
-void CDVRPTRRepeaterConfig::getModem(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDVRPTRRepeaterConfig::getModem(DVRPTR_VERSION& version, wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
 {
+	version  = m_modemVersion;
 	port     = m_modemPort;
 	rxInvert = m_rxInvert;
 	txInvert = m_txInvert;
@@ -615,14 +626,15 @@ void CDVRPTRRepeaterConfig::getModem(wxString& port, bool& rxInvert, bool& txInv
 	txDelay  = m_txDelay;
 }
 
-void CDVRPTRRepeaterConfig::setModem(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+void CDVRPTRRepeaterConfig::setModem(DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
 {
-	m_modemPort = port;
-	m_rxInvert  = rxInvert;
-	m_txInvert  = txInvert;
-	m_channel   = channel;
-	m_modLevel  = modLevel;
-	m_txDelay   = txDelay;
+	m_modemVersion = version;
+	m_modemPort    = port;
+	m_rxInvert     = rxInvert;
+	m_txInvert     = txInvert;
+	m_channel      = channel;
+	m_modLevel     = modLevel;
+	m_txDelay      = txDelay;
 }
 
 void CDVRPTRRepeaterConfig::getModem(wxString& path) const
@@ -779,6 +791,7 @@ bool CDVRPTRRepeaterConfig::write()
 	m_config->Write(m_name + KEY_GATEWAY_PORT, long(m_gatewayPort));
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
 	m_config->Write(m_name + KEY_LOCAL_PORT, long(m_localPort));
+	m_config->Write(m_name + KEY_MODEM_VERSION, long(m_modemVersion));
 	m_config->Write(m_name + KEY_MODEM_PORT, m_modemPort);
 	m_config->Write(m_name + KEY_MODEM_PATH, m_modemPath);
 	m_config->Write(m_name + KEY_MODEM_RXINVERT, m_rxInvert);
@@ -863,6 +876,7 @@ bool CDVRPTRRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_GATEWAY_PORT.c_str(), m_gatewayPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_LOCAL_PORT.c_str(), m_localPort); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_MODEM_VERSION.c_str(), int(m_modemVersion)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_MODEM_PORT.c_str(), m_modemPort.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_MODEM_PATH.c_str(), m_modemPath.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_MODEM_RXINVERT.c_str(), m_rxInvert ? 1 : 0); file.AddLine(buffer);

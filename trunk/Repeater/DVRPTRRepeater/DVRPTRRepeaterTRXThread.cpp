@@ -376,7 +376,7 @@ void CDVRPTRRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* hand
 	m_protocolHandler = handler;
 }
 
-void CDVRPTRRepeaterTRXThread::setModem(CDVRPTRController* controller)
+void CDVRPTRRepeaterTRXThread::setModem(IDVRPTRController* controller)
 {
 	wxASSERT(controller != NULL);
 

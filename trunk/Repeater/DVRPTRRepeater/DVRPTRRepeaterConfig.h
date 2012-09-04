@@ -41,8 +41,8 @@ public:
 	void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	void getModem(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
-	void setModem(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	void getModem(DVRPTR_VERSION& version, wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
+	void setModem(DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 
 	void getModem(wxString& path) const;
 	void setModem(const wxString& path);
@@ -87,6 +87,7 @@ private:
 	unsigned int  m_gatewayPort;
 	wxString      m_localAddress;
 	unsigned int  m_localPort;
+	DVRPTR_VERSION m_modemVersion;
 	wxString      m_modemPort;
 	wxString      m_modemPath;
 	bool          m_rxInvert;

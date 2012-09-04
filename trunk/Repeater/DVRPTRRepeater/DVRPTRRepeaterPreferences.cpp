@@ -28,8 +28,8 @@ CDVRPTRRepeaterPreferences::CDVRPTRRepeaterPreferences(wxWindow* parent, int id,
 	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation,
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int beaconTime,
-	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, const wxString& port, bool rxInvert,
-	bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay, bool enabled,
+	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, DVRPTR_VERSION version, const wxString& port,
+	bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay, bool enabled,
 	const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown,
 	const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3,
 	const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line,
@@ -64,7 +64,7 @@ m_controller(NULL)
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
 
-	m_modem = new CDVRPTRRepeaterModemSet(noteBook, -1, APPLICATION_NAME, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	m_modem = new CDVRPTRRepeaterModemSet(noteBook, -1, APPLICATION_NAME, version, port, rxInvert, txInvert, channel, modLevel, txDelay);
 	noteBook->AddPage(m_modem, _("DV-RPTR"), false);
 
 	m_control1 = new CControl1Set(noteBook, -1, APPLICATION_NAME, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, output1, output2, output3, output4);
@@ -179,6 +179,11 @@ bool CDVRPTRRepeaterPreferences::getBeaconVoice() const
 TEXT_LANG CDVRPTRRepeaterPreferences::getLanguage() const
 {
 	return m_beacon->getLanguage();
+}
+
+DVRPTR_VERSION CDVRPTRRepeaterPreferences::getVersion() const
+{
+	return m_modem->getVersion();
 }
 
 wxString CDVRPTRRepeaterPreferences::getPort() const

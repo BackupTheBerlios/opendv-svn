@@ -38,7 +38,7 @@ class IDVRPTRRepeaterThread {
 public:
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation) = 0;
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler) = 0;
-	virtual void setModem(CDVRPTRController* modem) = 0;
+	virtual void setModem(IDVRPTRController* modem) = 0;
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime) = 0;
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime) = 0;
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language) = 0;

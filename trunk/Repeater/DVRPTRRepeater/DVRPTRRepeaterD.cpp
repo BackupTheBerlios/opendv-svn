@@ -22,6 +22,8 @@
 #include "DVRPTRRepeaterRXThread.h"
 #include "DVRPTRRepeaterTXThread.h"
 #include "DVRPTRRepeaterConfig.h"
+#include "DVRPTRControllerV2.h"
+#include "DVRPTRControllerV1.h"
 #include "DVRPTRController.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -225,24 +227,39 @@ bool CDVRPTRRepeaterD::createThread()
 	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
+	DVRPTR_VERSION modemVersion;
 	wxString modemPort, modemPath;
 	bool rxInvert, txInvert, channel;
 	unsigned int modLevel, txDelay;
-	config.getModem(modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
+	config.getModem(modemVersion, modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
 	config.getModem(modemPath);
-	wxLogInfo(wxT("DV-RPTR modem: port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), modemPort.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+	wxLogInfo(wxT("DV-RPTR modem: version: %d, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), int(modemVersion), modemPort.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
 
 	if (!modemPort.IsEmpty()) {
 		if (!modemPath.IsEmpty())
 			wxLogInfo(wxT("DV-RPTR modem: path: %s"), modemPath.c_str());
 
-		CDVRPTRController* controller = new CDVRPTRController(modemPort, modemPath, rxInvert, txInvert, channel, modLevel, txDelay);
-		bool res = controller->open();
-		if (!res) {
-			wxLogError(wxT("Cannot open the DV-RPTR modem"));
-		} else {
-			m_thread->setModem(controller);
-			config.setModem(controller->getPath());
+		IDVRPTRController* controller = NULL;
+		switch (modemVersion) {
+			case DVRPTR_V1:
+				controller = new CDVRPTRControllerV1(modemPort, modemPath, rxInvert, txInvert, channel, modLevel, txDelay);
+				break;
+			case DVRPTR_V2:
+				controller = new CDVRPTRControllerV2(modemPort, modemPath, rxInvert, txInvert, channel, modLevel, txDelay);
+				break;
+			default:
+				wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(modemVersion));
+				break;
+		}
+
+		if (controller != NULL) {
+			bool res = controller->open();
+			if (!res) {
+				wxLogError(wxT("Cannot open the DV-RPTR modem"));
+			} else {
+				m_thread->setModem(controller);
+				setModem(controller->getPath());
+			}
 		}
 	}
 

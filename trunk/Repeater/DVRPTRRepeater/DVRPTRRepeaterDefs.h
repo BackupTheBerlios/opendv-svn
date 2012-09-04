@@ -39,5 +39,9 @@ enum DSTAR_RX_STATE {
 	DSRXS_PROCESS_SLOW_DATA
 };
 
-#endif
+enum DVRPTR_VERSION {
+	DVRPTR_V1 = 1,
+	DVRPTR_V2
+};
 
+#endif

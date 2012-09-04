@@ -260,7 +260,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DVRPTRController.cpp"
+				RelativePath=".\DVRPTRControllerV1.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRControllerV2.cpp"
 				>
 			</File>
 			<File
@@ -559,6 +563,14 @@
 			</File>
 			<File
 				RelativePath=".\DVRPTRController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRControllerV1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRControllerV2.h"
 				>
 			</File>
 			<File

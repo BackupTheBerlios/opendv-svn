@@ -3,7 +3,7 @@ all:		Common.a
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o CCITTChecksum.o \
 		CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
 		DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o DVAPController.o \
-		DVDongleController.o DVRPTRController.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o FIRFilter.o \
+		DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o FIRFilter.o \
 		GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LogEvent.o Logger.o NCO.o MessageTextCtrl.o \
 		NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
 		RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o \
@@ -93,8 +93,13 @@ DVAPController.o:	DVAPController.cpp DVAPController.h SerialDataController.h Hea
 DVDongleController.o:	DVDongleController.cpp DVDongleController.h DStarDefines.h SerialDataController.h
 		$(CC) $(CFLAGS) -c DVDongleController.cpp
 
-DVRPTRController.o:	DVRPTRController.cpp DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h CCITTChecksum.h CCITTChecksumReverse.h Timer.h
-		$(CC) $(CFLAGS) -c DVRPTRController.cpp
+DVRPTRControllerV1.o:	DVRPTRControllerV1.cpp DVRPTRControllerV1.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h CCITTChecksum.h \
+						CCITTChecksumReverse.h Timer.h
+		$(CC) $(CFLAGS) -c DVRPTRControllerV1.cpp
+
+DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h CCITTChecksum.h \
+						CCITTChecksumReverse.h Timer.h
+		$(CC) $(CFLAGS) -c DVRPTRControllerV2.cpp
 
 DVTOOLFileReader.o:	DVTOOLFileReader.cpp DVTOOLFileReader.h HeaderData.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c DVTOOLFileReader.cpp
