@@ -24,6 +24,9 @@
 # 2012-07-11 dl5di    bugfixes, cleanups, first beta release
 # 2012-08-24 dl5di    initial version for ARM platform
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
+# 2012-09-01 dl5di    minor fixes
+# 2012-09-02 dl5di    more fixes for bugs reported by Tom ON4TOP
+# 2012-09-04 dl5di    change access right to device ttyS*, ttyACM* and ttyUSB*
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -33,7 +36,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120901-beta"
+rev="20120902-beta"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -310,7 +313,7 @@ function request_callsign(){
   if [ $# != 3 -a $# != 4 ]; then
     return $RETVAL
   fi
-  echo " - callsign request $1 $2 $3 \'$4\'" >> $LOG
+  echo " - callsign request $1 $2 $3 [$4]" >> $LOG
 
   while [ $RETVAL -eq 0 ]; do
     read -r -e -n 8 -p "$1 [$4] > " INPUT
@@ -1582,6 +1585,8 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "/dev/ttyS${VALUE}"
+	    echo "KERNEL==\"/dev/ttyS${VALUE}\", NAME=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/50_udev_ttyS${VALUE}.rules
+	    [ -c /dev/ttyS${VALUE} ] && chown opendv:opendv /dev/ttyS${VALUE}
 	    ;;
 	4)
 	    print_text "iface_usb"
@@ -1603,6 +1608,8 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "/dev/ttyUSB${VALUE}"
+	    echo "KERNEL==\"/dev/ttyUSB${VALUE}\", NAME=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/50_udev_ttyUSB${VALUE}.rules
+	    [ -c /dev/ttyUSB${VALUE} ] && chown opendv:opendv /dev/ttyUSB${VALUE}
 	    ;;
 	*)
 	    write_value $REPEATERCONFIG $var "$DEFAULT"
@@ -1714,6 +1721,8 @@ function hwtype2(){
 	    ;;
     esac
     write_value $REPEATERCONFIG $var "/dev/ttyACM${VALUE}"
+    echo "KERNEL==\"/dev/ttyACM${VALUE}\", NAME=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/50_udev_ttyACM${VALUE}.rules
+    [ -c /dev/ttyACM${VALUE} ] && chown opendv:opendv /dev/ttyACM${VALUE}
 
 #
 # modemRXInvert=0
@@ -1948,6 +1957,8 @@ function hwtype4(){
 	    ;;
     esac
     write_value $REPEATERCONFIG $var "/dev/ttyUSB${VALUE}"
+    echo "KERNEL==\"/dev/ttyUSB${VALUE}\", NAME=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/50_udev_ttyUSB${VALUE}.rules
+    [ -c /dev/ttyUSB${VALUE} ] && chown opendv:opendv /dev/ttyUSB${VALUE}
 
 #
 # dvapFrequency=145500000
@@ -2298,7 +2309,7 @@ readconfig(){
 	echo "FATAL ERROR!! Configfile $CONFIGFILE not found"
 	echo "FATAL ERROR!! Configfile $CONFIGFILE not found" >> $LOG
 	echo " "
-	exit
+	exit 1
     fi
     return
 }
@@ -2353,7 +2364,7 @@ esac
 
 if [ $# -gt 1 ]; then
     MODULE=$1
-    if [ $2 -ne "AUTO" ]; then
+    if [ $2 != "AUTO" ]; then
 	HWTYPE=$2
 	AUTO=0
     fi
@@ -2393,7 +2404,7 @@ if [[ $MODULE -gt 0 ]] && [[ $HWTYPE -gt 0 ]]; then
 fi
 
 if [ "$RET" = 0 ]; then
-    IRCDDBCONFIG="/etc/default/repeater_conf"
+    IRCDDBCONFIG="/home/opendv/ircddbgateway/ircddbgw_conf"
     if [ -f $IRCDDBCONFIG ]; then
 	read_value $IRCDDBCONFIG "IRCDDBGWCONFIG"
 	if [ "$?" = 0 ]; then

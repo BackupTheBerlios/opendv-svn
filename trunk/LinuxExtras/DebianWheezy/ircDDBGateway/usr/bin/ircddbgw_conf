@@ -595,7 +595,7 @@ function valid_band()
     echo " - valid_band: $1 $2" >> $LOG
     echo ""
     echo ""
-    if [[ $band =~ ^[A-D]{1}$ ]] || [[ $band =~ ^[A-D]D$ ]]; then
+    if [[ $band =~ ^[A-E]{1}$ ]] || [[ $band =~ ^[A-E]D$ ]]; then
 	echo " - valid_band: $band" >> $LOG
 	cat $IRCDDBGWCONFIG | grep -v "$1" | grep "repeaterBand.=$2$" || stat=0
 	if [ $stat = 1 ]; then
@@ -2557,6 +2557,11 @@ if [ -f $CONFIGFILE ]; then
 
     read_value $CONFIGFILE "TIMESERVERCFG"
     TIMESERVERCFG=$VALUE
+else
+    echo "FATAL ERROR!! Configfile $CONFIGFILE not found"
+    echo "FATAL ERROR!! Configfile $CONFIGFILE not found" >> $LOG
+    echo " "
+    exit 1
 fi
 
 touch $IRCDDBGWCONFIG

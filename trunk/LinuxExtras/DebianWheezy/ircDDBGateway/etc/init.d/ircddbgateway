@@ -59,7 +59,7 @@ do_start()
 
 	ps aux | grep ntpd | grep -vq grep && /etc/init.d/ntp stop
 	ntpdate pool.ntp.org
-	[ -e /etc/init.d/ntp ] && /etc/init.d/ntp start
+	[ -x /etc/init.d/ntp ] && /etc/init.d/ntp start
 
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON --test > /dev/null \
 		|| return 1
@@ -76,7 +76,7 @@ do_start()
     	    echo 1 > /proc/sys/net/ipv4/ip_forward
 	    if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
 		echo " - start dhcpd "
-        	/etc/init.d/dhcpd start
+        	[ -x "/etc/init.d/dhcpd" ] && /etc/init.d/dhcpd start
 	    fi
 	fi
 }
@@ -93,7 +93,7 @@ do_stop()
 	#   other if a failure occurred
 	if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
     	    echo " - dhcp for dd-mode is enabled, stop it "
-    	    /etc/init.d/dhcpd stop
+    	    [ -x "/etc/init.d/dhcpd" ] && /etc/init.d/dhcpd stop
     	    sleep 15
 	fi                    
 	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
