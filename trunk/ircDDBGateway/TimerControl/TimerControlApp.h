@@ -19,8 +19,8 @@
 #ifndef	TimerControlApp_H
 #define	TimerControlApp_H
 
+#include "TimerControlThreadHelper.h"
 #include "TimerControlConfig.h"
-#include "TimerControlThread.h"
 #include "TimerControlFrame.h"
 #include "TimerControlItem.h"
 
@@ -55,13 +55,13 @@ public:
 	virtual void writeItems();
 
 private:
-	wxString             m_name;
-	wxString             m_fileName;
-	bool                 m_nolog;
-	wxString             m_logDir;
-	CTimerControlFrame*  m_frame;
-	CTimerControlConfig* m_config;
-	CTimerControlThread* m_thread;
+	wxString                   m_name;
+	wxString                   m_fileName;
+	bool                       m_nolog;
+	wxString                   m_logDir;
+	CTimerControlFrame*        m_frame;
+	CTimerControlConfig*       m_config;
+	CTimerControlThreadHelper* m_thread;
 
 	void createThread();
 };

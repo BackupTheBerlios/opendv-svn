@@ -152,12 +152,7 @@ bool CXReflectorAppD::init()
 
 void CXReflectorAppD::run()
 {
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
-
-	m_thread->Wait();
-	delete m_thread;
+	m_thread->run();
 
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 }

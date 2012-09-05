@@ -17,6 +17,7 @@
  */
 
 #include "StarNetServerLogRedirect.h"
+#include "StarNetServerThread.h"
 #include "StarNetServerDefs.h"
 #include "StarNetServerApp.h"
 #include "Version.h"
@@ -122,8 +123,6 @@ int CStarNetServerApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -536,7 +535,7 @@ bool CStarNetServerApp::writeConfig()
 
 void CStarNetServerApp::createThread()
 {
-	m_thread = new CStarNetServerThread(m_nolog, m_logDir);
+	CStarNetServerThread* thread = new CStarNetServerThread(m_nolog, m_logDir);
 
 	wxString callsign, address;
 	getGateway(callsign, address);
@@ -565,7 +564,7 @@ void CStarNetServerApp::createThread()
 		if (!res)
 			wxLogError(wxT("Cannot initialise the ircDDB protocol handler"));
 		else
-			m_thread->setIRC(ircDDB);
+			thread->setIRC(ircDDB);
 	}
 
 	wxString starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetLink1;		// DEXTRA_LINK || DCS_LINK
@@ -584,10 +583,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand1);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1);
+		thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1);
 		wxLogInfo(wxT("StarNet 1 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign1.c_str(), starNetLogoff1.c_str(), repeater.c_str(), starNetInfo1.c_str(), starNetPermanent1.c_str(), starNetUserTimeout1, starNetGroupTimeout1, int(starNetCallsignSwitch1), int(starNetTXMsgSwitch1), starNetLink1.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1);
+		thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1);
 		wxLogInfo(wxT("StarNet 1 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign1.c_str(), starNetLogoff1.c_str(), repeater.c_str(), starNetInfo1.c_str(), starNetPermanent1.c_str(), starNetUserTimeout1, starNetGroupTimeout1, int(starNetCallsignSwitch1), int(starNetTXMsgSwitch1));
 #endif
 	}
@@ -608,10 +607,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand2);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, starNetLink2);
+		thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, starNetLink2);
 		wxLogInfo(wxT("StarNet 2 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign2.c_str(), starNetLogoff2.c_str(), repeater.c_str(), starNetInfo2.c_str(), starNetPermanent2.c_str(), starNetUserTimeout2, starNetGroupTimeout2, int(starNetCallsignSwitch2), int(starNetTXMsgSwitch2), starNetLink2.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2);
+		thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2);
 		wxLogInfo(wxT("StarNet 2 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign2.c_str(), starNetLogoff2.c_str(), repeater.c_str(), starNetInfo2.c_str(), starNetPermanent2.c_str(), starNetUserTimeout2, starNetGroupTimeout2, int(starNetCallsignSwitch2), int(starNetTXMsgSwitch2));
 #endif
 	}
@@ -632,10 +631,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand3);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, starNetLink3);
+		thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, starNetLink3);
 		wxLogInfo(wxT("StarNet 3 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign3.c_str(), starNetLogoff3.c_str(), repeater.c_str(), starNetInfo3.c_str(), starNetPermanent3.c_str(), starNetUserTimeout3, starNetGroupTimeout3, int(starNetCallsignSwitch3), int(starNetTXMsgSwitch3), starNetLink3.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3);
+		thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3);
 		wxLogInfo(wxT("StarNet 3 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign3.c_str(), starNetLogoff3.c_str(), repeater.c_str(), starNetInfo3.c_str(), starNetPermanent3.c_str(), starNetUserTimeout3, starNetGroupTimeout3, int(starNetCallsignSwitch3), int(starNetTXMsgSwitch3));
 #endif
 	}
@@ -656,10 +655,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand4);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4, starNetLink4);
+		thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4, starNetLink4);
 		wxLogInfo(wxT("StarNet 4 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign4.c_str(), starNetLogoff4.c_str(), repeater.c_str(), starNetInfo4.c_str(), starNetPermanent4.c_str(), starNetUserTimeout4, starNetGroupTimeout4, int(starNetCallsignSwitch4), int(starNetTXMsgSwitch4), starNetLink4.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4);
+		thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4);
 		wxLogInfo(wxT("StarNet 4 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign4.c_str(), starNetLogoff4.c_str(), repeater.c_str(), starNetInfo4.c_str(), starNetPermanent4.c_str(), starNetUserTimeout4, starNetGroupTimeout4, int(starNetCallsignSwitch4), int(starNetTXMsgSwitch4));
 #endif
 	}
@@ -680,10 +679,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand5);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5, starNetLink5);
+		thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5, starNetLink5);
 		wxLogInfo(wxT("StarNet 5 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign5.c_str(), starNetLogoff5.c_str(), repeater.c_str(), starNetInfo5.c_str(), starNetPermanent5.c_str(), starNetUserTimeout5, starNetGroupTimeout5, int(starNetCallsignSwitch5), int(starNetTXMsgSwitch5), starNetLink5.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5);
+		thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5);
 		wxLogInfo(wxT("StarNet 5 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign5.c_str(), starNetLogoff5.c_str(), repeater.c_str(), starNetInfo5.c_str(), starNetPermanent5.c_str(), starNetUserTimeout5, starNetGroupTimeout5, int(starNetCallsignSwitch5), int(starNetTXMsgSwitch5));
 #endif
 	}
@@ -704,10 +703,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand6);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign6, starNetLogoff6, repeater, starNetInfo6, starNetPermanent6, starNetUserTimeout6, starNetGroupTimeout6, starNetCallsignSwitch6, starNetTXMsgSwitch6, starNetLink6);
+		thread->addStarNet(starNetCallsign6, starNetLogoff6, repeater, starNetInfo6, starNetPermanent6, starNetUserTimeout6, starNetGroupTimeout6, starNetCallsignSwitch6, starNetTXMsgSwitch6, starNetLink6);
 		wxLogInfo(wxT("StarNet 6 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign6.c_str(), starNetLogoff6.c_str(), repeater.c_str(), starNetInfo6.c_str(), starNetPermanent6.c_str(), starNetUserTimeout6, starNetGroupTimeout6, int(starNetCallsignSwitch6), int(starNetTXMsgSwitch6), starNetLink6.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign6, starNetLogoff6, repeater, starNetInfo6, starNetPermanent6, starNetUserTimeout6, starNetGroupTimeout6, starNetCallsignSwitch6, starNetTXMsgSwitch6);
+		thread->addStarNet(starNetCallsign6, starNetLogoff6, repeater, starNetInfo6, starNetPermanent6, starNetUserTimeout6, starNetGroupTimeout6, starNetCallsignSwitch6, starNetTXMsgSwitch6);
 		wxLogInfo(wxT("StarNet 6 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign6.c_str(), starNetLogoff6.c_str(), repeater.c_str(), starNetInfo6.c_str(), starNetPermanent6.c_str(), starNetUserTimeout6, starNetGroupTimeout6, int(starNetCallsignSwitch6), int(starNetTXMsgSwitch6));
 #endif
 	}
@@ -728,10 +727,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand7);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign7, starNetLogoff7, repeater, starNetInfo7, starNetPermanent7, starNetUserTimeout7, starNetGroupTimeout7, starNetCallsignSwitch7, starNetTXMsgSwitch7, starNetLink7);
+		thread->addStarNet(starNetCallsign7, starNetLogoff7, repeater, starNetInfo7, starNetPermanent7, starNetUserTimeout7, starNetGroupTimeout7, starNetCallsignSwitch7, starNetTXMsgSwitch7, starNetLink7);
 		wxLogInfo(wxT("StarNet 7 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign7.c_str(), starNetLogoff7.c_str(), repeater.c_str(), starNetInfo7.c_str(), starNetPermanent7.c_str(), starNetUserTimeout7, starNetGroupTimeout7, int(starNetCallsignSwitch7), int(starNetTXMsgSwitch7), starNetLink7.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign7, starNetLogoff7, repeater, starNetInfo7, starNetPermanent7, starNetUserTimeout7, starNetGroupTimeout7, starNetCallsignSwitch7, starNetTXMsgSwitch7);
+		thread->addStarNet(starNetCallsign7, starNetLogoff7, repeater, starNetInfo7, starNetPermanent7, starNetUserTimeout7, starNetGroupTimeout7, starNetCallsignSwitch7, starNetTXMsgSwitch7);
 		wxLogInfo(wxT("StarNet 7 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign7.c_str(), starNetLogoff7.c_str(), repeater.c_str(), starNetInfo7.c_str(), starNetPermanent7.c_str(), starNetUserTimeout7, starNetGroupTimeout7, int(starNetCallsignSwitch7), int(starNetTXMsgSwitch7));
 #endif
 	}
@@ -752,10 +751,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand8);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign8, starNetLogoff8, repeater, starNetInfo8, starNetPermanent8, starNetUserTimeout8, starNetGroupTimeout8, starNetCallsignSwitch8, starNetTXMsgSwitch8, starNetLink8);
+		thread->addStarNet(starNetCallsign8, starNetLogoff8, repeater, starNetInfo8, starNetPermanent8, starNetUserTimeout8, starNetGroupTimeout8, starNetCallsignSwitch8, starNetTXMsgSwitch8, starNetLink8);
 		wxLogInfo(wxT("StarNet 8 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign8.c_str(), starNetLogoff8.c_str(), repeater.c_str(), starNetInfo8.c_str(), starNetPermanent8.c_str(), starNetUserTimeout8, starNetGroupTimeout8, int(starNetCallsignSwitch8), int(starNetTXMsgSwitch8), starNetLink8.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign8, starNetLogoff8, repeater, starNetInfo8, starNetPermanent8, starNetUserTimeout8, starNetGroupTimeout8, starNetCallsignSwitch8, starNetTXMsgSwitch8);
+		thread->addStarNet(starNetCallsign8, starNetLogoff8, repeater, starNetInfo8, starNetPermanent8, starNetUserTimeout8, starNetGroupTimeout8, starNetCallsignSwitch8, starNetTXMsgSwitch8);
 		wxLogInfo(wxT("StarNet 8 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign8.c_str(), starNetLogoff8.c_str(), repeater.c_str(), starNetInfo8.c_str(), starNetPermanent8.c_str(), starNetUserTimeout8, starNetGroupTimeout8, int(starNetCallsignSwitch8), int(starNetTXMsgSwitch8));
 #endif
 	}
@@ -776,10 +775,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand9);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign9, starNetLogoff9, repeater, starNetInfo9, starNetPermanent9, starNetUserTimeout9, starNetGroupTimeout9, starNetCallsignSwitch9, starNetTXMsgSwitch9, starNetLink9);
+		thread->addStarNet(starNetCallsign9, starNetLogoff9, repeater, starNetInfo9, starNetPermanent9, starNetUserTimeout9, starNetGroupTimeout9, starNetCallsignSwitch9, starNetTXMsgSwitch9, starNetLink9);
 		wxLogInfo(wxT("StarNet 9 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign9.c_str(), starNetLogoff9.c_str(), repeater.c_str(), starNetInfo9.c_str(), starNetPermanent9.c_str(), starNetUserTimeout9, starNetGroupTimeout9, int(starNetCallsignSwitch9), int(starNetTXMsgSwitch9), starNetLink9.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign9, starNetLogoff9, repeater, starNetInfo9, starNetPermanent9, starNetUserTimeout9, starNetGroupTimeout9, starNetCallsignSwitch9, starNetTXMsgSwitch9);
+		thread->addStarNet(starNetCallsign9, starNetLogoff9, repeater, starNetInfo9, starNetPermanent9, starNetUserTimeout9, starNetGroupTimeout9, starNetCallsignSwitch9, starNetTXMsgSwitch9);
 		wxLogInfo(wxT("StarNet 9 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign9.c_str(), starNetLogoff9.c_str(), repeater.c_str(), starNetInfo9.c_str(), starNetPermanent9.c_str(), starNetUserTimeout9, starNetGroupTimeout9, int(starNetCallsignSwitch9), int(starNetTXMsgSwitch9));
 #endif
 	}
@@ -800,10 +799,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand10);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign10, starNetLogoff10, repeater, starNetInfo10, starNetPermanent10, starNetUserTimeout10, starNetGroupTimeout10, starNetCallsignSwitch10, starNetTXMsgSwitch10, starNetLink10);
+		thread->addStarNet(starNetCallsign10, starNetLogoff10, repeater, starNetInfo10, starNetPermanent10, starNetUserTimeout10, starNetGroupTimeout10, starNetCallsignSwitch10, starNetTXMsgSwitch10, starNetLink10);
 		wxLogInfo(wxT("StarNet 10 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign10.c_str(), starNetLogoff10.c_str(), repeater.c_str(), starNetInfo10.c_str(), starNetPermanent10.c_str(), starNetUserTimeout10, starNetGroupTimeout10, int(starNetCallsignSwitch10), int(starNetTXMsgSwitch10), starNetLink10.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign10, starNetLogoff10, repeater, starNetInfo10, starNetPermanent10, starNetUserTimeout10, starNetGroupTimeout10, starNetCallsignSwitch10, starNetTXMsgSwitch10);
+		thread->addStarNet(starNetCallsign10, starNetLogoff10, repeater, starNetInfo10, starNetPermanent10, starNetUserTimeout10, starNetGroupTimeout10, starNetCallsignSwitch10, starNetTXMsgSwitch10);
 		wxLogInfo(wxT("StarNet 10 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign10.c_str(), starNetLogoff10.c_str(), repeater.c_str(), starNetInfo10.c_str(), starNetPermanent10.c_str(), starNetUserTimeout10, starNetGroupTimeout10, int(starNetCallsignSwitch10), int(starNetTXMsgSwitch10));
 #endif
 	}
@@ -824,10 +823,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand11);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign11, starNetLogoff11, repeater, starNetInfo11, starNetPermanent11, starNetUserTimeout11, starNetGroupTimeout11, starNetCallsignSwitch11, starNetTXMsgSwitch11, starNetLink11);
+		thread->addStarNet(starNetCallsign11, starNetLogoff11, repeater, starNetInfo11, starNetPermanent11, starNetUserTimeout11, starNetGroupTimeout11, starNetCallsignSwitch11, starNetTXMsgSwitch11, starNetLink11);
 		wxLogInfo(wxT("StarNet 11 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign11.c_str(), starNetLogoff11.c_str(), repeater.c_str(), starNetInfo11.c_str(), starNetPermanent11.c_str(), starNetUserTimeout11, starNetGroupTimeout11, int(starNetCallsignSwitch11), int(starNetTXMsgSwitch11), starNetLink11.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign11, starNetLogoff11, repeater, starNetInfo11, starNetPermanent11, starNetUserTimeout11, starNetGroupTimeout11, starNetCallsignSwitch11, starNetTXMsgSwitch11);
+		thread->addStarNet(starNetCallsign11, starNetLogoff11, repeater, starNetInfo11, starNetPermanent11, starNetUserTimeout11, starNetGroupTimeout11, starNetCallsignSwitch11, starNetTXMsgSwitch11);
 		wxLogInfo(wxT("StarNet 11 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign11.c_str(), starNetLogoff11.c_str(), repeater.c_str(), starNetInfo11.c_str(), starNetPermanent11.c_str(), starNetUserTimeout11, starNetGroupTimeout11, int(starNetCallsignSwitch11), int(starNetTXMsgSwitch11));
 #endif
 	}
@@ -848,10 +847,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand12);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign12, starNetLogoff12, repeater, starNetInfo12, starNetPermanent12, starNetUserTimeout12, starNetGroupTimeout12, starNetCallsignSwitch12, starNetTXMsgSwitch12, starNetLink12);
+		thread->addStarNet(starNetCallsign12, starNetLogoff12, repeater, starNetInfo12, starNetPermanent12, starNetUserTimeout12, starNetGroupTimeout12, starNetCallsignSwitch12, starNetTXMsgSwitch12, starNetLink12);
 		wxLogInfo(wxT("StarNet 12 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign12.c_str(), starNetLogoff12.c_str(), repeater.c_str(), starNetInfo12.c_str(), starNetPermanent12.c_str(), starNetUserTimeout12, starNetGroupTimeout12, int(starNetCallsignSwitch12), int(starNetTXMsgSwitch12), starNetLink12.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign12, starNetLogoff12, repeater, starNetInfo12, starNetPermanent12, starNetUserTimeout12, starNetGroupTimeout12, starNetCallsignSwitch12, starNetTXMsgSwitch12);
+		thread->addStarNet(starNetCallsign12, starNetLogoff12, repeater, starNetInfo12, starNetPermanent12, starNetUserTimeout12, starNetGroupTimeout12, starNetCallsignSwitch12, starNetTXMsgSwitch12);
 		wxLogInfo(wxT("StarNet 12 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign12.c_str(), starNetLogoff12.c_str(), repeater.c_str(), starNetInfo12.c_str(), starNetPermanent12.c_str(), starNetUserTimeout12, starNetGroupTimeout12, int(starNetCallsignSwitch12), int(starNetTXMsgSwitch12));
 #endif
 	}
@@ -872,10 +871,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand13);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign13, starNetLogoff13, repeater, starNetInfo13, starNetPermanent13, starNetUserTimeout13, starNetGroupTimeout13, starNetCallsignSwitch13, starNetTXMsgSwitch13, starNetLink13);
+		thread->addStarNet(starNetCallsign13, starNetLogoff13, repeater, starNetInfo13, starNetPermanent13, starNetUserTimeout13, starNetGroupTimeout13, starNetCallsignSwitch13, starNetTXMsgSwitch13, starNetLink13);
 		wxLogInfo(wxT("StarNet 13 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign13.c_str(), starNetLogoff13.c_str(), repeater.c_str(), starNetInfo13.c_str(), starNetPermanent13.c_str(), starNetUserTimeout13, starNetGroupTimeout13, int(starNetCallsignSwitch13), int(starNetTXMsgSwitch13), starNetLink13.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign13, starNetLogoff13, repeater, starNetInfo13, starNetPermanent13, starNetUserTimeout13, starNetGroupTimeout13, starNetCallsignSwitch13, starNetTXMsgSwitch13);
+		thread->addStarNet(starNetCallsign13, starNetLogoff13, repeater, starNetInfo13, starNetPermanent13, starNetUserTimeout13, starNetGroupTimeout13, starNetCallsignSwitch13, starNetTXMsgSwitch13);
 		wxLogInfo(wxT("StarNet 13 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign13.c_str(), starNetLogoff13.c_str(), repeater.c_str(), starNetInfo13.c_str(), starNetPermanent13.c_str(), starNetUserTimeout13, starNetGroupTimeout13, int(starNetCallsignSwitch13), int(starNetTXMsgSwitch13));
 #endif
 	}
@@ -896,10 +895,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand14);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign14, starNetLogoff14, repeater, starNetInfo14, starNetPermanent14, starNetUserTimeout14, starNetGroupTimeout14, starNetCallsignSwitch14, starNetTXMsgSwitch14, starNetLink14);
+		thread->addStarNet(starNetCallsign14, starNetLogoff14, repeater, starNetInfo14, starNetPermanent14, starNetUserTimeout14, starNetGroupTimeout14, starNetCallsignSwitch14, starNetTXMsgSwitch14, starNetLink14);
 		wxLogInfo(wxT("StarNet 14 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign14.c_str(), starNetLogoff14.c_str(), repeater.c_str(), starNetInfo14.c_str(), starNetPermanent14.c_str(), starNetUserTimeout14, starNetGroupTimeout14, int(starNetCallsignSwitch14), int(starNetTXMsgSwitch14), starNetLink14.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign14, starNetLogoff14, repeater, starNetInfo14, starNetPermanent14, starNetUserTimeout14, starNetGroupTimeout14, starNetCallsignSwitch14, starNetTXMsgSwitch14);
+		thread->addStarNet(starNetCallsign14, starNetLogoff14, repeater, starNetInfo14, starNetPermanent14, starNetUserTimeout14, starNetGroupTimeout14, starNetCallsignSwitch14, starNetTXMsgSwitch14);
 		wxLogInfo(wxT("StarNet 14 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign14.c_str(), starNetLogoff14.c_str(), repeater.c_str(), starNetInfo14.c_str(), starNetPermanent14.c_str(), starNetUserTimeout14, starNetGroupTimeout14, int(starNetCallsignSwitch14), int(starNetTXMsgSwitch14));
 #endif
 	}
@@ -920,10 +919,10 @@ void CStarNetServerApp::createThread()
 		repeater.Append(starNetBand15);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign15, starNetLogoff15, repeater, starNetInfo15, starNetPermanent15, starNetUserTimeout15, starNetGroupTimeout15, starNetCallsignSwitch15, starNetTXMsgSwitch15, starNetLink15);
+		thread->addStarNet(starNetCallsign15, starNetLogoff15, repeater, starNetInfo15, starNetPermanent15, starNetUserTimeout15, starNetGroupTimeout15, starNetCallsignSwitch15, starNetTXMsgSwitch15, starNetLink15);
 		wxLogInfo(wxT("StarNet 15 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign15.c_str(), starNetLogoff15.c_str(), repeater.c_str(), starNetInfo15.c_str(), starNetPermanent15.c_str(), starNetUserTimeout15, starNetGroupTimeout15, int(starNetCallsignSwitch15), int(starNetTXMsgSwitch15), starNetLink15.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign15, starNetLogoff15, repeater, starNetInfo15, starNetPermanent15, starNetUserTimeout15, starNetGroupTimeout15, starNetCallsignSwitch15, starNetTXMsgSwitch15);
+		thread->addStarNet(starNetCallsign15, starNetLogoff15, repeater, starNetInfo15, starNetPermanent15, starNetUserTimeout15, starNetGroupTimeout15, starNetCallsignSwitch15, starNetTXMsgSwitch15);
 		wxLogInfo(wxT("StarNet 15 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign15.c_str(), starNetLogoff15.c_str(), repeater.c_str(), starNetInfo15.c_str(), starNetPermanent15.c_str(), starNetUserTimeout15, starNetGroupTimeout15, int(starNetCallsignSwitch15), int(starNetTXMsgSwitch15));
 #endif
 	}
@@ -933,13 +932,13 @@ void CStarNetServerApp::createThread()
 	unsigned int remotePort;
 	getRemote(remoteEnabled, remotePassword, remotePort);
 	wxLogInfo(wxT("Remote enabled set to %d, port set to %u"), int(remoteEnabled), remotePort);
-	m_thread->setRemote(remoteEnabled, remotePassword, remotePort);
+	thread->setRemote(remoteEnabled, remotePassword, remotePort);
 
-	m_thread->setLog(logEnabled);
-	m_thread->setAddress(address);
-	m_thread->setCallsign(callsign);
+	thread->setLog(logEnabled);
+	thread->setAddress(address);
+	thread->setCallsign(callsign);
 
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CStarNetServerThreadHelper(thread);
+	m_thread->start();
 }

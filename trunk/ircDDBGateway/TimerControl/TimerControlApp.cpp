@@ -16,6 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "TimerControlThread.h"
 #include "TimerControlDefs.h"
 #include "TimerControlApp.h"
 #include "Version.h"
@@ -122,8 +123,6 @@ int CTimerControlApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -203,25 +202,26 @@ void CTimerControlApp::writeItems()
 
 void CTimerControlApp::createThread()
 {
-	m_thread = new CTimerControlThread;
+	CTimerControlThread* thread = new CTimerControlThread;
 
 	wxString address, password;
 	unsigned int port;
 	getGateway(address, port, password);
-	m_thread->setGateway(address, port, password);
+	thread->setGateway(address, port, password);
 	wxLogInfo(wxT("Gateway set to %s:%u"), address.c_str(), port);
 
 	bool delay;
 	getDelay(delay);
-	m_thread->setDelay(delay);
+	thread->setDelay(delay);
 	wxLogInfo(wxT("Delay set to %d"), int(delay));
 
 	wxLogInfo(wxT("Schedule file is %s"), m_fileName.c_str());
 	m_frame->setFileName(m_fileName);
-	m_thread->setFileName(m_fileName);
+	thread->setFileName(m_fileName);
 
-	m_thread->reload();
+	thread->reload();
 
-	m_thread->Create();
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CTimerControlThreadHelper(thread);
+	m_thread->start();
 }

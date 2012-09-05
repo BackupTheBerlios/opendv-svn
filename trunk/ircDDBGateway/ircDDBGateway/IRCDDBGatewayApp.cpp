@@ -19,6 +19,7 @@
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
 #include "IRCDDBGatewayLogRedirect.h"
+#include "IRCDDBGatewayThread.h"
 #include "IRCDDBGatewayDefs.h"
 #include "IRCDDBGatewayApp.h"
 #include "APRSWriter.h"
@@ -131,8 +132,6 @@ int CIRCDDBGatewayApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -430,7 +429,7 @@ bool CIRCDDBGatewayApp::writeConfig()
 
 void CIRCDDBGatewayApp::createThread()
 {
-	m_thread = new CIRCDDBGatewayThread(m_logDir, m_name);
+	CIRCDDBGatewayThread* thread = new CIRCDDBGatewayThread(m_logDir, m_name);
 
 	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress, description1, description2, url;
 	unsigned int icomPort, hbPort;
@@ -448,7 +447,7 @@ void CIRCDDBGatewayApp::createThread()
 
 	wxLogInfo(wxT("Gateway callsign: \"%s\", address: %s, Icom address: %s:%u, homebrew address: %s:%u, latitude: %lf, longitude: %lf, description: \"%s %s\", URL: \"%s\""), gatewayCallsign.c_str(), gatewayAddress.c_str(), icomAddress.c_str(), icomPort, hbAddress.c_str(), hbPort, latitude, longitude, description1.c_str(), description2.c_str(), url.c_str());
 
-	m_thread->setGateway(gatewayCallsign, gatewayAddress, latitude, longitude, description1, description2, url);
+	thread->setGateway(gatewayCallsign, gatewayAddress, latitude, longitude, description1, description2, url);
 
 	wxString aprsHostname;
 	unsigned int aprsPort;
@@ -464,7 +463,7 @@ void CIRCDDBGatewayApp::createThread()
 		if (!res)
 			wxLogError(wxT("Cannot initialise the APRS data writer"));
 		else
-			m_thread->setAPRSWriter(aprs);
+			thread->setAPRSWriter(aprs);
 	}
 
 	TEXT_LANG language;
@@ -517,7 +516,7 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType1 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 1 bands: %u %u %u"), band11, band12, band13);
-			m_thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, agl1, icomRepeaterHandler, band11, band12, band13);
+			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, agl1, icomRepeaterHandler, band11, band12, band13);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -531,7 +530,7 @@ void CIRCDDBGatewayApp::createThread()
 
 			icomCount++;
 		} else if (repeaterType1 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			m_thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, agl1, hbRepeaterHandler);
+			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, agl1, hbRepeaterHandler);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -585,7 +584,7 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType2 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 2 bands: %u %u %u"), band21, band22, band23);
-			m_thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, agl2, icomRepeaterHandler, band21, band22, band23);
+			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, agl2, icomRepeaterHandler, band21, band22, band23);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -599,7 +598,7 @@ void CIRCDDBGatewayApp::createThread()
 
 			icomCount++;
 		} else if (repeaterType2 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			m_thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, agl2, hbRepeaterHandler);
+			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, agl2, hbRepeaterHandler);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -653,7 +652,7 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType3 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 3 bands: %u %u %u"), band31, band32, band33);
-			m_thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, agl3, icomRepeaterHandler, band31, band32, band33);
+			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, agl3, icomRepeaterHandler, band31, band32, band33);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -667,7 +666,7 @@ void CIRCDDBGatewayApp::createThread()
 
 			icomCount++;
 		} else if (repeaterType3 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			m_thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, agl3, hbRepeaterHandler);
+			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, agl3, hbRepeaterHandler);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -721,7 +720,7 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType4 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 4 bands: %u %u %u"), band41, band42, band43);
-			m_thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, agl4, icomRepeaterHandler, band41, band42, band43);
+			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, agl4, icomRepeaterHandler, band41, band42, band43);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -735,7 +734,7 @@ void CIRCDDBGatewayApp::createThread()
 
 			icomCount++;
 		} else if (repeaterType4 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			m_thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, agl4, hbRepeaterHandler);
+			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, agl4, hbRepeaterHandler);
 
 			if (aprs != NULL) {
 				double lat = latitude;
@@ -766,7 +765,7 @@ void CIRCDDBGatewayApp::createThread()
 		if (!res)
 			wxLogError(wxT("Cannot initialise the ircDDB protocol handler"));
 		else
-			m_thread->setIRC(ircDDB);
+			thread->setIRC(ircDDB);
 	}
 
 	wxString starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, link1;		// DEXTRA_LINK || DCS_LINK
@@ -785,10 +784,10 @@ void CIRCDDBGatewayApp::createThread()
 		repeater.Append(starNetBand1);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, link1);
+		thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, link1);
 		wxLogInfo(wxT("STARnet group 1 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign1.c_str(), starNetLogoff1.c_str(), repeater.c_str(), starNetInfo1.c_str(), starNetPermanent1.c_str(), starNetUserTimeout1, starNetGroupTimeout1, int(starNetCallsignSwitch1), int(starNetTXMsgSwitch1), link1.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1);
+		thread->addStarNet(starNetCallsign1, starNetLogoff1, repeater, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1);
 		wxLogInfo(wxT("STARnet group 1 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign1.c_str(), starNetLogoff1.c_str(), repeater.c_str(), starNetInfo1.c_str(), starNetPermanent1.c_str(), starNetUserTimeout1, starNetGroupTimeout1, int(starNetCallsignSwitch1), int(starNetTXMsgSwitch1));
 #endif
 	}
@@ -809,10 +808,10 @@ void CIRCDDBGatewayApp::createThread()
 		repeater.Append(starNetBand2);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, link2);
+		thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, link2);
 		wxLogInfo(wxT("STARnet group 2 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign2.c_str(), starNetLogoff2.c_str(), repeater.c_str(), starNetInfo2.c_str(), starNetPermanent2.c_str(), starNetUserTimeout2, starNetGroupTimeout2, int(starNetCallsignSwitch2), int(starNetTXMsgSwitch2), link2.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2);
+		thread->addStarNet(starNetCallsign2, starNetLogoff2, repeater, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2);
 		wxLogInfo(wxT("STARnet group 2 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign2.c_str(), starNetLogoff2.c_str(), repeater.c_str(), starNetInfo2.c_str(), starNetPermanent2.c_str(), starNetUserTimeout2, starNetGroupTimeout2, int(starNetCallsignSwitch2), int(starNetTXMsgSwitch2));
 #endif
 	}
@@ -833,10 +832,10 @@ void CIRCDDBGatewayApp::createThread()
 		repeater.Append(starNetBand3);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, link3);
+		thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, link3);
 		wxLogInfo(wxT("STARnet group 3 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign3.c_str(), starNetLogoff3.c_str(), repeater.c_str(), starNetInfo3.c_str(), starNetPermanent3.c_str(), starNetUserTimeout3, starNetGroupTimeout3, int(starNetCallsignSwitch3), int(starNetTXMsgSwitch3), link3.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3);
+		thread->addStarNet(starNetCallsign3, starNetLogoff3, repeater, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3);
 		wxLogInfo(wxT("STARnet group 3 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign3.c_str(), starNetLogoff3.c_str(), repeater.c_str(), starNetInfo3.c_str(), starNetPermanent3.c_str(), starNetUserTimeout3, starNetGroupTimeout3, int(starNetCallsignSwitch3), int(starNetTXMsgSwitch3));
 #endif
 	}
@@ -857,10 +856,10 @@ void CIRCDDBGatewayApp::createThread()
 		repeater.Append(starNetBand4);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4, link4);
+		thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4, link4);
 		wxLogInfo(wxT("STARnet group 4 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign4.c_str(), starNetLogoff4.c_str(), repeater.c_str(), starNetInfo4.c_str(), starNetPermanent4.c_str(), starNetUserTimeout4, starNetGroupTimeout4, int(starNetCallsignSwitch4), int(starNetTXMsgSwitch4), link4.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4);
+		thread->addStarNet(starNetCallsign4, starNetLogoff4, repeater, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4);
 		wxLogInfo(wxT("STARnet group 4 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign4.c_str(), starNetLogoff4.c_str(), repeater.c_str(), starNetInfo4.c_str(), starNetPermanent4.c_str(), starNetUserTimeout4, starNetGroupTimeout4, int(starNetCallsignSwitch4), int(starNetTXMsgSwitch4));
 #endif
 	}
@@ -881,10 +880,10 @@ void CIRCDDBGatewayApp::createThread()
 		repeater.Append(starNetBand5);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-		m_thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5, link5);
+		thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5, link5);
 		wxLogInfo(wxT("STARnet group 5 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d, reflector: %s"), starNetCallsign5.c_str(), starNetLogoff5.c_str(), repeater.c_str(), starNetInfo5.c_str(), starNetPermanent5.c_str(), starNetUserTimeout5, starNetGroupTimeout5, int(starNetCallsignSwitch5), int(starNetTXMsgSwitch5), link5.c_str());
 #else
-		m_thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5);
+		thread->addStarNet(starNetCallsign5, starNetLogoff5, repeater, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5);
 		wxLogInfo(wxT("STARnet group 5 set to %s/%s on repeater %s, info: \"%s\", permanent: %s, user: %u mins, group: %u mins, callsign switch: %d, tx msg switch: %d"), starNetCallsign5.c_str(), starNetLogoff5.c_str(), repeater.c_str(), starNetInfo5.c_str(), starNetPermanent5.c_str(), starNetUserTimeout5, starNetGroupTimeout5, int(starNetCallsignSwitch5), int(starNetTXMsgSwitch5));
 #endif
 	}
@@ -899,7 +898,7 @@ void CIRCDDBGatewayApp::createThread()
 	unsigned int remotePort;
 	getRemote(remoteEnabled, remotePassword, remotePort);
 	wxLogInfo(wxT("Remote enabled: %d, port: %u"), int(remoteEnabled), remotePort);
-	m_thread->setRemote(remoteEnabled, remotePassword, remotePort);
+	thread->setRemote(remoteEnabled, remotePassword, remotePort);
 
 	wxString dplusLogin;
 	unsigned int dplusMaxDongles;
@@ -914,21 +913,21 @@ void CIRCDDBGatewayApp::createThread()
 	if (repeaterBand1.Len() > 1U || repeaterBand2.Len() > 1U ||
 		repeaterBand3.Len() > 1U || repeaterBand4.Len() > 1U) {
 		wxLogInfo(wxT("DD mode enabled"));
-		m_thread->setDDModeEnabled(true);
+		thread->setDDModeEnabled(true);
 	}
 
-	m_thread->setIcomRepeaterHandler(icomRepeaterHandler);
-	m_thread->setHBRepeaterHandler(hbRepeaterHandler);
-	m_thread->setLanguage(language);
-	m_thread->setDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
-	m_thread->setDExtra(dextraEnabled, dextraMaxDongles);
-	m_thread->setDCS(dcsEnabled);
-	m_thread->setInfoEnabled(infoEnabled);
-	m_thread->setEchoEnabled(echoEnabled);
-	m_thread->setDTMFEnabled(dtmfEnabled);
-	m_thread->setLog(logEnabled);
+	thread->setIcomRepeaterHandler(icomRepeaterHandler);
+	thread->setHBRepeaterHandler(hbRepeaterHandler);
+	thread->setLanguage(language);
+	thread->setDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
+	thread->setDExtra(dextraEnabled, dextraMaxDongles);
+	thread->setDCS(dcsEnabled);
+	thread->setInfoEnabled(infoEnabled);
+	thread->setEchoEnabled(echoEnabled);
+	thread->setDTMFEnabled(dtmfEnabled);
+	thread->setLog(logEnabled);
 
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CIRCDDBGatewayThreadHelper(thread);
+	m_thread->start();
 }

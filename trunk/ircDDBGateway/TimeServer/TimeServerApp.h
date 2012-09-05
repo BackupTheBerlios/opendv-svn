@@ -19,8 +19,8 @@
 #ifndef	TimeServerApp_H
 #define	TimeServerApp_H
 
+#include "TimeServerThreadHelper.h"
 #include "TimeServerConfig.h"
-#include "TimeServerThread.h"
 #include "TimeServerFrame.h"
 #include "TimeServerDefs.h"
 
@@ -57,15 +57,15 @@ public:
 	virtual bool writeConfig();
 
 private:
-	wxString           m_name;
-	bool               m_nolog;
-	bool               m_gui;
-	wxString           m_logDir;
-	wxString           m_confDir;
-	CTimeServerFrame*  m_frame;
-	CTimeServerThread* m_thread;
-	CTimeServerConfig* m_config;
-	wxLogChain*        m_logChain;
+	wxString                 m_name;
+	bool                     m_nolog;
+	bool                     m_gui;
+	wxString                 m_logDir;
+	wxString                 m_confDir;
+	CTimeServerFrame*        m_frame;
+	CTimeServerThreadHelper* m_thread;
+	CTimeServerConfig*       m_config;
+	wxLogChain*              m_logChain;
 
 	void createThread();
 };

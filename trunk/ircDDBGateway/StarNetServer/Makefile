@@ -3,9 +3,10 @@ all:			starnetserver starnetserverd
 CFLAGS :=		-I../ircDDB -I../Common $(CFLAGS)
 
 starnetserver:	StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o StarNetServerLogRedirect.o \
-				StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o ../ircDDB/libircDDB.a ../Common/Common.a
+				StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o StarNetServerThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a
 				$(CC) $(LDFLAGS) -o starnetserver StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o \
-				StarNetServerLogRedirect.o StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o ../ircDDB/libircDDB.a \
+				StarNetServerLogRedirect.o StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o StarNetServerThreadHelper.o \
+				../ircDDB/libircDDB.a \
 				../Common/Common.a $(LIBS)
 
 starnetserverd:	StarNetServerAppD.o StarNetServerConfig.o StarNetServerThread.o ../ircDDB/libircDDB.a ../Common/Common.a
@@ -13,7 +14,7 @@ starnetserverd:	StarNetServerAppD.o StarNetServerConfig.o StarNetServerThread.o 
 				$(LIBS)
 
 StarNetServerApp.o:		StarNetServerApp.cpp StarNetServerApp.h StarNetServerThread.h StarNetServerFrame.h StarNetServerConfig.h StarNetServerLogRedirect.h \
-						StarNetServerDefs.h ../Common/Defs.h ../Common/Logger.h ../Common/Version.h ../ircDDB/IRCDDB.h
+						StarNetServerDefs.h StarNetServerThreadHelper.h ../Common/Defs.h ../Common/Logger.h ../Common/Version.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c StarNetServerApp.cpp
 
 StarNetServerAppD.o:	StarNetServerAppD.cpp StarNetServerAppD.h StarNetServerThread.h StarNetServerConfig.h StarNetServerDefs.h ../Common/Defs.h \
@@ -40,6 +41,9 @@ StarNetServerMiscellaneousSet.o:	StarNetServerMiscellaneousSet.cpp StarNetServer
 StarNetServerPreferences.o:	StarNetServerPreferences.cpp StarNetServerPreferences.h StarNetServerMiscellaneousSet.h StarNetServerCallsignSet.h \
 							../Common/Defs.h ../Common/IrcDDBSet.h ../Common/RemoteSet.h ../Common/StarNetSet.h
 				$(CC) $(CFLAGS) -c StarNetServerPreferences.cpp
+
+StarNetServerThreadHelper.o:		StarNetServerThreadHelper.cpp StarNetServerThreadHelper.h StarNetServerThread.h
+				$(CC) $(CFLAGS) -c StarNetServerThreadHelper.cpp
 
 StarNetServerThread.o:		StarNetServerThread.cpp StarNetServerThread.h StarNetServerApp.h ../Common/Defs.h ../Common/CacheManager.h \
 							../Common/HeaderData.h ../Common/AMBEData.h ../Common/G2ProtocolHandler.h ../Common/DStarDefines.h ../Common/Utils.h \

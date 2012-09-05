@@ -19,8 +19,8 @@
 #ifndef	StarNetServerApp_H
 #define	StarNetServerApp_H
 
+#include "StarNetServerThreadHelper.h"
 #include "StarNetServerConfig.h"
-#include "StarNetServerThread.h"
 #include "StarNetServerFrame.h"
 #include "Defs.h"
 
@@ -155,14 +155,14 @@ public:
 	virtual bool writeConfig();
 
 private:
-	bool                  m_nolog;
-	bool                  m_gui;
-	wxString              m_logDir;
-	wxString              m_confDir;
-	CStarNetServerFrame*  m_frame;
-	CStarNetServerThread* m_thread;
-	CStarNetServerConfig* m_config;
-	wxLogChain*           m_logChain;
+	bool                        m_nolog;
+	bool                        m_gui;
+	wxString                    m_logDir;
+	wxString                    m_confDir;
+	CStarNetServerFrame*        m_frame;
+	CStarNetServerThreadHelper* m_thread;
+	CStarNetServerConfig*       m_config;
+	wxLogChain*                 m_logChain;
 
 	void createThread();
 };

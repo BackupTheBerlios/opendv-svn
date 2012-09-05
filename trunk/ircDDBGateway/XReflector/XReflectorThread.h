@@ -26,7 +26,7 @@
 
 #include <wx/wx.h>
 
-class CXReflectorThread : public wxThread {
+class CXReflectorThread {
 public:
 	CXReflectorThread(const wxString& name, const wxString& lopgDir);
 	virtual ~CXReflectorThread();
@@ -35,8 +35,8 @@ public:
 	virtual void setDPlus(bool enabled);
 	virtual void setMiscellaneous(bool logEnabled);
 
-	virtual void* Entry();
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	wxString                  m_name;

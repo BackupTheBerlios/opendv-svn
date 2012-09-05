@@ -225,6 +225,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\XReflectorThreadHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\XReflectorUserLog.cpp"
 				>
 			</File>
@@ -288,6 +292,10 @@
 			</File>
 			<File
 				RelativePath=".\XReflectorThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XReflectorThreadHelper.h"
 				>
 			</File>
 			<File

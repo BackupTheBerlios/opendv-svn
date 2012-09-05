@@ -212,6 +212,10 @@
 				RelativePath=".\IRCDDBGatewayThread.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\IRCDDBGatewayThreadHelper.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -256,6 +260,10 @@
 			</File>
 			<File
 				RelativePath=".\IRCDDBGatewayThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IRCDDBGatewayThreadHelper.h"
 				>
 			</File>
 		</Filter>

@@ -34,7 +34,6 @@
 const unsigned int DPLUS_DUMMY_PORT = 65013U;
 
 CXReflectorThread::CXReflectorThread(const wxString& name, const wxString& logDir) :
-wxThread(wxTHREAD_JOINABLE),
 m_name(name),
 m_logDir(logDir),
 m_killed(false),
@@ -64,7 +63,7 @@ CXReflectorThread::~CXReflectorThread()
 	CXReflectorDPlusHandler::finalise();
 }
 
-void* CXReflectorThread::Entry()
+void CXReflectorThread::run()
 {
 	// Truncate the old Links.log file
 	wxString fullName = LINKS_BASE_NAME;
@@ -101,10 +100,10 @@ void* CXReflectorThread::Entry()
 
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_dextraHandler == NULL || m_dplusHandler == NULL || m_callsign.IsEmpty()))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_stopped = false;
 
@@ -145,7 +144,7 @@ void* CXReflectorThread::Entry()
 			m_statusTimer.reset();
 		}
 
-		Sleep(TIME_PER_TIC_MS);
+		::wxMilliSleep(TIME_PER_TIC_MS);
 
 		unsigned long ms = stopWatch.Time();
 
@@ -175,8 +174,6 @@ void* CXReflectorThread::Entry()
 		userLogger->close();
 		delete userLogger;
 	}
-
-	return NULL;
 }
 
 void CXReflectorThread::kill()

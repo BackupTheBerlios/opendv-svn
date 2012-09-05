@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -160,11 +160,7 @@ bool CTimerControlAppD::init()
 
 void CTimerControlAppD::run()
 {
-	m_thread->Create();
-	m_thread->Run();
-
-	m_thread->Wait();
-	delete m_thread;
+	m_thread->run();
 
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 }

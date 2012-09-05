@@ -17,6 +17,7 @@
  */
 
 #include "TimeServerLogRedirect.h"
+#include "TimeServerThread.h"
 #include "TimeServerApp.h"
 #include "Version.h"
 #include "Logger.h"
@@ -126,8 +127,6 @@ int CTimeServerApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -218,23 +217,23 @@ bool CTimeServerApp::writeConfig()
 
 void CTimeServerApp::createThread()
 {
-	m_thread = new CTimeServerThread;
+	CTimeServerThread* thread = new CTimeServerThread;
 
 	wxString callsign, address;
 	bool sendA, sendB, sendC, sendD;
 	getGateway(callsign, sendA, sendB, sendC, sendD, address);
 	callsign.MakeUpper();
-	m_thread->setGateway(callsign, sendA, sendB, sendC, sendD, address);
+	thread->setGateway(callsign, sendA, sendB, sendC, sendD, address);
 	wxLogInfo(wxT("Callsign set to %s, module %s%s%s%s, address: %s"), callsign.c_str(), sendA ? wxT("A") : wxT(""), sendB ? wxT("B") : wxT(""), sendC ? wxT("C") : wxT(""), sendD ? wxT("D") : wxT(""), address.c_str());
 
 	LANGUAGE language;
 	FORMAT format;
 	INTERVAL interval;
 	getAnnouncements(language, format, interval);
-	m_thread->setAnnouncements(language, format, interval);
+	thread->setAnnouncements(language, format, interval);
 	wxLogInfo(wxT("Language: %d, format: %d, interval: %d"), int(language), int(format), int(interval));
 
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CTimeServerThreadHelper(thread);
+	m_thread->start();
 }

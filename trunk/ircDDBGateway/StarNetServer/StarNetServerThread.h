@@ -30,7 +30,7 @@
 
 #include <wx/wx.h>
 
-class CStarNetServerThread : public wxThread {
+class CStarNetServerThread {
 public:
 	CStarNetServerThread(bool nolog, const wxString& logDir);
 	virtual ~CStarNetServerThread();
@@ -46,8 +46,8 @@ public:
 	virtual void setIRC(IIRC* irc);
 	virtual void setLog(bool enabled);
 
-	virtual void* Entry();
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	bool                    m_nolog;

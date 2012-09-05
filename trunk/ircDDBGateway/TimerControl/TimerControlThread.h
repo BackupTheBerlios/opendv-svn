@@ -25,20 +25,19 @@
 
 #include <wx/wx.h>
 
-class CTimerControlThread : public wxThread {
+class CTimerControlThread {
 public:
 	CTimerControlThread();
 	virtual ~CTimerControlThread();
 
-	virtual void  setGateway(const wxString& address, unsigned int port, const wxString& password);
-	virtual void  setDelay(bool enabled);
-	virtual void  setFileName(const wxString& fileName);
+	virtual void setGateway(const wxString& address, unsigned int port, const wxString& password);
+	virtual void setDelay(bool enabled);
+	virtual void setFileName(const wxString& fileName);
 
-	virtual void  reload();
+	virtual void reload();
 
-	virtual void* Entry();
-
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	wxString                           m_password;

@@ -5,10 +5,10 @@ CFLAGS :=		-I../ircDDB -I../Common $(CFLAGS)
 
 xreflector:		XReflectorApp.o XReflectorConfig.o XReflectorDExtraHandler.o XReflectorDPlusHandler.o XReflectorFrame.o XReflectorLogRedirect.o \
 				XReflectorMiscellaneousSet.o XReflectorPreferences.o XReflectorReflectorHandler.o XReflectorReflectorSet.o XReflectorThread.o \
-				XReflectorDPlusSet.o XReflectorUserLog.o ../Common/Common.a
+				XReflectorDPlusSet.o XReflectorUserLog.o XReflectorThreadHelper.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o xreflector XReflectorApp.o XReflectorConfig.o XReflectorDExtraHandler.o XReflectorDPlusHandler.o XReflectorFrame.o \
 				XReflectorLogRedirect.o XReflectorMiscellaneousSet.o XReflectorPreferences.o XReflectorReflectorHandler.o XReflectorReflectorSet.o \
-				XReflectorThread.o XReflectorDPlusSet.o XReflectorUserLog.o ../Common/Common.a $(LIBS)
+				XReflectorThread.o XReflectorDPlusSet.o XReflectorUserLog.o XReflectorThreadHelper.o ../Common/Common.a $(LIBS)
 
 xreflectord:	XReflectorAppD.o XReflectorConfig.o XReflectorDExtraHandler.o XReflectorDPlusHandler.o XReflectorReflectorHandler.o XReflectorThread.o \
 				XReflectorUserLog.o ../Common/Common.a
@@ -16,7 +16,7 @@ xreflectord:	XReflectorAppD.o XReflectorConfig.o XReflectorDExtraHandler.o XRefl
 				XReflectorReflectorHandler.o XReflectorThread.o XReflectorUserLog.o ../Common/Common.a $(LIBS)
 
 XReflectorApp.o:	XReflectorApp.cpp XReflectorApp.h XReflectorThread.h XReflectorFrame.h XReflectorConfig.h XReflectorLogRedirect.h \
-				XReflectorDefs.h XReflectorReflectorHandler.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h
+				XReflectorDefs.h XReflectorReflectorHandler.h XReflectorThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c XReflectorApp.cpp
 
 XReflectorAppD.o:	XReflectorAppD.cpp XReflectorAppD.h XReflectorThread.h XReflectorConfig.h XReflectorDefs.h XReflectorReflectorHandler.h \
@@ -61,6 +61,9 @@ XReflectorReflectorHandler.o:	XReflectorReflectorHandler.cpp XReflectorReflector
 XReflectorReflectorSet.o:	XReflectorReflectorSet.cpp XReflectorReflectorSet.h ../Common/DStarDefines.h ../Common/AddressTextCtrl.h \
 					../Common/CallsignTextCtrl.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c XReflectorReflectorSet.cpp
+
+XReflectorThreadHelper.o:		XReflectorThreadHelper.cpp XReflectorThreadHelper.h
+				$(CC) $(CFLAGS) -c XReflectorThreadHelper.cpp
 
 XReflectorThread.o:		XReflectorThread.cpp XReflectorThread.h XReflectorReflectorHandler.h XReflectorDExtraHandler.h XReflectorDPlusHandler.h \
 					XReflectorDefs.h XReflectorUserLog.h ../Common/Defs.h ../Common/HeaderData.h ../Common/AMBEData.h \

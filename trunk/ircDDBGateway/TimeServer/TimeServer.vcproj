@@ -208,6 +208,10 @@
 				RelativePath=".\TimeServerThread.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\TimeServerThreadHelper.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -248,6 +252,10 @@
 			</File>
 			<File
 				RelativePath=".\TimeServerThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TimeServerThreadHelper.h"
 				>
 			</File>
 		</Filter>

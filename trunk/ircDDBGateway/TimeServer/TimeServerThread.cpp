@@ -34,7 +34,6 @@ enum SLOW_DATA {
 };
 
 CTimeServerThread::CTimeServerThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_socket(wxEmptyString, 0U),
 m_callsign(),
 m_callsignA(),
@@ -76,14 +75,14 @@ CTimeServerThread::~CTimeServerThread()
 	CAMBEData::finalise();
 }
 
-void* CTimeServerThread::Entry()
+void CTimeServerThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && m_address.s_addr == INADDR_NONE && m_callsignA.IsEmpty() && m_callsignB.IsEmpty() && m_callsignC.IsEmpty() && m_callsignD.IsEmpty())
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	loadAMBE();
 
@@ -111,14 +110,12 @@ void* CTimeServerThread::Entry()
 
 		lastMin = min;
 
-		Sleep(450UL);
+		::wxMilliSleep(450UL);
 	}
 
 	wxLogMessage(wxT("Stopping the Time Server thread"));
 
 	m_socket.close();
-
-	return NULL;
 }
 
 void CTimeServerThread::kill()
@@ -1194,7 +1191,7 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 				return true;
 		}
 
-		Sleep(10UL);
+		::wxMilliSleep(10UL);
 	}
 }
 

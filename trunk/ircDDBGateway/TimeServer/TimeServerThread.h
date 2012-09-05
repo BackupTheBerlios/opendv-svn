@@ -59,7 +59,7 @@ private:
 
 WX_DECLARE_STRING_HASH_MAP(CIndexRecord*, CIndexList_t);
 
-class CTimeServerThread : public wxThread {
+class CTimeServerThread {
 public:
 	CTimeServerThread();
 	virtual ~CTimeServerThread();
@@ -67,8 +67,8 @@ public:
 	virtual bool setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address);
 	virtual void setAnnouncements(LANGUAGE language, FORMAT format, INTERVAL interval);
 
-	virtual void* Entry();
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	CUDPReaderWriter m_socket;

@@ -3,10 +3,11 @@ all:			timercontrol timercontrold
 CFLAGS :=		-I../Common $(CFLAGS)
 
 timercontrol:	TimerControlApp.o TimerControlConfig.o TimerControlFrame.o TimerControlItemFile.o TimerControlPreferences.o \
-				TimerControlRemoteControlHandler.o TimerControlRemoteSet.o TimerControlRepeaterPanel.o TimerControlThread.o ../Common/Common.a
+				TimerControlRemoteControlHandler.o TimerControlRemoteSet.o TimerControlRepeaterPanel.o TimerControlThread.o TimerControlThreadHelper.o \
+				../Common/Common.a
 				$(CC) $(LDFLAGS) -o timercontrol TimerControlApp.o TimerControlConfig.o TimerControlFrame.o TimerControlItemFile.o \
 				TimerControlPreferences.o TimerControlRemoteControlHandler.o TimerControlRemoteSet.o TimerControlRepeaterPanel.o \
-				TimerControlThread.o ../Common/Common.a $(LIBS)
+				TimerControlThread.o TimerControlThreadHelper.o ../Common/Common.a $(LIBS)
 
 timercontrold:	TimerControlAppD.o TimerControlConfig.o TimerControlItemFile.o TimerControlRemoteControlHandler.o TimerControlThread.o \
 				../Common/Common.a
@@ -14,7 +15,7 @@ timercontrold:	TimerControlAppD.o TimerControlConfig.o TimerControlItemFile.o Ti
 				TimerControlThread.o ../Common/Common.a $(LIBS)
 
 TimerControlApp.o:		TimerControlApp.cpp TimerControlApp.h TimerControlFrame.h TimerControlConfig.h TimerControlDefs.h TimerControlThread.h \
-				../Common/Logger.h ../Common/Version.h
+				TimerControlThreadHelper.h ../Common/Logger.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c TimerControlApp.cpp
 
 TimerControlAppD.o:		TimerControlAppD.cpp TimerControlAppD.h TimerControlFrame.h TimerControlConfig.h TimerControlDefs.h ../Common/Logger.h \
@@ -45,6 +46,9 @@ TimerControlRemoteSet.o:	TimerControlRemoteSet.cpp TimerControlRemoteSet.h ../Co
 TimerControlRepeaterPanel.o:	TimerControlRepeaterPanel.cpp TimerControlRepeaterPanel.h TimerControlApp.h TimerControlItem.h \
 								../Common/DStarDefines.h ../Common/HostFile.h
 				$(CC) $(CFLAGS) -c TimerControlRepeaterPanel.cpp
+
+TimerControlThreadHelper.o:	TimerControlThreadHelper.cpp TimerControlThreadHelper.h TimerControlThread.h
+				$(CC) $(CFLAGS) -c TimerControlThreadHelper.cpp
 
 TimerControlThread.o:	TimerControlThread.cpp TimerControlThread.h TimerControlRemoteControlHandler.h TimerControlItem.h TimerControlItemFile.h \
 				../Common/Defs.h ../Common/SHA256.h

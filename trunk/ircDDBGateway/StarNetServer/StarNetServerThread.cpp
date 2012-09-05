@@ -34,7 +34,6 @@ const unsigned int DPLUS_DUMMY_PORT  = 65013U;
 const unsigned int REMOTE_DUMMY_PORT = 65015U;
 
 CStarNetServerThread::CStarNetServerThread(bool nolog, const wxString& logDir) :
-wxThread(wxTHREAD_JOINABLE),
 m_nolog(nolog),
 m_logDir(logDir),
 m_killed(false),
@@ -84,7 +83,7 @@ CStarNetServerThread::~CStarNetServerThread()
 #endif
 }
 
-void* CStarNetServerThread::Entry()
+void CStarNetServerThread::run()
 {
 	// Truncate the old StarNet.log file
 	wxFileName fileName(m_logDir, STARNET_BASE_NAME, wxT("log"));
@@ -126,17 +125,17 @@ void* CStarNetServerThread::Entry()
 	// Wait here until we have the essentials to run
 #if defined(DEXTRA_LINK)
 	while (!m_killed && (m_g2Handler == NULL || m_dextraHandler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 #elif defined(DCS_LINK)
 	while (!m_killed && (m_g2Handler == NULL || m_dcsHandler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 #else
 	while (!m_killed && (m_g2Handler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 #endif
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_stopped = false;
 
@@ -219,7 +218,7 @@ void* CStarNetServerThread::Entry()
 		CDCSHandler::clock(ms);
 #endif
 
-		Sleep(TIME_PER_TIC_MS);
+		::wxMilliSleep(TIME_PER_TIC_MS);
 	}
 
 	wxLogMessage(wxT("Stopping the StarNet Server thread"));
@@ -255,8 +254,6 @@ void* CStarNetServerThread::Entry()
 		headerLogger->close();
 		delete headerLogger;
 	}
-
-	return NULL;
 }
 
 void CStarNetServerThread::kill()

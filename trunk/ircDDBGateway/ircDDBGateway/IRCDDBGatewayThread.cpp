@@ -47,7 +47,6 @@ const unsigned int DCS_DUMMY_PORT    = 65015U;
 const unsigned int REMOTE_DUMMY_PORT = 65016U;
 
 CIRCDDBGatewayThread::CIRCDDBGatewayThread(const wxString& logDir, const wxString& name) :
-wxThread(wxTHREAD_JOINABLE),
 m_logDir(logDir),
 m_name(name),
 m_killed(false),
@@ -121,7 +120,7 @@ CIRCDDBGatewayThread::~CIRCDDBGatewayThread()
 	CAudioUnit::finalise();
 }
 
-void* CIRCDDBGatewayThread::Entry()
+void CIRCDDBGatewayThread::run()
 {
 	// Truncate the old Links.log file
 	wxString fullName = LINKS_BASE_NAME;
@@ -188,10 +187,10 @@ void* CIRCDDBGatewayThread::Entry()
 
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_dextraHandler == NULL || m_dplusHandler == NULL || m_dcsHandler == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL)|| m_irc == NULL || m_gatewayCallsign.IsEmpty()))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_stopped = false;
 
@@ -341,7 +340,7 @@ void* CIRCDDBGatewayThread::Entry()
 			}
 		}
 
-		Sleep(TIME_PER_TIC_MS);
+		::wxMilliSleep(TIME_PER_TIC_MS);
 	}
 
 	wxLogMessage(wxT("Stopping the ircDDB Gateway thread"));
@@ -391,8 +390,6 @@ void* CIRCDDBGatewayThread::Entry()
 		headerLogger->close();
 		delete headerLogger;
 	}
-
-	return NULL;
 }
 
 void CIRCDDBGatewayThread::kill()

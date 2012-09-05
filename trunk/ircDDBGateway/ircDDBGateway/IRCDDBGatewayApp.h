@@ -19,9 +19,9 @@
 #ifndef	IRCDDBGatewayApp_H
 #define	IRCDDBGatewayApp_H
 
+#include "IRCDDBGatewayThreadHelper.h"
 #include "IRCDDBGatewayStatusData.h"
 #include "IRCDDBGatewayConfig.h"
-#include "IRCDDBGatewayThread.h"
 #include "IRCDDBGatewayFrame.h"
 #include "Defs.h"
 
@@ -122,15 +122,15 @@ public:
 	virtual bool writeConfig();
 
 private:
-	wxString              m_name;
-	bool                  m_nolog;
-	bool                  m_gui;
-	wxString              m_logDir;
-	wxString              m_confDir;
-	CIRCDDBGatewayFrame*  m_frame;
-	CIRCDDBGatewayThread* m_thread;
-	CIRCDDBGatewayConfig* m_config;
-	wxLogChain*           m_logChain;
+	wxString                    m_name;
+	bool                        m_nolog;
+	bool                        m_gui;
+	wxString                    m_logDir;
+	wxString                    m_confDir;
+	CIRCDDBGatewayFrame*        m_frame;
+	CIRCDDBGatewayThreadHelper* m_thread;
+	CIRCDDBGatewayConfig*       m_config;
+	wxLogChain*                 m_logChain;
 
 	void createThread();
 };

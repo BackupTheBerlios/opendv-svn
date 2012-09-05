@@ -3,11 +3,11 @@ all:			ircddbgateway ircddbgatewayd
 CFLAGS :=		-I../ircDDB -I../Common $(CFLAGS)
 
 ircddbgateway:	IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o IRCDDBGatewayLogRedirect.o \
-				IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o ../ircDDB/libircDDB.a \
-				../Common/Common.a
+				IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o IRCDDBGatewayThreadHelper.o \
+				../ircDDB/libircDDB.a ../Common/Common.a
 				$(CC) $(LDFLAGS) -o ircddbgateway IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o \
 				IRCDDBGatewayLogRedirect.o IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o \
-				../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
+				IRCDDBGatewayThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
 
 ircddbgatewayd:	IRCDDBGatewayAppD.o IRCDDBGatewayConfig.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o ../ircDDB/libircDDB.a ../Common/Common.a
 				$(CC) $(LDFLAGS) -o ircddbgatewayd IRCDDBGatewayAppD.o IRCDDBGatewayConfig.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o \
@@ -15,7 +15,7 @@ ircddbgatewayd:	IRCDDBGatewayAppD.o IRCDDBGatewayConfig.o IRCDDBGatewayStatusDat
 
 IRCDDBGatewayApp.o:		IRCDDBGatewayApp.cpp IRCDDBGatewayApp.h IRCDDBGatewayThread.h IRCDDBGatewayFrame.h IRCDDBGatewayConfig.h IRCDDBGatewayLogRedirect.h \
 				IRCDDBGatewayStatusData.h IRCDDBGatewayDefs.h ../Common/Defs.h ../Common/RepeaterProtocolHandler.h ../Common/HBRepeaterProtocolHandler.h \
-				../Common/IcomRepeaterProtocolHandler.h ../Common/APRSWriter.h ../Common/Logger.h ../Common/Version.h ../ircDDB/IRCDDB.h
+				IRCDDBGatewayThreadHelper.h ../Common/IcomRepeaterProtocolHandler.h ../Common/APRSWriter.h ../Common/Logger.h ../Common/Version.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayApp.cpp
 
 IRCDDBGatewayAppD.o:	IRCDDBGatewayAppD.cpp IRCDDBGatewayAppD.h IRCDDBGatewayThread.h IRCDDBGatewayConfig.h IRCDDBGatewayDefs.h ../Common/Defs.h \
@@ -47,6 +47,9 @@ IRCDDBGatewayPreferences.o:	IRCDDBGatewayPreferences.cpp IRCDDBGatewayPreference
 
 IRCDDBGatewayStatusData.o:	IRCDDBGatewayStatusData.cpp IRCDDBGatewayStatusData.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayStatusData.cpp
+
+IRCDDBGatewayThreadHelper.o:		IRCDDBGatewayThreadHelper.cpp IRCDDBGatewayThreadHelper.h IRCDDBGatewayThread.h IRCDDBGatewayStatusData.h
+				$(CC) $(CFLAGS) -c IRCDDBGatewayThreadHelper.cpp
 
 IRCDDBGatewayThread.o:		IRCDDBGatewayThread.cpp IRCDDBGatewayThread.h IRCDDBGatewayStatusData.h IRCDDBGatewayApp.h ../Common/Defs.h \
 				../Common/CacheManager.h ../Common/HeaderData.h ../Common/AMBEData.h ../Common/HostFile.h ../Common/RepeaterProtocolHandler.h \

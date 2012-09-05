@@ -208,6 +208,10 @@
 				RelativePath=".\StarNetServerThread.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\StarNetServerThreadHelper.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -248,6 +252,10 @@
 			</File>
 			<File
 				RelativePath=".\StarNetServerThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StarNetServerThreadHelper.h"
 				>
 			</File>
 		</Filter>

@@ -129,8 +129,6 @@ int CXReflectorApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -231,11 +229,11 @@ bool CXReflectorApp::writeConfig()
 
 void CXReflectorApp::createThread()
 {
-	m_thread = new CXReflectorThread(m_name, m_logDir);
+	CXReflectorThread* thread = new CXReflectorThread(m_name, m_logDir);
 
 	wxString reflector, address;
 	getReflector(reflector, address);
-	m_thread->setReflector(reflector, address);
+	thread->setReflector(reflector, address);
 	wxLogInfo(wxT("Callsign set to \"%s\", address set to \"%s\""), reflector.c_str(), address.c_str());
 
 	reflector.Append(wxT("        "));
@@ -268,14 +266,14 @@ void CXReflectorApp::createThread()
 	bool dplusEnabled;
 	getDPlus(dplusEnabled);
 	wxLogInfo(wxT("D-Plus enabled set to %d"), dplusEnabled);
-	m_thread->setDPlus(dplusEnabled);
+	thread->setDPlus(dplusEnabled);
 
 	bool logEnabled;
 	getMiscellaneous(logEnabled);
 	wxLogInfo(wxT("Log enabled set to %d"), logEnabled);
-	m_thread->setMiscellaneous(logEnabled);
+	thread->setMiscellaneous(logEnabled);
 
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CXReflectorThreadHelper(thread);
+	m_thread->start();
 }

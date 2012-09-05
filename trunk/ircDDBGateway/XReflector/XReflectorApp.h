@@ -19,7 +19,7 @@
 #ifndef	XReflectorApp_H
 #define	XReflectorApp_H
 
-#include "XReflectorThread.h"
+#include "XReflectorThreadHelper.h"
 #include "XReflectorConfig.h"
 #include "XReflectorFrame.h"
 #include "XReflectorDefs.h"
@@ -60,15 +60,15 @@ public:
 	virtual bool writeConfig();
 
 private:
-	wxString           m_name;
-	bool               m_nolog;
-	bool               m_gui;
-	wxString           m_logDir;
-	wxString           m_confDir;
-	CXReflectorFrame*  m_frame;
-	CXReflectorThread* m_thread;
-	CXReflectorConfig* m_config;
-	wxLogChain*        m_logChain;
+	wxString                 m_name;
+	bool                     m_nolog;
+	bool                     m_gui;
+	wxString                 m_logDir;
+	wxString                 m_confDir;
+	CXReflectorFrame*        m_frame;
+	CXReflectorThreadHelper* m_thread;
+	CXReflectorConfig*       m_config;
+	wxLogChain*              m_logChain;
 
 	void createThread();
 };

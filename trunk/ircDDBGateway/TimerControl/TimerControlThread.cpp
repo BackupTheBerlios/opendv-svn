@@ -22,7 +22,6 @@
 
 
 CTimerControlThread::CTimerControlThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_password(),
 m_fileName(),
 m_delay(false),
@@ -46,17 +45,17 @@ CTimerControlThread::~CTimerControlThread()
 	delete m_handler;
 }
 
-void* CTimerControlThread::Entry()
+void CTimerControlThread::run()
 {
 	if (m_delay) {
 		for (unsigned int i = 0U; i < 20U; i++) {
 			if (m_killed)
-				return NULL;
+				return;
 
-			Sleep(1000UL);
+			::wxMilliSleep(1000UL);
 		}
 	} else {
-		Sleep(100UL);
+		::wxMilliSleep(100UL);
 	}
 
 	int lastDay  = 0;
@@ -109,10 +108,8 @@ void* CTimerControlThread::Entry()
 			lastMin  = min;
 		}
 
-		Sleep(5000UL);
+		::wxMilliSleep(5000UL);
 	}
-
-	return NULL;
 }
 
 void CTimerControlThread::setGateway(const wxString& address, unsigned int port, const wxString& password)
@@ -180,7 +177,7 @@ bool CTimerControlThread::login()
 			return false;
 		}
 
-		Sleep(100UL);
+		::wxMilliSleep(100UL);
 
 		type = m_handler->readType();
 		switch (type) {
@@ -194,7 +191,7 @@ bool CTimerControlThread::login()
 				m_handler->close();
 				return false;
 			default:
-				Sleep(100UL);
+				::wxMilliSleep(100UL);
 				break;
 		}
 	} while (type != TCT_RANDOM);
@@ -209,7 +206,7 @@ bool CTimerControlThread::login()
 			return false;
 		}
 
-		Sleep(100UL);
+		::wxMilliSleep(100UL);
 
 		type = m_handler->readType();
 		switch (type) {
@@ -224,7 +221,7 @@ bool CTimerControlThread::login()
 				m_handler->close();
 				return false;
 			default:
-				Sleep(100UL);
+				::wxMilliSleep(100UL);
 				break;
 		}
 	} while (type != TCT_ACK);
@@ -243,7 +240,7 @@ bool CTimerControlThread::link(const wxString& repeater, RECONNECT reconnect, co
 			return false;
 		}
 
-		Sleep(100UL);
+		::wxMilliSleep(100UL);
 
 		TC_TYPE type = m_handler->readType();
 		switch (type) {
@@ -255,7 +252,7 @@ bool CTimerControlThread::link(const wxString& repeater, RECONNECT reconnect, co
 				m_handler->readNAK();
 				return false;
 			default:
-				Sleep(100UL);
+				::wxMilliSleep(100UL);
 				break;
 		}
 	}

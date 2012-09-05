@@ -36,7 +36,7 @@
 
 #include <wx/wx.h>
 
-class CIRCDDBGatewayThread : public wxThread {
+class CIRCDDBGatewayThread {
 public:
 	CIRCDDBGatewayThread(const wxString& logDir, const wxString& name);
 	virtual ~CIRCDDBGatewayThread();
@@ -65,8 +65,8 @@ public:
 
 	virtual CIRCDDBGatewayStatusData* getStatus() const;
 
-	virtual void* Entry();
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	wxString                  m_logDir;
