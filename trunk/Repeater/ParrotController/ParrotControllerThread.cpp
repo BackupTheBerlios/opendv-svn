@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 
 
 CParrotControllerThread::CParrotControllerThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_mode(PM_PARROT),
 m_state(PS_WAITING),
 m_beaconTimer(1000U, 0U),
@@ -48,14 +47,14 @@ CParrotControllerThread::~CParrotControllerThread()
 {
 }
 
-void* CParrotControllerThread::Entry()
+void CParrotControllerThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && m_protocolHandler == NULL)
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_writer.setDirectory(::wxGetHomeDir());
 
@@ -134,7 +133,7 @@ void* CParrotControllerThread::Entry()
 		unsigned int ms = timer.Time();
 
 		if (ms < DSTAR_FRAME_TIME_MS) {
-			Sleep(DSTAR_FRAME_TIME_MS - ms);
+			::wxMilliSleep(DSTAR_FRAME_TIME_MS - ms);
 			ms = timer.Time();
 		}
 
@@ -147,8 +146,6 @@ void* CParrotControllerThread::Entry()
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
-
-	return NULL;
 }
 
 void CParrotControllerThread::kill()

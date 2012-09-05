@@ -153,9 +153,7 @@ bool CSplitRepeaterD::init()
 
 void CSplitRepeaterD::run()
 {
-	m_thread->start();
-
-	m_thread->wait();
+	m_thread->run();
 
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 }

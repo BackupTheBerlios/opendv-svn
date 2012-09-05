@@ -48,8 +48,8 @@ m_txDelay(NULL)
 	sizer->Add(versionLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	m_version = new wxChoice(this, CHOICE_VERSION, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_version->Append(wxT("V1"));
-	m_version->Append(wxT("V2"));
+	m_version->Append(wxT("1"));
+	m_version->Append(wxT("2"));
 	sizer->Add(m_version, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_version->SetSelection(version == DVRPTR_V2 ? 1 : 0);
 

@@ -237,6 +237,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AnalogueRepeaterThreadHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\AnalogueRepeaterTimesSet.cpp"
 				>
 			</File>
@@ -312,6 +316,10 @@
 			</File>
 			<File
 				RelativePath=".\AnalogueRepeaterThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AnalogueRepeaterThreadHelper.h"
 				>
 			</File>
 			<File

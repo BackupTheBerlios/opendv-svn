@@ -19,8 +19,8 @@
 #ifndef	DVAPNodeApp_H
 #define	DVAPNodeApp_H
 
+#include "DVAPNodeThreadHelper.h"
 #include "DVAPNodeStatusData.h"
-#include "DVAPNodeThread.h"
 #include "DVAPNodeConfig.h"
 #include "DVAPNodeFrame.h"
 #include "DVAPNodeDefs.h"
@@ -72,15 +72,15 @@ public:
 	virtual bool writeConfig();
 
 private:
-	wxString         m_name;
-	bool             m_nolog;
-	bool             m_gui;
-	wxString         m_logDir;
-	wxString         m_confDir;
-	CDVAPNodeFrame*  m_frame;
-	IDVAPNodeThread* m_thread;
-	CDVAPNodeConfig* m_config;
-	wxLogChain*      m_logChain;
+	wxString               m_name;
+	bool                   m_nolog;
+	bool                   m_gui;
+	wxString               m_logDir;
+	wxString               m_confDir;
+	CDVAPNodeFrame*        m_frame;
+	CDVAPNodeThreadHelper* m_thread;
+	CDVAPNodeConfig*       m_config;
+	wxLogChain*            m_logChain;
 
 	void createThread();
 };

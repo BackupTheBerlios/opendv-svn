@@ -30,7 +30,6 @@ const unsigned int TICKS_PER_SEC = 200U;
 const unsigned int FRAME_WAIT_TIME = 100U;
 
 CSplitRepeaterThread::CSplitRepeaterThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_protocolHandler(NULL),
 m_gatewayAddress(),
 m_gatewayPort(0U),
@@ -160,23 +159,14 @@ CSplitRepeaterThread::~CSplitRepeaterThread()
 	delete[] m_receiver2Data;
 }
 
-void CSplitRepeaterThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CSplitRepeaterThread::Entry()
+void CSplitRepeaterThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_protocolHandler == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	CSplitRepeaterHeaderData::initialise();
 
@@ -274,7 +264,7 @@ void* CSplitRepeaterThread::Entry()
 			}
 		}
 
-		Sleep(CYCLE_TIME);
+		::wxMilliSleep(CYCLE_TIME);
 
 		unsigned long ms = timer.Time();
 
@@ -288,18 +278,11 @@ void* CSplitRepeaterThread::Entry()
 	m_protocolHandler->close();
 
 	delete m_protocolHandler;
-
-	return NULL;
 }
 
 void CSplitRepeaterThread::kill()
 {
 	m_killed = true;
-}
-
-void CSplitRepeaterThread::wait()
-{
-	Wait();
 }
 
 void CSplitRepeaterThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)

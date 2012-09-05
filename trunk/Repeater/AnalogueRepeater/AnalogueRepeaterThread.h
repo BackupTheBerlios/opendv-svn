@@ -52,7 +52,7 @@ enum ACK_TYPE {
 	ACK_BATTERY_SENDING
 };
 
-class CAnalogueRepeaterThread : public wxThread, public IAudioCallback {
+class CAnalogueRepeaterThread : public IAudioCallback {
 public:
 	CAnalogueRepeaterThread();
 	virtual ~CAnalogueRepeaterThread();
@@ -95,8 +95,8 @@ public:
 
 	virtual CAnalogueRepeaterStatusData* getStatus();
 
-	virtual void* Entry();
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	CSoundCardReaderWriter*   m_radioSoundcard;

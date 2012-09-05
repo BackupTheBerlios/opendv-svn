@@ -19,8 +19,8 @@
 #ifndef	GMSKRepeaterApp_H
 #define	GMSKRepeaterApp_H
 
+#include "GMSKRepeaterThreadHelper.h"
 #include "GMSKRepeaterStatusData.h"
-#include "GMSKRepeaterThread.h"
 #include "GMSKRepeaterConfig.h"
 #include "GMSKRepeaterFrame.h"
 #include "GMSKRepeaterDefs.h"
@@ -88,15 +88,15 @@ public:
 	virtual void command4();
 
 private:
-	wxString             m_name;
-	bool                 m_nolog;
-	bool                 m_gui;
-	wxString             m_logDir;
-	wxString             m_confDir;
-	CGMSKRepeaterFrame*  m_frame;
-	IGMSKRepeaterThread* m_thread;
-	CGMSKRepeaterConfig* m_config;
-	wxLogChain*          m_logChain;
+	wxString                   m_name;
+	bool                       m_nolog;
+	bool                       m_gui;
+	wxString                   m_logDir;
+	wxString                   m_confDir;
+	CGMSKRepeaterFrame*        m_frame;
+	CGMSKRepeaterThreadHelper* m_thread;
+	CGMSKRepeaterConfig*       m_config;
+	wxLogChain*                m_logChain;
 
 	void createThread();
 };

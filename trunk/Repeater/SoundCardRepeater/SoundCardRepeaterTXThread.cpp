@@ -32,7 +32,6 @@ const unsigned int SILENCE_THRESHOLD = 2U;
 // #define	TX_TO_WAV_FILE
 
 CSoundCardRepeaterTXThread::CSoundCardRepeaterTXThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_soundcard(NULL),
 m_protocolHandler(NULL),
 m_controller(NULL),
@@ -70,23 +69,14 @@ CSoundCardRepeaterTXThread::~CSoundCardRepeaterTXThread()
 	delete   m_header;
 }
 
-void CSoundCardRepeaterTXThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CSoundCardRepeaterTXThread::Entry()
+void CSoundCardRepeaterTXThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_soundcard == NULL || m_protocolHandler == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        ")) || m_controller == NULL))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_controller->setActive(false);
 	m_controller->setRadioTransmit(false);
@@ -176,18 +166,11 @@ void* CSoundCardRepeaterTXThread::Entry()
 		delete m_writer;
 	}
 #endif
-
-	return NULL;
 }
 
 void CSoundCardRepeaterTXThread::kill()
 {
 	m_killed = true;
-}
-
-void CSoundCardRepeaterTXThread::wait()
-{
-	Wait();
 }
 
 void CSoundCardRepeaterTXThread::setReader(CWAVFileReader* reader)

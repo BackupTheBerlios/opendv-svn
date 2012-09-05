@@ -16,6 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "AnalogueRepeaterThread.h"
 #include "AnalogueRepeaterLogger.h"
 #include "AnalogueRepeaterApp.h"
 #include "ExternalController.h"
@@ -133,8 +134,6 @@ int CAnalogueRepeaterApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -393,7 +392,7 @@ void CAnalogueRepeaterApp::command2()
 
 void CAnalogueRepeaterApp::createThread()
 {
-	m_thread = new CAnalogueRepeaterThread;
+	CAnalogueRepeaterThread* thread = new CAnalogueRepeaterThread;
 
 	wxString openId, closeId, beacon1, beacon2;
 	unsigned int speed, freq;
@@ -467,7 +466,7 @@ void CAnalogueRepeaterApp::createThread()
 			break;
 	}
 
-	m_thread->setCallsign(openIdAudio, closeIdAudio, beacon1Audio, beacon2Audio, level1, level2);
+	thread->setCallsign(openIdAudio, closeIdAudio, beacon1Audio, beacon2Audio, level1, level2);
 
 	wxString radioAck, extAck, batteryAck;
 	unsigned int ack, minimum;
@@ -525,11 +524,11 @@ void CAnalogueRepeaterApp::createThread()
 			break;
 	}
 
-	m_thread->setAck(radioAckAudio, extAckAudio, batteryAckAudio, level, ack, minimum);
+	thread->setAck(radioAckAudio, extAckAudio, batteryAckAudio, level, ack, minimum);
 
 	unsigned int callsignTime, timeout, lockoutTime, hangTime, latchTime;
 	getTimes(callsignTime, timeout, lockoutTime, hangTime, latchTime);
-	m_thread->setTimes(callsignTime, timeout, lockoutTime, hangTime, latchTime);
+	thread->setTimes(callsignTime, timeout, lockoutTime, hangTime, latchTime);
 	wxLogInfo(wxT("Times set to: callsign time: %u secs, timeout: %u secs, lockout time: %u secs, hang time: %u secs, latch time: %u secs"), callsignTime, timeout, lockoutTime, hangTime, latchTime);
 
 	bool tbEnable, ctcssInternal;
@@ -537,7 +536,7 @@ void CAnalogueRepeaterApp::createThread()
 	unsigned int ctcssHangTime;
 	ANALOGUE_CTCSS_OUTPUT ctcssOutput;
 	getTones(tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput);
-	m_thread->setTones(tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput);
+	thread->setTones(tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput);
 	wxLogInfo(wxT("Tones set to: toneburst enable: %u, threshold: %.3f, CTCSS freq: %.1f Hz, internal: %u, threshold: %.3f, level: %.3f, hang time: %u ms, output: %d"), tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime * 20U, ctcssOutput);
 
 	ANALOGUE_CALLSIGN_START callsignAtStart;
@@ -545,7 +544,7 @@ void CAnalogueRepeaterApp::createThread()
 	ANALOGUE_TIMEOUT_TYPE timeoutType;
 	ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff;
 	getFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
-	m_thread->setFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	thread->setFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
 	wxLogInfo(wxT("Feel set to: callsignAtStart: %d, callsignAtEnd: %u, timeoutType: %d, callsignHoldoff: %d"), callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
 
 	wxString readDevice, writeDevice;
@@ -560,13 +559,13 @@ void CAnalogueRepeaterApp::createThread()
 #else
 		CSoundCardReaderWriter* soundcard = new CSoundCardReaderWriter(readDevice, writeDevice, ANALOGUE_RADIO_SAMPLE_RATE, 64U);
 #endif
-		soundcard->setCallback(m_thread, SOUNDCARD_RADIO);
+		soundcard->setCallback(thread, SOUNDCARD_RADIO);
 
 		bool res = soundcard->open();
 		if (!res)
 			wxLogError(wxT("Cannot open the radio sound card"));
 		else
-			m_thread->setRadio(soundcard, audioDelay, deEmphasis, preEmphasis, vogad);
+			thread->setRadio(soundcard, audioDelay, deEmphasis, preEmphasis, vogad);
 	}
 
 	wxString type;
@@ -596,7 +595,7 @@ void CAnalogueRepeaterApp::createThread()
 	if (!res)
 		wxLogError(wxT("Cannot open the hardware interface - %s"), type.c_str());
 	else
-		m_thread->setController(controller, pttDelay, squelchDelay);
+		thread->setController(controller, pttDelay, squelchDelay);
 
 	ANALOGUE_EXTERNAL_MODE mode;
 	wxString device;
@@ -611,7 +610,7 @@ void CAnalogueRepeaterApp::createThread()
 #else
 		CSoundCardReaderWriter* soundcard = new CSoundCardReaderWriter(readDevice, writeDevice, ANALOGUE_RADIO_SAMPLE_RATE, 64U);
 #endif
-		soundcard->setCallback(m_thread, SOUNDCARD_EXTERNAL);
+		soundcard->setCallback(thread, SOUNDCARD_EXTERNAL);
 
 		bool res = soundcard->open();
 		if (!res) {
@@ -624,13 +623,13 @@ void CAnalogueRepeaterApp::createThread()
 			if (!res)
 				wxLogError(wxT("Cannot open serial port - %s"), device.c_str());
 			else
-				m_thread->setExternal(mode, soundcard, audioDelay, deEmphasis, preEmphasis, vogad, controller, background);
+				thread->setExternal(mode, soundcard, audioDelay, deEmphasis, preEmphasis, vogad, controller, background);
 		}
 	}
 
 	bool out1, out2, out3, out4;
 	getOutputs(out1, out2, out3, out4);
-	m_thread->setOutputs(out1, out2, out3, out4);
+	thread->setOutputs(out1, out2, out3, out4);
 	m_frame->setOutputs(out1, out2, out3, out4);
 	wxLogInfo(wxT("Output 1: %d, output 2: %d, output 3: %d, output 4: %d"), out1, out2, out3, out4);
 
@@ -639,15 +638,15 @@ void CAnalogueRepeaterApp::createThread()
 	wxString dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line;
 	wxFloat32 dtmfThreshold;
 	getDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
-	m_thread->setDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
+	thread->setDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
 	wxLogInfo(wxT("DTMF: Radio: %d, External: %d, Shutdown: %s, Startup: %s, Timeout: %s, Time Reset: %s, Command1: %s = %s, Command2: %s = %s, Output1: %s, Output2: %s, Output3: %s, Output4: %s, Threshold: %f"), dtmfRadio, dtmfExternal, dtmfShutdown.c_str(), dtmfStartup.c_str(), dtmfTimeout.c_str(), dtmfTimeReset.c_str(), dtmfCommand1.c_str(), dtmfCommand1Line.c_str(), dtmfCommand2.c_str(), dtmfCommand2Line.c_str(), dtmfOutput1.c_str(), dtmfOutput2.c_str(), dtmfOutput3.c_str(), dtmfOutput4.c_str(), dtmfThreshold);
 
 	unsigned int activeHangTime;
 	getActiveHang(activeHangTime);
-	m_thread->setActiveHang(activeHangTime);
+	thread->setActiveHang(activeHangTime);
 	wxLogInfo(wxT("Active Hang: time: %u"), activeHangTime);
 
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CAnalogueRepeaterThreadHelper(thread);
+	m_thread->start();
 }

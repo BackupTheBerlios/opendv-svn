@@ -5,18 +5,18 @@ CFLAGS :=		-I../Common $(CFLAGS)
 analoguerepeater:	AnalogueRepeaterAckSet.o AnalogueRepeaterApp.o AnalogueRepeaterCallsignSet.o AnalogueRepeaterConfig.o AnalogueRepeaterControllerSet.o \
 					AnalogueRepeaterDTMF1Set.o AnalogueRepeaterDTMF2Set.o AnalogueRepeaterExternalSet.o AnalogueRepeaterFeelSet.o AnalogueRepeaterFrame.o \
 					AnalogueRepeaterLogger.o AnalogueRepeaterPreferences.o AnalogueRepeaterRadioSet.o AnalogueRepeaterStatusData.o AnalogueRepeaterThread.o \
-					AnalogueRepeaterTimesSet.o AnalogueRepeaterTonesSet.o ../Common/Common.a
+					AnalogueRepeaterTimesSet.o AnalogueRepeaterTonesSet.o AnalogueRepeaterThreadHelper.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o analoguerepeater AnalogueRepeaterAckSet.o AnalogueRepeaterApp.o AnalogueRepeaterCallsignSet.o AnalogueRepeaterConfig.o \
 				AnalogueRepeaterControllerSet.o AnalogueRepeaterDTMF1Set.o AnalogueRepeaterDTMF2Set.o AnalogueRepeaterExternalSet.o AnalogueRepeaterFeelSet.o \
 				AnalogueRepeaterFrame.o AnalogueRepeaterLogger.o AnalogueRepeaterPreferences.o AnalogueRepeaterStatusData.o AnalogueRepeaterRadioSet.o \
-				AnalogueRepeaterThread.o AnalogueRepeaterTimesSet.o AnalogueRepeaterTonesSet.o ../Common/Common.a $(LIBS)
+				AnalogueRepeaterThread.o AnalogueRepeaterTimesSet.o AnalogueRepeaterTonesSet.o AnalogueRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
 
 analoguerepeaterd:	AnalogueRepeaterD.o AnalogueRepeaterConfig.o AnalogueRepeaterThread.o AnalogueRepeaterStatusData.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o analoguerepeaterd AnalogueRepeaterD.o AnalogueRepeaterConfig.o AnalogueRepeaterThread.o AnalogueRepeaterStatusData.o \
 				../Common/Common.a $(LIBS)
 
 AnalogueRepeaterApp.o:	AnalogueRepeaterApp.cpp AnalogueRepeaterApp.h AnalogueRepeaterThread.h AnalogueRepeaterFrame.h AnalogueRepeaterDefs.h \
-						AnalogueRepeaterStatusData.h AnalogueRepeaterLogger.h AnalogueRepeaterConfig.h ../Common/ExternalController.h \
+						AnalogueRepeaterStatusData.h AnalogueRepeaterLogger.h AnalogueRepeaterConfig.h AnalogueRepeaterThreadHelper.h ../Common/ExternalController.h \
 						../Common/DummyController.h ../Common/K8055Controller.h ../Common/SerialController.h ../Common/URIUSBController.h \
 						../Common/Logger.h ../Common/AnalogueDefines.h ../Common/Version.h ../Common/CWKeyer.h ../Common/WAVFileStore.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterApp.cpp
@@ -73,6 +73,10 @@ AnalogueRepeaterRadioSet.o:	AnalogueRepeaterRadioSet.cpp AnalogueRepeaterRadioSe
 
 AnalogueRepeaterStatusData.o:	AnalogueRepeaterStatusData.cpp AnalogueRepeaterStatusData.h ../Common/AnalogueDefines.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterStatusData.cpp
+
+AnalogueRepeaterThreadHelper.o:	AnalogueRepeaterThreadHelper.cpp AnalogueRepeaterThreadHelper.h AnalogueRepeaterThread.h AnalogueRepeaterStatusData.h \
+							../Common/WAVFileReader.h
+				$(CC) $(CFLAGS) -c AnalogueRepeaterThreadHelper.cpp
 
 AnalogueRepeaterThread.o:	AnalogueRepeaterThread.cpp AnalogueRepeaterThread.h AnalogueRepeaterDefs.h AnalogueRepeaterApp.h AnalogueRepeaterStatusData.h \
 							../Common/FIRFilter.h ../Common/SoundCardReaderWriter.h ../Common/ExternalController.h ../Common/NetworkController.h \

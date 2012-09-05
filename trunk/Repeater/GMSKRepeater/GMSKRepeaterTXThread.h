@@ -27,7 +27,7 @@
 
 #include <wx/wx.h>
 
-class CGMSKRepeaterTXThread : public IGMSKRepeaterThread, public wxThread {
+class CGMSKRepeaterTXThread : public IGMSKRepeaterThread {
 public:
 	CGMSKRepeaterTXThread();
 	virtual ~CGMSKRepeaterTXThread();
@@ -54,10 +54,8 @@ public:
 
 	virtual CGMSKRepeaterStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 private:
 	IGMSKModem*                m_modem;

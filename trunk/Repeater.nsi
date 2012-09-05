@@ -47,8 +47,6 @@ Section "Repeater Program Files" SecProgram
   SetOutPath "$INSTDIR"
 
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\AnalogueRepeater.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DCSGateway.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DExtraGateway.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DummyRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DVAPNode.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DVRPTRRepeater.exe"
@@ -92,8 +90,6 @@ Section "Repeater Program Files" SecProgram
   ;Create start menu entry
   CreateDirectory "$SMPROGRAMS\Repeater"
   CreateShortCut "$SMPROGRAMS\Repeater\Analogue Repeater.lnk"        "$INSTDIR\AnalogueRepeater.exe"
-  CreateShortCut "$SMPROGRAMS\Repeater\DCS Gateway.lnk"              "$INSTDIR\DCSGateway.exe"
-  CreateShortCut "$SMPROGRAMS\Repeater\DExtra Gateway.lnk"           "$INSTDIR\DExtraGateway.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DummyRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DVAP Node.lnk"                "$INSTDIR\DVAPNode.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DV-RPTR Repeater.lnk"         "$INSTDIR\DVRPTRRepeater.exe"
@@ -123,8 +119,6 @@ Section "Uninstall"
   RMDir  "$SMPROGRAMS\Repeater"
 
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Analogue Repeater"
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\DCS Gateway"
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\DExtra Gateway"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Dummy Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DVAP Node"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DV-RPTR Repeater"

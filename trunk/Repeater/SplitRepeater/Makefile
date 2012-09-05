@@ -5,11 +5,11 @@ CFLAGS :=		-I../Common $(CFLAGS)
 splitrepeater:	SplitRepeaterAddressSet.o SplitRepeaterAMBEData.o SplitRepeaterApp.o SplitRepeaterCallsignSet.o SplitRepeaterConfig.o \
 				SplitRepeaterControl1Set.o SplitRepeaterControl2Set.o SplitRepeaterFrame.o SplitRepeaterHeaderData.o SplitRepeaterLogger.o \
 				SplitRepeaterPreferences.o SplitRepeaterProtocolHandler.o SplitRepeaterStatusData.o SplitRepeaterThread.o SplitRepeaterTimesSet.o \
-				SplitRepeaterUDPReaderWriter.o ../Common/Common.a
+				SplitRepeaterUDPReaderWriter.o SplitRepeaterThreadHelper.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o splitrepeater SplitRepeaterAddressSet.o SplitRepeaterAMBEData.o SplitRepeaterApp.o SplitRepeaterCallsignSet.o \
 				SplitRepeaterConfig.o SplitRepeaterControl1Set.o SplitRepeaterControl2Set.o SplitRepeaterFrame.o SplitRepeaterHeaderData.o \
 				SplitRepeaterLogger.o SplitRepeaterPreferences.o SplitRepeaterProtocolHandler.o SplitRepeaterStatusData.o SplitRepeaterThread.o \
-				SplitRepeaterTimesSet.o SplitRepeaterUDPReaderWriter.o ../Common/Common.a $(LIBS)
+				SplitRepeaterTimesSet.o SplitRepeaterUDPReaderWriter.o SplitRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
 
 splitrepeaterd:	SplitRepeaterAMBEData.o SplitRepeaterD.o SplitRepeaterConfig.o SplitRepeaterHeaderData.o SplitRepeaterProtocolHandler.o \
 				SplitRepeaterStatusData.o SplitRepeaterThread.o SplitRepeaterUDPReaderWriter.o ../Common/Common.a
@@ -24,7 +24,7 @@ SplitRepeaterAMBEData.o:	SplitRepeaterAMBEData.cpp SplitRepeaterAMBEData.h ../Co
 				$(CC) $(CFLAGS) -c SplitRepeaterAMBEData.cpp
 
 SplitRepeaterApp.o:	SplitRepeaterApp.cpp SplitRepeaterApp.h SplitRepeaterThread.h SplitRepeaterFrame.h SplitRepeaterDefs.h SplitRepeaterStatusData.h \
-					SplitRepeaterLogger.h SplitRepeaterConfig.h SplitRepeaterProtocolHandler.h ../Common/DStarDefines.h ../Common/Logger.h \
+					SplitRepeaterLogger.h SplitRepeaterConfig.h SplitRepeaterProtocolHandler.h SplitRepeaterThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h \
 					../Common/Version.h ../Common/CallsignList.h
 				$(CC) $(CFLAGS) -c SplitRepeaterApp.cpp
 
@@ -66,6 +66,9 @@ SplitRepeaterProtocolHandler.o:	SplitRepeaterProtocolHandler.cpp SplitRepeaterPr
 
 SplitRepeaterStatusData.o:	SplitRepeaterStatusData.cpp SplitRepeaterStatusData.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c SplitRepeaterStatusData.cpp
+
+SplitRepeaterThreadHelper.o:	SplitRepeaterThreadHelper.cpp SplitRepeaterThreadHelper.h SplitRepeaterThread.h SplitRepeaterStatusData.h
+				$(CC) $(CFLAGS) -c SplitRepeaterThreadHelper.cpp
 
 SplitRepeaterThread.o:	SplitRepeaterThread.cpp SplitRepeaterThread.h SplitRepeaterDefs.h SplitRepeaterApp.h SplitRepeaterAMBEData.h \
 						SplitRepeaterHeaderData.h SplitRepeaterStatusData.h SplitRepeaterProtocolHandler.h ../Common/DStarDefines.h ../Common/Timer.h \

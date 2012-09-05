@@ -4,11 +4,12 @@ CFLAGS :=		-I../Common $(CFLAGS)
 
 soundcardrepeater:	SoundCardRepeaterApp.o SoundCardRepeaterCallsignSet.o SoundCardRepeaterConfig.o SoundCardRepeaterFrame.o SoundCardRepeaterControllerSet.o \
 				SoundCardRepeaterLogger.o SoundCardRepeaterPreferences.o SoundCardRepeaterRadioSet.o SoundCardRepeaterStatusData.o SoundCardRepeaterTRXThread.o \
-				SoundCardRepeaterTXRXThread.o SoundCardRepeaterTXThread.o SoundCardRepeaterRXThread.o SoundCardRepeaterTimesSet.o ../Common/Common.a
+				SoundCardRepeaterTXRXThread.o SoundCardRepeaterTXThread.o SoundCardRepeaterRXThread.o SoundCardRepeaterTimesSet.o SoundCardRepeaterThreadHelper.o \
+				../Common/Common.a
 				$(CC) $(LDFLAGS) -o soundcardrepeater SoundCardRepeaterApp.o SoundCardRepeaterCallsignSet.o SoundCardRepeaterConfig.o SoundCardRepeaterControllerSet.o \
 				SoundCardRepeaterFrame.o SoundCardRepeaterLogger.o SoundCardRepeaterPreferences.o SoundCardRepeaterRadioSet.o SoundCardRepeaterStatusData.o \
 				SoundCardRepeaterTRXThread.o SoundCardRepeaterTXRXThread.o SoundCardRepeaterTXThread.o SoundCardRepeaterRXThread.o SoundCardRepeaterTimesSet.o \
-				../Common/Common.a $(LIBS)
+				SoundCardRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
 
 soundcardrepeaterd:	SoundCardRepeaterD.o SoundCardRepeaterConfig.o SoundCardRepeaterTRXThread.o SoundCardRepeaterTXRXThread.o SoundCardRepeaterTXThread.o \
 				SoundCardRepeaterRXThread.o SoundCardRepeaterStatusData.o ../Common/Common.a
@@ -17,7 +18,7 @@ soundcardrepeaterd:	SoundCardRepeaterD.o SoundCardRepeaterConfig.o SoundCardRepe
 
 SoundCardRepeaterApp.o:	SoundCardRepeaterApp.cpp SoundCardRepeaterApp.h SoundCardRepeaterThread.h SoundCardRepeaterTRXThread.h SoundCardRepeaterTXRXThread.h \
 					SoundCardRepeaterTXThread.h SoundCardRepeaterRXThread.h SoundCardRepeaterFrame.h SoundCardRepeaterDefs.h SoundCardRepeaterStatusData.h \
-					SoundCardRepeaterLogger.h SoundCardRepeaterConfig.h ../Common/WAVFileReader.h ../Common/DStarDefines.h ../Common/Logger.h \
+					SoundCardRepeaterLogger.h SoundCardRepeaterConfig.h SoundCardRepeaterHelper.h ../Common/WAVFileReader.h ../Common/DStarDefines.h ../Common/Logger.h \
 					../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialController.h \
 					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterApp.cpp
@@ -55,6 +56,10 @@ SoundCardRepeaterRadioSet.o:	SoundCardRepeaterRadioSet.cpp SoundCardRepeaterRadi
 
 SoundCardRepeaterStatusData.o:	SoundCardRepeaterStatusData.cpp SoundCardRepeaterStatusData.h SoundCardRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterStatusData.cpp
+
+SoundCardRepeaterThreadHelper.o:	SoundCardRepeaterThreadHelper.cpp SoundCardRepeaterThreadHelper.h SoundCardRepeaterThread.h SoundCardRepeaterStatusData.h \
+							../Common/WAVFileReader.h
+				$(CC) $(CFLAGS) -c SoundCardRepeaterThreadHelper.cpp
 
 SoundCardRepeaterTRXThread.o:	SoundCardRepeaterTRXThread.cpp SoundCardRepeaterTRXThread.h SoundCardRepeaterThread.h SoundCardRepeaterDefs.h SoundCardRepeaterApp.h \
 							SoundCardRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/SoundCardReaderWriter.h \

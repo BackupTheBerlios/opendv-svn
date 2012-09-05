@@ -233,6 +233,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SplitRepeaterThreadHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SplitRepeaterTimesSet.cpp"
 				>
 			</File>
@@ -304,6 +308,10 @@
 			</File>
 			<File
 				RelativePath=".\SplitRepeaterThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SplitRepeaterThreadHelper.h"
 				>
 			</File>
 			<File

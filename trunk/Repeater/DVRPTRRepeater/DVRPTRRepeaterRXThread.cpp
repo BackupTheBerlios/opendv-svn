@@ -34,7 +34,6 @@ const unsigned int NETWORK_QUEUE_COUNT = 2U;
 const unsigned int CYCLE_TIME = 9U;
 
 CDVRPTRRepeaterRXThread::CDVRPTRRepeaterRXThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_dvrptr(NULL),
 m_protocolHandler(NULL),
 m_rxHeader(NULL),
@@ -60,23 +59,14 @@ CDVRPTRRepeaterRXThread::~CDVRPTRRepeaterRXThread()
 	delete  m_rxHeader;
 }
 
-void CDVRPTRRepeaterRXThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CDVRPTRRepeaterRXThread::Entry()
+void CDVRPTRRepeaterRXThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_dvrptr == NULL  || m_protocolHandler == NULL))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_pollTimer.start();
 
@@ -103,7 +93,7 @@ void* CDVRPTRRepeaterRXThread::Entry()
 
 		unsigned long ms = stopWatch.Time();
 		if (ms < CYCLE_TIME) {
-			Sleep(CYCLE_TIME - ms);
+			::wxMilliSleep(CYCLE_TIME - ms);
 			clock(CYCLE_TIME);
 		} else {
 			clock(ms);
@@ -116,18 +106,11 @@ void* CDVRPTRRepeaterRXThread::Entry()
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
-
-	return NULL;
 }
 
 void CDVRPTRRepeaterRXThread::kill()
 {
 	m_killed = true;
-}
-
-void CDVRPTRRepeaterRXThread::wait()
-{
-	Wait();
 }
 
 void CDVRPTRRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)

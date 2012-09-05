@@ -4,11 +4,11 @@ CFLAGS :=		-I../Common $(CFLAGS)
 
 gmskrepeater:	GMSKRepeaterApp.o GMSKRepeaterCallsignSet.o GMSKRepeaterConfig.o GMSKRepeaterControllerSet.o GMSKRepeaterFrame.o GMSKRepeaterLogger.o \
 				GMSKRepeaterModemSet.o GMSKRepeaterPreferences.o GMSKRepeaterStatusData.o GMSKRepeaterTRXThread.o GMSKRepeaterTXRXThread.o \
-				GMSKRepeaterTXThread.o GMSKRepeaterRXThread.o GMSKRepeaterTimesSet.o ../Common/Common.a
+				GMSKRepeaterTXThread.o GMSKRepeaterRXThread.o GMSKRepeaterTimesSet.o GMSKRepeaterThreadHelper.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o gmskrepeater GMSKRepeaterApp.o GMSKRepeaterCallsignSet.o GMSKRepeaterConfig.o GMSKRepeaterControllerSet.o \
 				GMSKRepeaterFrame.o GMSKRepeaterLogger.o GMSKRepeaterModemSet.o GMSKRepeaterPreferences.o GMSKRepeaterStatusData.o \
 				GMSKRepeaterTRXThread.o GMSKRepeaterTXRXThread.o GMSKRepeaterTXThread.o GMSKRepeaterRXThread.o GMSKRepeaterTimesSet.o \
-				../Common/Common.a $(LIBS)
+				GMSKRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
 
 gmskrepeaterd:	GMSKRepeaterD.o GMSKRepeaterConfig.o GMSKRepeaterTRXThread.o GMSKRepeaterTXRXThread.o GMSKRepeaterTXThread.o GMSKRepeaterRXThread.o \
 				GMSKRepeaterStatusData.o ../Common/Common.a
@@ -17,8 +17,9 @@ gmskrepeaterd:	GMSKRepeaterD.o GMSKRepeaterConfig.o GMSKRepeaterTRXThread.o GMSK
 
 GMSKRepeaterApp.o:	GMSKRepeaterApp.cpp GMSKRepeaterApp.h GMSKRepeaterThread.h GMSKRepeaterTRXThread.h GMSKRepeaterTXRXThread.h GMSKRepeaterTXThread.h \
 					GMSKRepeaterRXThread.h GMSKRepeaterFrame.h GMSKRepeaterDefs.h GMSKRepeaterStatusData.h GMSKRepeaterLogger.h GMSKRepeaterConfig.h \
-					../Common/GMSKModem.h ../Common/GMSKModemLibUsb.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
-					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h
+					GMSKRepeaterThreadHelper.h ../Common/GMSKModem.h ../Common/GMSKModemLibUsb.h ../Common/DStarDefines.h ../Common/Logger.h \
+					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h \
+					../Common/K8055Controller.h
 				$(CC) $(CFLAGS) -c GMSKRepeaterApp.cpp
 
 GMSKRepeaterCallsignSet.o:	GMSKRepeaterCallsignSet.cpp GMSKRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -53,6 +54,9 @@ GMSKRepeaterPreferences.o:	GMSKRepeaterPreferences.cpp GMSKRepeaterPreferences.h
 
 GMSKRepeaterStatusData.o:	GMSKRepeaterStatusData.cpp GMSKRepeaterStatusData.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c GMSKRepeaterStatusData.cpp
+
+GMSKRepeaterThreadHelper.o:	GMSKRepeaterThreadHelper.cpp GMSKRepeaterThreadHelper.h GMSKRepeaterThread.h GMSKRepeaterStatusData.h
+				$(CC) $(CFLAGS) -c GMSKRepeaterThreadHelper.cpp
 
 GMSKRepeaterTRXThread.o:	GMSKRepeaterTRXThread.cpp GMSKRepeaterTRXThread.h GMSKRepeaterThread.h GMSKRepeaterDefs.h GMSKRepeaterApp.h \
 							GMSKRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/GMSKModem.h ../Common/HeaderData.h \

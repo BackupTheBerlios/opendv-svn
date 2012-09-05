@@ -38,7 +38,7 @@
 
 #include <wx/wx.h>
 
-class CSoundCardRepeaterTXRXThread : public wxThread, public ISoundCardRepeaterThread {
+class CSoundCardRepeaterTXRXThread : public ISoundCardRepeaterThread {
 public:
 	CSoundCardRepeaterTXRXThread();
 	virtual ~CSoundCardRepeaterTXRXThread();
@@ -73,10 +73,8 @@ public:
 
 	virtual CSoundCardRepeaterStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 private:
 	CSoundCardReaderWriter*   m_soundcard;

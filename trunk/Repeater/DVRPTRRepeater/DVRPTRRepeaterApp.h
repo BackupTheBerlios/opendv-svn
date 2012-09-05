@@ -19,8 +19,8 @@
 #ifndef	DVRPTRRepeaterApp_H
 #define	DVRPTRRepeaterApp_H
 
+#include "DVRPTRRepeaterThreadHelper.h"
 #include "DVRPTRRepeaterStatusData.h"
-#include "DVRPTRRepeaterThread.h"
 #include "DVRPTRRepeaterConfig.h"
 #include "DVRPTRRepeaterFrame.h"
 #include "DVRPTRRepeaterDefs.h"
@@ -91,15 +91,15 @@ public:
 	virtual void command4();
 
 private:
-	wxString               m_name;
-	bool                   m_nolog;
-	bool                   m_gui;
-	wxString               m_logDir;
-	wxString               m_confDir;
-	CDVRPTRRepeaterFrame*  m_frame;
-	IDVRPTRRepeaterThread* m_thread;
-	CDVRPTRRepeaterConfig* m_config;
-	wxLogChain*            m_logChain;
+	wxString                     m_name;
+	bool                         m_nolog;
+	bool                         m_gui;
+	wxString                     m_logDir;
+	wxString                     m_confDir;
+	CDVRPTRRepeaterFrame*        m_frame;
+	CDVRPTRRepeaterThreadHelper* m_thread;
+	CDVRPTRRepeaterConfig*       m_config;
+	wxLogChain*                  m_logChain;
 
 	void createThread();
 };

@@ -19,11 +19,11 @@
 #ifndef	ParrotControllerApp_H
 #define	ParrotControllerApp_H
 
-#include "ParrotControllerThread.h"
-#include "ParrotControllerFrame.h"
-#include "ParrotControllerDefs.h"
+#include "ParrotControllerThreadHelper.h"
 #include "ParrotControllerStatusData.h"
 #include "ParrotControllerConfig.h"
+#include "ParrotControllerFrame.h"
+#include "ParrotControllerDefs.h"
 
 #include <wx/wx.h>
 
@@ -58,14 +58,14 @@ public:
 	virtual bool writeConfig();
 
 private:
-	wxString                 m_name;
-	bool                     m_nolog;
-	bool                     m_gui;
-	wxString                 m_logDir;
-	wxString                 m_confDir;
-	CParrotControllerFrame*  m_frame;
-	CParrotControllerThread* m_thread;
-	CParrotControllerConfig* m_config;
+	wxString                       m_name;
+	bool                           m_nolog;
+	bool                           m_gui;
+	wxString                       m_logDir;
+	wxString                       m_confDir;
+	CParrotControllerFrame*        m_frame;
+	CParrotControllerThreadHelper* m_thread;
+	CParrotControllerConfig*       m_config;
 
 	void createThread();
 };

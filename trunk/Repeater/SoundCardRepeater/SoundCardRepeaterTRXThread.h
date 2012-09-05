@@ -41,7 +41,7 @@
 #include <wx/wx.h>
 #include <wx/regex.h>
 
-class CSoundCardRepeaterTRXThread : public ISoundCardRepeaterThread, public IBeaconCallback, public wxThread {
+class CSoundCardRepeaterTRXThread : public ISoundCardRepeaterThread, public IBeaconCallback {
 public:
 	CSoundCardRepeaterTRXThread();
 	virtual ~CSoundCardRepeaterTRXThread();
@@ -76,10 +76,8 @@ public:
 
 	virtual CSoundCardRepeaterStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 	virtual void transmitBeaconHeader();
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end);

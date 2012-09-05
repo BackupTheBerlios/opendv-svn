@@ -217,6 +217,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DVRPTRRepeaterThreadHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DVRPTRRepeaterTimesSet.cpp"
 				>
 			</File>
@@ -284,6 +288,10 @@
 			</File>
 			<File
 				RelativePath=".\DVRPTRRepeaterThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRRepeaterThreadHelper.h"
 				>
 			</File>
 			<File

@@ -32,7 +32,6 @@ const unsigned int NETWORK_QUEUE_COUNT = 2U;
 const unsigned int SILENCE_THRESHOLD = 2U;
 
 CGMSKRepeaterTXRXThread::CGMSKRepeaterTXRXThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_modem(NULL),
 m_protocolHandler(NULL),
 m_controller(NULL),
@@ -96,23 +95,14 @@ CGMSKRepeaterTXRXThread::~CGMSKRepeaterTXRXThread()
 	delete   m_txHeader;
 }
 
-void CGMSKRepeaterTXRXThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CGMSKRepeaterTXRXThread::Entry()
+void CGMSKRepeaterTXRXThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_modem == NULL  || m_controller == NULL || m_protocolHandler == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_broken = m_modem->isBroken();
 
@@ -227,7 +217,7 @@ void* CGMSKRepeaterTXRXThread::Entry()
 
 		if (m_state != DSRS_VALID) {
 			if (ms < m_cycleTime)
-				Sleep(m_cycleTime - ms);
+				::wxMilliSleep(m_cycleTime - ms);
 
 			ms = stopWatch.Time();
 		}
@@ -250,18 +240,11 @@ void* CGMSKRepeaterTXRXThread::Entry()
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
-
-	return NULL;
 }
 
 void CGMSKRepeaterTXRXThread::kill()
 {
 	m_killed = true;
-}
-
-void CGMSKRepeaterTXRXThread::wait()
-{
-	Wait();
 }
 
 void CGMSKRepeaterTXRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
@@ -919,7 +902,7 @@ bool CGMSKRepeaterTXRXThread::reopenModem()
 		for (unsigned int j = 0U; j < NETWORK_QUEUE_COUNT; j++)
 			m_networkQueue[j]->reset();
 
-		Sleep(1000UL);
+		::wxMilliSleep(1000UL);
 	}
 
 	delete m_modem;

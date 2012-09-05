@@ -39,7 +39,7 @@
 #include <wx/wx.h>
 #include <wx/regex.h>
 
-class CDVRPTRRepeaterTRXThread : public IDVRPTRRepeaterThread, public IBeaconCallback, public wxThread {
+class CDVRPTRRepeaterTRXThread : public IDVRPTRRepeaterThread, public IBeaconCallback {
 public:
 	CDVRPTRRepeaterTRXThread();
 	virtual ~CDVRPTRRepeaterTRXThread();
@@ -66,10 +66,8 @@ public:
 
 	virtual CDVRPTRRepeaterStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 	virtual void transmitBeaconHeader();
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end);

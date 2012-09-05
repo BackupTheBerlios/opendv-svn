@@ -27,7 +27,7 @@
 
 #include <wx/wx.h>
 
-class CDVRPTRRepeaterTXThread : public IDVRPTRRepeaterThread, public wxThread {
+class CDVRPTRRepeaterTXThread : public IDVRPTRRepeaterThread {
 public:
 	CDVRPTRRepeaterTXThread();
 	virtual ~CDVRPTRRepeaterTXThread();
@@ -54,10 +54,8 @@ public:
 
 	virtual CDVRPTRRepeaterStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 private:
 	IDVRPTRController*         m_dvrptr;

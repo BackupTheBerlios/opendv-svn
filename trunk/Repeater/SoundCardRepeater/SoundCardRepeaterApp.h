@@ -19,8 +19,8 @@
 #ifndef	SoundCardRepeaterApp_H
 #define	SoundCardRepeaterApp_H
 
+#include "SoundCardRepeaterThreadHelper.h"
 #include "SoundCardRepeaterStatusData.h"
-#include "SoundCardRepeaterThread.h"
 #include "SoundCardRepeaterConfig.h"
 #include "SoundCardRepeaterFrame.h"
 #include "SoundCardRepeaterDefs.h"
@@ -97,15 +97,15 @@ public:
 	virtual void command4();
 
 private:
-	wxString              m_name;
-	bool                  m_nolog;
-	bool                  m_gui;
-	wxString              m_logDir;
-	wxString              m_confDir;
-	CSoundCardRepeaterFrame*  m_frame;
-	ISoundCardRepeaterThread* m_thread;
-	CSoundCardRepeaterConfig* m_config;
-	wxLogChain*           m_logChain;
+	wxString                        m_name;
+	bool                            m_nolog;
+	bool                            m_gui;
+	wxString                        m_logDir;
+	wxString                        m_confDir;
+	CSoundCardRepeaterFrame*        m_frame;
+	CSoundCardRepeaterThreadHelper* m_thread;
+	CSoundCardRepeaterConfig*       m_config;
+	wxLogChain*                     m_logChain;
 
 	void createThread();
 };

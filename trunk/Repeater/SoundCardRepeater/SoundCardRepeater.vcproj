@@ -217,6 +217,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SoundCardRepeaterThreadHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SoundCardRepeaterTimesSet.cpp"
 				>
 			</File>
@@ -284,6 +288,10 @@
 			</File>
 			<File
 				RelativePath=".\SoundCardRepeaterThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundCardRepeaterThreadHelper.h"
 				>
 			</File>
 			<File

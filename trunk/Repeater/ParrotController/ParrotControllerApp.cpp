@@ -123,8 +123,6 @@ int CParrotControllerApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-	m_thread->Wait();
-	delete m_thread;
 
 	delete m_config;
 
@@ -215,14 +213,14 @@ bool CParrotControllerApp::writeConfig()
 
 void CParrotControllerApp::createThread()
 {
-	m_thread = new CParrotControllerThread;
+	CParrotControllerThread* thread = new CParrotControllerThread;
 
 	PARROT_MODE mode;
 	unsigned int beaconTime, turnaroundTime;
 	wxString beaconFileName;
 	bool keepFile;
 	getMode(mode, beaconTime, beaconFileName, turnaroundTime, keepFile);
-	m_thread->setMode(mode, beaconTime, beaconFileName, turnaroundTime, keepFile);
+	thread->setMode(mode, beaconTime, beaconFileName, turnaroundTime, keepFile);
 	wxLogInfo(wxT("Mode set to %d, beacon time set to %u secs, beacon file name set to %s, turnaround time set to %u secs, keep file set to %d"), mode, beaconTime, beaconFileName.c_str(), turnaroundTime, keepFile);
 
 	wxString repeaterAddress, localAddress;
@@ -237,10 +235,10 @@ void CParrotControllerApp::createThread()
 		if (!res)
 			wxLogError(wxT("Cannot open the protocol handler"));
 		else
-			m_thread->setNetwork(handler);
+			thread->setNetwork(handler);
 	}
 
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
+	// Convert the worker class into a thread
+	m_thread = new CParrotControllerThreadHelper(thread);
+	m_thread->start();
 }

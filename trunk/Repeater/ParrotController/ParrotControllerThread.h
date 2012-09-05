@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2010,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 #include <wx/wx.h>
 
-class CParrotControllerThread : public wxThread {
+class CParrotControllerThread {
 public:
 	CParrotControllerThread();
 	virtual ~CParrotControllerThread();
@@ -38,8 +38,8 @@ public:
 
 	virtual CParrotControllerStatusData* getStatus();
 
-	virtual void* Entry();
-	virtual void  kill();
+	virtual void run();
+	virtual void kill();
 
 private:
 	PARROT_MODE                       m_mode;

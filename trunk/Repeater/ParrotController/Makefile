@@ -4,10 +4,10 @@ CFLAGS :=		-I../Common $(CFLAGS)
 
 parrotcontroller:	ParrotControllerApp.o ParrotControllerBeaconSet.o ParrotControllerConfig.o ParrotControllerFrame.o ParrotControllerModeSet.o \
 					ParrotControllerNetworkSet.o ParrotControllerParrotSet.o ParrotControllerPreferences.o ParrotControllerProtocolHandler.o \
-					ParrotControllerStatusData.o ParrotControllerThread.o ../Common/Common.a
+					ParrotControllerStatusData.o ParrotControllerThread.o ParrotControllerThreadHelper.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o parrotcontroller ParrotControllerApp.o ParrotControllerBeaconSet.o ParrotControllerConfig.o ParrotControllerFrame.o \
 				ParrotControllerModeSet.o ParrotControllerNetworkSet.o ParrotControllerParrotSet.o ParrotControllerPreferences.o \
-				ParrotControllerProtocolHandler.o ParrotControllerStatusData.o ParrotControllerThread.o ../Common/Common.a $(LIBS)
+				ParrotControllerProtocolHandler.o ParrotControllerStatusData.o ParrotControllerThread.o ParrotControllerThreadHelper.o ../Common/Common.a $(LIBS)
 
 parrotcontrollerd:	ParrotControllerD.o ParrotControllerConfig.o ParrotControllerProtocolHandler.o ParrotControllerStatusData.o ParrotControllerThread.o \
 					../Common/Common.a
@@ -15,7 +15,8 @@ parrotcontrollerd:	ParrotControllerD.o ParrotControllerConfig.o ParrotController
 				ParrotControllerStatusData.o ParrotControllerThread.o ../Common/Common.a $(LIBS)
 
 ParrotControllerApp.o:	ParrotControllerApp.cpp ParrotControllerApp.h ParrotControllerThread.h ParrotControllerFrame.h ParrotControllerDefs.h \
-						ParrotControllerStatusData.h ParrotControllerConfig.h ParrotControllerProtocolHandler.h ../Common/Logger.h ../Common/Version.h
+						ParrotControllerStatusData.h ParrotControllerConfig.h ParrotControllerProtocolHandler.h ParrotControllerThreadHelper.o ../Common/Logger.h \
+						../Common/Version.h
 				$(CC) $(CFLAGS) -c ParrotControllerApp.cpp
 
 ParrotControllerD.o:	ParrotControllerD.cpp ParrotControllerD.h ParrotControllerThread.h ParrotControllerDefs.h ParrotControllerConfig.h \
@@ -52,6 +53,9 @@ ParrotControllerProtocolHandler.o:	ParrotControllerProtocolHandler.cpp ParrotCon
 
 ParrotControllerStatusData.o:	ParrotControllerStatusData.cpp ParrotControllerStatusData.h ParrotControllerDefs.h
 				$(CC) $(CFLAGS) -c ParrotControllerStatusData.cpp
+
+ParrotControllerThreadHelper.o:	ParrotControllerThreadHelper.cpp ParrotControllerThreadHelper.h ParrotControllerThread.h ParrotControllerStatusData.h
+				$(CC) $(CFLAGS) -c ParrotControllerThreadHelper.cpp
 
 ParrotControllerThread.o:	ParrotControllerThread.cpp ParrotControllerThread.h ParrotControllerDefs.h ParrotControllerApp.h ParrotControllerStatusData.h \
 							ParrotControllerProtocolHandler.h ../Common/DStarDefines.h ../Common/HeaderData.h ../Common/Utils.h ../Common/Timer.h \

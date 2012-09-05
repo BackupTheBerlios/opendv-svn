@@ -19,8 +19,8 @@
 #ifndef	AnalogueRepeaterApp_H
 #define	AnalogueRepeaterApp_H
 
+#include "AnalogueRepeaterThreadHelper.h"
 #include "AnalogueRepeaterStatusData.h"
-#include "AnalogueRepeaterThread.h"
 #include "AnalogueRepeaterConfig.h"
 #include "AnalogueRepeaterFrame.h"
 #include "AnalogueRepeaterDefs.h"
@@ -111,15 +111,15 @@ public:
 	virtual void command2();
 
 private:
-	wxString                 m_name;
-	bool                     m_nolog;
-	bool                     m_gui;
-	wxString                 m_logDir;
-	wxString                 m_confDir;
-	CAnalogueRepeaterFrame*  m_frame;
-	CAnalogueRepeaterThread* m_thread;
-	CAnalogueRepeaterConfig* m_config;
-	wxLogChain*              m_logChain;
+	wxString                       m_name;
+	bool                           m_nolog;
+	bool                           m_gui;
+	wxString                       m_logDir;
+	wxString                       m_confDir;
+	CAnalogueRepeaterFrame*        m_frame;
+	CAnalogueRepeaterThreadHelper* m_thread;
+	CAnalogueRepeaterConfig*       m_config;
+	wxLogChain*                    m_logChain;
 
 	void createThread();
 };

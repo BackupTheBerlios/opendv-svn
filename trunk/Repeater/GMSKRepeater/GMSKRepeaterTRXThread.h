@@ -32,7 +32,7 @@
 #include <wx/wx.h>
 #include <wx/regex.h>
 
-class CGMSKRepeaterTRXThread : public IGMSKRepeaterThread, public IBeaconCallback, public wxThread {
+class CGMSKRepeaterTRXThread : public IGMSKRepeaterThread, public IBeaconCallback {
 public:
 	CGMSKRepeaterTRXThread();
 	virtual ~CGMSKRepeaterTRXThread();
@@ -59,10 +59,8 @@ public:
 
 	virtual CGMSKRepeaterStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 	virtual void transmitBeaconHeader();
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end);

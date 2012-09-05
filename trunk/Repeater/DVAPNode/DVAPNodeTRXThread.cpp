@@ -32,7 +32,6 @@ const unsigned int SILENCE_THRESHOLD = 2U;
 const unsigned int CYCLE_TIME = 9U;
 
 CDVAPNodeTRXThread::CDVAPNodeTRXThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_dvap(NULL),
 m_protocolHandler(NULL),
 m_stopped(true),
@@ -102,23 +101,14 @@ CDVAPNodeTRXThread::~CDVAPNodeTRXThread()
 	delete   m_rxHeader;
 }
 
-void CDVAPNodeTRXThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CDVAPNodeTRXThread::Entry()
+void CDVAPNodeTRXThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_dvap == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_stopped = false;
 
@@ -191,7 +181,7 @@ void* CDVAPNodeTRXThread::Entry()
 
 		unsigned long ms = stopWatch.Time();
 		if (ms < CYCLE_TIME) {
-			Sleep(CYCLE_TIME - ms);
+			::wxMilliSleep(CYCLE_TIME - ms);
 			clock(CYCLE_TIME);
 		} else {
 			clock(ms);
@@ -206,18 +196,11 @@ void* CDVAPNodeTRXThread::Entry()
 		m_protocolHandler->close();
 		delete m_protocolHandler;
 	}
-
-	return NULL;
 }
 
 void CDVAPNodeTRXThread::kill()
 {
 	m_killed = true;
-}
-
-void CDVAPNodeTRXThread::wait()
-{
-	Wait();
 }
 
 void CDVAPNodeTRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)

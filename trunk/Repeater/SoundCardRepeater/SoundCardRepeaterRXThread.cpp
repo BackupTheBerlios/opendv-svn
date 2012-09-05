@@ -34,7 +34,6 @@ const unsigned int MAX_SQUELCH_COUNT = 5U;
 const unsigned int MAX_LOST_SYNCS    = 3U;
 
 CSoundCardRepeaterRXThread::CSoundCardRepeaterRXThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_soundcard(NULL),
 m_protocolHandler(NULL),
 m_controller(NULL),
@@ -76,23 +75,14 @@ CSoundCardRepeaterRXThread::~CSoundCardRepeaterRXThread()
 	delete m_header;
 }
 
-void CSoundCardRepeaterRXThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CSoundCardRepeaterRXThread::Entry()
+void CSoundCardRepeaterRXThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_soundcard == NULL || m_protocolHandler == NULL || m_controller == NULL))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_controller->setActive(false);
 
@@ -152,18 +142,11 @@ void* CSoundCardRepeaterRXThread::Entry()
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
-
-	return NULL;
 }
 
 void CSoundCardRepeaterRXThread::kill()
 {
 	m_killed = true;
-}
-
-void CSoundCardRepeaterRXThread::wait()
-{
-	Wait();
 }
 
 void CSoundCardRepeaterRXThread::setReader(CWAVFileReader* reader)
@@ -265,7 +248,7 @@ void CSoundCardRepeaterRXThread::receiveRadio()
 		length += m_inBuffer.getData(audio + length, DSTAR_RADIO_BLOCK_SIZE - length);
 
 		if (length < DSTAR_RADIO_BLOCK_SIZE)
-			Sleep(DSTAR_FRAME_TIME_MS / 4UL);
+			::wxMilliSleep(DSTAR_FRAME_TIME_MS / 4UL);
 	}
 
 	if (length < DSTAR_RADIO_BLOCK_SIZE)

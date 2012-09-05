@@ -157,11 +157,7 @@ bool CAnalogueRepeaterD::init()
 
 void CAnalogueRepeaterD::run()
 {
-	m_thread->Create();
-	m_thread->Run();
-
-	m_thread->Wait();
-	delete m_thread;
+	m_thread->run();
 
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 }
@@ -429,10 +425,6 @@ bool CAnalogueRepeaterD::createThread()
 	config.getActiveHang(activeHangTime);
 	m_thread->setActiveHang(activeHangTime);
 	wxLogInfo(wxT("Active Hang: time: %u"), activeHangTime);
-
-	m_thread->Create();
-	m_thread->SetPriority(100U);
-	m_thread->Run();
 
 	return true;
 }

@@ -41,7 +41,6 @@ const unsigned int MAX_LOST_SYNCS    = 3U;
 const unsigned int SILENCE_THRESHOLD = 2U;
 
 CSoundCardRepeaterTXRXThread::CSoundCardRepeaterTXRXThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_soundcard(NULL),
 m_protocolHandler(NULL),
 m_controller(NULL),
@@ -117,23 +116,14 @@ CSoundCardRepeaterTXRXThread::~CSoundCardRepeaterTXRXThread()
 	delete   m_txHeader;
 }
 
-void CSoundCardRepeaterTXRXThread::start()
-{
-	Create();
-
-	SetPriority(100U);
-
-	Run();
-}
-
-void* CSoundCardRepeaterTXRXThread::Entry()
+void CSoundCardRepeaterTXRXThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_soundcard == NULL  || m_protocolHandler == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        ")) || m_controller == NULL))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_stopped = false;
 
@@ -257,18 +247,11 @@ void* CSoundCardRepeaterTXRXThread::Entry()
 		delete m_writer;
 	}
 #endif
-
-	return NULL;
 }
 
 void CSoundCardRepeaterTXRXThread::kill()
 {
 	m_killed = true;
-}
-
-void CSoundCardRepeaterTXRXThread::wait()
-{
-	Wait();
 }
 
 void CSoundCardRepeaterTXRXThread::setReader(CWAVFileReader* reader)
@@ -388,7 +371,7 @@ void CSoundCardRepeaterTXRXThread::receiveRadio()
 		length += m_inBuffer.getData(audio + length, DSTAR_RADIO_BLOCK_SIZE - length);
 
 		if (length < DSTAR_RADIO_BLOCK_SIZE)
-			Sleep(DSTAR_FRAME_TIME_MS / 4UL);
+			::wxMilliSleep(DSTAR_FRAME_TIME_MS / 4UL);
 	}
 
 	if (length < DSTAR_RADIO_BLOCK_SIZE)

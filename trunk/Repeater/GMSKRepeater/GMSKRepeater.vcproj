@@ -217,6 +217,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GMSKRepeaterThreadHelper.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GMSKRepeaterTimesSet.cpp"
 				>
 			</File>
@@ -284,6 +288,10 @@
 			</File>
 			<File
 				RelativePath=".\GMSKRepeaterThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GMSKRepeaterThreadHelper.h"
 				>
 			</File>
 			<File

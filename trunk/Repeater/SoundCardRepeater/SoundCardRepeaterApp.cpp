@@ -22,6 +22,7 @@
 #include "SoundCardRepeaterRXThread.h"
 #include "SoundCardRepeaterLogger.h"
 #include "RepeaterProtocolHandler.h"
+#include "SoundCardRepeaterThread.h"
 #include "SoundCardRepeaterApp.h"
 #include "SerialController.h"
 #include "URIUSBController.h"
@@ -136,8 +137,6 @@ int CSoundCardRepeaterApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-
-	m_thread->wait();
 
 	delete m_config;
 
@@ -375,22 +374,23 @@ void CSoundCardRepeaterApp::createThread()
 	bool restriction, rpt1Validation;
 	getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
 
+	ISoundCardRepeaterThread* thread = NULL;
 	switch (mode) {
 		case MODE_RXONLY:
-			m_thread = new CSoundCardRepeaterRXThread;
+			thread = new CSoundCardRepeaterRXThread;
 			break;
 		case MODE_TXONLY:
-			m_thread = new CSoundCardRepeaterTXThread;
+			thread = new CSoundCardRepeaterTXThread;
 			break;
 		case MODE_TXANDRX:
-			m_thread = new CSoundCardRepeaterTXRXThread;
+			thread = new CSoundCardRepeaterTXRXThread;
 			break;
 		default:
-			m_thread = new CSoundCardRepeaterTRXThread;
+			thread = new CSoundCardRepeaterTRXThread;
 			break;
 	}
 
-	m_thread->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	thread->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
 	wxLogInfo(wxT("Callsign set to \"%s\", gateway set to \"%s\", mode: %d, ack: %d, restriction: %d, RPT1 validation: %d"), callsign.c_str(), gateway.c_str(), int(mode), int(ack), restriction, rpt1Validation);
 
 	wxString gatewayAddress, localAddress;
@@ -405,12 +405,12 @@ void CSoundCardRepeaterApp::createThread()
 		if (!res)
 			wxLogError(wxT("Cannot open the protocol handler"));
 		else
-			m_thread->setProtocolHandler(handler);
+			thread->setProtocolHandler(handler);
 	}
 
 	unsigned int timeout, ackTime, hangTime;
 	getTimes(timeout, ackTime, hangTime);
-	m_thread->setTimes(timeout, ackTime, hangTime);
+	thread->setTimes(timeout, ackTime, hangTime);
 	wxLogInfo(wxT("Timeout set to %u secs, Ack time set to %u ms, Hang time set to %u ms"), timeout, ackTime, hangTime);
 
 	unsigned int beaconTime;
@@ -418,7 +418,7 @@ void CSoundCardRepeaterApp::createThread()
 	bool beaconVoice;
 	TEXT_LANG language;
 	getBeacon(beaconTime, beaconText, beaconVoice, language);
-	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
+	thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
 	wxString readDevice, writeDevice;
@@ -434,13 +434,13 @@ void CSoundCardRepeaterApp::createThread()
 #else
 		CSoundCardReaderWriter* soundcard = new CSoundCardReaderWriter(readDevice, writeDevice, DSTAR_RADIO_SAMPLE_RATE, 64U);
 #endif
-		soundcard->setCallback(m_thread, 0U);
+		soundcard->setCallback(thread, 0U);
 
 		bool res = soundcard->open();
 		if (!res)
 			wxLogError(wxT("Cannot open the sound card"));
 		else
-			m_thread->setSoundCard(soundcard, rxLevel, txLevel, squelchMode, squelchLevel, rxInvert, txInvert);
+			thread->setSoundCard(soundcard, rxLevel, txLevel, squelchMode, squelchLevel, rxInvert, txInvert);
 	}
 
 	wxString type;
@@ -471,11 +471,11 @@ void CSoundCardRepeaterApp::createThread()
 	if (!res)
 		wxLogError(wxT("Cannot open the hardware interface - %s"), type.c_str());
 	else
-		m_thread->setController(controller, pttDelay);
+		thread->setController(controller, pttDelay);
 
 	bool out1, out2, out3, out4;
 	getOutputs(out1, out2, out3, out4);
-	m_thread->setOutputs(out1, out2, out3, out4);
+	thread->setOutputs(out1, out2, out3, out4);
 	m_frame->setOutputs(out1, out2, out3, out4);
 	wxLogInfo(wxT("Output 1 = %d, output 2 = %d, output 3 = %d, output 4 = %d"), out1, out2, out3, out4);
 
@@ -487,17 +487,17 @@ void CSoundCardRepeaterApp::createThread()
 	wxString command3, command3Line, command4, command4Line;
 	wxString output1, output2, output3, output4;
 	getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
-	m_thread->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
+	thread->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 	wxLogInfo(wxT("Control: enabled: %d, RPT1: %s, RPT2: %s, shutdown: %s, startup: %s, status1: %s, status2: %s, status3: %s, status4: %s, status5: %s, command1: %s = %s, command2: %s = %s, command3: %s = %s, command4: %s = %s, output1: %s, output2: %s, output3: %s, output4: %s"), enabled, rpt1Callsign.c_str(), rpt2Callsign.c_str(), shutdown.c_str(), startup.c_str(), status1.c_str(), status2.c_str(), status3.c_str(), status4.c_str(), status5.c_str(), command1.c_str(), command1Line.c_str(), command2.c_str(), command2Line.c_str(), command1.c_str(), command1Line.c_str(), command2.c_str(), command2Line.c_str(), command3.c_str(), command3Line.c_str(), command4.c_str(), command4Line.c_str(), output1.c_str(), output2.c_str(), output3.c_str(), output4.c_str());
 
 	unsigned int activeHangTime;
 	getActiveHang(activeHangTime);
-	m_thread->setActiveHang(activeHangTime);
+	thread->setActiveHang(activeHangTime);
 	wxLogInfo(wxT("Active Hang: time: %u"), activeHangTime);
 
 	bool logging;
 	getLogging(logging);
-	m_thread->setLogging(logging, ::wxGetHomeDir());
+	thread->setLogging(logging, ::wxGetHomeDir());
 	m_frame->setLogging(logging);
 	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), ::wxGetHomeDir().c_str());
 
@@ -511,7 +511,7 @@ void CSoundCardRepeaterApp::createThread()
 			delete list;
 		} else {
 			wxLogInfo(wxT("%u callsigns loaded into the white list"), list->getCount());
-			m_thread->setWhiteList(list);
+			thread->setWhiteList(list);
 		}
 	}
 
@@ -525,9 +525,11 @@ void CSoundCardRepeaterApp::createThread()
 			delete list;
 		} else {
 			wxLogInfo(wxT("%u callsigns loaded into the black list"), list->getCount());
-			m_thread->setBlackList(list);
+			thread->setBlackList(list);
 		}
 	}
 
+	// Convert the worker class into a thread
+	m_thread = new CSoundCardRepeaterThreadHelper(thread);
 	m_thread->start();
 }

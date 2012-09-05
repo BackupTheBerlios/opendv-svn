@@ -58,9 +58,8 @@ public:
 
 	virtual CGMSKRepeaterStatusData* getStatus() = 0;
 
-	virtual void start() = 0;
+	virtual void run() = 0;
 	virtual void kill() = 0;
-	virtual void wait() = 0;
 
 private:
 };

@@ -22,6 +22,7 @@
 #include "DVAPNodeTXThread.h"
 #include "DVAPController.h"
 #include "DVAPNodeLogger.h"
+#include "DVAPNodeThread.h"
 #include "DStarDefines.h"
 #include "DVAPNodeApp.h"
 #include "Version.h"
@@ -133,8 +134,6 @@ int CDVAPNodeApp::OnExit()
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 
 	m_thread->kill();
-
-	m_thread->wait();
 
 	delete m_config;
 
@@ -279,19 +278,20 @@ void CDVAPNodeApp::createThread()
 	bool restriction, rpt1Validation;
 	getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
 
+	IDVAPNodeThread* thread = NULL;
 	switch (mode) {
 		case MODE_RXONLY:
-			m_thread = new CDVAPNodeRXThread;
+			thread = new CDVAPNodeRXThread;
 			break;
 		case MODE_TXONLY:
-			m_thread = new CDVAPNodeTXThread;
+			thread = new CDVAPNodeTXThread;
 			break;
 		default:
-			m_thread = new CDVAPNodeTRXThread;
+			thread = new CDVAPNodeTRXThread;
 			break;
 	}
 
-	m_thread->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	thread->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
 	wxLogInfo(wxT("Callsign set to \"%s\", gateway set to \"%s\", mode: %d, ack: %d, restriction: %d, RPT1 validation: %d"), callsign.c_str(), gateway.c_str(), int(mode), int(ack), restriction, rpt1Validation);
 
 	wxString gatewayAddress, localAddress;
@@ -306,12 +306,12 @@ void CDVAPNodeApp::createThread()
 		if (!res)
 			wxLogError(wxT("Cannot open the protocol handler"));
 		else
-			m_thread->setProtocolHandler(handler);
+			thread->setProtocolHandler(handler);
 	}
 
 	unsigned int timeout, ackTime;
 	getTimes(timeout, ackTime);
-	m_thread->setTimes(timeout, ackTime);
+	thread->setTimes(timeout, ackTime);
 	wxLogInfo(wxT("Timeout set to %u secs, ack time set to %u ms"), timeout, ackTime);
 
 	unsigned int beaconTime;
@@ -319,7 +319,7 @@ void CDVAPNodeApp::createThread()
 	bool beaconVoice;
 	TEXT_LANG language;
 	getBeacon(beaconTime, beaconText, beaconVoice, language);
-	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
+	thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
 	wxString dvapPort;
@@ -334,12 +334,12 @@ void CDVAPNodeApp::createThread()
 		if (!res)
 			wxLogError(wxT("Unable to open the DVAP"));
 		else
-			m_thread->setDVAP(dvap);
+			thread->setDVAP(dvap);
 	}
 
 	bool logging;
 	getLogging(logging);
-	m_thread->setLogging(logging, ::wxGetHomeDir());
+	thread->setLogging(logging, ::wxGetHomeDir());
 	m_frame->setLogging(logging);
 	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), ::wxGetHomeDir().c_str());
 
@@ -353,7 +353,7 @@ void CDVAPNodeApp::createThread()
 			delete list;
 		} else {
 			wxLogInfo(wxT("%u callsigns loaded into the white list"), list->getCount());
-			m_thread->setWhiteList(list);
+			thread->setWhiteList(list);
 		}
 	}
 
@@ -367,9 +367,11 @@ void CDVAPNodeApp::createThread()
 			delete list;
 		} else {
 			wxLogInfo(wxT("%u callsigns loaded into the black list"), list->getCount());
-			m_thread->setBlackList(list);
+			thread->setBlackList(list);
 		}
 	}
 
+	// Convert the worker class into a thread
+	m_thread = new CDVAPNodeThreadHelper(thread);
 	m_thread->start();
 }

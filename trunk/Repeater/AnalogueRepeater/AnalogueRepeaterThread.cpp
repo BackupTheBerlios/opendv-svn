@@ -110,7 +110,6 @@ const wxFloat32    FIRLP_TAPS[] = {
 
 
 CAnalogueRepeaterThread::CAnalogueRepeaterThread() :
-wxThread(wxTHREAD_JOINABLE),
 m_radioSoundcard(NULL),
 m_extSoundcard(NULL),
 m_controller(NULL),
@@ -199,14 +198,14 @@ CAnalogueRepeaterThread::~CAnalogueRepeaterThread()
 {
 }
 
-void* CAnalogueRepeaterThread::Entry()
+void CAnalogueRepeaterThread::run()
 {
 	// Wait here until we have the essentials to run
 	while (!m_killed && (m_radioSoundcard == NULL || m_openId == NULL || m_closeId == NULL || m_beacon1 == NULL || m_beacon2 == NULL || m_radioAck == NULL || m_extAck == NULL || m_batteryAck == NULL || m_timeoutTones == NULL || m_controller == NULL))
-		Sleep(500UL);		// 1/2 sec
+		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
-		return NULL;
+		return;
 
 	m_stopped = false;
 
@@ -434,8 +433,6 @@ void* CAnalogueRepeaterThread::Entry()
 	delete m_radioAck;
 	delete m_extAck;
 	delete m_batteryAck;
-
-	return NULL;
 }
 
 void CAnalogueRepeaterThread::kill()
@@ -716,7 +713,7 @@ void CAnalogueRepeaterThread::getAudio(wxFloat32* radioAudio, wxFloat32* externa
 			nExternal += m_extInBuffer.getData(externalAudio + nExternal, ANALOGUE_RADIO_BLOCK_SIZE - nExternal);
 
 			if (nExternal < ANALOGUE_RADIO_BLOCK_SIZE)
-				Sleep(ANALOGUE_FRAME_TIME_MS / 4UL);
+				::wxMilliSleep(ANALOGUE_FRAME_TIME_MS / 4UL);
 		}
 
 		nRadio = m_radioInBuffer.getData(radioAudio, ANALOGUE_RADIO_BLOCK_SIZE);
@@ -735,7 +732,7 @@ void CAnalogueRepeaterThread::getAudio(wxFloat32* radioAudio, wxFloat32* externa
 			nRadio += m_radioInBuffer.getData(radioAudio + nRadio, ANALOGUE_RADIO_BLOCK_SIZE - nRadio);
 
 			if (nRadio < ANALOGUE_RADIO_BLOCK_SIZE)
-				Sleep(ANALOGUE_FRAME_TIME_MS / 4UL);
+				::wxMilliSleep(ANALOGUE_FRAME_TIME_MS / 4UL);
 		}
 
 		if (m_radioAudioDelay != NULL && nRadio > 0U)

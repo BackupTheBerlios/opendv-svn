@@ -19,8 +19,8 @@
 #ifndef	SplitRepeaterApp_H
 #define	SplitRepeaterApp_H
 
+#include "SplitRepeaterThreadHelper.h"
 #include "SplitRepeaterStatusData.h"
-#include "SplitRepeaterThread.h"
 #include "SplitRepeaterConfig.h"
 #include "SplitRepeaterFrame.h"
 #include "SplitRepeaterDefs.h"
@@ -88,15 +88,15 @@ public:
 	virtual void command4();
 
 private:
-	wxString              m_name;
-	bool                  m_nolog;
-	bool                  m_gui;
-	wxString              m_logDir;
-	wxString              m_confDir;
-	CSplitRepeaterFrame*  m_frame;
-	CSplitRepeaterThread* m_thread;
-	CSplitRepeaterConfig* m_config;
-	wxLogChain*           m_logChain;
+	wxString                    m_name;
+	bool                        m_nolog;
+	bool                        m_gui;
+	wxString                    m_logDir;
+	wxString                    m_confDir;
+	CSplitRepeaterFrame*        m_frame;
+	CSplitRepeaterThreadHelper* m_thread;
+	CSplitRepeaterConfig*       m_config;
+	wxLogChain*                 m_logChain;
 
 	void createThread();
 };

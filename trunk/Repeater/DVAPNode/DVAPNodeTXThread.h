@@ -28,7 +28,7 @@
 
 #include <wx/wx.h>
 
-class CDVAPNodeTXThread : public IDVAPNodeThread, public wxThread {
+class CDVAPNodeTXThread : public IDVAPNodeThread {
 public:
 	CDVAPNodeTXThread();
 	virtual ~CDVAPNodeTXThread();
@@ -44,10 +44,8 @@ public:
 
 	virtual CDVAPNodeStatusData* getStatus();
 
-	virtual void  start();
-	virtual void* Entry();
-	virtual void  kill();
-	virtual void  wait();
+	virtual void run();
+	virtual void kill();
 
 private:
 	CDVAPController*           m_dvap;
