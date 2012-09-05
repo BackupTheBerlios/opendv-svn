@@ -256,7 +256,7 @@ bool CDVRPTRRepeaterD::createThread()
 				wxLogError(wxT("Cannot open the DV-RPTR modem"));
 			} else {
 				m_thread->setModem(controller);
-				setModem(controller->getPath());
+				config.setModem(controller->getPath());
 			}
 		}
 	}
