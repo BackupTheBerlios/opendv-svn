@@ -1,5 +1,0 @@
-#
-# Regular cron jobs for the repeater package
-#
-0 4	* * *	root	[ -x /usr/bin/ircddbgateway_maintenance ] && /usr/bin/ircddbgateway_maintenance
-*/15	* * *	root	ps aux | grep ircddbgateway | grep -vq grep || /etc/init.d/ircddbgateway start
