@@ -3,7 +3,7 @@ all:			timeserver timeserverd
 CFLAGS :=		-I../Common $(CFLAGS)
 
 timeserver:		TimeServerAnnouncementsSet.o TimeServerApp.o TimeServerConfig.o TimeServerFrame.o TimeServerGatewaySet.o TimeServerLogRedirect.o \
-				TimeServerPreferences.o TimeServerThread.o TimeServerTheadHelper.o ../Common/Common.a
+				TimeServerPreferences.o TimeServerThread.o TimeServerThreadHelper.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o timeserver TimeServerAnnouncementsSet.o TimeServerApp.o TimeServerConfig.o TimeServerFrame.o TimeServerGatewaySet.o \
 				TimeServerLogRedirect.o TimeServerPreferences.o TimeServerThread.o TimeServerThreadHelper.o ../Common/Common.a $(LIBS)
 
