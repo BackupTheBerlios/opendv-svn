@@ -282,5 +282,5 @@ Added Windows LibUSB support to the GMSK Client.
 2012xxxx
 --------
 
-Added XRF250.
+Added XRF018 and XRF250.
 Updated the DCS protocol.
