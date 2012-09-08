@@ -1,0 +1,139 @@
+/*
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include "DVAPClientModemSet.h"
+
+#include "SerialDataController.h"
+
+CDVAPClientModemSet::CDVAPClientModemSet(wxWindow* parent, int id, const wxString& title, const wxString& port, unsigned int frequency, int power, int squelch, int offset) :
+wxPanel(parent, id),
+m_title(title),
+m_port(NULL),
+m_frequency(NULL),
+m_power(NULL),
+m_squelch(NULL),
+m_offset(NULL)
+{
+	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
+
+	wxStaticText* portLabel = new wxStaticText(this, -1, _("Port"));
+	sizer->Add(portLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_port = new wxChoice(this, -1, wxDefaultPosition, wxSize(NAME_WIDTH, -1));
+	sizer->Add(m_port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+// #if defined(__WINDOWS__)
+//	wxArrayString ports = CFTDIDriver::getDevices();
+// #else
+	wxArrayString ports = CSerialDataController::getDevices();
+// #endif
+	for (unsigned int i = 0U; i < ports.GetCount(); i++)
+		m_port->Append(ports.Item(i));
+	bool res = m_port->SetStringSelection(port);
+	if (!res)
+		m_port->SetSelection(0);
+
+	wxStaticText* freqLabel = new wxStaticText(this, -1, _("Frequency (Hz)"));
+	sizer->Add(freqLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxString text;
+	text.Printf(wxT("%u"), frequency);
+
+	m_frequency = new wxTextCtrl(this, -1, text, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	sizer->Add(m_frequency, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* powerLabel = new wxStaticText(this, -1, _("Power (dBm)"));
+	sizer->Add(powerLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_power = new wxSpinCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1), wxSP_ARROW_KEYS, -12, 10, power);
+	sizer->Add(m_power, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* squelchLabel = new wxStaticText(this, -1, _("Squelch (dBm)"));
+	sizer->Add(squelchLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_squelch = new wxSpinCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1), wxSP_ARROW_KEYS, -128, -45, squelch);
+	sizer->Add(m_squelch, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* offsetLabel = new wxStaticText(this, -1, _("Offset (Hz)"));
+	sizer->Add(offsetLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_offset = new wxSpinCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1), wxSP_ARROW_KEYS, -2000, 2000, offset);
+	sizer->Add(m_offset, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	SetAutoLayout(true);
+
+	sizer->Fit(this);
+	sizer->SetSizeHints(this);
+
+	SetSizer(sizer);
+}
+
+CDVAPClientModemSet::~CDVAPClientModemSet()
+{
+}
+
+bool CDVAPClientModemSet::Validate()
+{
+	if (m_port->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+
+	unsigned int freq = getFrequency();
+	if (freq < 144000000U || freq > 148000000U) {
+		wxMessageDialog dialog(this, _("The Frequency is out of range"), m_title + _(" Error"), wxICON_ERROR);
+		dialog.ShowModal();
+		return false;
+	}
+
+	return true;
+}
+
+wxString CDVAPClientModemSet::getPort() const
+{
+	return m_port->GetStringSelection();
+}
+
+unsigned int CDVAPClientModemSet::getFrequency() const
+{
+	wxString hz = m_frequency->GetValue();
+
+	unsigned long frequency;
+	hz.ToULong(&frequency);
+
+	return frequency;
+}
+
+int CDVAPClientModemSet::getPower() const
+{
+	int power = m_power->GetValue();
+
+	return power;
+}
+
+int CDVAPClientModemSet::getSquelch() const
+{
+	int power = m_squelch->GetValue();
+
+	return power;
+}
+
+int CDVAPClientModemSet::getOffset() const
+{
+	int power = m_offset->GetValue();
+
+	return power;
+}

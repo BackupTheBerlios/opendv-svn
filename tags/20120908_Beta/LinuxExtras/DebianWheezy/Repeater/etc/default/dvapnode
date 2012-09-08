@@ -1,0 +1,3 @@
+DAEMON_PATH=/usr/bin/dvapnoded
+DAEMON_ARGS="-daemon -logdir /var/log/opendv"
+DAEMON_USER=opendv
