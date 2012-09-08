@@ -1,4 +1,4 @@
-ircDDB Gateway - 20120826
+ircDDB Gateway - 20120908
 =========================
 
 20101010
@@ -1100,7 +1100,7 @@ Upgraded the DCS protocol to the latest version.
 
 Reverted to Visual C++ 2008.
 
-2012xxxx
+20120908
 --------
 
 Allow repeater module E to be set.

@@ -1,4 +1,4 @@
-ircDDB Gateway - 20120826
+ircDDB Gateway - 20120908
 =========================
 
 Windows
@@ -44,13 +44,19 @@ version of wxWidgets is adequate. However you should get the latest version of
 PortAudio from its home and build it from scratch.
 
 To install them from scratch, you need to get wxWidgets from 
-http://www.wxwidgets.org. If you do a "make install" on both then they'll be 
+<http://www.wxwidgets.org>. If you do a "make install" on both then they'll be 
 installed in the right places and nothing more needs to be done.
 
 The top level Makefile includes platform specific settings from the file 
-"settings.mk". The default file is for x86 Linux systems.
-Samples for other platforms are provided by other developers, copy a required
-version to "settings.mk" when needed.
+"settings.mk". The default file is for x86 Linux systems. Samples for other
+platforms are provided by other developers, copy a required version to
+"settings.mk" when needed.
+
+Before building the software you need to run the script mksvnrev.sh to create
+the file Common/SVN.h which contains the SVN revision of the build which makes
+debugging easier. This file may need to be made executable by using the command
+"chmod 0755 mksvnrev.sh" before using it, and it needs to be run on the machine
+that was used to access SVN.
 
 To actually build the software, type "make" in the same directory as this file
 and all should build without errors, there may be a warning or two though. Once
