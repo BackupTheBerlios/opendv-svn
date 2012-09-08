@@ -8,8 +8,7 @@ include settings.mk
 all:	pre-build main-build
 
 pre-build:
-		@echo Creating new SVN.h
-		mksvnrev.sh
+		./mksvnrev.sh
 
 main-build:	AnalogueRepeater/analoguerepeater DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
 

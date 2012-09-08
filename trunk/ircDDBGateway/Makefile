@@ -8,8 +8,7 @@ include settings.mk
 all:	pre-build main-build
 
 pre-build:
-		@echo Creating new SVN.h
-		mksvnrev.sh
+		./mksvnrev.sh
 
 main-build:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver XReflector/xreflector
 

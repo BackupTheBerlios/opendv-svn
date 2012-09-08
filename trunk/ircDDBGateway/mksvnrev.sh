@@ -5,6 +5,8 @@ SVN_H=Common/SVN.h
 
 # If SVN is installed then assume that it's in use
 if [ -x $SVNVERSION ]; then
+	echo Creating new SVN.h
+
 	SVNREV=$($SVNVERSION -n .)
 
 	echo "/*" > $SVN_H
