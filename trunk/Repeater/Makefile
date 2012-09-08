@@ -5,7 +5,13 @@
 
 include settings.mk
 
-all:	AnalogueRepeater/analoguerepeater DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
+all:	pre-build main-build
+
+pre-build:
+		@echo Creating new SVN.h
+		mksvnrev.sh
+
+main-build:	AnalogueRepeater/analoguerepeater DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
 
 AnalogueRepeater/analoguerepeater:	Common/Common.a
 		make -C AnalogueRepeater

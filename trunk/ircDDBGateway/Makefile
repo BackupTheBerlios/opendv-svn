@@ -5,7 +5,13 @@
 
 include settings.mk
 
-all:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver XReflector/xreflector
+all:	pre-build main-build
+
+pre-build:
+		@echo Creating new SVN.h
+		mksvnrev.sh
+
+main-build:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver XReflector/xreflector
 
 ircDDBGateway/ircddbgateway:	ircDDB/libircDDB.a Common/Common.a
 		make -C ircDDBGateway

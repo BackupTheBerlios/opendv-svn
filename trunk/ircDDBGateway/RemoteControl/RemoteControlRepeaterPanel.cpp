@@ -63,6 +63,28 @@ const unsigned int RECONNECT_WIDTH = 100U;
 
 const unsigned int BORDER_SIZE = 5U;
 
+static int wxCALLBACK itemCompare(long item1, long item2, long sortData)
+{
+	PROTOCOL proto1 = PROTOCOL(item1);
+	PROTOCOL proto2 = PROTOCOL(item2);
+
+	if (proto1 == proto2)
+		return 0;
+
+	// DCS at the top
+	if (proto1 == PROTO_DCS)
+		return 1;
+
+	if (proto2 == PROTO_DCS)
+		return -1;
+
+	// D-Plus comes next
+	if (proto1 == PROTO_DPLUS)
+		return 1;
+
+	return -1;
+}
+
 CRemoteControlRepeaterPanel::CRemoteControlRepeaterPanel(wxWindow* parent, int id, const wxString& callsign) :
 wxPanel(parent, id),
 m_callsign(callsign),
@@ -250,6 +272,9 @@ void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 
 		m_list->InsertItem(0L, callsign);
 
+		// To allow for sorting
+		m_list->SetItemData(0L, long(protocol));
+
 		switch (protocol) {
 			case PROTO_DEXTRA:
 				m_list->SetItem(0L, 1, wxT("DExtra"));
@@ -287,6 +312,8 @@ void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 		else
 			m_list->SetItem(0L, 4, _("Linking"));
 	}
+
+	m_list->SortItems(itemCompare, 0L);
 }
 
 void CRemoteControlRepeaterPanel::onRefresh(wxCommandEvent& event)

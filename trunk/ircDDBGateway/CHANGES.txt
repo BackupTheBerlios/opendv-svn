@@ -1110,3 +1110,8 @@ Added the ircddb.dstar.su test server.
 More changes to the DCS protocol.
 Added XRF018 and XRF250.
 Added SVN revsion number to the log file.
+
+2012xxxx
+--------
+
+Sort the reflector list in the Remote Control by protocol.
