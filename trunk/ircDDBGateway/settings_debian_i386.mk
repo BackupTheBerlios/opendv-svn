@@ -8,7 +8,7 @@
 	export LIBS    := $(shell wx-config --libs adv,core)
 	export CC      := $(shell wx-config --cxx)
 	export LDFLAGS := -g
-	export BINDIR  := "/usr/bin"
+	export BINDIR  := "$(DESTDIR)/usr/bin"
 #
 # Comment out the first CFLAGS entry and uncomment the second to enable the DExtra Link. For DCS Link you must comment out the first
 # CFLAGS entry and uncomment the thrird entrt. You must do a "make clean" before rebuilding the software.
