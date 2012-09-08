@@ -25,6 +25,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Adding SVN revision number"
+				CommandLine="SubWCRev .. SVN_in.h SVN.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -89,6 +91,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Adding SVN revision number"
+				CommandLine="SubWCRev .. SVN_in.h SVN.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

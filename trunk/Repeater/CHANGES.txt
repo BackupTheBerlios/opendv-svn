@@ -1727,3 +1727,4 @@ Make LibUsb on both Windows and Linux more agressive at transferring data.
 Remove the need for the extra thread in the Linux command line versions.
 Support for the DV-RPTR V2 protocol.
 Removed the DCS and DExtra Gateways.
+Added SVN revsion version to the log file.

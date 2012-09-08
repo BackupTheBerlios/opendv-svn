@@ -23,6 +23,7 @@
 #include "DStarDefines.h"
 #include "Version.h"
 #include "Logger.h"
+#include "SVN.h"
 
 #include <wx/cmdline.h>
 #include <wx/filename.h>
@@ -114,7 +115,8 @@ bool CXReflectorApp::OnInit()
 
 	wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" - ") + VERSION);
 
-	// Log the version of wxWidgets and the Operating System
+	// Log the SVN revsion and the version of wxWidgets and the Operating System
+	wxLogInfo(SVNREV);
 	wxLogInfo(wxT("Using wxWidgets %d.%d.%d on %s"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, ::wxGetOsDescription().c_str());
 
 	createThread();

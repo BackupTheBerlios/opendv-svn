@@ -14,11 +14,11 @@ starnetserverd:	StarNetServerAppD.o StarNetServerConfig.o StarNetServerThread.o 
 				$(LIBS)
 
 StarNetServerApp.o:		StarNetServerApp.cpp StarNetServerApp.h StarNetServerThread.h StarNetServerFrame.h StarNetServerConfig.h StarNetServerLogRedirect.h \
-						StarNetServerDefs.h StarNetServerThreadHelper.h ../Common/Defs.h ../Common/Logger.h ../Common/Version.h ../ircDDB/IRCDDB.h
+						StarNetServerDefs.h StarNetServerThreadHelper.h ../Common/Defs.h ../Common/Logger.h ../Common/Version.h ../Common/SVN.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c StarNetServerApp.cpp
 
 StarNetServerAppD.o:	StarNetServerAppD.cpp StarNetServerAppD.h StarNetServerThread.h StarNetServerConfig.h StarNetServerDefs.h ../Common/Defs.h \
-						../Common/Logger.h ../Common/Version.h ../ircDDB/IRCDDB.h
+						../Common/Logger.h ../Common/Version.h ../Common/SVN.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c StarNetServerAppD.cpp
 
 StarNetServerConfig.o:		StarNetServerConfig.cpp StarNetServerConfig.h StarNetServerDefs.h ../Common/Defs.h

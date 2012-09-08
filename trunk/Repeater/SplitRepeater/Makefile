@@ -25,7 +25,7 @@ SplitRepeaterAMBEData.o:	SplitRepeaterAMBEData.cpp SplitRepeaterAMBEData.h ../Co
 
 SplitRepeaterApp.o:	SplitRepeaterApp.cpp SplitRepeaterApp.h SplitRepeaterThread.h SplitRepeaterFrame.h SplitRepeaterDefs.h SplitRepeaterStatusData.h \
 					SplitRepeaterLogger.h SplitRepeaterConfig.h SplitRepeaterProtocolHandler.h SplitRepeaterThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h \
-					../Common/Version.h ../Common/CallsignList.h
+					../Common/Version.h ../Common/CallsignList.h ../Common/SVN.h
 				$(CC) $(CFLAGS) -c SplitRepeaterApp.cpp
 
 SplitRepeaterCallsignSet.o:	SplitRepeaterCallsignSet.cpp SplitRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -41,7 +41,7 @@ SplitRepeaterControl2Set.o:	SplitRepeaterControl2Set.cpp SplitRepeaterControl2Se
 				$(CC) $(CFLAGS) -c SplitRepeaterControl2Set.cpp
 
 SplitRepeaterD.o:	SplitRepeaterD.cpp SplitRepeaterD.h SplitRepeaterThread.h SplitRepeaterProtocolHandler.h SplitRepeaterConfig.h SplitRepeaterDefs.h \
-					../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h ../Common/CallsignList.h
+					../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h ../Common/CallsignList.h ../Common/SVN.h
 				$(CC) $(CFLAGS) -c SplitRepeaterD.cpp
 
 SplitRepeaterFrame.o:	SplitRepeaterFrame.cpp SplitRepeaterFrame.h SplitRepeaterDefs.h SplitRepeaterApp.h SplitRepeaterStatusData.h \

@@ -16,11 +16,12 @@ xreflectord:	XReflectorAppD.o XReflectorConfig.o XReflectorDExtraHandler.o XRefl
 				XReflectorReflectorHandler.o XReflectorThread.o XReflectorUserLog.o ../Common/Common.a $(LIBS)
 
 XReflectorApp.o:	XReflectorApp.cpp XReflectorApp.h XReflectorThread.h XReflectorFrame.h XReflectorConfig.h XReflectorLogRedirect.h \
-				XReflectorDefs.h XReflectorReflectorHandler.h XReflectorThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h
+				XReflectorDefs.h XReflectorReflectorHandler.h XReflectorThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h \
+				../Common/SVN.h
 				$(CC) $(CFLAGS) -c XReflectorApp.cpp
 
 XReflectorAppD.o:	XReflectorAppD.cpp XReflectorAppD.h XReflectorThread.h XReflectorConfig.h XReflectorDefs.h XReflectorReflectorHandler.h \
-				../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h
+				../Common/DStarDefines.h ../Common/Logger.h ../Common/Version.h ../Common/SVN.h
 				$(CC) $(CFLAGS) -c XReflectorAppD.cpp
 
 XReflectorConfig.o:	XReflectorConfig.cpp XReflectorConfig.h XReflectorDefs.h
