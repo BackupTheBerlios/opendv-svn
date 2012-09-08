@@ -28,6 +28,6 @@ echo "#define	SVN_H" >> $SVN_H
 echo >> $SVN_H
 echo "#include <wx/wx.h>" >> $SVN_H
 echo >> $SVN_H
-echo "const wxString SVNREV = wxT\(\"SVN revision: $SVNREV\"\);" >> $SVN_H
+echo "const wxString SVNREV = wxT(\"SVN revision: $SVNREV\");" >> $SVN_H
 echo >> $SVN_H
 echo "#endif" >> $SVN_H
