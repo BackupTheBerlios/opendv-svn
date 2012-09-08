@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 SVNVERSION=/usr/bin/svnversion
 SVN_H=Common/SVN.h
