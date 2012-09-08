@@ -24,12 +24,13 @@
 # 2012-08-12 dl5di    initial version for Debian systems
 # 2012-08-24 dl5di    fixes on ARM system/DVRPTR-NET
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
+# 2012-09-08 dl5di    change from "chkconfig" to Debian style "update-rc.d"
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20120826beta"
+rev="dvrptrnet-20120908-beta"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2659,7 +2660,7 @@ while [ "$SELECT" -ne 99 ]; do
 	20)
 	    if [ -f $INITPATH/ircddbgateway ]; then
 		print_text "scr_act" 
-		/sbin/chkconfig --add ircddbgateway
+		/usr/sbin/update-rc.d ircddbgateway defaults
 	    else
 		print_text "scr_err" 
 	    fi
@@ -2668,7 +2669,7 @@ while [ "$SELECT" -ne 99 ]; do
 	21)
 	    if [ -f $INITPATH/ircddbgateway ]; then
 		print_text "scr_deact" 
-		/sbin/chkconfig --del ircddbgateway
+		/usr/sbin/update-rc.d ircddbgateway remove
 	    else
 		print_text "scr_err" 
 	    fi
@@ -2677,7 +2678,7 @@ while [ "$SELECT" -ne 99 ]; do
 	22)
 	    if [ -f  $INITPATH/timeserver ]; then
 		print_text "timer_act" 
-		/sbin/chkconfig --add timeserver
+		/usr/sbin/update-rc.d timeserver defaults
 	    else
 		print_text "timer_err" 
 	    fi
@@ -2686,7 +2687,7 @@ while [ "$SELECT" -ne 99 ]; do
 	23)
 	    if [ -f  $INITPATH/timeserver ]; then
 		print_text "timer_deact" 
-		/sbin/chkconfig --del timeserver
+		/usr/sbin/update-rc.d timeserver remove
 	    else
 		print_text "timer_err" 
 	    fi
