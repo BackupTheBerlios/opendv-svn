@@ -5,12 +5,7 @@
 
 include settings.mk
 
-all:	pre-build main-build
-
-pre-build:
-		./mksvnrev.sh
-
-main-build:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver XReflector/xreflector
+all:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver XReflector/xreflector
 
 ircDDBGateway/ircddbgateway:	ircDDB/libircDDB.a Common/Common.a
 		make -C ircDDBGateway

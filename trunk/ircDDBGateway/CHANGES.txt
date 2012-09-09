@@ -1115,3 +1115,4 @@ Added SVN revsion number to the log file.
 --------
 
 Sort the reflector list in the Remote Control by protocol.
+Changed the way that the SVN revision is included.

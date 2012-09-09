@@ -68,12 +68,6 @@ The top level Makefile includes platform specific settings from the file
 platforms are provided by other developers, copy a required version to
 "settings.mk" when needed.
 
-Before building the software you need to run the script mksvnrev.sh to create
-the file Common/SVN.h which contains the SVN revision of the build which makes
-debugging easier. This file may need to be made executable by using the command
-"chmod 0755 mksvnrev.sh" before using it, and it needs to be run on the machine
-that was used to access SVN.
-
 To actually build the software, type "make" in the same directory as this file
 and all should build without errors, there may be a warning or two though. Once
 compiled log in as root or use the sudo command, and do "make install".

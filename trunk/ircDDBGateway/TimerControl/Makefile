@@ -15,11 +15,11 @@ timercontrold:	TimerControlAppD.o TimerControlConfig.o TimerControlItemFile.o Ti
 				TimerControlThread.o ../Common/Common.a $(LIBS)
 
 TimerControlApp.o:		TimerControlApp.cpp TimerControlApp.h TimerControlFrame.h TimerControlConfig.h TimerControlDefs.h TimerControlThread.h \
-				TimerControlThreadHelper.h ../Common/Logger.h ../Common/Version.h ../Common/SVN.h
+				TimerControlThreadHelper.h ../Common/Logger.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c TimerControlApp.cpp
 
 TimerControlAppD.o:		TimerControlAppD.cpp TimerControlAppD.h TimerControlFrame.h TimerControlConfig.h TimerControlDefs.h ../Common/Logger.h \
-				../Common/Version.h ../Common/SVN.h
+				../Common/Version.h
 				$(CC) $(CFLAGS) -c TimerControlAppD.cpp
 
 TimerControlConfig.o:	TimerControlConfig.cpp TimerControlConfig.h

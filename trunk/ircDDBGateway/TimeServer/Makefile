@@ -14,10 +14,10 @@ TimeServerAnnouncementsSet.o:	TimeServerAnnouncementsSet.cpp TimeServerAnnouncem
 				$(CC) $(CFLAGS) -c TimeServerAnnouncementsSet.cpp
 
 TimeServerApp.o:	TimeServerApp.cpp TimeServerApp.h TimeServerThread.h TimeServerFrame.h TimeServerLogRedirect.h TimeServerDefs.h TimeServerConfig.h \
-					TimeServerThreadHelper.h ../Common/Logger.h ../Common/Version.h ../Common/SVN.h
+					TimeServerThreadHelper.h ../Common/Logger.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c TimeServerApp.cpp
 
-TimeServerD.o:	TimeServerD.cpp TimeServerD.h TimeServerThread.h TimeServerDefs.h TimeServerConfig.h ../Common/Logger.h ../Common/Version.h ../Common/SVN.h
+TimeServerD.o:	TimeServerD.cpp TimeServerD.h TimeServerThread.h TimeServerDefs.h TimeServerConfig.h ../Common/Logger.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c TimeServerD.cpp
 
 TimeServerConfig.o:	TimeServerConfig.cpp TimeServerConfig.h TimeServerDefs.h

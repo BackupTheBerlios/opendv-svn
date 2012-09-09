@@ -26,7 +26,6 @@
 #include "Version.h"
 #include "Logger.h"
 #include "IRCDDB.h"
-#include "SVN.h"
 
 #include <wx/config.h>
 #include <wx/cmdline.h>

@@ -14,8 +14,7 @@ dvapnoded:	DVAPNodeD.o DVAPNodeConfig.o DVAPNodeTRXThread.o DVAPNodeTXThread.o D
 
 DVAPNodeApp.o:	DVAPNodeApp.cpp DVAPNodeApp.h DVAPNodeThread.h DVAPNodeTRXThread.h DVAPNodeTXThread.h DVAPNodeRXThread.h DVAPNodeFrame.h DVAPNodeDefs.h \
 				DVAPNodeStatusData.h DVAPNodeLogger.h DVAPNodeConfig.h DVAPNodeThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h \
-				../Common/RepeaterProtocolHandler.h ../Common/DVAPController.h ../Common/Utils.h ../Common/Version.h ../Common/CallsignList.h \
-				../Common/SVN.h
+				../Common/RepeaterProtocolHandler.h ../Common/DVAPController.h ../Common/Utils.h ../Common/Version.h ../Common/CallsignList.h
 				$(CC) $(CFLAGS) -c DVAPNodeApp.cpp
 
 DVAPNodeCallsignSet.o:	DVAPNodeCallsignSet.cpp DVAPNodeCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -26,7 +25,7 @@ DVAPNodeConfig.o:	DVAPNodeConfig.cpp DVAPNodeConfig.h DVAPNodeDefs.h ../Common/D
 
 DVAPNodeD.o:	DVAPNodeD.cpp DVAPNodeD.h DVAPNodeThread.h DVAPNodeTRXThread.h DVAPNodeTXThread.h DVAPNodeRXThread.h DVAPNodeConfig.h DVAPNodeDefs.h \
 				../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h ../Common/DVAPController.h ../Common/Utils.h \
-				../Common/Version.h ../Common/CallsignList.h ../Common/SVN.h
+				../Common/Version.h ../Common/CallsignList.h
 				$(CC) $(CFLAGS) -c DVAPNodeD.cpp
 
 DVAPNodeDVAPSet.o:	DVAPNodeDVAPSet.cpp DVAPNodeDVAPSet.h DVAPNodeDefs.h ../Common/DStarDefines.h ../Common/SerialDataController.h

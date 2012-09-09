@@ -16,11 +16,11 @@ parrotcontrollerd:	ParrotControllerD.o ParrotControllerConfig.o ParrotController
 
 ParrotControllerApp.o:	ParrotControllerApp.cpp ParrotControllerApp.h ParrotControllerThread.h ParrotControllerFrame.h ParrotControllerDefs.h \
 						ParrotControllerStatusData.h ParrotControllerConfig.h ParrotControllerProtocolHandler.h ParrotControllerThreadHelper.o ../Common/Logger.h \
-						../Common/Version.h ../Common/SVN.h
+						../Common/Version.h
 				$(CC) $(CFLAGS) -c ParrotControllerApp.cpp
 
 ParrotControllerD.o:	ParrotControllerD.cpp ParrotControllerD.h ParrotControllerThread.h ParrotControllerDefs.h ParrotControllerConfig.h \
-						ParrotControllerProtocolHandler.h ../Common/Logger.h ../Common/Version.h ../Common/SVN.h
+						ParrotControllerProtocolHandler.h ../Common/Logger.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c ParrotControllerD.cpp
 
 ParrotControllerBeaconSet.o:	ParrotControllerBeaconSet.cpp ParrotControllerBeaconSet.h ParrotControllerDefs.h

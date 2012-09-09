@@ -21,7 +21,6 @@
 #include "TimerControlApp.h"
 #include "Version.h"
 #include "Logger.h"
-#include "SVN.h"
 
 #include <wx/config.h>
 #include <wx/cmdline.h>
