@@ -28,6 +28,7 @@
 # 2012-09-02 dl5di    more fixes for bugs reported by Tom ON4TOP
 # 2012-09-04 dl5di    change access right to device ttyS*, ttyACM* and ttyUSB*
 # 2012-09-08 dl5di    replace "chkconfig" calls to Debian style "update-rc.d"
+# 2012-09-10 dl5di    permissions to devices moved to postinst script
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -37,7 +38,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120908-beta"
+rev="20120910-beta"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1586,8 +1587,6 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "/dev/ttyS${VALUE}"
-	    echo "KERNEL==\"/dev/ttyS${VALUE}\", NAME=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/50_udev_ttyS${VALUE}.rules
-	    [ -c /dev/ttyS${VALUE} ] && chown opendv:opendv /dev/ttyS${VALUE}
 	    ;;
 	4)
 	    print_text "iface_usb"
