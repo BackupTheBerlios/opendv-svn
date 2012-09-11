@@ -5,6 +5,32 @@ CHANGES / RESOLVED ISSUES:
 Release status: 
 
 ircddbgateway_20120908-1_arm
+ircddbgateway_20120908-2_i386
+
+repeater_20120907-3_armel
+repeater_20120907-6_i386
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: ntp / ntpdate handling costs time, not needed on i386
+FOUND: 2012-09-10
+REPORTED: ON4TOP
+VERIFIED: 2012-09-10
+PRIORITY: low
+SOLVED: 2012-09-11
+COMMIT: not part of the SVN
+
+Packager removes ntp/ntpdate commands from startup files for i386.
+
+Solution:
+i386 version does not set time by ntpdate, which requires ntp to be stopped before and restarted after,
+This procedure is only used for ARM systems which usually have no hardware clock.
+
+##########################################################################################################################################################
+
+Release status: 
+
+ircddbgateway_20120908-1_arm
 ircddbgateway_20120908-1_i386
 
 repeater_20120907-3_armel
