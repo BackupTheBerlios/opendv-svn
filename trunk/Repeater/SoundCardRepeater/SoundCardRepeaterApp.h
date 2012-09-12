@@ -102,6 +102,7 @@ private:
 	bool                            m_gui;
 	wxString                        m_logDir;
 	wxString                        m_confDir;
+	wxString                        m_audioDir;
 	CSoundCardRepeaterFrame*        m_frame;
 	CSoundCardRepeaterThreadHelper* m_thread;
 	CSoundCardRepeaterConfig*       m_config;

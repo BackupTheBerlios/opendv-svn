@@ -96,6 +96,7 @@ private:
 	bool                         m_gui;
 	wxString                     m_logDir;
 	wxString                     m_confDir;
+	wxString                     m_audioDir;
 	CDVRPTRRepeaterFrame*        m_frame;
 	CDVRPTRRepeaterThreadHelper* m_thread;
 	CDVRPTRRepeaterConfig*       m_config;

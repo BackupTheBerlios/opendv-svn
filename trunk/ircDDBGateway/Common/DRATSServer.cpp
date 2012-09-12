@@ -354,18 +354,17 @@ void CDRATSServer::serviceSocket()
 	}
 
 	int len = m_socket->read(m_readBuffer + m_readLength, BUFFER_LENGTH, 0U);
-	if (len > 0 && m_readEnd)
-		wxLogWarning(wxT("Ignoring incoming D-RATS data, busy"));
-
-	if (len > 0 && !m_readEnd) {
+	if (len > 0) {
 		m_readLength += len;
 
-		// To allow strstr() to run correctly
-		m_readBuffer[m_readLength] = 0x00U;
+		if (!m_readEnd) {
+			// To allow strstr() to run correctly
+			m_readBuffer[m_readLength] = 0x00U;
 
-		if (::strstr((char*)m_readBuffer, "[EOB]") != NULL) {
-			// CUtils::dump(wxT("To RF"), m_readBuffer, m_readLength);
-			m_readEnd = true;
+			if (::strstr((char*)m_readBuffer, "[EOB]") != NULL) {
+				// CUtils::dump(wxT("To RF"), m_readBuffer, m_readLength);
+				m_readEnd = true;
+			}
 		}
 	}
 }

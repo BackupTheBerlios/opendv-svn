@@ -27,7 +27,7 @@
 class CDVRPTRRepeaterD {
 
 public:
-	CDVRPTRRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& name);
+	CDVRPTRRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name);
 	~CDVRPTRRepeaterD();
 
 	bool init();
@@ -39,6 +39,7 @@ private:
 	bool                   m_nolog;
 	wxString               m_logDir;
 	wxString               m_confDir;
+	wxString               m_audioDir;
 	IDVRPTRRepeaterThread* m_thread;
 
 	bool createThread();

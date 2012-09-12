@@ -77,6 +77,7 @@ private:
 	bool                   m_gui;
 	wxString               m_logDir;
 	wxString               m_confDir;
+	wxString               m_audioDir;
 	CDVAPNodeFrame*        m_frame;
 	CDVAPNodeThreadHelper* m_thread;
 	CDVAPNodeConfig*       m_config;

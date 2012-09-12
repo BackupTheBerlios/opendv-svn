@@ -93,6 +93,7 @@ private:
 	bool                       m_gui;
 	wxString                   m_logDir;
 	wxString                   m_confDir;
+	wxString                   m_audioDir;
 	CGMSKRepeaterFrame*        m_frame;
 	CGMSKRepeaterThreadHelper* m_thread;
 	CGMSKRepeaterConfig*       m_config;

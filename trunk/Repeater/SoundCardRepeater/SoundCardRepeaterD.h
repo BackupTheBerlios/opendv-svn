@@ -27,7 +27,7 @@
 class CSoundCardRepeaterD {
 
 public:
-	CSoundCardRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& name);
+	CSoundCardRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name);
 	~CSoundCardRepeaterD();
 
 	bool init();
@@ -35,10 +35,11 @@ public:
 	void run();
 
 private:
-	wxString              m_name;
-	bool                  m_nolog;
-	wxString              m_logDir;
-	wxString              m_confDir;
+	wxString                  m_name;
+	bool                      m_nolog;
+	wxString                  m_logDir;
+	wxString                  m_confDir;
+	wxString                  m_audioDir;
 	ISoundCardRepeaterThread* m_thread;
 
 	bool createThread();

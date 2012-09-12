@@ -27,7 +27,7 @@
 class CGMSKRepeaterD {
 
 public:
-	CGMSKRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& name);
+	CGMSKRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name);
 	~CGMSKRepeaterD();
 
 	bool init();
@@ -39,6 +39,7 @@ private:
 	bool                 m_nolog;
 	wxString             m_logDir;
 	wxString             m_confDir;
+	wxString             m_audioDir;
 	IGMSKRepeaterThread* m_thread;
 
 	bool createThread();

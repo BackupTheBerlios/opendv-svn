@@ -45,6 +45,7 @@ const wxChar*       NAME_PARAM = wxT("Repeater Name");
 const wxChar* NOLOGGING_SWITCH = wxT("nolog");
 const wxChar*    LOGDIR_OPTION = wxT("logdir");
 const wxChar*   CONFDIR_OPTION = wxT("confdir");
+const wxChar*  AUDIODIR_OPTION = wxT("audiodir");
 const wxChar*    DAEMON_SWITCH = wxT("daemon");
 
 
@@ -61,6 +62,7 @@ int main(int argc, char** argv)
 	parser.AddSwitch(DAEMON_SWITCH,    wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddOption(LOGDIR_OPTION,    wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddOption(CONFDIR_OPTION,   wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddOption(AUDIODIR_OPTION,  wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddParam(NAME_PARAM, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
 	int cmd = parser.Parse();
@@ -81,6 +83,11 @@ int main(int argc, char** argv)
 	found = parser.Found(CONFDIR_OPTION, &confDir);
 	if (!found)
 		confDir = CONF_DIR;
+
+	wxString audioDir;
+	found = parser.Found(AUDIODIR_OPTION, &audioDir);
+	if (!found)
+		audioDir = ::wxGetHomeDir();
 
 	wxString name;
 	if (parser.GetParamCount() > 0U)
@@ -107,7 +114,7 @@ int main(int argc, char** argv)
 		::umask(0);
 	}
 
-	CGMSKRepeaterD repeater(nolog, logDir, confDir, name);
+	CGMSKRepeaterD repeater(nolog, logDir, confDir, audioDir, name);
 
 	if (!repeater.init()) {
 		::wxUninitialize();
@@ -120,11 +127,12 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-CGMSKRepeaterD::CGMSKRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& name) :
+CGMSKRepeaterD::CGMSKRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name) :
 m_name(name),
 m_nolog(nolog),
 m_logDir(logDir),
 m_confDir(confDir),
+m_audioDir(audioDir),
 m_thread(NULL)
 {
 }
@@ -276,6 +284,11 @@ bool CGMSKRepeaterD::createThread()
 	config.getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 	m_thread->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 	wxLogInfo(wxT("Control: enabled: %d, RPT1: %s, RPT2: %s, shutdown: %s, startup: %s, status1: %s, status2: %s, status3: %s, status4: %s, status5: %s, command1: %s = %s, command2: %s = %s, command3: %s = %s, command4: %s = %s, output1: %s, output2: %s, output3: %s, output4: %s"), enabled, rpt1Callsign.c_str(), rpt2Callsign.c_str(), shutdown.c_str(), startup.c_str(), status1.c_str(), status2.c_str(), status3.c_str(), status4.c_str(), status5.c_str(), command1.c_str(), command1Line.c_str(), command2.c_str(), command2Line.c_str(), command3.c_str(), command3Line.c_str(), command4.c_str(), command4Line.c_str(), output1.c_str(), output2.c_str(), output3.c_str(), output4.c_str());
+
+	bool logging;
+	config.getLogging(logging);
+	m_thread->setLogging(logging, m_audioDir);
+	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());
 
 	wxFileName wlFilename(wxFileName::GetHomeDir(), WHITELIST_FILE_NAME);
 	bool exists = wlFilename.FileExists();

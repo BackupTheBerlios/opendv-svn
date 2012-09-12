@@ -43,6 +43,7 @@ const wxChar* NOLOGGING_SWITCH = wxT("nolog");
 const wxChar*       GUI_SWITCH = wxT("gui");
 const wxChar*    LOGDIR_OPTION = wxT("logdir");
 const wxChar*   CONFDIR_OPTION = wxT("confdir");
+const wxChar*  AUDIODIR_OPTION = wxT("audiodir");
 
 
 CDVRPTRRepeaterApp::CDVRPTRRepeaterApp() :
@@ -52,6 +53,7 @@ m_nolog(false),
 m_gui(false),
 m_logDir(),
 m_confDir(),
+m_audioDir(),
 m_frame(NULL),
 m_thread(NULL),
 m_config(NULL),
@@ -151,6 +153,7 @@ void CDVRPTRRepeaterApp::OnInitCmdLine(wxCmdLineParser& parser)
 	parser.AddSwitch(GUI_SWITCH,       wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddOption(LOGDIR_OPTION,    wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddOption(CONFDIR_OPTION,   wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddOption(AUDIODIR_OPTION,  wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddParam(NAME_PARAM, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
 	wxApp::OnInitCmdLine(parser);
@@ -173,6 +176,13 @@ bool CDVRPTRRepeaterApp::OnCmdLineParsed(wxCmdLineParser& parser)
 	found = parser.Found(CONFDIR_OPTION, &confDir);
 	if (found)
 		m_confDir = confDir;
+
+	wxString audioDir;
+	found = parser.Found(AUDIODIR_OPTION, &audioDir);
+	if (found)
+		m_audioDir = audioDir;
+	else
+		m_audioDir = ::wxGetHomeDir();
 
 	if (parser.GetParamCount() > 0U)
 		m_name = parser.GetParam(0U);
@@ -297,10 +307,10 @@ void CDVRPTRRepeaterApp::getLogging(bool& logging) const
 
 void CDVRPTRRepeaterApp::setLogging(bool logging)
 {
-	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), ::wxGetHomeDir().c_str());
+	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());
 
 	m_config->setLogging(logging);
-	m_thread->setLogging(logging, ::wxGetHomeDir());
+	m_thread->setLogging(logging, m_audioDir);
 }
 
 void CDVRPTRRepeaterApp::getPosition(int& x, int& y) const
@@ -480,9 +490,9 @@ void CDVRPTRRepeaterApp::createThread()
 
 	bool logging;
 	getLogging(logging);
-	thread->setLogging(logging, ::wxGetHomeDir());
+	thread->setLogging(logging, m_audioDir);
 	m_frame->setLogging(logging);
-	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), ::wxGetHomeDir().c_str());
+	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());
 
 	wxFileName wlFilename(wxFileName::GetHomeDir(), WHITELIST_FILE_NAME);
 	bool exists = wlFilename.FileExists();
