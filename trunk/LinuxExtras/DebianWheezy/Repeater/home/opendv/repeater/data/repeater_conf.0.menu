@@ -182,15 +182,14 @@ language:
 language:  0   English (UK) 
 language:  1   Deutsch 
 language:  2   Dansk 
-language:  3   Italiano 
-language:  4   Francais 
+language:  3   Francais 
+language:  4   Italiano 
 language:  5   Espanol 
-language:  6   Svenska 
-language:  7   Polski 
-language:  8   English (US) 
-language:  9   Nederlands (NL) 
-language: 10   Nederland (BE) 
-language: 11   Norsk
+language:  6   Polski 
+language:  7   Svenska 
+language:  8   Nederlands (NL) 
+language:  9   English (US) 
+language: 10   Norsk
 language: 
 language: -    RESET to default
 language: <CR> Keep old value

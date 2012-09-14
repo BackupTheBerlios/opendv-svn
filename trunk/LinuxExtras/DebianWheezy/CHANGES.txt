@@ -2,6 +2,31 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: language index error in config-tools
+FOUND: 2012-09-12
+REPORTED: F0DEI
+VERIFIED: 2012-09-12
+PRIORITY: standard
+SOLVED: 2012-09-14
+COMMIT: 2012-09-14
+
+- menu files corrected
+- index converted from ircddbgateway to repeater
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: DD-mode documentation update
+FOUND: 2012-09-13
+REPORTED: ON4TOP/DL5DI
+VERIFIED: 2012-09-13
+PRIORITY: low
+SOLVED: 2012-09-13
+COMMIT: not part of the SVN
+
+DD-mode documentation updated to show actual scripts
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Release status: 
 
 ircddbgateway_20120908-1_arm

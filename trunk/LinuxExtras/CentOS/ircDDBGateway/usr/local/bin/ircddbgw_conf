@@ -43,13 +43,14 @@
 # 2012-08-17 dl5di    bugfix default callsign
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script 
 # 2012-08-27 dl5di    allow band module "E" (10m)
-# 2012-09-01 dl5di    create direcotry if LOGPATH does not exist
+# 2012-09-01 dl5di    create directory if LOGPATH does not exist
+# 2012-09-14 dl5di    language settings sorted correct
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20120901beta"
+rev="20120914"
 
 if [ $UID -ne 0 ]; then
 	echo

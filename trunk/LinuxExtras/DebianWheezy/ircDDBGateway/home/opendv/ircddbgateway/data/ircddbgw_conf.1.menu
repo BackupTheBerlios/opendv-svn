@@ -372,8 +372,8 @@ rptr_stop:
 
 repeaterBand: 
 repeaterBand:Gib das Kennzeichen fuer das Repeater-Band ein. 
-repeaterBand:A, B, C, D fuer Sprachmodule, AD, BD, CD, DD fuer DD-Daten-Module. 
-repeaterBand:Der uebliche Standard ist A=SHF, B=UHF, C=VHF, DD=SHF/Data. 
+repeaterBand:A, B, C, D, E fuer Sprachmodule, AD, BD, CD, DD, ED fuer DD-Daten-Module. 
+repeaterBand:Der uebliche Standard ist A=SHF, B=UHF, C=VHF, DD=SHF/Data, E=HF.
 repeaterBand:Beachte: jedes Bandkennzeichen kann nur einmal verwendet werden! 
 repeaterBand: 
 repeaterBand:'-' wird das Modul loeschen, alle Einstellungen zuruecksetzen.
@@ -798,12 +798,12 @@ language:
 language:  0      English (UK) 
 language:  1      Deutsch 
 language:  2      Dansk 
-language:  3      Italiano 
-language:  4      Francais 
-language:  5      Espanol 
-language:  6      Svenska 
-language:  7      Polski 
-language:  8      English (US) 
+language:  3      Francais 
+language:  4      Italiano 
+language:  5      Polski 
+language:  6      English (US) 
+language:  7      Espanol 
+language:  8      Svenska 
 language:  9      Nederlands (NL) 
 language: 10      Nederland (BE) 
 language: 11      Norsk

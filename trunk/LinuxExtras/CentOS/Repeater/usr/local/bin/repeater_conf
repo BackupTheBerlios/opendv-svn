@@ -24,7 +24,8 @@
 # 2012-07-11 dl5di    bugfixes, cleanups, first beta release
 # 2012-08-22 dl5di    change dstarrepeater->soundcardrepeater
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
-# 2012-09-01 dl5di    create directory if LOGPATH does not exist
+# 2012-09-01 dl5di    create direcotry if LOGPATH does not exist
+# 2012-09-14 dl5di    language setting corrected (ircddbgateway uses different indexes)
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -34,7 +35,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120901-beta"
+rev="20120914"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -505,12 +506,12 @@ function select_item(){
 	RETVAL=2
 	SELECT=$3
 	break
+    elif [ "$INPUT" == "-" ]; then
+	RETVAL=3
+	break
     elif [ $INPUT -le $2 ]; then
 	RETVAL=1
 	SELECT=$INPUT
-	break
-    elif [ $INPUT -eq "-" ]; then
-	RETVAL=3
 	break
     fi
   done
@@ -628,6 +629,27 @@ function set_language(){
 	read_value $IRCDDBGWCONFIG $var
 	if [ "$?" = 0 ]; then
     	    VALUE=$DEFAULT
+	else
+#	    convert different language index from ircddbgateway
+	    case $VALUE in
+		6)
+		    VALUE=9
+		    ;;
+		7)
+		    VALUE=6
+		    ;;
+		8)
+		    VALUE=7
+		    ;;
+		9-10)
+		    VALUE=8
+		    ;;
+		11)
+		    VALUE=10
+		    ;;
+		*)
+		    ;;
+	    esac	
 	fi
     fi
     print_text $var 
