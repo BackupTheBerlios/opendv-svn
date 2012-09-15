@@ -30,24 +30,17 @@ enum RESP_TYPE_V2 {
 	RT2_TIMEOUT,
 	RT2_ERROR,
 	RT2_UNKNOWN,
-	RT2_GET_STATUS,
-	RT2_GET_VERSION,
-	RT2_GET_SERIAL,
-	RT2_GET_CONFIG,
-	RT2_SET_CONFIG,
-	RT2_RXPREAMBLE,
-	RT2_START,
+	RT2_SPACE,
+	RT2_QUERY,
+	RT2_CONFIG,
+	RT2_WATCHDOG,
 	RT2_HEADER,
-	RT2_RXSYNC,
-	RT2_DATA,
-	RT2_EOT,
-	RT2_RXLOST,
-	RT2_SET_TESTMDE
+	RT2_DATA
 };
 
 class CDVRPTRControllerV2 : public IDVRPTRController, public wxThread {
 public:
-	CDVRPTRControllerV2(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, unsigned int txDelay, bool duplex);
 	virtual ~CDVRPTRControllerV2();
 
 	virtual void* Entry();
@@ -65,7 +58,7 @@ public:
 
 	virtual bool writeStart();
 	virtual bool writeHeader(const CHeaderData& header);
-	virtual bool writeData(const unsigned char* data, unsigned int length);
+	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
 	virtual bool writeEnd();
 
 	virtual void close();
@@ -77,30 +70,25 @@ public:
 private:
 	wxString                   m_port;
 	wxString                   m_path;
-	bool                       m_rxInvert;
 	bool                       m_txInvert;
-	bool                       m_channel;
 	unsigned int               m_modLevel;
 	unsigned int               m_txDelay;
+	bool                       m_duplex;
 	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
-	unsigned char              m_txCounter;
-	unsigned char              m_pktCounter;
+	unsigned char              m_counter;
 	bool                       m_ptt;
 	bool                       m_rx;
-	unsigned int               m_txSpace;
-	bool                       m_txEnabled;
-	bool                       m_checksum;
 	unsigned int               m_space;
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
 
-	bool getVersion();
-	bool getStatus();
+	bool getSerial();
 	bool setConfig();
-	bool setEnabled(bool enable);
+	bool getSpace();
+	bool watchdog();
 
 	RESP_TYPE_V2 getResponse(unsigned char* buffer, unsigned int& length);
 

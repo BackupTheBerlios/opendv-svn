@@ -97,8 +97,7 @@ DVRPTRControllerV1.o:	DVRPTRControllerV1.cpp DVRPTRControllerV1.h DVRPTRControll
 						CCITTChecksumReverse.h Timer.h
 		$(CC) $(CFLAGS) -c DVRPTRControllerV1.cpp
 
-DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h CCITTChecksum.h \
-						CCITTChecksumReverse.h Timer.h
+DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h
 		$(CC) $(CFLAGS) -c DVRPTRControllerV2.cpp
 
 DVTOOLFileReader.o:	DVTOOLFileReader.cpp DVTOOLFileReader.h HeaderData.h DStarDefines.h Utils.h

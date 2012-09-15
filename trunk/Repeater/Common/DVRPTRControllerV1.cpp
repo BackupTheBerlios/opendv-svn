@@ -132,7 +132,7 @@ bool CDVRPTRControllerV1::open()
 
 void* CDVRPTRControllerV1::Entry()
 {
-	wxLogMessage(wxT("Starting DV-RPTR Modem Controller thread"));
+	wxLogMessage(wxT("Starting DV-RPTR1 Modem Controller thread"));
 
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 0U, 250U);
@@ -146,7 +146,7 @@ void* CDVRPTRControllerV1::Entry()
 			if (!ret) {
 				ret = findModem();
 				if (!ret) {
-					wxLogMessage(wxT("Stopping DV-RPTR Modem Controller thread"));
+					wxLogMessage(wxT("Stopping DV-RPTR1 Modem Controller thread"));
 					return NULL;
 				}
 			}
@@ -164,7 +164,7 @@ void* CDVRPTRControllerV1::Entry()
 			case RT1_ERROR: {
 					bool ret = findModem();
 					if (!ret) {
-						wxLogMessage(wxT("Stopping DV-RPTR Modem Controller thread"));
+						wxLogMessage(wxT("Stopping DV-RPTR1 Modem Controller thread"));
 						return NULL;
 					}
 				}
@@ -227,6 +227,8 @@ void* CDVRPTRControllerV1::Entry()
 						data[1U] = DV_FRAME_LENGTH_BYTES;
 						m_rxData.addData(data, 2U);
 						m_rxData.addData(m_buffer + 8U, DV_FRAME_LENGTH_BYTES);
+
+						m_rx = true;
 					}
 
 					m_mutex.Unlock();
@@ -314,7 +316,7 @@ void* CDVRPTRControllerV1::Entry()
 				if (ret == -1) {
 					bool ret = findModem();
 					if (!ret) {
-						wxLogMessage(wxT("Stopping DV-RPTR Modem Controller thread"));
+						wxLogMessage(wxT("Stopping DV-RPTR1 Modem Controller thread"));
 						return NULL;
 					}
 				} else {
@@ -328,7 +330,7 @@ void* CDVRPTRControllerV1::Entry()
 		pollTimer.clock();
 	}
 
-	wxLogMessage(wxT("Stopping DV-RPTR Modem Controller thread"));
+	wxLogMessage(wxT("Stopping DV-RPTR1 Modem Controller thread"));
 
 	setEnabled(false);
 
@@ -492,10 +494,14 @@ bool CDVRPTRControllerV1::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int length)
+bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	if (!m_txEnabled)
 		return false;
+
+	// We don't pass on ends to the DV-RPTR1 modem
+	if (end)
+		return true;
 
 	unsigned char buffer[30U];
 

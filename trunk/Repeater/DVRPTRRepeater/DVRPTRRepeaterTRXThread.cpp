@@ -927,9 +927,9 @@ void CDVRPTRRepeaterTRXThread::transmitLocalData()
 	if (length == 0U)
 		return;
 
-	if (!end) {
-		m_dvrptr->writeData(buffer, length);
-	} else {
+	m_dvrptr->writeData(buffer, length, end);
+
+	if (end) {
 		m_dvrptr->writeEnd();
 		m_localQueue.reset();
 	}
@@ -963,9 +963,9 @@ void CDVRPTRRepeaterTRXThread::transmitRadioData()
 	if (length == 0U)
 		return;
 
-	if (!end) {
-		m_dvrptr->writeData(buffer, length);
-	} else {
+	m_dvrptr->writeData(buffer, length, end);
+
+	if (end) {
 		m_dvrptr->writeEnd();
 		m_radioQueue.reset();
 	}
@@ -999,9 +999,9 @@ void CDVRPTRRepeaterTRXThread::transmitNetworkData()
 	if (length == 0U)
 		return;
 
-	if (!end) {
-		m_dvrptr->writeData(buffer, length);
-	} else {
+	m_dvrptr->writeData(buffer, length, end);
+
+	if (end) {
 		m_dvrptr->writeEnd();
 
 		m_networkQueue[m_readNum]->reset();

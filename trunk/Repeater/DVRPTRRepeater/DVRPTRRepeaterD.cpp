@@ -252,7 +252,7 @@ bool CDVRPTRRepeaterD::createThread()
 				controller = new CDVRPTRControllerV1(modemPort, modemPath, rxInvert, txInvert, channel, modLevel, txDelay);
 				break;
 			case DVRPTR_V2:
-				controller = new CDVRPTRControllerV2(modemPort, modemPath, rxInvert, txInvert, channel, modLevel, txDelay);
+				controller = new CDVRPTRControllerV2(modemPort, modemPath, txInvert, modLevel, txDelay, mode == MODE_DUPLEX || mode == MODE_TXANDRX);
 				break;
 			default:
 				wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(modemVersion));

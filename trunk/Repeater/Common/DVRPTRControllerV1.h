@@ -65,7 +65,7 @@ public:
 
 	virtual bool writeStart();
 	virtual bool writeHeader(const CHeaderData& header);
-	virtual bool writeData(const unsigned char* data, unsigned int length);
+	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
 	virtual bool writeEnd();
 
 	virtual void close();
