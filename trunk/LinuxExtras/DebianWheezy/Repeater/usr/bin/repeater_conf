@@ -30,6 +30,7 @@
 # 2012-09-08 dl5di    replace "chkconfig" calls to Debian style "update-rc.d"
 # 2012-09-10 dl5di    permissions to devices moved to postinst script
 # 2012-09-14 dl5di    language setting corrected (ircddbgateway uses different indexes)
+# 2012-09-15 dl5di    modemVersion added
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -1745,6 +1746,33 @@ function hwtype2(){
     write_value $REPEATERCONFIG $var "/dev/ttyACM${VALUE}"
     echo "KERNEL==\"/dev/ttyACM${VALUE}\", NAME=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/50_udev_ttyACM${VALUE}.rules
     [ -c /dev/ttyACM${VALUE} ] && chown opendv:opendv /dev/ttyACM${VALUE}
+
+#
+# modemVersion=1
+# (1-2)
+#
+    var="modemVersion"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $REPEATERCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    print_text $var 
+    request_selection $var "$DEFAULT" "$VALUE"
+    INPUT=$?
+    case $INPUT in
+	[1-2])
+    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $REPEATERCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
 
 #
 # modemRXInvert=0

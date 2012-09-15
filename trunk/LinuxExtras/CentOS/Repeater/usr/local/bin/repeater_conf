@@ -26,6 +26,7 @@
 # 2012-08-26 dl5di    check if started by root, needed to modify default settings for start script
 # 2012-09-01 dl5di    create direcotry if LOGPATH does not exist
 # 2012-09-14 dl5di    language setting corrected (ircddbgateway uses different indexes)
+# 2012-09-15 dl5di    modemVersion added
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -1736,6 +1737,33 @@ function hwtype2(){
 	    ;;
     esac
     write_value $REPEATERCONFIG $var "/dev/ttyACM${VALUE}"
+
+#
+# modemVersion=1
+# (1-2)
+#
+    var="modemVersion"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $REPEATERCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    print_text $var 
+    request_selection $var "$DEFAULT" "$VALUE"
+    INPUT=$?
+    case $INPUT in
+	[1-2])
+    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $REPEATERCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
 
 #
 # modemRXInvert=0

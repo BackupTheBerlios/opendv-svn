@@ -2,6 +2,18 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: configuration optin DVRPTR v2
+FOUND: 2012-09-15
+REPORTED: DL5DI
+VERIFIED: 2012-09-15
+PRIORITY: standard
+SOLVED: 2012-09-15
+COMMIT: 2012-09-15
+
+add configuration option for DVRPTR modem V2 to repeater_conf
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: language index error in config-tools
 FOUND: 2012-09-12
 REPORTED: F0DEI

@@ -297,6 +297,12 @@ squelchLevel:Squelch-Level
 squelchLevel: (0 .. 100) [%]
 squelchLevel:
 
+modemVersion:
+modemVersion:Modem-/Protocol-Version
+modemVersion:
+modemVersion: 1-2
+modemVersion:
+
 rxInvert:
 rxInvert:RX-Invertierung
 rxInvert: 0=AUS
