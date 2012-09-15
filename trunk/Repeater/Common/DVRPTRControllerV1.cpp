@@ -373,7 +373,7 @@ DATA_QUEUE_TYPE CDVRPTRControllerV1::readQueue(unsigned char* data, unsigned int
 	return type;
 }
 
-bool CDVRPTRControllerV1::writeStart()
+bool CDVRPTRControllerV1::writeHeader(const CHeaderData& header)
 {
 	if (!m_txEnabled)
 		return false;
@@ -382,100 +382,81 @@ bool CDVRPTRControllerV1::writeStart()
 	if (m_txCounter == 0U)
 		m_txCounter = 1U;
 
-	unsigned char buffer[10U];
+	unsigned char buffer1[10U];
 
-	buffer[0U] = DVRPTR_FRAME_START;
+	buffer1[0U] = DVRPTR_FRAME_START;
 
-	buffer[1U] = 0x03U;
-	buffer[2U] = 0x00U;
+	buffer1[1U] = 0x03U;
+	buffer1[2U] = 0x00U;
 
-	buffer[3U] = DVRPTR_START;
+	buffer1[3U] = DVRPTR_START;
 
-	buffer[4U] = m_txCounter;
-	buffer[5U] = 0x00U;
+	buffer1[4U] = m_txCounter;
+	buffer1[5U] = 0x00U;
 
 	if (m_checksum) {
 		CCCITTChecksum cksum;
-		cksum.update(buffer + 0U, 6U);
-		cksum.result(buffer + 6U);
+		cksum.update(buffer1 + 0U, 6U);
+		cksum.result(buffer1 + 6U);
 	} else {
-		buffer[6U] = 0x00U;
-		buffer[7U] = 0x0BU;
+		buffer1[6U] = 0x00U;
+		buffer1[7U] = 0x0BU;
 	}
 
-	wxMutexLocker locker(m_mutex);
+	unsigned char buffer2[60U];
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < 9U)
-		return false;
+	buffer2[0U] = DVRPTR_FRAME_START;
 
-	unsigned char len = 8U;
-	m_txData.addData(&len, 1U);
+	buffer2[1U] = 0x2FU;
+	buffer2[2U] = 0x00U;
 
-	m_txData.addData(buffer, 8U);
+	buffer2[3U] = DVRPTR_HEADER;
 
-	return true;
-}
+	buffer2[4U] = m_txCounter;
+	buffer2[5U] = 0x00U;
 
-bool CDVRPTRControllerV1::writeHeader(const CHeaderData& header)
-{
-	if (!m_txEnabled)
-		return false;
+	buffer2[6U] = 0x00U;
+	buffer2[7U] = 0x00U;
 
-	unsigned char buffer[60U];
+	::memset(buffer2 + 8U, ' ', RADIO_HEADER_LENGTH_BYTES);
 
-	buffer[0U] = DVRPTR_FRAME_START;
-
-	buffer[1U] = 0x2FU;
-	buffer[2U] = 0x00U;
-
-	buffer[3U] = DVRPTR_HEADER;
-
-	buffer[4U] = m_txCounter;
-	buffer[5U] = 0x00U;
-
-	buffer[6U] = 0x00U;
-	buffer[7U] = 0x00U;
-
-	::memset(buffer + 8U, ' ', RADIO_HEADER_LENGTH_BYTES);
-
-	buffer[8U]  = header.getFlag1();
-	buffer[9U]  = header.getFlag2();
-	buffer[10U] = header.getFlag3();
+	buffer2[8U]  = header.getFlag1();
+	buffer2[9U]  = header.getFlag2();
+	buffer2[10U] = header.getFlag3();
 
 	wxString rpt2 = header.getRptCall2();
 	for (unsigned int i = 0U; i < rpt2.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[i + 11U]  = rpt2.GetChar(i);
+		buffer2[i + 11U]  = rpt2.GetChar(i);
 
 	wxString rpt1 = header.getRptCall1();
 	for (unsigned int i = 0U; i < rpt1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[i + 19U] = rpt1.GetChar(i);
+		buffer2[i + 19U] = rpt1.GetChar(i);
 
 	wxString your = header.getYourCall();
 	for (unsigned int i = 0U; i < your.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[i + 27U] = your.GetChar(i);
+		buffer2[i + 27U] = your.GetChar(i);
 
 	wxString my1 = header.getMyCall1();
 	for (unsigned int i = 0U; i < my1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[i + 35U] = my1.GetChar(i);
+		buffer2[i + 35U] = my1.GetChar(i);
 
 	wxString my2 = header.getMyCall2();
 	for (unsigned int i = 0U; i < my2.Len() && i < SHORT_CALLSIGN_LENGTH; i++)
-		buffer[i + 43U] = my2.GetChar(i);
+		buffer2[i + 43U] = my2.GetChar(i);
 
 	CCCITTChecksumReverse cksum1;
-	cksum1.update(buffer + 8U, RADIO_HEADER_LENGTH_BYTES - 2U);
-	cksum1.result(buffer + 47U);
+	cksum1.update(buffer2 + 8U, RADIO_HEADER_LENGTH_BYTES - 2U);
+	cksum1.result(buffer2 + 47U);
 
-	buffer[49U] = 0x00U;
+	buffer2[49U] = 0x00U;
 
 	if (m_checksum) {
-		CCCITTChecksum cksum2;
-		cksum2.update(buffer + 0U, 50U);
-		cksum2.result(buffer + 50U);
+		CCCITTChecksum cksum;
+		cksum.update(buffer2 + 0U, 50U);
+		cksum.result(buffer2 + 50U);
 	} else {
-		buffer[50U] = 0x00U;
-		buffer[51U] = 0x0BU;
+		buffer2[50U] = 0x00U;
+		buffer2[51U] = 0x0BU;
 	}
 
 	m_pktCounter = 0U;
@@ -483,13 +464,18 @@ bool CDVRPTRControllerV1::writeHeader(const CHeaderData& header)
 	wxMutexLocker locker(m_mutex);
 
 	unsigned int space = m_txData.freeSpace();
-	if (space < 53U)
+	if (space < 62U)
 		return false;
 
-	unsigned char len = 52U;
-	m_txData.addData(&len, 1U);
+	unsigned char len1 = 8U;
+	m_txData.addData(&len1, 1U);
 
-	m_txData.addData(buffer, 52U);
+	m_txData.addData(buffer1, 8U);
+
+	unsigned char len2 = 52U;
+	m_txData.addData(&len2, 1U);
+
+	m_txData.addData(buffer2, 52U);
 
 	return true;
 }
@@ -499,11 +485,41 @@ bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int leng
 	if (!m_txEnabled)
 		return false;
 
-	// We don't pass on ends to the DV-RPTR1 modem
-	if (end)
-		return true;
-
 	unsigned char buffer[30U];
+
+	if (end) {
+		buffer[0U] = DVRPTR_FRAME_START;
+
+		buffer[1U] = 0x03U;
+		buffer[2U] = 0x00U;
+
+		buffer[3U] = DVRPTR_EOT;
+
+		buffer[4U] = m_txCounter;
+		buffer[5U] = 0xFFU;
+
+		if (m_checksum) {
+			CCCITTChecksum cksum;
+			cksum.update(buffer + 0U, 6U);
+			cksum.result(buffer + 6U);
+		} else {
+			buffer[6U] = 0x00U;
+			buffer[7U] = 0x0BU;
+		}
+
+		wxMutexLocker locker(m_mutex);
+
+		unsigned int space = m_txData.freeSpace();
+		if (space < 9U)
+			return false;
+
+		unsigned char len = 8U;
+		m_txData.addData(&len, 1U);
+
+		m_txData.addData(buffer, 8U);
+
+		return true;
+	}
 
 	buffer[0U] = DVRPTR_FRAME_START;
 
@@ -546,46 +562,6 @@ bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int leng
 	m_txData.addData(&len, 1U);
 
 	m_txData.addData(buffer, 24U);
-
-	return true;
-}
-
-bool CDVRPTRControllerV1::writeEnd()
-{
-	if (!m_txEnabled)
-		return false;
-
-	unsigned char buffer[10U];
-
-	buffer[0U] = DVRPTR_FRAME_START;
-
-	buffer[1U] = 0x03U;
-	buffer[2U] = 0x00U;
-
-	buffer[3U] = DVRPTR_EOT;
-
-	buffer[4U] = m_txCounter;
-	buffer[5U] = 0xFFU;
-
-	if (m_checksum) {
-		CCCITTChecksum cksum;
-		cksum.update(buffer + 0U, 6U);
-		cksum.result(buffer + 6U);
-	} else {
-		buffer[6U] = 0x00U;
-		buffer[7U] = 0x0BU;
-	}
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned int space = m_txData.freeSpace();
-	if (space < 9U)
-		return false;
-
-	unsigned char len = 8U;
-	m_txData.addData(&len, 1U);
-
-	m_txData.addData(buffer, 8U);
 
 	return true;
 }

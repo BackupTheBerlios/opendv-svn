@@ -45,10 +45,8 @@ public:
 
 	virtual DATA_QUEUE_TYPE readQueue(unsigned char* data, unsigned int& length) = 0;
 
-	virtual bool writeStart() = 0;
 	virtual bool writeHeader(const CHeaderData& header) = 0;
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end) = 0;
-	virtual bool writeEnd() = 0;
 
 	virtual void close() = 0;
 

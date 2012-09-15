@@ -501,7 +501,6 @@ void CDVRPTRRepeaterTXRXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeStart();
 	m_dvrptr->writeHeader(*header);
 	delete header;
 }
@@ -522,8 +521,6 @@ void CDVRPTRRepeaterTXRXThread::transmitNetworkData()
 	m_dvrptr->writeData(buffer, length, end);
 
 	if (end) {
-		m_dvrptr->writeEnd();
-
 		m_networkQueue[m_readNum]->reset();
 
 		m_readNum++;

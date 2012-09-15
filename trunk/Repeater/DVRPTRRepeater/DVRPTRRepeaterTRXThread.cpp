@@ -909,7 +909,6 @@ void CDVRPTRRepeaterTRXThread::transmitLocalHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeStart();
 	m_dvrptr->writeHeader(*header);
 	delete header;
 }
@@ -929,10 +928,8 @@ void CDVRPTRRepeaterTRXThread::transmitLocalData()
 
 	m_dvrptr->writeData(buffer, length, end);
 
-	if (end) {
-		m_dvrptr->writeEnd();
+	if (end)
 		m_localQueue.reset();
-	}
 }
 
 void CDVRPTRRepeaterTRXThread::transmitRadioHeader()
@@ -945,7 +942,6 @@ void CDVRPTRRepeaterTRXThread::transmitRadioHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeStart();
 	m_dvrptr->writeHeader(*header);
 	delete header;
 }
@@ -965,10 +961,8 @@ void CDVRPTRRepeaterTRXThread::transmitRadioData()
 
 	m_dvrptr->writeData(buffer, length, end);
 
-	if (end) {
-		m_dvrptr->writeEnd();
+	if (end)
 		m_radioQueue.reset();
-	}
 }
 
 void CDVRPTRRepeaterTRXThread::transmitNetworkHeader()
@@ -981,7 +975,6 @@ void CDVRPTRRepeaterTRXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeStart();
 	m_dvrptr->writeHeader(*header);
 	delete header;
 }
@@ -1002,8 +995,6 @@ void CDVRPTRRepeaterTRXThread::transmitNetworkData()
 	m_dvrptr->writeData(buffer, length, end);
 
 	if (end) {
-		m_dvrptr->writeEnd();
-
 		m_networkQueue[m_readNum]->reset();
 
 		m_readNum++;

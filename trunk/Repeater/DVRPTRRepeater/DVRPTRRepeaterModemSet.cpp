@@ -36,8 +36,8 @@ wxPanel(parent, id),
 m_title(title),
 m_version(NULL),
 m_port(NULL),
-m_rxInvert(NULL),
 m_txInvert(NULL),
+m_rxInvert(NULL),
 m_channel(NULL),
 m_modLevel(NULL),
 m_txDelay(NULL)
@@ -77,15 +77,6 @@ m_txDelay(NULL)
 	if (!found)
 		m_port->SetSelection(0);
 
-	wxStaticText* rxInvertLabel = new wxStaticText(this, -1, _("RX Inversion"));
-	sizer->Add(rxInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	m_rxInvert = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_rxInvert->Append(_("Off"));
-	m_rxInvert->Append(_("On"));
-	sizer->Add(m_rxInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-	m_rxInvert->SetSelection(rxInvert ? 1 : 0);
-
 	wxStaticText* txInvertLabel = new wxStaticText(this, -1, _("TX Inversion"));
 	sizer->Add(txInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -94,6 +85,15 @@ m_txDelay(NULL)
 	m_txInvert->Append(_("On"));
 	sizer->Add(m_txInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_txInvert->SetSelection(txInvert ? 1 : 0);
+
+	wxStaticText* rxInvertLabel = new wxStaticText(this, -1, _("RX Inversion"));
+	sizer->Add(rxInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_rxInvert = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_rxInvert->Append(_("Off"));
+	m_rxInvert->Append(_("On"));
+	sizer->Add(m_rxInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_rxInvert->SetSelection(rxInvert ? 1 : 0);
 
 	wxStaticText* channelLabel = new wxStaticText(this, -1, _("Channel"));
 	sizer->Add(channelLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -136,10 +136,10 @@ bool CDVRPTRRepeaterModemSet::Validate()
 	if (m_port->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	if (m_rxInvert->GetCurrentSelection() == wxNOT_FOUND)
+	if (m_txInvert->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	if (m_txInvert->GetCurrentSelection() == wxNOT_FOUND)
+	if (m_rxInvert->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
 	return m_channel->GetCurrentSelection() != wxNOT_FOUND;
@@ -147,7 +147,7 @@ bool CDVRPTRRepeaterModemSet::Validate()
 
 DVRPTR_VERSION CDVRPTRRepeaterModemSet::getVersion() const
 {
-	int n = m_port->GetCurrentSelection();
+	int n = m_version->GetCurrentSelection();
 
 	if (n == wxNOT_FOUND)
 		return DVRPTR_V1;
@@ -216,9 +216,15 @@ void CDVRPTRRepeaterModemSet::onVersion(wxCommandEvent &event)
 	switch (n) {
 		case 1:
 			ports = CDVRPTRControllerV2::getDevices();
+			m_rxInvert->Disable();
+			m_txDelay->Disable();
+			m_channel->Disable();
 			break;
 		default:
 			ports = CDVRPTRControllerV1::getDevices();
+			m_rxInvert->Enable();
+			m_txDelay->Enable();
+			m_channel->Enable();
 			break;
 	}
 

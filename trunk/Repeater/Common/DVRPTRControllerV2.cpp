@@ -140,7 +140,7 @@ void* CDVRPTRControllerV2::Entry()
 				break;
 
 			case RT2_HEADER: {
-					// CUtils::dump(wxT("RT_HEADER"), m_buffer, length);
+					// CUtils::dump(wxT("RT2_HEADER"), m_buffer, length);
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -171,7 +171,7 @@ void* CDVRPTRControllerV2::Entry()
 				break;
 
 			case RT2_DATA: {
-					// CUtils::dump(wxT("RT_DATA"), m_buffer, length);
+					// CUtils::dump(wxT("RT2_DATA"), m_buffer, length);
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -202,7 +202,7 @@ void* CDVRPTRControllerV2::Entry()
 
 			case RT2_SPACE:
 				m_space = m_buffer[9U];
-				// CUtils::dump(wxT("GET_STATUS"), m_buffer, length);
+				// CUtils::dump(wxT("RT2_SPACE"), m_buffer, length);
 				break;
 
 			// These should not be received in this loop, but don't complain if we do
@@ -289,13 +289,6 @@ DATA_QUEUE_TYPE CDVRPTRControllerV2::readQueue(unsigned char* data, unsigned int
 	return type;
 }
 
-bool CDVRPTRControllerV2::writeStart()
-{
-	m_ptt = true;
-
-	return true;
-}
-
 bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer[105U];
@@ -351,6 +344,8 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 
 	m_txData.addData(buffer, 105U);
 
+	m_ptt = true;
+
 	return true;
 }
 
@@ -382,6 +377,8 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 		buffer[60U] = 0x55U;
 		buffer[61U] = 0x55U;
 		buffer[62U] = 0x55U;
+
+		m_ptt = false;
 	}
 
 	wxMutexLocker locker(m_mutex);
@@ -394,13 +391,6 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	m_txData.addData(&len, 1U);
 
 	m_txData.addData(buffer, 105U);
-
-	return true;
-}
-
-bool CDVRPTRControllerV2::writeEnd()
-{
-	m_ptt = false;
 
 	return true;
 }
@@ -500,7 +490,7 @@ bool CDVRPTRControllerV2::setConfig()
 	buffer[2U] = 'A';
 	buffer[3U] = 'D';
 	buffer[4U] = 'X';
-	buffer[5U] = '0';
+	buffer[5U] = '9';
 	buffer[6U] = '0';
 	buffer[7U] = '0';
 	buffer[8U] = '1';
@@ -588,20 +578,21 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 
 	// CUtils::dump(wxT("Received"), buffer, length);
 
-	if (::memcmp(buffer + 4U, "0001", 4U) == 0) {
+	if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
 		if (buffer[104U] == 0x01U)
 			return RT2_HEADER;
 		else
 			return RT2_DATA;
-	} else if (::memcmp(buffer + 4U, "9000", 4U) == 0) {
+	} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
 		return RT2_QUERY;
-	} else if (::memcmp(buffer + 4U, "9001", 4U) == 0) {
+	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
 		return RT2_CONFIG;
-	} else if (::memcmp(buffer + 4U, "9009", 4U) == 0) {
+	} else if (::memcmp(buffer + 5U, "9009", 4U) == 0) {
 		return RT2_WATCHDOG;
-	} else if (::memcmp(buffer + 4U, "9011", 4U) == 0) {
+	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
 	} else {
+		wxLogError(wxT("DV-RPTR frame type number is incorrect - %c%c%c%c"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
 		return RT2_UNKNOWN;
 	}
 }

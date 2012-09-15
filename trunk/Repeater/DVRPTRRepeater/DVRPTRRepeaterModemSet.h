@@ -45,8 +45,8 @@ private:
 	wxString  m_title;
 	wxChoice* m_version;
 	wxChoice* m_port;
-	wxChoice* m_rxInvert;
 	wxChoice* m_txInvert;
+	wxChoice* m_rxInvert;
 	wxChoice* m_channel;
 	wxSlider* m_modLevel;
 	wxSlider* m_txDelay;
