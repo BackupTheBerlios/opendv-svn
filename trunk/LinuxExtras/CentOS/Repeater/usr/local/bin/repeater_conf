@@ -1757,7 +1757,7 @@ function hwtype2(){
 	[1-2])
     	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
-	2)   
+	3)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
