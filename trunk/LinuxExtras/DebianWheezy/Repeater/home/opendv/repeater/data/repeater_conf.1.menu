@@ -58,7 +58,8 @@ mainmenu:
 mainmenu: 1    Sprache                    (Gateway-Ansagen und Skript-Menues)
 mainmenu: 2    Grundinstallation          (durchlaeuft Option 3-4) 
 mainmenu: 3    Basiseinstellungen         (allgemeine Einstellungen) 
-mainmenu: 4    Hardware-Einstellungen     (Konfiguration Hardware-spezifischer Parameter) 
+mainmenu: 4    Logbuchfuehrung            (Logbuch ein/aus und Log-Verzeichnis) 
+mainmenu: 5    Hardware-Einstellungen     (Konfiguration Hardware-spezifischer Parameter) 
 mainmenu:
 mainmenu:10    Ueberblick                 (wichtige Einstellungen anzeigen) 
 mainmenu:---------------------------------------------------------------------------------
@@ -197,6 +198,27 @@ logging:
 logging: -        Zuruecksetzen der Einstellung
 logging: <ENTER>  Den alten Wert beibehalten (Wert in [])
 logging: 
+
+nolog:
+nolog: Logbuchabschaltung
+nolog:
+nolog: Die Groesse von Logfiles kann sehr schnell anwachsen.
+nolog: Mit dieser Funktion kann das Logbuch abgeschaltet werden.
+nolog:
+nolog: 0  LOGBUCHABSCHALTUNG AUS
+nolog: 1  LOGBUCHABSCHAlTUNG EIN
+nolog:
+
+logpath:
+logpath: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
+logpath: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
+logpath: Die Einstellung ist auch erforderlich, wenn das Logbuch abgeschaltet wurde,
+logpath: da es auch für wichtige Statusfiles verwendet wird.
+logpath: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
+logpath:
+
+log_path:
+log_path: Das Logverzeichnis des Repeater-Modules wurde geaendert:
 
 mode:
 mode: Mode-Einstellung:

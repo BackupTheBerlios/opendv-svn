@@ -59,7 +59,8 @@ mainmenu:
 mainmenu: 1    Language         (set language of announcements and script menues)
 mainmenu: 2    Complete setup   (will run through 3-4, parts can be skipped) 
 mainmenu: 3    Basic settings   (common settings for repeater modules) 
-mainmenu: 4    Hardware setup   (hardware specific settings for repeater modules) 
+mainmenu: 4    Logging          (log mode and log path) 
+mainmenu: 5    Hardware setup   (hardware specific settings for repeater modules) 
 mainmenu: 
 mainmenu:10    Overview         (show current config file)
 mainmenu:--------------------------------------------------------------------------------
@@ -202,6 +203,34 @@ logging:
 logging: -    RESET to default
 logging: <CR> Keep old value
 logging: 
+
+nolog:
+nolog: Switch logging on/off
+nolog:
+nolog: 0  NOLOG DISABLED    (logging is on)
+nolog: 1  NOLOG ENDABLED    (logging is off)
+nolog:
+nolog: Note: Growing logfiles may need a lot of disk space.
+nolog:
+
+logpath:
+logpath: Enter the directory where logfiles are created.
+logpath: This directory needs to exist and have write permissions!!
+logpath: The path needs to be set even when logging was switched off
+logpath: because it is also used for statusfiles.
+logpath: It is save to keep the default path like it was installed automatically.
+logpath:
+
+
+logpath:
+logpath: Enter the directory where logfiles are created.
+logpath: This directory needs to exist and have write permissions.
+logpath: The path needs to be set even when logging was switched off
+logpath: because it is also used for statusfiles.
+logpath:
+
+log_path:
+log_path: The logdir for the repeater modules will be changed:
 
 alsa_req:
 alsa_req:The "alsa-utils" package is required to find sound devices.

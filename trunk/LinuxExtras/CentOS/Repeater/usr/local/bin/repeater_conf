@@ -2207,6 +2207,39 @@ function hwsetup(){
     return $RET
 }
 
+function logging(){
+
+    var="nolog"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    REPEATER_OPTIONS=$(grep "^REPEATER_OPTIONS" /etc/sysconfig/repeater_$MODULE)
+    print_text $var 
+    grep -q "\-nolog" /etc/sysconfig/repeater_$MODULE && VALUE=1 || VALUE=0
+    echo " "
+    
+    NEW_ARGS="-daemon"
+    request_selection $var "1" "$VALUE"
+    if [ "$?" != 0 ]; then
+    	NEW_ARGS="$NEW_ARGS -nolog"
+    fi
+    
+    var="logpath"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    print_text $var 
+    LOGPATH=$(echo $REPEATER_OPTIONS | sed "s/REPEATER_OPTIONS=//g" | sed "s/-nolog//g" | sed "s/-logdir//g" | sed "s/-daemon//g" | sed "s/ $MODULE//g"  | sed "s/ //g" | sed "s/\"//g")
+    echo $LOGPATH
+    request_input $var 3 80 2 "$LOGPATH"
+
+    NEW_ARGS="REPEATER_OPTIONS=$NEW_ARGS -logdir $INPUT $MODULE"
+    echo "OK!"
+    print_text "log_path"
+    echo "$REPEATER_OPTIONS -> $NEW_ARGS"
+    sed -i "s|$REPEATER_OPTIONS|$NEW_ARGS|g" /etc/sysconfig/repeater_$MODULE
+}
+
 setup_main(){
     INP=0
     while [ "$INP" -ne 99 ]; do
@@ -2235,6 +2268,9 @@ setup_main(){
 		basic_setup
 		;;
 	    4)
+		logging
+		;;
+	    5)
 		hwsetup
 		;;
 	    10)

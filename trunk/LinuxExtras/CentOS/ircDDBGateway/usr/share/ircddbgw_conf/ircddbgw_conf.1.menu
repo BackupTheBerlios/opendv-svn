@@ -924,7 +924,7 @@ logpath: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung bei
 logpath:
 
 log_path:
-log_path: Das Logverzeichnis von ircDDBGateway wurde geanedert:
+log_path: Das Logverzeichnis von ircDDBGateway wurde geaendert:
 
 dashboard_path:
 dashboard_path: Die Konfigurationsdatei des Dashboards wurde geaendert:
