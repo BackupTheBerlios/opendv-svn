@@ -869,6 +869,30 @@ dtmfEnabled:
 dtmfEnabled:(DTMF is used to controle repeater status, linking, unlinking) 
 dtmfEnabled: 
 
+nolog:
+nolog: Switch logging on/off
+nolog:
+nolog: 0  NOLOG DISABLED    (logging is on)
+nolog: 1  NOLOG ENDABLED    (logging is off)
+nolog:
+nolog: Note: Growing logfiles need a lot of disk space.
+nolog:       Logging may be necessary for add-on software like some dashboards
+nolog:       The dashboard of the package does not need local logfiles.
+nolog:
+
+logpath:
+logpath: Enter the directory where logfiles are created.
+logpath: This directory needs to exist and have write permissions!!
+logpath: The path needs to be set even when logging was switched off
+logpath: because it is also used for statusfiles.
+logpath: It is save to keep the default path like it was installed automatically.
+logpath:
+
+log_path:
+log_path: The logdir for ircddbgateway will be changed:
+
+dashboard_path:
+dashboard_path: The dashboard configuration will be changed:
 
 header:--------------------------------------------------------------------------------
 header: 
@@ -920,7 +944,8 @@ mainmenu:10    DPlus setup      (DPlus reflector network access)
 mainmenu:11    DCS setup        (DCS reflector network access) 
 mainmenu:12    STARnet setup    (STARnet server setup) 
 mainmenu:13    Timeserver setup (Timeserver setup) 
-mainmenu:14    Misc setup       (logging, dtmf, echo, info and other settings) 
+mainmenu:14    Misc setup       (dtmf, echo, info and other settings) 
+mainmenu:15    Logging          (logging on/off, log directory) 
 mainmenu:--------------------------------------------------------------------------------
 mainmenu:Configure the autostart system:
 mainmenu: ircDDBGateway:  20) ON       21) OFF

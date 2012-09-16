@@ -45,12 +45,13 @@
 # 2012-08-27 dl5di    allow band module "E" (10m)
 # 2012-09-01 dl5di    create directory if LOGPATH does not exist
 # 2012-09-14 dl5di    language settings sorted correct
+# 2012-09-15 dl5di    logging options added
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20120914"
+rev="20120915"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2467,6 +2468,47 @@ function timeserver_setup(){
     fi
 }
 
+##################### Configuration of Logging  ####################
+
+function logging(){
+
+    var="nolog"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    DAEMON_OPTIONS=$(grep "^DAEMON_OPTIONS" /etc/sysconfig/ircddbgateway)
+    print_text $var 
+    grep -q "\-nolog" /etc/sysconfig/ircddbgateway && VALUE=1 || VALUE=0
+    echo " "
+    
+    NEW_ARGS="-daemon"
+    request_selection $var "1" "$VALUE"
+    if [ "$?" != 0 ]; then
+    	NEW_ARGS="$NEW_ARGS -nolog"
+    fi
+    
+    var="logpath"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    print_text $var 
+    LOGPATH=$(echo $DAEMON_OPTIONS | sed "s/DAEMON_OPTIONS=//g" | sed "s/-nolog//g" | sed "s/-logdir//g" | sed "s/-daemon//g" | sed "s/ //g" | sed "s/\"//g")
+    echo $LOGPATH
+    request_input $var 3 80 2 "$LOGPATH"
+
+    NEW_ARGS="DAEMON_OPTIONS=$NEW_ARGS -logdir $INPUT"
+    echo "OK!"
+    print_text "log_path"
+    echo "$DAEMON_OPTIONS -> $NEW_ARGS"
+    sed -i "s|$DAEMON_OPTIONS|$NEW_ARGS|g" /etc/sysconfig/ircddbgateway
+
+    OLD=$(grep "^\$logPath" /var/www/html/ircddblocal.php)
+    NEW="\$logPath=$INPUT;"
+    print_text "dashboard_path"
+    echo "$OLD -> $NEW"
+    sed -i "s|$OLD|$NEW|g" /var/www/html/ircddblocal.php
+}
+
 ##################### Misc feature settings  ####################
 
 function misc_setup(){
@@ -2803,6 +2845,9 @@ while [ "$SELECT" -ne 99 ]; do
 	    ;;
 	14)
 	    misc_setup
+	    ;;
+	15)
+	    logging
 	    ;;
 	20)
 	    if [ -f /etc/init.d/ircddbgateway ]; then

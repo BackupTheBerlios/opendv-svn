@@ -4,7 +4,7 @@
 # Hans-J. Barthen (DL5DI) - dl5di@gmx.de
 #
 # description: Starts the G4KLX ircDDBGateway in GUI mode and sets the LC_NUMERIC LOCALE
-# to en_US.UTF-8 to make the configfile compatible for GUI and dameon modem.
+# to en_US.UTF-8 to make the configfile compatible for GUI and daemon modem.
 # config: /etc/sysconfig/ircddbgateway
 #
 

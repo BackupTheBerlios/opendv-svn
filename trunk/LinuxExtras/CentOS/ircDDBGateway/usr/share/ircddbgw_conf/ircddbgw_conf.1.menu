@@ -903,6 +903,32 @@ dtmfEnabled:
 dtmfEnabled:(DTMF is used to controle repeater status, linking, unlinking) 
 dtmfEnabled: 
 
+nolog:
+nolog: Logbuchabschaltung
+nolog:
+nolog: Die Groesse von Logfiles kann sehr schnell anwachsen.
+nolog: Mit dieser Funktion kann das Logbuch abgeschaltet werden.
+nolog: Logfiles werden teilweise von Zusatzsoftware benoetigt (z.B. Dashboard)
+nolog: Das Dashboard aus dem Installationspaket benoetigt kein Logfile.
+nolog:
+nolog: 0  LOGBUCHABSCHALTUNG AUS
+nolog: 1  LOGBUCHABSCHAlTUNG EIN
+nolog:
+
+logpath:
+logpath: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
+logpath: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
+logpath: Die Einstellung ist auch erforderlich, wenn das Logbuch abgeschaltet wurde,
+logpath: da es auch für wichtige Statusfiles verwendet wird.
+logpath: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
+logpath:
+
+log_path:
+log_path: Das Logverzeichnis von ircDDBGateway wurde geanedert:
+
+dashboard_path:
+dashboard_path: Die Konfigurationsdatei des Dashboards wurde geaendert:
+
 header:--------------------------------------------------------------------------------
 header: 
 header: Konfigurations-Skript fuer ircDDBGateway von Jonathan Naylor, G4KLX 
@@ -952,7 +978,8 @@ mainmenu:10    DPlus                      (DPlus-Reflektornetzwerk)
 mainmenu:11    DCS                        (DCS-Reflektornetzwerk) 
 mainmenu:12    STARnet                    (STARnet-Server) 
 mainmenu:13    Timeserver/Zeitansage      (Zeitansagen Einstellungen) 
-mainmenu:14    Verschiedenes              (Log, DTMF, Echo, Info etc.) 
+mainmenu:14    Verschiedenes              (DTMF, Echo, Info etc.) 
+mainmenu:15    Logbuchfuehrung            (Log ein/aus, Logverzeichnis) 
 mainmenu:---------------------------------------------------------------------------------
 mainmenu:Konfiguration der Startskripte fuer den automatischen Start nach dem Booten: 
 mainmenu: ircDDBGateway:  20) EIN     21) AUS
