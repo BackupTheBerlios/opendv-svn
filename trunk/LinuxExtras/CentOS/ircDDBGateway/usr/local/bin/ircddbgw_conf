@@ -2503,7 +2503,7 @@ function logging(){
     sed -i "s|$DAEMON_OPTIONS|$NEW_ARGS|g" /etc/sysconfig/ircddbgateway
 
     OLD=$(grep "^\$logPath" /var/www/html/ircddblocal.php)
-    NEW="\$logPath=$INPUT;"
+    NEW="\$logPath='$INPUT';"
     print_text "dashboard_path"
     echo "$OLD -> $NEW"
     sed -i "s|$OLD|$NEW|g" /var/www/html/ircddblocal.php

@@ -2,6 +2,19 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: backup for repo server
+FOUND: 2012-09-13
+REPORTED: DL5DI
+VERIFIED: 2012-09-13
+PRIORITY: standard
+SOLVED: 2012-09-16
+COMMIT: 2012-09-16
+
+- 2nd and 3rd repo server set up
+- addresse added to /etc/apt/sources.list.d/opendv.list
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: logging configuration in ircddbgw_conf
 FOUND: 2012-09-13
 REPORTED: DL5DI
@@ -13,7 +26,6 @@ COMMIT: 2012-09-16
 configuration option to change logdir added to ircddbgw_conf
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 TITLE: configuration optin DVRPTR v2
 FOUND: 2012-09-15

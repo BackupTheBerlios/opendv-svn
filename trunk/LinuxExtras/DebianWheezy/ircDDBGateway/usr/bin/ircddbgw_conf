@@ -31,7 +31,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20120908-beta"
+rev="dvrptrnet-20120915"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2353,7 +2353,7 @@ function logging(){
     sed -i "s|$DAEMON_ARGS|$NEW_ARGS|g" /etc/default/ircddbgateway
 
     OLD=$(grep "^\$logPath" /var/www/ircddblocal.php)
-    NEW="\$logPath=$INPUT;"
+    NEW="\$logPath='$INPUT';"
     print_text "dashboard_path"
     echo "$OLD -> $NEW"
     sed -i "s|$OLD|$NEW|g" /var/www/ircddblocal.php
