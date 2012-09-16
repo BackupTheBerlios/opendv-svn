@@ -40,7 +40,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120914"
+rev="20120915"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2219,6 +2219,41 @@ function hwsetup(){
     return $RET
 }
 
+
+function logging(){
+
+    var="nolog"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    DAEMON_ARGS=$(grep "^DAEMON_ARGS" /etc/default/repeater_$MODULE)
+    print_text $var 
+    grep -q "\-nolog" /etc/default/repeater_$MODULE && VALUE=1 || VALUE=0
+    echo " "
+    
+    NEW_ARGS="-daemon"
+    request_selection $var "1" "$VALUE"
+    if [ "$?" != 0 ]; then
+    	NEW_ARGS="$NEW_ARGS -nolog"
+    fi
+    
+    var="logpath"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    print_text $var 
+    LOGPATH=$(echo $DAEMON_ARGS | sed "s/DAEMON_ARGS=//g" | sed "s/-nolog//g" | sed "s/-logdir//g" | sed "s/-daemon//g" | sed "s/ $MODULE//g" | sed "s/ //g" | sed "s/\"//g")
+    echo $LOGPATH
+    request_input $var 3 80 2 "$LOGPATH"
+
+    NEW_ARGS="DAEMON_ARGS=$NEW_ARGS -logdir $INPUT"
+    echo "OK!"
+    print_text "log_path"
+    echo "$DAEMON_ARGS -> $NEW_ARGS"
+    sed -i "s|$DAEMON_ARGS|$NEW_ARGS|g" /etc/default/repeater_$MODULE
+}
+
+
 setup_main(){
     INP=0
     while [ "$INP" -ne 99 ]; do
@@ -2247,6 +2282,9 @@ setup_main(){
 		basic_setup
 		;;
 	    4)
+		logging
+		;;
+	    5)
 		hwsetup
 		;;
 	    10)
