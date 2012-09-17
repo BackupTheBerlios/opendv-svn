@@ -33,14 +33,13 @@ enum RESP_TYPE_V2 {
 	RT2_SPACE,
 	RT2_QUERY,
 	RT2_CONFIG,
-	RT2_WATCHDOG,
 	RT2_HEADER,
 	RT2_DATA
 };
 
 class CDVRPTRControllerV2 : public IDVRPTRController, public wxThread {
 public:
-	CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, unsigned int txDelay, bool duplex);
+	CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex);
 	virtual ~CDVRPTRControllerV2();
 
 	virtual void* Entry();
@@ -70,7 +69,6 @@ private:
 	wxString                   m_path;
 	bool                       m_txInvert;
 	unsigned int               m_modLevel;
-	unsigned int               m_txDelay;
 	bool                       m_duplex;
 	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
@@ -86,7 +84,6 @@ private:
 	bool getSerial();
 	bool setConfig();
 	bool getSpace();
-	bool watchdog();
 
 	RESP_TYPE_V2 getResponse(unsigned char* buffer, unsigned int& length);
 

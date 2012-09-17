@@ -16,6 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+// TODO Handle flag 103
+
 #include "DVRPTRControllerV2.h"
 #include "DStarDefines.h"
 #include "Timer.h"
@@ -53,13 +55,12 @@ wxArrayString CDVRPTRControllerV2::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDVRPTRControllerV2::CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, unsigned int txDelay, bool duplex) :
+CDVRPTRControllerV2::CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex) :
 wxThread(wxTHREAD_JOINABLE),
 m_port(port),
 m_path(path),
 m_txInvert(txInvert),
 m_modLevel(modLevel),
-m_txDelay(txDelay),
 m_duplex(duplex),
 m_serial(port, SERIAL_115200),
 m_buffer(NULL),
@@ -223,7 +224,7 @@ void* CDVRPTRControllerV2::Entry()
 				unsigned char len = 0U;
 				m_txData.getData(&len, 1U);
 
-				unsigned char data[100U];
+				unsigned char data[200U];
 				m_txData.getData(data, len);
 
 				m_mutex.Unlock();
@@ -476,6 +477,8 @@ bool CDVRPTRControllerV2::getSpace()
 	buffer[8U] = '1';
 	buffer[9U] = 0x00U;
 
+	// CUtils::dump(wxT("Written"), buffer, 10U);
+
 	return m_serial.write(buffer, 10U) == 10;
 }
 
@@ -588,8 +591,6 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
 		return RT2_CONFIG;
 	} else if (::memcmp(buffer + 5U, "9009", 4U) == 0) {
-		return RT2_WATCHDOG;
-	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
 	} else {
 		wxLogError(wxT("DV-RPTR frame type number is incorrect - %c%c%c%c"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
