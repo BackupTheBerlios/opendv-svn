@@ -187,8 +187,8 @@ void* CDVRPTRControllerV2::Entry()
 
 						m_rx = true;
 
-						// End of transmission
-						if (m_buffer[60U] == 0x55U && m_buffer[61U] == 0x55U && m_buffer[62U] == 0x55U) {
+						// End of transmission?
+						if ((m_buffer[50U] & 0x40U) == 0x40) {
 							data[0U] = DQT_EOT;
 							data[1U] = 0U;
 							m_rxData.addData(data, 2U);
@@ -367,6 +367,8 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	buffer[8U] = '1';
 
 	buffer[50U] = m_counter;
+	if (end)
+		buffer[50U] |= 0x40U;
 
 	m_counter++;
 	if (m_counter == 21U)
@@ -590,7 +592,7 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 		return RT2_QUERY;
 	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
 		return RT2_CONFIG;
-	} else if (::memcmp(buffer + 5U, "9009", 4U) == 0) {
+	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
 	} else {
 		wxLogError(wxT("DV-RPTR frame type number is incorrect - %c%c%c%c"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
@@ -632,13 +634,19 @@ bool CDVRPTRControllerV2::findPort()
 		char symlink[255U];
 		int ret2 = ::readlink(cpath, symlink, 255U);
 		if (ret2 < 0) {
-			wxLogError(wxT("Error from readlink()"));
-			return false;
-		}
+			::strcat(cpath, "/device");
+			ret2 = ::readlink(cpath, symlink, 255U);
+			if (ret2 < 0) {
+				wxLogError(wxT("Error from readlink()"));
+				return false;
+			}
 
-		// Get all but the last section
-		wxString fullPath = wxString(symlink, wxConvLocal, ret2);
-		path = fullPath.BeforeLast(wxT('/'));
+			path = wxString(symlink, wxConvLocal, ret);
+		} else {
+			// Get all but the last section
+			wxString fullPath = wxString(symlink, wxConvLocal, ret2);
+			path = fullPath.BeforeLast(wxT('/'));
+		}
 
 		if (path.IsSameAs(m_path)) {
 			m_port.Printf(wxT("/dev/%s"), fileName.c_str());
@@ -717,12 +725,18 @@ bool CDVRPTRControllerV2::findPath()
 	char symlink[255U];
 	int ret = ::readlink(cpath, symlink, 255U);
 	if (ret < 0) {
-		wxLogError(wxT("Error from readlink()"));
-		return false;
-	}
+		::strcat(cpath, "/device");
+		ret = ::readlink(cpath, symlink, 255U);
+		if (ret < 0) {
+			wxLogError(wxT("Error from readlink()"));
+			return false;
+		}
 
-	wxString fullPath = wxString(symlink, wxConvLocal, ret);
-	path = fullPath.BeforeLast(wxT('/'));
+		path = wxString(symlink, wxConvLocal, ret);
+	} else {
+		wxString fullPath = wxString(symlink, wxConvLocal, ret);
+		path = fullPath.BeforeLast(wxT('/'));
+	}
 
 	if (m_path.IsEmpty())
 		wxLogMessage(wxT("Found modem path of %s"), path.c_str());
