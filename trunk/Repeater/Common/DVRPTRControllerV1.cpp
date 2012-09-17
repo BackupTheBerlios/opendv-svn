@@ -920,13 +920,19 @@ bool CDVRPTRControllerV1::findPort()
 		char symlink[255U];
 		int ret2 = ::readlink(cpath, symlink, 255U);
 		if (ret2 < 0) {
-			wxLogError(wxT("Error from readlink()"));
-			return false;
-		}
+			::strcat(cpath, "/device");
+			ret2 = ::readlink(cpath, symlink, 255U);
+			if (ret2 < 0) {
+				wxLogError(wxT("Error from readlink()"));
+				return false;
+			}
 
-		// Get all but the last section
-		wxString fullPath = wxString(symlink, wxConvLocal, ret2);
-		path = fullPath.BeforeLast(wxT('/'));
+			path = wxString(symlink, wxConvLocal, ret2);
+		} else {
+			// Get all but the last section
+			wxString fullPath = wxString(symlink, wxConvLocal, ret2);
+			path = fullPath.BeforeLast(wxT('/'));
+		}
 
 		if (path.IsSameAs(m_path)) {
 			m_port.Printf(wxT("/dev/%s"), fileName.c_str());
@@ -1005,12 +1011,18 @@ bool CDVRPTRControllerV1::findPath()
 	char symlink[255U];
 	int ret = ::readlink(cpath, symlink, 255U);
 	if (ret < 0) {
-		wxLogError(wxT("Error from readlink()"));
-		return false;
-	}
+		::strcat(cpath, "/device");
+		ret = ::readlink(cpath, symlink, 255U);
+		if (ret < 0) {
+			wxLogError(wxT("Error from readlink()"));
+			return false;
+		}
 
-	wxString fullPath = wxString(symlink, wxConvLocal, ret);
-	path = fullPath.BeforeLast(wxT('/'));
+		path = wxString(symlink, wxConvLocal, ret);
+	} else {
+		wxString fullPath = wxString(symlink, wxConvLocal, ret);
+		path = fullPath.BeforeLast(wxT('/'));
+	}
 
 	if (m_path.IsEmpty())
 		wxLogMessage(wxT("Found modem path of %s"), path.c_str());

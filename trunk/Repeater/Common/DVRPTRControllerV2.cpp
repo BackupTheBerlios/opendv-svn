@@ -456,10 +456,7 @@ bool CDVRPTRControllerV2::getSerial()
 		}
 	} while (resp != RT2_QUERY);
 
-	// Which endian is this?
-	wxUint32* serial = (wxUint32*)(m_buffer + 9U);
-
-	wxLogInfo(wxT("DV-RPTR Modem Hardware serial: %u"), *serial);
+	wxLogInfo(wxT("DV-RPTR Modem Hardware serial: 0x%02X%02X%02x%02X"), m_buffer[9U], m_buffer[10U], m_buffer[11U], m_buffer[12U]);
 
 	return true;
 }
@@ -595,7 +592,7 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
 	} else {
-		wxLogError(wxT("DV-RPTR frame type number is incorrect - %c%c%c%c"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
+		wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
 		return RT2_UNKNOWN;
 	}
 }
@@ -641,7 +638,7 @@ bool CDVRPTRControllerV2::findPort()
 				return false;
 			}
 
-			path = wxString(symlink, wxConvLocal, ret);
+			path = wxString(symlink, wxConvLocal, ret2);
 		} else {
 			// Get all but the last section
 			wxString fullPath = wxString(symlink, wxConvLocal, ret2);
