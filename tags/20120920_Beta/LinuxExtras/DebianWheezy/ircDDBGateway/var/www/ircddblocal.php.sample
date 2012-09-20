@@ -1,0 +1,9 @@
+<?php
+$logPath='/var/log/opendv';
+$callsign='';
+$registerURL = 'http://status.ircddb.net';
+$starLogPath = $logPath . '/STARnet.log';
+$linkLogPath = $logPath . '/Links.log';
+$hdrLogPath = $logPath . '/Headers.log';
+$gatewayConfigPath = '/home/opendv/ircddbgateway/ircddbgateway';
+?>
