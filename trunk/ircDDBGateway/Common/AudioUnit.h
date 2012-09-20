@@ -70,9 +70,9 @@ public:
 	CAudioUnit(IRepeaterCallback* handler, const wxString& callsign);
 	~CAudioUnit();
 
-	void sendStatus(LINK_STATUS status, const wxString& reflector);
+	void sendStatus();
 
-	void setText(const wxString& text);
+	void setStatus(LINK_STATUS status, const wxString& reflector, const wxString& text);
 
 	void cancel();
 
@@ -95,16 +95,16 @@ private:
 	CSlowDataEncoder   m_encoder;
 	AUDIO_STATUS       m_status;
 	LINK_STATUS        m_linkStatus;
+	wxString           m_reflector;
 	CTimer             m_timer;
 	CAMBEData**        m_data;
-	unsigned int       m_id;
 	unsigned int       m_in;
 	unsigned int       m_out;
 	unsigned int       m_seqNo;
 	wxStopWatch        m_time;
 
-	bool lookup(const wxString& id);
-	void spellReflector(const wxString& reflector);
+	bool lookup(unsigned int id, const wxString& name);
+	void spellReflector(unsigned int id, const wxString& reflector);
 
 	static bool readAMBE(const wxString& name);
 	static bool readIndex(const wxString& name);

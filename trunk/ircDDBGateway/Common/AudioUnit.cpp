@@ -125,9 +125,9 @@ m_callsign(callsign),
 m_encoder(),
 m_status(AS_IDLE),
 m_linkStatus(LS_NONE),
+m_reflector(),
 m_timer(1000U, 2U),			// 2 seconds
 m_data(NULL),
-m_id(0U),
 m_in(0U),
 m_out(0U),
 m_seqNo(0U),
@@ -146,7 +146,7 @@ CAudioUnit::~CAudioUnit()
 	delete[] m_data;
 }
 
-void CAudioUnit::sendStatus(LINK_STATUS status, const wxString& reflector)
+void CAudioUnit::sendStatus()
 {
 	if (m_ambe == NULL)
 		return;
@@ -154,52 +154,15 @@ void CAudioUnit::sendStatus(LINK_STATUS status, const wxString& reflector)
 	if (m_status != AS_IDLE)
 		return;
 
-	m_linkStatus = status;
-
-	m_id = CHeaderData::createId();
-
-	lookup(wxT(" "));
-	lookup(wxT(" "));
-	lookup(wxT(" "));
-	lookup(wxT(" "));
-
-	bool found;
-
-	switch (status) {
-		case LS_NONE:
-			lookup(wxT("notlinked"));
-			break;
-		case LS_LINKED_DCS:
-		case LS_LINKED_DPLUS:
-		case LS_LINKED_DEXTRA:
-			found = lookup(wxT("linkedto"));
-			if (!found) {
-				lookup(wxT("linked"));
-				lookup(wxT("2"));
-			}
-			spellReflector(reflector);
-			break;
-		default:
-			found = lookup(wxT("linkingto"));
-			if (!found) {
-				lookup(wxT("linking"));
-				lookup(wxT("2"));
-			}
-			spellReflector(reflector);
-			break;
-	}
-
-	lookup(wxT(" "));
-	lookup(wxT(" "));
-	lookup(wxT(" "));
-	lookup(wxT(" "));
-
 	m_status = AS_WAIT;
 	m_timer.start();
 }
 
-void CAudioUnit::setText(const wxString& text)
+void CAudioUnit::setStatus(LINK_STATUS status, const wxString& reflector, const wxString& text)
 {
+	m_linkStatus = status;
+	m_reflector  = reflector;
+
 	m_encoder.setTextData(text);
 }
 
@@ -210,12 +173,51 @@ void CAudioUnit::clock(unsigned int ms)
 	if (m_status == AS_WAIT && m_timer.hasExpired()) {
 		m_timer.stop();
 
+		// Create the message
+		unsigned int id = CHeaderData::createId();
+
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+
+		bool found;
+
+		switch (m_linkStatus) {
+			case LS_NONE:
+				lookup(id, wxT("notlinked"));
+				break;
+			case LS_LINKED_DCS:
+			case LS_LINKED_DPLUS:
+			case LS_LINKED_DEXTRA:
+				found = lookup(id, wxT("linkedto"));
+				if (!found) {
+					lookup(id, wxT("linked"));
+					lookup(id, wxT("2"));
+				}
+				spellReflector(id, m_reflector);
+				break;
+			default:
+				found = lookup(id, wxT("linkingto"));
+				if (!found) {
+					lookup(id, wxT("linking"));
+					lookup(id, wxT("2"));
+				}
+				spellReflector(id, m_reflector);
+				break;
+		}
+
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+
 		// RPT1 and RPT2 will be filled in later
 		CHeaderData header;
 		header.setMyCall1(m_callsign);
 		header.setMyCall2(wxT("INFO"));
 		header.setYourCall(wxT("CQCQCQ  "));
-		header.setId(m_id);
+		header.setId(id);
 
 		m_handler->process(header, AS_INFO);
 
@@ -271,11 +273,11 @@ void CAudioUnit::cancel()
 	m_timer.stop();
 }
 
-bool CAudioUnit::lookup(const wxString &id)
+bool CAudioUnit::lookup(unsigned int id, const wxString &name)
 {
-	CIndexRecord* info = m_index[id];
+	CIndexRecord* info = m_index[name];
 	if (info == NULL) {
-		// wxLogError(wxT("Cannot find the AMBE index for *%s*"), id.c_str());
+		// wxLogError(wxT("Cannot find the AMBE index for *%s*"), name.c_str());
 		return false;
 	}
 
@@ -287,7 +289,7 @@ bool CAudioUnit::lookup(const wxString &id)
 
 		CAMBEData* dataOut = new CAMBEData;
 		dataOut->setSeq(m_seqNo);
-		dataOut->setId(m_id);
+		dataOut->setId(id);
 
 		unsigned char buffer[DV_FRAME_LENGTH_BYTES];
 		::memcpy(buffer + 0U, dataIn, VOICE_FRAME_LENGTH_BYTES);
@@ -313,7 +315,7 @@ bool CAudioUnit::lookup(const wxString &id)
 	return true;
 }
 
-void CAudioUnit::spellReflector(const wxString &reflector)
+void CAudioUnit::spellReflector(unsigned int id, const wxString &reflector)
 {
 	unsigned int length = reflector.Len();
 
@@ -321,31 +323,31 @@ void CAudioUnit::spellReflector(const wxString &reflector)
 		wxString c = reflector.Mid(i, 1U);
 
 		if (!c.IsSameAs(wxT(" ")))
-			lookup(c);
+			lookup(id, c);
 	}
 
 	wxChar c = reflector.GetChar(length - 1U);
 
 	if (m_linkStatus == LS_LINKING_DCS || m_linkStatus == LS_LINKED_DCS) {
-		lookup(wxString(c));
+		lookup(id, wxString(c));
 		return;
 	}
 
 	switch (c) {
 		case wxT('A'):
-			lookup(wxT("alpha"));
+			lookup(id, wxT("alpha"));
 			break;
 		case wxT('B'):
-			lookup(wxT("bravo"));
+			lookup(id, wxT("bravo"));
 			break;
 		case wxT('C'):
-			lookup(wxT("charlie"));
+			lookup(id, wxT("charlie"));
 			break;
 		case wxT('D'):
-			lookup(wxT("delta"));
+			lookup(id, wxT("delta"));
 			break;
 		default:
-			lookup(wxString(c));
+			lookup(id, wxString(c));
 			break;
 	}
 }

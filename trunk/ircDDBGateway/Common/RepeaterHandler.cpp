@@ -761,7 +761,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			sendToLoopback(data);
 
 			if (data.isEnd()) {
-				m_audio->sendStatus(m_linkStatus, m_linkRepeater);
+				m_audio->sendStatus();
 
 				m_id       = 0x00;
 				m_g2Status = G2_NONE;
@@ -862,7 +862,7 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 
 	if (data.isEnd()) {
 		if (m_g2Status == G2_INFO)
-			m_audio->sendStatus(m_linkStatus, m_linkRepeater);
+			m_audio->sendStatus();
 
 		if (m_g2Status == G2_VERSION)
 			m_version->sendVersion();
@@ -1284,7 +1284,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 					break;
 
 				case G2_INFO:
-					m_audio->sendStatus(m_linkStatus, m_linkRepeater);
+					m_audio->sendStatus();
 					break;
 
 				case G2_VERSION:
@@ -1301,7 +1301,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 
 		if (m_busyId != 0x00U) {
 			if (m_g2Status == G2_INFO)
-				m_audio->sendStatus(m_linkStatus, m_linkRepeater);
+				m_audio->sendStatus();
 
 			if (m_g2Status == G2_VERSION)
 				m_version->sendVersion();
@@ -2042,7 +2042,7 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 	CTextData textData(m_linkStatus, callsign, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
 
-	m_audio->setText(text);
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 }
 
 void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
@@ -2086,7 +2086,7 @@ void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
 	CTextData textData(m_linkStatus, callsign, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
 
-	m_audio->setText(text);
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 }
 
 void CRepeaterHandler::writeNotLinked()
@@ -2130,7 +2130,7 @@ void CRepeaterHandler::writeNotLinked()
 	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
 
-	m_audio->setText(text);
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)
@@ -2171,5 +2171,5 @@ void CRepeaterHandler::triggerInfo()
 	if (m_id != 0x00U || m_busyId != 0x00U)
 		m_g2Status = G2_INFO;
 	else
-		m_audio->sendStatus(m_linkStatus, m_linkRepeater);
+		m_audio->sendStatus();
 }
