@@ -1,4 +1,4 @@
-Repeater - 20120901
+Repeater - 20120920
 ===================
 
 20090530
@@ -1720,12 +1720,12 @@ Reverted to using Visual C++ 2008 on Windows.
 Allow module E on all of the repeaters.
 Re-added Windows LibUSB support to the GMSK Repeater.
 
-2012xxxx
+20120920
 --------
 
 Make LibUsb on both Windows and Linux more agressive at transferring data.
 Remove the need for the extra thread in the Linux command line versions.
-Initial support for the DV-RPTR V2 protocol.
+Initial support for the XDV-RPTR (V2) protocol.
 Removed the DCS and DExtra Gateways.
 Added SVN revsion version to the log file.
 Add AMBE logging to non-GUI versions of the repeaters.

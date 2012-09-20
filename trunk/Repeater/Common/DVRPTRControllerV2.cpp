@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// TODO Handle flag 103
+// TODO Handle flags 102 + 103
 
 #include "DVRPTRControllerV2.h"
 #include "DStarDefines.h"

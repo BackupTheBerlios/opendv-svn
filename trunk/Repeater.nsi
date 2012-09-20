@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "Repeater 20120901"
-  OutFile "Repeater-20120901.exe"
+  Name "Repeater 20120920"
+  OutFile "Repeater-20120920.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\Repeater"
@@ -58,11 +58,10 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\wxbase28u_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\wxmsw28u_adv_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\wxmsw28u_core_vc_custom.dll"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\WindowsUSB\xDVRPTR-32-64-2.inf"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\WindowsUSB\dvrptr_cdc.inf"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\WindowsUSB\gmsk.inf"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\WindowsUSB\gmsk.cat"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Data\DCS_Hosts.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Data\DExtra_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Data\de_DE.ambe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Data\de_DE.indx"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Data\dk_DK.ambe"

@@ -1,4 +1,4 @@
-Repeater - 20120901
+Repeater - 20120920
 ===================
 
 Windows
@@ -52,12 +52,12 @@ need to copy and run the Vcredist_x86.exe file which is found at
 Linux
 -----
 
-You need to ensure that wxWidgets, PortAudio and libusb-1.0 are already 
+You need to ensure that wxGTK, PortAudio and libusb-1.0 are already 
 installed on your machine, under Ubuntu these are available from the standard 
 repositories, the version of wxWidgets is adequate. However you should get the 
 latest version of PortAudio from its home and build it from scratch.
 
-To install them from scratch, you need to get wxWidgets from 
+To install them from scratch, you need to get wxGTK from 
 <http://www.wxwidgets.org>, PortAudio from <http://www.portaudio.com>, and
 libusb-1.0 from <http://www.libusb.org/wiki/libusb-1.0>. If you do a
 "make install" on  all of them then they'll be installed in the right places
