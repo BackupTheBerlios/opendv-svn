@@ -213,24 +213,21 @@ nolog:
 nolog: Note: Growing logfiles may need a lot of disk space.
 nolog:
 
-logpath:
-logpath: Enter the directory where logfiles are created.
-logpath: This directory needs to exist and have write permissions!!
-logpath: The path needs to be set even when logging was switched off
-logpath: because it is also used for statusfiles.
-logpath: It is save to keep the default path like it was installed automatically.
-logpath:
+logdir:
+logdir: Enter the directory where logfiles are created.
+logdir: This directory needs to exist and have write permissions for the daemon!!
+logdir: The path needs to be set even when logging was switched off
+logdir: because it is also used for statusfiles.
+logdir: It is save to keep the default path like it was installed automatically.
+logdir:
 
+audiodir:
+audiodir: Enter the directory where autio output file are stored (.dvtool)
+audiodir: This directory needs to exist and have write permissions for the daemon.
+audiodir:
 
-logpath:
-logpath: Enter the directory where logfiles are created.
-logpath: This directory needs to exist and have write permissions.
-logpath: The path needs to be set even when logging was switched off
-logpath: because it is also used for statusfiles.
-logpath:
-
-log_path:
-log_path: The logdir for the repeater modules will be changed:
+cmd_options:
+cmd_options: The command line options will be changed:
 
 alsa_req:
 alsa_req:The "alsa-utils" package is required to find sound devices.

@@ -27,6 +27,7 @@
 # 2012-09-01 dl5di    create direcotry if LOGPATH does not exist
 # 2012-09-14 dl5di    language setting corrected (ircddbgateway uses different indexes)
 # 2012-09-15 dl5di    modemVersion added
+# 2012-09-21 dl5di    bugfix, new command line option of repeater added
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -36,7 +37,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120914"
+rev="20120921"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2149,23 +2150,26 @@ function modulesetup(){
     if [ "$?" = 0 ]; then
 	unset VALUE
     fi
-    print_text $var 
-    select_item $var 4 "$VALUE"
-    RET=$?
-    case $RET in
-	1)
-	    MODULE=$SELECT
-	    ;;
-	2)
-	    MODULE=$VALUE
-	    ;;
-	3)
-	    MODULE=0
-	    ;;
-	*)
-	    ;;
-    esac
-
+    MODULE=0
+    while [ "$MODULE" -eq "0" ]; do
+	print_text $var 
+	select_item $var 4 "$VALUE"
+	RET=$?
+    
+	case $RET in
+	    1)
+		MODULE=$SELECT
+		;;
+	    2)
+		MODULE=$VALUE
+		;;
+	    3)
+		MODULE=0
+		;;
+	    *)
+		;;
+	esac
+    done
     echo "OK ($MODULE)"
     echo " "
     return $RET
@@ -2215,29 +2219,64 @@ function logging(){
 
     REPEATER_OPTIONS=$(grep "^REPEATER_OPTIONS" /etc/sysconfig/repeater_$MODULE)
     print_text $var 
-    grep -q "\-nolog" /etc/sysconfig/repeater_$MODULE && VALUE=1 || VALUE=0
-    echo " "
-    
+
+    options=( ${REPEATER_OPTIONS//-/ } )
+    i=0
+    NOLOG=0
+    while [ ! -z "${options[$i]}" ]; do
+
+	case "${options[$i]}" in
+	    logdir)
+	        let i+=1
+		LOGDIR=${options[$i]}
+		;;
+	    audiodir)
+	        let i+=1
+		AUDIODIR=${options[$i]}
+		;;
+	    nolog)
+		NOLOG=1
+		;;
+	    daemon)
+		;;
+	    *)
+		;;
+	esac
+	let i+=1
+    done
+
     NEW_ARGS="-daemon"
-    request_selection $var "1" "$VALUE"
+    request_selection $var "1" "$NOLOG"
     if [ "$?" != 0 ]; then
     	NEW_ARGS="$NEW_ARGS -nolog"
     fi
     
-    var="logpath"
+    var="logdir"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
-
     print_text $var 
-    LOGPATH=$(echo $REPEATER_OPTIONS | sed "s/REPEATER_OPTIONS=//g" | sed "s/-nolog//g" | sed "s/-logdir//g" | sed "s/-daemon//g" | sed "s/ $MODULE//g"  | sed "s/ //g" | sed "s/\"//g")
-    echo $LOGPATH
-    request_input $var 3 80 2 "$LOGPATH"
+    echo $LOGDIR
+    request_input $var 3 80 2 "$LOGDIR"
+    if [ ! -z "$LOGDIR" ]; then
+	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
+    fi
+    
+    var="audiodir"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    print_text $var 
+    echo $AUDIODIR
+    request_input $var 3 80 0 "$AUDIODIR"
+    if [ ! -z "$AUDIODIR" ]; then
+	NEW_ARGS="$NEW_ARGS -audiodir $INPUT"
+    fi
 
-    NEW_ARGS="REPEATER_OPTIONS=$NEW_ARGS -logdir $INPUT $MODULE"
+    NEW_ARGS="REPEATER_OPTIONS=\"$NEW_ARGS $MODULE\""
     echo "OK!"
-    print_text "log_path"
+    print_text "cmd_options"
     echo "$REPEATER_OPTIONS -> $NEW_ARGS"
     sed -i "s|$REPEATER_OPTIONS|$NEW_ARGS|g" /etc/sysconfig/repeater_$MODULE
+    sleep 3
 }
 
 setup_main(){

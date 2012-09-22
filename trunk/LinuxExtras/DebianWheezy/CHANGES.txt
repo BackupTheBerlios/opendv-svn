@@ -2,6 +2,31 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: bug in repeater_conf (command line options)
+FOUND: 2012-09-20
+REPORTED: DL5DI
+VERIFIED: 2012-09-20
+PRIORITY: low
+SOLVED: 2012-09-21
+COMMIT: 2012-09-22
+
+New function to read and set command line options, bugfix, audiopath option added.
+Manual module setting checked for value 1-4.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: documentation ircDDBGateway Debian package
+FOUND: 2012-09-07
+REPORTED: DL5DI
+VERIFIED: 2012-09-07
+PRIORITY: low
+SOLVED: 2012-09-18
+COMMIT: not part of SVN
+
+Documentation for ircDDBGateway package for Debian ARM/i386
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: backup for repo server
 FOUND: 2012-09-13
 REPORTED: DL5DI

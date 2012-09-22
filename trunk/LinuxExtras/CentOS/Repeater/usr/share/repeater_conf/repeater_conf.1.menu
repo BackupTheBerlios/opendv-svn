@@ -209,16 +209,22 @@ nolog: 0  LOGBUCHABSCHALTUNG AUS
 nolog: 1  LOGBUCHABSCHAlTUNG EIN
 nolog:
 
-logpath:
-logpath: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
-logpath: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
-logpath: Die Einstellung ist auch erforderlich, wenn das Logbuch abgeschaltet wurde,
-logpath: da es auch für wichtige Statusfiles verwendet wird.
-logpath: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
-logpath:
+logdir:
+logdir: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
+logdir: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
+logdir: Die Einstellung ist auch erforderlich, wenn das Logbuch abgeschaltet wurde,
+logdir: da es auch für wichtige Statusfiles verwendet wird.
+logdir: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
+logdir:
 
-log_path:
-log_path: Das Logverzeichnis des Repeater-Moduls wurde geaendert:
+audiodir:
+audiodir: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
+audiodir: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
+audiodir: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
+audiodir:
+
+cmd_options:
+cmd_options: Die Kommandozeilenoptionen des Repeater-Moduls wurden geaendert:
 
 mode:
 mode: Mode-Einstellung:
