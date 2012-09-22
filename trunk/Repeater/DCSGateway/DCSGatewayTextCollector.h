@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,38 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-      
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef DCSGatewayTextCollector_H
+#define DCSGatewayTextCollector_H
+
+#include "DCSGatewayAMBEData.h"
+#include "DCSGatewayDefs.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDCSGatewayTextCollector {
+public:
+	CDCSGatewayTextCollector();
+	~CDCSGatewayTextCollector();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	void writeData(const CDCSGatewayAMBEData& data);
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20120920 - DEBUG");
-#else
-const wxString VERSION = wxT("20120920");
-#endif
+	void sync();
+
+	void reset();
+
+	bool hasData() const;
+
+	wxString getData();
+
+private:
+	char*          m_data;
+	unsigned char* m_buffer;
+	SLOWDATA_STATE m_slowData;
+	bool           m_has0;
+	bool           m_has1;
+	bool           m_has2;
+	bool           m_has3;
+};
 
 #endif

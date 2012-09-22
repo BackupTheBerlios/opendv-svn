@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,22 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-      
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DExtraGatewayCallback_H
+#define	DExtraGatewayCallback_H
+
+#include "DExtraGatewayHeaderData.h"
+#include "DExtraGatewayAMBEData.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class IDExtraGatewayCallback {
+public:
+	virtual bool writeHeader(CDExtraGatewayHeaderData& header) = 0;
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool writeData(CDExtraGatewayAMBEData& data) = 0;
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20120920 - DEBUG");
-#else
-const wxString VERSION = wxT("20120920");
-#endif
+private:
+};
 
 #endif

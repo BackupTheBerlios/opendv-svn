@@ -15,20 +15,38 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-      
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DExtraGatewayDefs_H
+#define	DExtraGatewayDefs_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+const wxString APPLICATION_NAME = wxT("DExtra Gateway");
+const wxString LOG_BASE_NAME    = wxT("DExtraGateway");
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
-
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20120920 - DEBUG");
-#else
-const wxString VERSION = wxT("20120920");
+#if !defined(__WINDOWS__)
+const wxString CONFIG_FILE_NAME = wxT("dextragateway");
+const wxString LOG_DIR  = wxT("/var/log");
+const wxString CONF_DIR = wxT("/etc");
 #endif
+
+const wxString HOSTS_FILE_NAME  = wxT("DExtra_Hosts.txt");
+
+enum RECONNECT {
+	RECONNECT_FIXED,
+	RECONNECT_5MINS,
+	RECONNECT_10MINS,
+	RECONNECT_15MINS,
+	RECONNECT_20MINS,
+	RECONNECT_25MINS,
+	RECONNECT_30MINS,
+	RECONNECT_NEVER
+};
+
+enum LINK_STATE {
+	LINK_NONE,
+	LINK_LINKING,
+	LINK_LINKED
+};
 
 #endif

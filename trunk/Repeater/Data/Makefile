@@ -1,5 +1,7 @@
 install:
 	install -d -g bin -o root -m 0775 $(DATADIR)
+	install -g bin -o root -m 0664 DCS_Hosts.txt    $(DATADIR)
+	install -g bin -o root -m 0664 DExtra_Hosts.txt $(DATADIR)
 	install -g bin -o root -m 0664 de_DE.ambe $(DATADIR)
 	install -g bin -o root -m 0664 de_DE.indx $(DATADIR)
 	install -g bin -o root -m 0664 dk_DK.ambe $(DATADIR)

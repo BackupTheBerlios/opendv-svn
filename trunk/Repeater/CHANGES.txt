@@ -1730,3 +1730,9 @@ Removed the DCS and DExtra Gateways.
 Added SVN revsion version to the log file.
 Add AMBE logging to non-GUI versions of the repeaters.
 Add -audiodir command line option to change the location of the AMBE data logging.
+
+2012xxxx
+--------
+
+Put the DCS and DExtra Gateways back into the package.
+Updated DCS protocol.
