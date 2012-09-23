@@ -3,6 +3,19 @@ CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 TITLE: bug in repeater_conf (command line options)
+FOUND: 2012-09-23
+REPORTED: DL5DI
+VERIFIED: 2012-09-23
+PRIORITY: high
+SOLVED: 2012-09-23
+COMMIT: 2012-09-23
+
+bug in setting command line options
+audio logging moved to logging function
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: bug in repeater_conf (command line options)
 FOUND: 2012-09-20
 REPORTED: DL5DI
 VERIFIED: 2012-09-20

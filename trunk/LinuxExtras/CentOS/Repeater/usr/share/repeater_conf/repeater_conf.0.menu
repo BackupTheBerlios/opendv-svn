@@ -197,11 +197,16 @@ language: <CR> Keep old value
 language: 
 
 logging: 
-logging: 0    DISABLE Logging  
-logging: 1    ENABLE  Logging 
+logging: Audio logging
+logging:
+logging: 0    DISABLE audio logging  
+logging: 1    ENABLE  audio logging 
 logging: 
 logging: -    RESET to default
 logging: <CR> Keep old value
+logging:
+logging: This option allows to write audio streams to .dvtool-files.
+logging: !!! Note: audio logging may need a lot of disk space !!!
 logging: 
 
 nolog:

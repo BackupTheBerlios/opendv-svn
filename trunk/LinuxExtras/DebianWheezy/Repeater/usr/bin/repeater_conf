@@ -32,6 +32,7 @@
 # 2012-09-14 dl5di    language setting corrected (ircddbgateway uses different indexes)
 # 2012-09-15 dl5di    modemVersion added
 # 2012-09-21 dl5di    bugfixes, new comand line option for repeater modules integrated
+# 2012-09-23 dl5di    bugfix, commandline options were overwritten from template
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -41,7 +42,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120921"
+rev="20120923"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1122,32 +1123,6 @@ function basic_setup(){
 	    ;;
     esac
 
-#
-#logging=0
-#
-    var="logging"
-    Dat=`date +%Y%m%d%H%M`
-    echo "$Dat: $var" >> $LOG
-    read_default $var
-    read_value $REPEATERCONFIG $var
-    if [ "$?" = 0 ]; then
-	VALUE=$DEFAULT
-    fi
-    print_text $var 
-    request_selection $var "$DEFAULT" "$VALUE"
-    INPUT=$?
-    case $INPUT in
-	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
-	    ;;
-	2)   
-	    write_value $REPEATERCONFIG $var "$VALUE"
-	    ;;
-	*)
-    	    reset_value $var
-	    ;;
-    esac
-
 #####
 
     return
@@ -2196,6 +2171,7 @@ function hwsetup(){
     if [ "$?" = 0 ]; then
 	unset VALUE
     fi
+    OLDVALUE=$VALUE
     print_text $var
     select_item $var 4 "$VALUE"
     RET=$?
@@ -2214,18 +2190,26 @@ function hwsetup(){
     esac
 
     readconfig2
-    hwtype${HWTYPE}
-    write_value $CFG hwtype_${MODULE} "$HWTYPE"
-    cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_PATH" > /etc/default/repeater_$MODULE
-    cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_ARGS" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
-    cat /etc/default/${hwname[$HWTYPE]} | grep "DAEMON_USER" >> /etc/default/repeater_$MODULE
-    echo "OK ($HWTYPE)"
+
+    if [ "$HWTYPE" != "$OLDVALUE" ];then
+	hwtype${HWTYPE}
+	write_value $CFG hwtype_${MODULE} "$HWTYPE"
+	cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_PATH" > /etc/default/repeater_$MODULE
+	cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_ARGS" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
+	cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_USER" >> /etc/default/repeater_$MODULE
+	echo "OK ($HWTYPE)"
+    else
+	echo "OK"
+    fi
     echo " "
     return $RET
 }
 
 function logging(){
 
+#
+# command line options for logging / logdir / audiodir
+#
     var="nolog"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
@@ -2289,9 +2273,35 @@ function logging(){
     print_text "cmd_options"
     echo "$DAEMON_ARGS -> $NEW_ARGS"
     sed -i "s|$DAEMON_ARGS|$NEW_ARGS|g" /etc/default/repeater_$MODULE
-    sleep 3
-}
 
+#
+# audio logging
+#logging=0
+#
+    var="logging"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $REPEATERCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    print_text $var 
+    request_selection $var "$DEFAULT" "$VALUE"
+    INPUT=$?
+    case $INPUT in
+	[0-1])
+    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $REPEATERCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
+
+}
 
 setup_main(){
     INP=0

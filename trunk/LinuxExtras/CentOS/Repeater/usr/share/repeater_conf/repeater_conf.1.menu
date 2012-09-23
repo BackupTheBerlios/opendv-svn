@@ -192,11 +192,16 @@ language: <ENTER> Den alten Wert beibehalten (Wert in [])
 language: 
 
 logging: 
+logging: Audio Logging
+logging:
 logging:       0  Logging AUSschalten  
 logging:       1  Logging EINschalten
 logging: 
 logging: -        Zuruecksetzen der Einstellung
 logging: <ENTER>  Den alten Wert beibehalten (Wert in [])
+logging:
+logging: Diese Option speichert alle Audio-Streams in .dvtool-Files.
+logging: !!! BEACHTE: Audio-Logging braucht sehr viel Speicherplatz !!!
 logging: 
 
 nolog:
