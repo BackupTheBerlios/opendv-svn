@@ -2254,7 +2254,7 @@ function logging(){
     print_text $var 
     echo $LOGDIR
     request_input $var 3 80 2 "$LOGDIR"
-    if [ ! -z "$LOGDIR" ]; then
+    if [ ! -z "$INPUT" ]; then
 	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
     fi
     

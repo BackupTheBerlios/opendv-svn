@@ -46,6 +46,8 @@
 # 2012-09-01 dl5di    create directory if LOGPATH does not exist
 # 2012-09-14 dl5di    language settings sorted correct
 # 2012-09-15 dl5di    logging options added
+# 2012-09-21 dl5di    bugfix logging settings
+# 2012-09-23 dl5di    improved command line handling
 #
 # Todo / known issues:
 # - implement sanity check for config file 
@@ -2472,33 +2474,56 @@ function timeserver_setup(){
 
 function logging(){
 
+#
+# command line options for logging / logdir / audiodir
+#
     var="nolog"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
 
     DAEMON_OPTIONS=$(grep "^DAEMON_OPTIONS" /etc/sysconfig/ircddbgateway)
     print_text $var 
-    grep -q "\-nolog" /etc/sysconfig/ircddbgateway && VALUE=1 || VALUE=0
-    echo " "
-    
+
+    options=( ${DAEMON_OPTIONS//-/ } )
+    i=0
+    NOLOG=0
+    while [ ! -z "${options[$i]}" ]; do
+
+	case "${options[$i]}" in
+	    logdir)
+	        let i+=1
+		LOGDIR=${options[$i]}
+		;;
+	    nolog)
+		NOLOG=1
+		;;
+	    daemon)
+		;;
+	    *)
+		;;
+	esac
+	let i+=1
+    done
+
     NEW_ARGS="-daemon"
-    request_selection $var "1" "$VALUE"
+    request_selection $var "1" "$NOLOG"
     if [ "$?" != 0 ]; then
     	NEW_ARGS="$NEW_ARGS -nolog"
     fi
     
-    var="logpath"
+    var="logdir"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
-
     print_text $var 
-    LOGPATH=$(echo $DAEMON_OPTIONS | sed "s/DAEMON_OPTIONS=//g" | sed "s/-nolog//g" | sed "s/-logdir//g" | sed "s/-daemon//g" | sed "s/ //g" | sed "s/\"//g")
-    echo $LOGPATH
-    request_input $var 3 80 2 "$LOGPATH"
-
-    NEW_ARGS="DAEMON_OPTIONS=$NEW_ARGS -logdir $INPUT"
+    echo $LOGDIR
+    request_input $var 3 80 2 "$LOGDIR"
+    if [ ! -z "$INPUT" ]; then
+	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
+    fi
+    
+    NEW_ARGS="DAEMON_OPTIONS=\"$NEW_ARGS $MODULE\""
     echo "OK!"
-    print_text "log_path"
+    print_text "cmd_options"
     echo "$DAEMON_OPTIONS -> $NEW_ARGS"
     sed -i "s|$DAEMON_OPTIONS|$NEW_ARGS|g" /etc/sysconfig/ircddbgateway
 
