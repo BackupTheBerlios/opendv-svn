@@ -24,6 +24,7 @@ CDVAPClientModemSet::CDVAPClientModemSet(wxWindow* parent, int id, const wxStrin
 wxPanel(parent, id),
 m_title(title),
 m_port(NULL),
+m_band(NULL),
 m_frequency(NULL),
 m_power(NULL),
 m_squelch(NULL),
@@ -37,16 +38,21 @@ m_offset(NULL)
 	m_port = new wxChoice(this, -1, wxDefaultPosition, wxSize(NAME_WIDTH, -1));
 	sizer->Add(m_port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-// #if defined(__WINDOWS__)
-//	wxArrayString ports = CFTDIDriver::getDevices();
-// #else
 	wxArrayString ports = CSerialDataController::getDevices();
-// #endif
 	for (unsigned int i = 0U; i < ports.GetCount(); i++)
 		m_port->Append(ports.Item(i));
 	bool res = m_port->SetStringSelection(port);
 	if (!res)
 		m_port->SetSelection(0);
+
+	wxStaticText* bandLabel = new wxStaticText(this, -1, _("Band"));
+	sizer->Add(bandLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_band = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_band->Append(wxT("2m"));
+	m_band->Append(wxT("70cms"));
+	sizer->Add(m_band, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_band->SetSelection(frequency > 400000000U ? 1 : 0);
 
 	wxStaticText* freqLabel = new wxStaticText(this, -1, _("Frequency (Hz)"));
 	sizer->Add(freqLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -93,10 +99,27 @@ bool CDVAPClientModemSet::Validate()
 		return false;
 
 	unsigned int freq = getFrequency();
-	if (freq < 144000000U || freq > 148000000U) {
-		wxMessageDialog dialog(this, _("The Frequency is out of range"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
+
+	int n = m_band->GetCurrentSelection();
+	switch (n) {
+		case 0:
+			if (freq < 144000000U || freq > 148000000U) {
+				wxMessageDialog dialog(this, _("The Frequency is out of range"), m_title + _(" Error"), wxICON_ERROR);
+				dialog.ShowModal();
+				return false;
+			}
+			break;
+
+		case 1:
+			if (freq < 420000000U || freq > 450000000U) {
+				wxMessageDialog dialog(this, _("The Frequency is out of range"), m_title + _(" Error"), wxICON_ERROR);
+				dialog.ShowModal();
+				return false;
+			}
+			break;
+
+		default:
+			return false;
 	}
 
 	return true;

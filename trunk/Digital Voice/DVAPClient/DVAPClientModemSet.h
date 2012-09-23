@@ -41,6 +41,7 @@ public:
 private:
 	wxString    m_title;
 	wxChoice*   m_port;
+	wxChoice*   m_band;
 	wxTextCtrl* m_frequency;
 	wxSpinCtrl* m_power;
 	wxSpinCtrl* m_squelch;
