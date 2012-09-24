@@ -497,7 +497,8 @@ dvapPort:
 dvapFrequency:
 dvapFrequency:DVAP Frequency in !!Hertz!!
 dvapFrequency:
-dvapFrequency: (144000000 .. 148000000) [Hz]
+dvapFrequency: VHF version: (144000000 .. 148000000) [Hz]
+dvapFrequency: UHF version: (420000000 .. 450000000) [Hz]
 dvapFrequency:
 
 dvapPower:

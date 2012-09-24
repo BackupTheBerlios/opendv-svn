@@ -29,6 +29,7 @@
 # 2012-09-15 dl5di    modemVersion added
 # 2012-09-21 dl5di    bugfix, new command line option of repeater added
 # 2012-09-23 dl5di    bugfix, commandline options were overwritten from template
+# 2012-09-24 dl5di    added frequency configuration for UHF-version of DVAP
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -38,7 +39,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120923"
+rev="20120924"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -335,7 +336,7 @@ function request_callsign(){
 	    unset INPUT
 	fi
     fi
-    INPUT=$(echo "$INPUT" | tr [[:lower:]] [[:upper:]])
+    INPUT=$(echo "$INPUT" | tr "[[:lower:]]" "[[:upper:]]")
     if [ "$2" -gt 2 ]; then    
 	if [ ${#INPUT} -ge 6 ]; then
 	    pattern=$(echo "$INPUT" | sed "s!STN!!g" | tr "[[:alpha:]]" "A" | tr "[[:digit:]]" "N")
@@ -1978,7 +1979,8 @@ function hwtype4(){
 
 #
 # dvapFrequency=145500000
-# 144000000-148000000Hz
+# 2m:   144000000-148000000Hz
+# 70cm: 420000000-450000000Hz
 #
     var="dvapFrequency"
     Dat=`date +%Y%m%d%H%M`
@@ -1989,7 +1991,7 @@ function hwtype4(){
     	VALUE=$DEFAULT
     fi
     print_text $var 
-    request_value $var 144000000 148000000 2 "$VALUE"
+    request_value $var 144000000 450000000 2 "$VALUE"
     RET="$?"
     case $RET in
 	1)

@@ -2,6 +2,19 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: UHF version of DVAP
+FOUND: 2012-09-24
+REPORTED: DL5DI
+VERIFIED: 2012-09-24
+PRIORITY: low
+SOLVED: 2012-09-24
+COMMIT: 2012-09-24
+
+frequency setting for UHF version of DVAP the modem implemented
+settings to run GMSK/DVAP as non-root
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: bug in repeater_conf (command line options)
 FOUND: 2012-09-23
 REPORTED: DL5DI
