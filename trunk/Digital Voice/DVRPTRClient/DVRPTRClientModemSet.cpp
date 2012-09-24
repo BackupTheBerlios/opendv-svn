@@ -17,22 +17,40 @@
  */
 
 #include "DVRPTRClientModemSet.h"
-#include "DVRPTRController.h"
+#include "DVRPTRControllerV1.h"
+#include "DVRPTRControllerV2.h"
 
 const unsigned int CONTROL_WIDTH1 = 150U;
 const unsigned int CONTROL_WIDTH2 = 300U;
 
-CDVRPTRClientModemSet::CDVRPTRClientModemSet(wxWindow* parent, int id, const wxString& title, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
+const int CHOICE_VERSION = 8749;
+
+BEGIN_EVENT_TABLE(CDVRPTRClientModemSet, wxPanel)
+	EVT_CHOICE(CHOICE_VERSION, CDVRPTRClientModemSet::onVersion)
+END_EVENT_TABLE()
+
+
+CDVRPTRClientModemSet::CDVRPTRClientModemSet(wxWindow* parent, int id, const wxString& title, DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxPanel(parent, id),
 m_title(title),
+m_version(NULL),
 m_port(NULL),
-m_rxInvert(NULL),
 m_txInvert(NULL),
+m_rxInvert(NULL),
 m_channel(NULL),
 m_modLevel(NULL),
 m_txDelay(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
+
+	wxStaticText* versionLabel = new wxStaticText(this, -1, _("Version"));
+	sizer->Add(versionLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_version = new wxChoice(this, CHOICE_VERSION, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_version->Append(wxT("1"));
+	m_version->Append(wxT("2"));
+	sizer->Add(m_version, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_version->SetSelection(version == DVRPTR_V2 ? 1 : 0);
 
 	wxStaticText* portLabel = new wxStaticText(this, -1, _("Port"));
 	sizer->Add(portLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -40,22 +58,23 @@ m_txDelay(NULL)
 	m_port = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	sizer->Add(m_port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	wxArrayString ports = CDVRPTRController::getDevices();
+	wxArrayString ports;
+
+	switch (version) {
+		case DVRPTR_V2:
+			ports = CDVRPTRControllerV2::getDevices();
+			break;
+		default:
+			ports = CDVRPTRControllerV1::getDevices();
+			break;
+	}
+
 	for (unsigned int i = 0U; i < ports.GetCount(); i++)
 		m_port->Append(ports.Item(i));
 
 	bool found = m_port->SetStringSelection(port);
 	if (!found)
 		m_port->SetSelection(0);
-
-	wxStaticText* rxInvertLabel = new wxStaticText(this, -1, _("RX Inversion"));
-	sizer->Add(rxInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	m_rxInvert = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_rxInvert->Append(_("Off"));
-	m_rxInvert->Append(_("On"));
-	sizer->Add(m_rxInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-	m_rxInvert->SetSelection(rxInvert ? 1 : 0);
 
 	wxStaticText* txInvertLabel = new wxStaticText(this, -1, _("TX Inversion"));
 	sizer->Add(txInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -65,6 +84,15 @@ m_txDelay(NULL)
 	m_txInvert->Append(_("On"));
 	sizer->Add(m_txInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_txInvert->SetSelection(txInvert ? 1 : 0);
+
+	wxStaticText* rxInvertLabel = new wxStaticText(this, -1, _("RX Inversion"));
+	sizer->Add(rxInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_rxInvert = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_rxInvert->Append(_("Off"));
+	m_rxInvert->Append(_("On"));
+	sizer->Add(m_rxInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_rxInvert->SetSelection(rxInvert ? 1 : 0);
 
 	wxStaticText* channelLabel = new wxStaticText(this, -1, _("Channel"));
 	sizer->Add(channelLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -89,8 +117,8 @@ m_txDelay(NULL)
 
 	SetAutoLayout(true);
 
-	// sizer->Fit(this);
-	// sizer->SetSizeHints(this);
+	sizer->Fit(this);
+	sizer->SetSizeHints(this);
 
 	SetSizer(sizer);
 }
@@ -101,16 +129,29 @@ CDVRPTRClientModemSet::~CDVRPTRClientModemSet()
 
 bool CDVRPTRClientModemSet::Validate()
 {
-	if (m_port->GetCurrentSelection() == wxNOT_FOUND)
+	if (m_version->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	if (m_rxInvert->GetCurrentSelection() == wxNOT_FOUND)
+	if (m_port->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
 	if (m_txInvert->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
+	if (m_rxInvert->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+
 	return m_channel->GetCurrentSelection() != wxNOT_FOUND;
+}
+
+DVRPTR_VERSION CDVRPTRClientModemSet::getVersion() const
+{
+	int n = m_version->GetCurrentSelection();
+
+	if (n == wxNOT_FOUND)
+		return DVRPTR_V1;
+
+	return n == 1 ? DVRPTR_V2 : DVRPTR_V1;
 }
 
 wxString CDVRPTRClientModemSet::getPort() const
@@ -161,4 +202,36 @@ unsigned int CDVRPTRClientModemSet::getModLevel() const
 unsigned int CDVRPTRClientModemSet::getTXDelay() const
 {
 	return (unsigned int)m_txDelay->GetValue();
+}
+
+void CDVRPTRClientModemSet::onVersion(wxCommandEvent &event)
+{
+	int n = event.GetSelection();
+
+	wxString curr = m_port->GetStringSelection();
+
+	wxArrayString ports;
+
+	switch (n) {
+		case 1:
+			ports = CDVRPTRControllerV2::getDevices();
+			m_rxInvert->Disable();
+			m_txDelay->Disable();
+			m_channel->Disable();
+			break;
+		default:
+			ports = CDVRPTRControllerV1::getDevices();
+			m_rxInvert->Enable();
+			m_txDelay->Enable();
+			m_channel->Enable();
+			break;
+	}
+
+	m_port->Clear();
+	for (unsigned int i = 0U; i < ports.GetCount(); i++)
+		m_port->Append(ports.Item(i));
+
+	bool found = m_port->SetStringSelection(curr);
+	if (!found)
+		m_port->SetSelection(0);
 }

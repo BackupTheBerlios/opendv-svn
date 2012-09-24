@@ -55,7 +55,7 @@ public:
 	virtual void setSoundCard(CSoundCardReaderWriter* soundcard);
 	virtual void setDVDongle(CDVDongleController* dongle);
 	virtual void setMessage(const wxString& text);
-	virtual void setModem(CDVRPTRController* modem);
+	virtual void setModem(IDVRPTRController* modem);
 	virtual void setBleep(bool on);
 
 	virtual void setRecording(bool record);
@@ -72,7 +72,7 @@ private:
 	CSoundCardReaderWriter*    m_soundcard;
 	CDVDongleThread*           m_dongle;
 	CHeaderData*               m_header;
-	CDVRPTRController*         m_modem;
+	IDVRPTRController*         m_modem;
 	CSlowDataDecoder           m_slowDataDecoder;
 	CSlowDataEncoder           m_slowDataEncoder;
 	bool                       m_stopped;

@@ -63,7 +63,7 @@ m_agl(agl),
 m_band1(band1),
 m_band2(band2),
 m_band3(band3),
-m_id(0x00U),
+m_repeaterId(0x00U),
 m_busyId(0x00U),
 m_watchdogTimer(1000U, 2U),		// 2 seconds
 m_ddMode(false),
@@ -384,7 +384,7 @@ CRepeaterHandler* CRepeaterHandler::findDVRepeater(const CAMBEData& data, bool b
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];
 		if (repeater != NULL) {
-			if (!busy && !repeater->m_ddMode && repeater->m_id == id)
+			if (!busy && !repeater->m_ddMode && repeater->m_repeaterId == id)
 				return repeater;
 			if (busy && !repeater->m_ddMode && repeater->m_busyId == id)
 				return repeater;
@@ -458,7 +458,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	unsigned int id = header.getId();
 
 	// Stop duplicate headers
-	if (id == m_id)
+	if (id == m_repeaterId)
 		return;
 
 	// Save the header fields
@@ -524,14 +524,14 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	// Reset the DTMF decoder
 	m_dtmf.reset();
 
-	// Reset the info and echo commands if they're running
+	// Reset the info, echo and version commands if they're running
 	m_audio->cancel();
 	m_echo->cancel();
 	m_version->cancel();
 
 	// A new header resets fields and G2 routing status
-	m_id = id;
-	m_busyId = 0x00U;
+	m_repeaterId = id;
+	m_busyId     = 0x00U;
 	m_watchdogTimer.start();
 
 	m_xBandRptr = NULL;
@@ -690,8 +690,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 	switch (m_g2Status) {
 		case G2_LOCAL:
 			if (data.isEnd()) {
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
 			}
 			break;
 
@@ -700,8 +700,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			m_g2Handler->writeAMBE(data);
 
 			if (data.isEnd()) {
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
 			}
 			break;
 
@@ -711,15 +711,15 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			if (data.isEnd()) {
 				m_queryTimer.stop();
 				delete m_g2Header;
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
-				m_g2Header = NULL;
+				m_repeaterId = 0x0U;
+				m_g2Status   = G2_NONE;
+				m_g2Header   = NULL;
 			}
 			break;
 
 		case G2_NONE:
 			if (data.isEnd())
-				m_id = 0x00;
+				m_repeaterId = 0x00U;
 
 			sendToOutgoing(data);
 			sendToLoopback(data);
@@ -729,9 +729,9 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			m_xBandRptr->process(data, AS_XBAND);
 
 			if (data.isEnd()) {
-				m_id        = 0x00;
-				m_g2Status  = G2_NONE;
-				m_xBandRptr = NULL;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
+				m_xBandRptr  = NULL;
 			}
 			break;
 
@@ -739,9 +739,9 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			m_starNet->process(data);
 
 			if (data.isEnd()) {
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
-				m_starNet  = NULL;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
+				m_starNet    = NULL;
 			}
 			break;
 
@@ -751,8 +751,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			sendToLoopback(data);
 
 			if (data.isEnd()) {
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
 			}
 			break;
 
@@ -763,8 +763,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			if (data.isEnd()) {
 				m_audio->sendStatus();
 
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
 			}
 			break;
 
@@ -775,8 +775,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			if (data.isEnd()) {
 				m_version->sendVersion();
 
-				m_id       = 0x00;
-				m_g2Status = G2_NONE;
+				m_repeaterId = 0x00U;
+				m_g2Status   = G2_NONE;
 			}
 			break;
 	}
@@ -824,8 +824,8 @@ void CRepeaterHandler::processBusy(CHeaderData& header)
 
 	m_dtmf.reset();
 
-	m_busyId = id;
-	m_id = 0x00U;
+	m_busyId     = id;
+	m_repeaterId = 0x00U;
 	m_watchdogTimer.start();
 
 	// Reject simple cases
@@ -919,7 +919,7 @@ bool CRepeaterHandler::process(CDDData& data)
 bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 {
 	// If data is coming from the repeater then don't send
-	if (m_id != 0x00)
+	if (m_repeaterId != 0x00U)
 		return false;
 
 	// Send all original headers to all repeater types, and only send duplicate headers to homebrew repeaters
@@ -954,7 +954,7 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 bool CRepeaterHandler::process(CAMBEData& data, AUDIO_SOURCE source)
 {
 	// If data is coming from the repeater then don't send
-	if (m_id != 0x00)
+	if (m_repeaterId != 0x00U)
 		return false;
 
 	data.setBands(m_band1, m_band2, m_band3);
@@ -1254,7 +1254,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 		wxLogMessage(wxT("Radio watchdog timer for %s has expired"), m_callsign.c_str());
 		m_watchdogTimer.stop();
 
-		if (m_id != 0x00U) {
+		if (m_repeaterId != 0x00U) {
 			if (m_text.IsEmpty())
 				sendHeard();
 
@@ -1295,8 +1295,8 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 					break;
 			}
 
-			m_g2Status = G2_NONE;
-			m_id = 0x00U;
+			m_repeaterId = 0x00U;
+			m_g2Status   = G2_NONE;
 		}
 
 		if (m_busyId != 0x00U) {
@@ -2168,7 +2168,7 @@ void CRepeaterHandler::triggerInfo()
 		return;
 
 	// Either send the audio now, or queue it until the end of the transmission
-	if (m_id != 0x00U || m_busyId != 0x00U)
+	if (m_repeaterId != 0x00U || m_busyId != 0x00U)
 		m_g2Status = G2_INFO;
 	else
 		m_audio->sendStatus();

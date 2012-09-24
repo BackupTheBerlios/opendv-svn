@@ -40,7 +40,7 @@ TimeServerThreadHelper.o:	TimeServerThreadHelper.cpp TimeServerThreadHelper.h Ti
 				$(CC) $(CFLAGS) -c TimeServerThreadHelper.cpp
 
 TimeServerThread.o:	TimeServerThread.cpp TimeServerThread.h ../Common/DStarDefines.h ../Common/UDPReaderWriter.h ../Common/HeaderData.h \
-					../Common/AMBEData.h ../Common/SlowDataEncoder.h
+					../Common/AMBEData.h ../Common/SlowDataEncoder.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c TimeServerThread.cpp
 
 install:	timeserver timeserverd

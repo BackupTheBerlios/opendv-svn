@@ -2,11 +2,11 @@ all:		Common.a
 
 OBJS :=	AudioDelay.o Bleeper.o BleepSet.o BusyData.o BusyEvent.o CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o DCSProtocolHandler.o \
 		DExtraProtocolHandler.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o \
-		DummyController.o DVAPController.o DVDongleController.o DVDongleSet.o DVDongleThread.o DVRPTRController.o DVTOOLFileReader.o DVTOOLFileWriter.o \
-		ErrorEvent.o FIRFilter.o GMSKModemLibUsb.o HeaderData.o HeaderEvent.o InversionSet.o K8055Controller.o LimitedLengthBuffer.o LimitedPatternMatcher.o \
-		Logger.o MessageData.o MessageEvent.o MessageSet.o MessageTextCtrl.o PatternMatcher.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
-		RestrictedTextCtrl.o SerialController.o SerialDataController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o SoundcardSet.o \
-		Timer.o UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
+		DummyController.o DVAPController.o DVDongleController.o DVDongleSet.o DVDongleThread.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o \
+		DVTOOLFileWriter.o ErrorEvent.o FIRFilter.o GMSKModemLibUsb.o HeaderData.o HeaderEvent.o InversionSet.o K8055Controller.o LimitedLengthBuffer.o \
+		LimitedPatternMatcher.o Logger.o MessageData.o MessageEvent.o MessageSet.o MessageTextCtrl.o PatternMatcher.o PTTDelay.o RadioHeaderDecoder.o \
+		RadioHeaderEncoder.o RestrictedTextCtrl.o SerialController.o SerialDataController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o \
+		SoundcardSet.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -74,9 +74,12 @@ DVDongleSet.o:	DVDongleSet.cpp DVDongleSet.h SerialDataController.h
 DVDongleThread.o:	DVDongleThread.cpp DVDongleThread.h DVDongleController.h DStarDefines.h RingBuffer.h Bleeper.h
 		$(CC) $(CFLAGS) -c DVDongleThread.cpp
 
-DVRPTRController.o:	DVRPTRController.cpp DVRPTRController.h CCITTChecksumReverse.h DStarDefines.h SerialDataController.h RingBuffer.h HeaderData.h \
-					CCITTChecksum.h Utils.h
-		$(CC) $(CFLAGS) -c DVRPTRController.cpp
+DVRPTRControllerV1.o:	DVRPTRControllerV1.cpp DVRPTRControllerV1.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h CCITTChecksum.h \
+						CCITTChecksumReverse.h Timer.h
+		$(CC) $(CFLAGS) -c DVRPTRControllerV1.cpp
+
+DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h
+		$(CC) $(CFLAGS) -c DVRPTRControllerV2.cpp
 
 DVTOOLFileReader.o:	DVTOOLFileReader.cpp DVTOOLFileReader.h
 		$(CC) $(CFLAGS) -c DVTOOLFileReader.cpp

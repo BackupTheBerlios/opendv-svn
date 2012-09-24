@@ -59,8 +59,8 @@ public:
 	virtual void getCallsign(wxString& callsign1, wxString& callsign2) const;
 	virtual void setCallsign(const wxString& callsign1, const wxString& callsign2) const;
 
-	virtual void getModem(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
-	virtual void setModem(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) const;
+	virtual void getModem(DVRPTR_VERSION& version, wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
+	virtual void setModem(DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) const;
 
 	virtual void getSoundcard(wxString& readDevice, wxString& writeDevice) const;
 	virtual void setSoundcard(const wxString& readDevice, const wxString& writeDevice) const;

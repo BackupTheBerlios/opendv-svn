@@ -158,7 +158,7 @@ private:
 	unsigned char             m_band1;
 	unsigned char             m_band2;
 	unsigned char             m_band3;
-	unsigned int              m_id;
+	unsigned int              m_repeaterId;
 	unsigned int              m_busyId;
 	CTimer                    m_watchdogTimer;
 	bool                      m_ddMode;

@@ -286,3 +286,4 @@ Added XRF018 and XRF250.
 Updated the DCS protocol.
 Include the SVN revision number in the log file.
 Added support for the 70cms DVAP.
+Added support for the XDVRPTR modem firmware.

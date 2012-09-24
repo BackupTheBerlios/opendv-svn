@@ -18,6 +18,7 @@
 
 #include "TimeServerThread.h"
 #include "DStarDefines.h"
+#include "Utils.h"
 
 #include <wx/filename.h>
 #include <wx/textfile.h>
@@ -84,7 +85,13 @@ void CTimeServerThread::run()
 	if (m_killed)
 		return;
 
-	loadAMBE();
+	if (m_format == FORMAT_VOICE_TIME) {
+		bool ret = loadAMBE();
+		if (!ret) {
+			wxLogWarning(wxT("Cannot load the AMBE data, using text only time"));
+			m_format = FORMAT_TEXT_TIME;
+		}
+	}
 
 	wxLogMessage(wxT("Starting the Time Server thread"));
 
@@ -1069,7 +1076,7 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 		}
 
 		text.Replace(wxT("_"), wxT(" "));
-		wxLogMessage(wxT("Sending voice\"%s\", sending text \"%s\""), text.c_str(), slowData.c_str());
+		wxLogMessage(wxT("Sending voice \"%s\", sending text \"%s\""), text.c_str(), slowData.c_str());
 
 		m_seqNo = 0U;
 

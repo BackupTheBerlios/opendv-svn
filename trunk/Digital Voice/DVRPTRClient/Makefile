@@ -9,7 +9,7 @@ DVRPTRClient:	$(OBJS)
 
 DVRPTRClientApp.o:	DVRPTRClientApp.cpp DVRPTRClientApp.h DVRPTRClientThread.h DVRPTRClientFrame.h DVRPTRClientDefs.h ../Common/SerialDataController.h \
 				../Common/DStarDefines.h ../Common/MessageData.h ../Common/DVDongleSet.h ../Common/HeaderData.h ../Common/BusyData.h \
-				../Common/Logger.h ../Common/Version.h ../Common/DVRPTRController.h
+				../Common/Logger.h ../Common/Version.h ../Common/DVRPTRController.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h
 				$(CC) $(CFLAGS) -c DVRPTRClientApp.cpp
 
 DVRPTRClientCallsignSet.o:	DVRPTRClientCallsignSet.cpp DVRPTRClientCallsignSet.h ../Common/CallsignTextCtrl.h
@@ -20,7 +20,8 @@ DVRPTRClientFrame.o:	DVRPTRClientFrame.cpp DVRPTRClientFrame.h DVRPTRClientPrefe
 				../Common/MessageData.h ../Common/ErrorEvent.h ../Common/HeaderData.h ../Common/BusyEvent.h ../Common/BusyData.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DVRPTRClientFrame.cpp
 
-DVRPTRClientModemSet.o:	DVRPTRClientModemSet.cpp DVRPTRClientModemSet.h DVRPTRClientDefs.h ../Common/DStarDefines.h ../Common/SerialDataController.h
+DVRPTRClientModemSet.o:	DVRPTRClientModemSet.cpp DVRPTRClientModemSet.h DVRPTRClientDefs.h ../Common/DStarDefines.h ../Common/DVRPTRControllerV1.h \
+				../Common/DVRPTRControllerV2.h
 				$(CC) $(CFLAGS) -c DVRPTRClientModemSet.cpp
 
 DVRPTRClientPreferences.o:	DVRPTRClientPreferences.cpp DVRPTRClientPreferences.h DVRPTRClientCallsignSet.h DVRPTRClientModemSet.h DVRPTRClientDefs.h \

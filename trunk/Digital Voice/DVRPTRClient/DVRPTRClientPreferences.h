@@ -32,7 +32,7 @@
 class CDVRPTRClientPreferences : public wxDialog {
 public:
 	CDVRPTRClientPreferences(wxWindow* parent, int id, const wxString& callsign1, const wxString& callsign2,
-								   const wxString& readDevice, const wxString& writeDevice,
+								   const wxString& readDevice, const wxString& writeDevice, DVRPTR_VERSION version,
 								   const wxString& port, bool rxInvert, bool txInvert, bool channel,
 								   unsigned int modLevel, unsigned int txDelay, const wxString& dvdDevice,
 								   const wxString& message, bool bleep);
@@ -46,12 +46,13 @@ public:
 	virtual wxString     getSoundcardReadDevice() const;
 	virtual wxString     getSoundcardWriteDevice() const;
 
-	virtual wxString     getPort() const;
-	virtual bool         getRXInvert() const;
-	virtual bool         getTXInvert() const;
-	virtual bool         getChannel() const;
-	virtual unsigned int getModLevel() const;
-	virtual unsigned int getTXDelay() const;
+	virtual DVRPTR_VERSION getVersion() const;
+	virtual wxString       getPort() const;
+	virtual bool           getRXInvert() const;
+	virtual bool           getTXInvert() const;
+	virtual bool           getChannel() const;
+	virtual unsigned int   getModLevel() const;
+	virtual unsigned int   getTXDelay() const;
 
 	virtual wxString     getDVDDevice() const;
 

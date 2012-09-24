@@ -60,6 +60,7 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\WindowsUSB\dvrptr_cdc.inf"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\WindowsUSB\gmsk.inf"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\WindowsUSB\gmsk.cat"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\WindowsUSB\xDVRPTR-32-64-2.inf"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\DCSClient\DCS_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\DExtraClient\DExtra_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\COPYING.txt"

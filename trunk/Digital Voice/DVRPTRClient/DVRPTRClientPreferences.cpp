@@ -21,8 +21,8 @@
 #include "DVRPTRClientDefs.h"
 
 CDVRPTRClientPreferences::CDVRPTRClientPreferences(wxWindow* parent, int id, const wxString& callsign1,
-								   const wxString& callsign2, const wxString& readDevice,
-								   const wxString& writeDevice, const wxString& port, bool rxInvert,
+								   const wxString& callsign2, const wxString& readDevice, const wxString& writeDevice,
+								   DVRPTR_VERSION version, const wxString& port, bool rxInvert,
 								   bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay,
 								   const wxString& dvdDevice, const wxString& message, bool bleep) :
 wxDialog(parent, id, wxString(_("DVRPTR Client Preferences")), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER | wxDEFAULT_DIALOG_STYLE),
@@ -43,7 +43,7 @@ m_bleep(NULL)
 	m_soundcard = new CSoundcardSet(noteBook, -1, APPLICATION_NAME, readDevice, writeDevice);
 	noteBook->AddPage(m_soundcard, _("Sound Card"), false);
 
-	m_modem = new CDVRPTRClientModemSet(noteBook, -1, APPLICATION_NAME, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	m_modem = new CDVRPTRClientModemSet(noteBook, -1, APPLICATION_NAME, version, port, rxInvert, txInvert, channel, modLevel, txDelay);
 	noteBook->AddPage(m_modem, _("Modem"), false);
 
 	m_dongle = new CDVDongleSet(noteBook, -1, APPLICATION_NAME, dvdDevice);
@@ -110,6 +110,11 @@ wxString CDVRPTRClientPreferences::getSoundcardReadDevice() const
 wxString CDVRPTRClientPreferences::getSoundcardWriteDevice() const
 {
 	return m_soundcard->getWriteDevice();
+}
+
+DVRPTR_VERSION CDVRPTRClientPreferences::getVersion() const
+{
+	return m_modem->getVersion();
 }
 
 wxString CDVRPTRClientPreferences::getPort() const

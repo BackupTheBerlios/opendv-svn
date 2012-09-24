@@ -137,7 +137,7 @@ void CDVRPTRClientThread::setDVDongle(CDVDongleController* dongle)
 	m_dongle = new CDVDongleThread(dongle, &m_decodeAudio, &m_decodeData, &m_encodeAudio, &m_encodeData);
 }
 
-void CDVRPTRClientThread::setModem(CDVRPTRController* modem)
+void CDVRPTRClientThread::setModem(IDVRPTRController* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -316,7 +316,6 @@ void CDVRPTRClientThread::transmit()
 		Sleep(FRAME_TIME_MS / 4UL);
 	}
 
-	m_modem->writeStart();
 	m_modem->writeHeader(*m_header);
 
 	unsigned int frameCount = 20U;
@@ -341,7 +340,7 @@ void CDVRPTRClientThread::transmit()
 					frameCount++;
 				}
 
-				m_modem->writeData(frame, DV_FRAME_LENGTH_BYTES);
+				m_modem->writeData(frame, DV_FRAME_LENGTH_BYTES, endCount == 1U);
 
 				// Make transmit hang so that all the audio is flushed
 				if (m_transmit != CS_TRANSMIT)
@@ -351,9 +350,6 @@ void CDVRPTRClientThread::transmit()
 
 		Sleep(FRAME_TIME_MS / 4UL);
 	}
-
-	// Send the end pattern
-	m_modem->writeEnd();
 
 	m_dongle->setMode(DVDMODE_IDLE);
 

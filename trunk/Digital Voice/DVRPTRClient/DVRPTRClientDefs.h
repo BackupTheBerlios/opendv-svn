@@ -47,4 +47,9 @@ const wxString CQCQCQ = wxT("CQCQCQ");
 const wxString DIRECT = wxT("DIRECT  ");
 const wxString UNUSED = wxT("<unused>");
 
+enum DVRPTR_VERSION {
+	DVRPTR_V1 = 1,
+	DVRPTR_V2
+};
+
 #endif

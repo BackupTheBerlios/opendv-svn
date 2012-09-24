@@ -321,9 +321,10 @@ void CDVRPTRClientFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getSoundcard(oldReadDevice, oldWriteDevice);
 
 	wxString oldPort;
+	DVRPTR_VERSION oldVersion;
 	bool oldRXInvert, oldTXInvert, oldChannel;
 	unsigned int oldModLevel, oldTXDelay;
-	::wxGetApp().getModem(oldPort, oldRXInvert, oldTXInvert, oldChannel, oldModLevel, oldTXDelay);
+	::wxGetApp().getModem(oldVersion, oldPort, oldRXInvert, oldTXInvert, oldChannel, oldModLevel, oldTXDelay);
 
 	wxString oldDVDDevice;
 	::wxGetApp().getDVDongle(oldDVDDevice);
@@ -335,7 +336,7 @@ void CDVRPTRClientFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getBleep(oldBleep);
 
 	CDVRPTRClientPreferences dialog(this, -1, oldCallsign1, oldCallsign2, oldReadDevice, oldWriteDevice,
-								   oldPort, oldRXInvert, oldTXInvert, oldChannel, oldModLevel, oldTXDelay,
+								   oldVersion, oldPort, oldRXInvert, oldTXInvert, oldChannel, oldModLevel, oldTXDelay,
 								   oldDVDDevice, oldMessage, oldBleep);
 	if (dialog.ShowModal() != wxID_OK)
 		return;
@@ -344,6 +345,7 @@ void CDVRPTRClientFrame::onPreferences(wxCommandEvent& event)
 	wxString newCallsign2     = dialog.getCallsign2();
 	wxString newReadDevice    = dialog.getSoundcardReadDevice();
 	wxString newWriteDevice   = dialog.getSoundcardWriteDevice();
+	DVRPTR_VERSION newVersion = dialog.getVersion();
 	wxString newPort          = dialog.getPort();
 	bool     newRXInvert      = dialog.getRXInvert();
 	bool     newTXInvert      = dialog.getTXInvert();
@@ -364,8 +366,8 @@ void CDVRPTRClientFrame::onPreferences(wxCommandEvent& event)
 		changed = true;
 	}
 
-	if (!newPort.IsSameAs(oldPort) || newRXInvert != oldRXInvert || newTXInvert != oldTXInvert || newChannel != oldChannel || newModLevel != oldModLevel || newTXDelay != oldTXDelay) {
-		::wxGetApp().setModem(newPort, newRXInvert, newTXInvert, newChannel, newModLevel, newTXDelay);
+	if (newVersion != oldVersion || !newPort.IsSameAs(oldPort) || newRXInvert != oldRXInvert || newTXInvert != oldTXInvert || newChannel != oldChannel || newModLevel != oldModLevel || newTXDelay != oldTXDelay) {
+		::wxGetApp().setModem(oldVersion, newPort, newRXInvert, newTXInvert, newChannel, newModLevel, newTXDelay);
 		changed = true;
 	}
 

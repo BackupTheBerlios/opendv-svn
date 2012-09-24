@@ -19,6 +19,8 @@
 #include "DVRPTRClientApp.h"
 
 #include "SerialDataController.h"
+#include "DVRPTRControllerV2.h"
+#include "DVRPTRControllerV1.h"
 #include "DVRPTRController.h"
 #include "DStarDefines.h"
 #include "Version.h"
@@ -34,6 +36,7 @@ static const wxString KEY_CALLSIGN1          = wxT("/callsign1");
 static const wxString KEY_CALLSIGN2          = wxT("/callsign2");
 static const wxString KEY_MESSAGE_TYPE       = wxT("/msgType");
 static const wxString KEY_MESSAGE_TEXT       = wxT("/msgText");
+static const wxString KEY_MODEM_VERSION      = wxT("/modemVersion");
 static const wxString KEY_MODEM_PORT         = wxT("/modemPort");
 static const wxString KEY_MODEM_RXINVERT     = wxT("/modemFrequency");
 static const wxString KEY_MODEM_TXINVERT     = wxT("/modemTXInvert");
@@ -54,6 +57,7 @@ static const wxString KEY_BLEEP              = wxT("/bleep");
 static const wxString   DEFAULT_CALLSIGN1          = wxEmptyString;
 static const wxString   DEFAULT_CALLSIGN2          = wxEmptyString;
 static const wxString   DEFAULT_MESSAGE_TEXT       = wxEmptyString;
+static const DVRPTR_VERSION DEFAULT_MODEM_VERSION  = DVRPTR_V1;
 static const wxString   DEFAULT_MODEM_PORT         = wxEmptyString;
 static const bool       DEFAULT_MODEM_RXINVERT     = false;
 static const bool       DEFAULT_MODEM_TXINVERT     = false;
@@ -232,33 +236,37 @@ void CDVRPTRClientApp::setMessage(const wxString& message) const
 	delete profile;
 }
 
-void CDVRPTRClientApp::getModem(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDVRPTRClientApp::getModem(DVRPTR_VERSION& version, wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
 {
 	wxConfigBase* profile = new wxConfig(APPLICATION_NAME);
 	wxASSERT(profile != NULL);
+
+	long temp;
+	profile->Read(KEY_MODEM_VERSION,  &temp,     long(DEFAULT_MODEM_VERSION));
+	version = DVRPTR_VERSION(temp);
 
 	profile->Read(KEY_MODEM_PORT,     &port,     DEFAULT_MODEM_PORT);
 	profile->Read(KEY_MODEM_RXINVERT, &rxInvert, DEFAULT_MODEM_RXINVERT);
 	profile->Read(KEY_MODEM_TXINVERT, &txInvert, DEFAULT_MODEM_TXINVERT);
 	profile->Read(KEY_MODEM_CHANNEL,  &channel,  DEFAULT_MODEM_CHANNEL);
 
-	long temp;
 	profile->Read(KEY_MODEM_MODLEVEL, &temp,     DEFAULT_MODEM_MODLEVEL);
 	modLevel = (unsigned int)temp;
 
 	profile->Read(KEY_MODEM_TXDELAY,  &temp,     DEFAULT_MODEM_TXDELAY);
 	txDelay = (unsigned int)temp;
 
-	wxLogInfo(wxT("DV-RPTR modem: port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+	wxLogInfo(wxT("DV-RPTR modem: version: %d, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), int(version), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
 
 	delete profile;
 }
 
-void CDVRPTRClientApp::setModem(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) const
+void CDVRPTRClientApp::setModem(DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) const
 {
 	wxConfigBase* profile = new wxConfig(APPLICATION_NAME);
 	wxASSERT(profile != NULL);
 
+	profile->Write(KEY_MODEM_VERSION,  long(version));
 	profile->Write(KEY_MODEM_PORT,     port);
 	profile->Write(KEY_MODEM_RXINVERT, rxInvert);
 	profile->Write(KEY_MODEM_TXINVERT, txInvert);
@@ -267,7 +275,7 @@ void CDVRPTRClientApp::setModem(const wxString& port, bool rxInvert, bool txInve
 	profile->Write(KEY_MODEM_TXDELAY,  long(txDelay));
 	profile->Flush();
 
-	wxLogInfo(wxT("DV-RPTR modem: port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+	wxLogInfo(wxT("DV-RPTR modem: version: %d, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), int(version), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
 
 	delete profile;
 }
@@ -557,18 +565,33 @@ void CDVRPTRClientApp::createThread()
 	}
 
 	wxString modemPort;
+	DVRPTR_VERSION version;
 	bool rxInvert, txInvert, channel;
 	unsigned int modLevel, txDelay;
-	getModem(modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
+	getModem(version, modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
 
 	if (!modemPort.IsEmpty()) {
-		CDVRPTRController* controller = new CDVRPTRController(modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
-		bool res = controller->open();
-		if (!res) {
-			wxLogError(wxT("Cannot open the DV-RPTR modem"));
-			error(_("Cannot open the DV-RPTR modem"));
-		} else {
-			m_thread->setModem(controller);
+		IDVRPTRController* controller = NULL;
+		switch (version) {
+			case DVRPTR_V1:
+				controller = new CDVRPTRControllerV1(modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
+				break;
+			case DVRPTR_V2:
+				controller = new CDVRPTRControllerV2(modemPort, txInvert, modLevel);
+				break;
+			default:
+				wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(version));
+				break;
+		}
+
+		if (controller != NULL) {
+			bool res = controller->open();
+			if (!res) {
+				wxLogError(wxT("Cannot open the DV-RPTR modem"));
+				error(_("Cannot open the DV-RPTR modem"));
+			} else {
+				m_thread->setModem(controller);
+			}
 		}
 	}
 
