@@ -1,0 +1,58 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+OPEN ISSUES
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: Startup slow when DD_mode_dhcp is set to "yes" ?
+FOUND: 2012-09-10
+REPORTED: ON4TOP
+VERIFIED: not yet
+PRIORITY: standard
+SOLVED: open
+
+Updated startscript is OK, should not spend time for dhcp and other DD-Mode specific activities if not activated.
+
+${IRCDDBGATEWAY_DDENABLED} is set to "no" by default.
+${IRCDDBGATEWAY_DDDHCP} is set to "yes" by default, but only used if ${IRCDDBGATEWAY_DDENABLED} = "yes".
+
+short: No dhcp for DD-mode if no dd-mode.
+
+Possible issue:
+The Debian packager handles all files in the /etc/-tree automatically as configfiles and does not overwrite it
+if it had been modified since installation.
+Updated startup files may be stored as ".dpkg-new" and thus not be activated.
+To be verified.  
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: verification issue during installation/upgrade
+FOUND: 2012-09-04
+REPORTED: ON4TOP
+VERIFIED: 2012-09-04
+PRIORITY: low
+SOLVED: open
+
+apt-get always shows verification issue which needs to be confirmed.
+clarification if/how this can be solved.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: messages/notices during installation of packages
+FOUND: 2012-09-04
+REPORTED: DL5DI
+VERIFIED: 2012-09-07
+PRIORITY: low
+SOLVED: open
+
+
+ircddbgateway-20120908-2:
+insserv: script repeater_4: service repeater already provided!
+insserv: script repeater_2: service repeater already provided!
+insserv: script repeater_1: service repeater already provided!
+
+dh_make rules still use "Replaces repeater" after data already have been excluded to separate package.
+
+Solution:
+change dh_make control file, remove "Replaces"
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+

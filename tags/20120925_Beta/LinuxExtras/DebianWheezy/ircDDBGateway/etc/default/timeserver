@@ -1,0 +1,11 @@
+# Defaults for timeserver initscript
+# sourced by /etc/init.d/timeserver
+# installed at /etc/default/timeserver by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+DAEMON="/usr/bin/timeserverd"
+# Additional options that are passed to the Daemon.
+DAEMON_ARGS="-nolog -logdir=/var/log/opendv -daemon"
+DAEMON_USER=opendv
