@@ -10,7 +10,7 @@
  *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *	GNU General Public License for more details.
  */
-  
+   
 #ifndef	Version_H
 #define	Version_H
 
@@ -21,9 +21,9 @@ const wxString VENDOR_NAME = wxT("G4KLX");
 const wxString SVNREV = wxT("$Revision$ on $Date$");
 
 #if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20120901 - DEBUG");
+const wxString VERSION = wxT("20120925 - DEBUG");
 #else
-const wxString VERSION = wxT("20120901");
+const wxString VERSION = wxT("20120925");
 #endif
 
 #endif

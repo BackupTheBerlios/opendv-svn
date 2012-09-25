@@ -1,4 +1,4 @@
-Digital Voice - 20120901
+Digital Voice - 20120925
 ========================
 
 20090319
@@ -279,7 +279,7 @@ Reverted to Visual C++ 2008 on Windows.
 Allow up to module E for linking.
 Added Windows LibUSB support to the GMSK Client.
 
-2012xxxx
+20120925
 --------
 
 Added XRF018 and XRF250.
