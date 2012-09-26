@@ -1737,3 +1737,4 @@ Add -audiodir command line option to change the location of the AMBE data loggin
 Put the DCS and DExtra Gateways back into the package.
 Updated DCS protocol.
 Added support for the 70cms DVAP.
+Use the DVAP to validate its own frequency.

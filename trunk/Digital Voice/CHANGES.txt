@@ -287,3 +287,8 @@ Updated the DCS protocol.
 Include the SVN revision number in the log file.
 Added support for the 70cms DVAP.
 Added support for the XDVRPTR modem firmware.
+
+2012xxxx
+--------
+
+Use the DVAP to validate its own frequency.

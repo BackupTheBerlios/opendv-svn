@@ -74,6 +74,12 @@ const unsigned int  DVAP_REQ_FREQUENCY_LEN = 8U;
 const unsigned char DVAP_RESP_FREQUENCY[] = {0x08, 0x00, 0x20, 0x02, 0x00, 0x00, 0x00, 0x00};
 const unsigned int  DVAP_RESP_FREQUENCY_LEN = 8U;
 
+const unsigned char DVAP_REQ_FREQLIMITS[] = {0x04, 0x20, 0x30, 0x02};
+const unsigned int  DVAP_REQ_FREQLIMITS_LEN = 4U;
+
+const unsigned char DVAP_RESP_FREQLIMITS[] = {0x0C, 0x00, 0x30, 0x02};
+const unsigned int  DVAP_RESP_FREQLIMITS_LEN = 4U;
+
 const unsigned char DVAP_REQ_START[] = {0x05, 0x00, 0x18, 0x00, 0x01};
 const unsigned int  DVAP_REQ_START_LEN = 5U;
 
@@ -846,13 +852,8 @@ bool CDVAPController::setFrequency()
 {
 	unsigned char buffer[10U];
 
-	::memcpy(buffer, DVAP_REQ_FREQUENCY, DVAP_REQ_FREQUENCY_LEN);
-
-	wxUint32 frequency = wxUINT32_SWAP_ON_BE(m_frequency);
-	::memcpy(buffer + 4U, &frequency, sizeof(wxUint32));
-
-	int ret = m_serial.write(buffer, DVAP_REQ_FREQUENCY_LEN);
-	if (ret != int(DVAP_REQ_FREQUENCY_LEN)) {
+	int ret = m_serial.write(DVAP_REQ_FREQLIMITS, DVAP_REQ_FREQLIMITS_LEN);
+	if (ret != int(DVAP_REQ_FREQLIMITS_LEN)) {
 		m_serial.close();
 		return false;
 	}
@@ -860,6 +861,46 @@ bool CDVAPController::setFrequency()
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
+	do {
+		::wxMilliSleep(5UL);
+
+		resp = getResponse(m_buffer, length);
+
+		if (resp != RT_FREQLIMITS) {
+			count++;
+			if (count >= MAX_RESPONSES) {
+				wxLogError(wxT("The DVAP is not responding to the frequency limits command"));
+				return false;
+			}
+		}
+	} while (resp != RT_FREQLIMITS);
+
+	wxUint32* pFreq1 = (wxUint32*)(m_buffer + 4U);
+	wxUint32* pFreq2 = (wxUint32*)(m_buffer + 8U);
+
+	wxUint32 lower = wxUINT32_SWAP_ON_BE(*pFreq1);
+	wxUint32 upper = wxUINT32_SWAP_ON_BE(*pFreq2);
+
+	wxLogInfo(wxT("DVAP frequency limits are %u Hz to %u Hz"), lower, upper);
+
+	if (m_frequency < lower || m_frequency > upper) {
+		wxLogError(wxT("The required frequency is out of the range of the DVAP hardware"));
+		m_serial.close();
+		return false;
+	}
+
+	::memcpy(buffer, DVAP_REQ_FREQUENCY, DVAP_REQ_FREQUENCY_LEN);
+
+	wxUint32 frequency = wxUINT32_SWAP_ON_BE(m_frequency);
+	::memcpy(buffer + 4U, &frequency, sizeof(wxUint32));
+
+	ret = m_serial.write(buffer, DVAP_REQ_FREQUENCY_LEN);
+	if (ret != int(DVAP_REQ_FREQUENCY_LEN)) {
+		m_serial.close();
+		return false;
+	}
+
+	count = 0U;
 	do {
 		::wxMilliSleep(5UL);
 
@@ -933,6 +974,8 @@ RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& leng
 		return RT_FIRMWARE;
 	else if (::memcmp(buffer, DVAP_RESP_FREQUENCY, 4U) == 0)
 		return RT_FREQUENCY;
+	else if (::memcmp(buffer, DVAP_RESP_FREQLIMITS, 4U) == 0)
+		return RT_FREQLIMITS;
 	else if (::memcmp(buffer, DVAP_RESP_MODULATION, DVAP_RESP_MODULATION_LEN) == 0)
 		return RT_MODULATION;
 	else if (::memcmp(buffer, DVAP_RESP_MODE, DVAP_RESP_MODE_LEN) == 0)
