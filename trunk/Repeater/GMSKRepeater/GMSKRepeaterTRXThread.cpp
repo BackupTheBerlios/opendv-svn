@@ -934,10 +934,6 @@ bool CGMSKRepeaterTRXThread::transmitLocalHeader()
 
 	delete header;
 
-	ret = m_modem->setPTT(true);
-	if (!ret)
-		return false;
-
 	m_tx = true;
 
 	m_modemLength = 0U;
@@ -1033,10 +1029,6 @@ bool CGMSKRepeaterTRXThread::transmitRadioHeader()
 
 	delete header;
 
-	ret = m_modem->setPTT(true);
-	if (!ret)
-		return false;
-
 	m_tx = true;
 
 	m_modemLength = 0U;
@@ -1131,10 +1123,6 @@ bool CGMSKRepeaterTRXThread::transmitNetworkHeader()
 		return false;
 
 	delete header;
-
-	ret = m_modem->setPTT(true);
-	if (!ret)
-		return false;
 
 	m_tx = true;
 

@@ -324,10 +324,6 @@ bool CGMSKRepeaterTXThread::transmitNetworkHeader()
 
 	delete header;
 
-	ret = m_modem->setPTT(true);
-	if (!ret)
-		return false;
-
 	m_tx = true;
 
 	m_modemLength = 0U;

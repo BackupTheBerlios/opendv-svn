@@ -329,7 +329,9 @@ bool CGMSKModemLibUsb::writeHeader(const CHeaderData& header)
 		return false;
 	}
 
-	return true;
+	::wxMilliSleep(5UL);
+
+	return setPTT(true);
 }
 
 TRISTATE CGMSKModemLibUsb::hasSpace()
@@ -718,7 +720,9 @@ bool CGMSKModemLibUsb::writeHeader(const CHeaderData& header)
 		return false;
 	}
 
-	return true;
+	::wxMilliSleep(5UL);
+
+	return setPTT(true);
 }
 
 TRISTATE CGMSKModemLibUsb::hasSpace()

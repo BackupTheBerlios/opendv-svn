@@ -237,7 +237,7 @@ bool CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 		return false;
 	}
 
-	return true;
+	return setPTT(true);
 }
 
 TRISTATE CGMSKModemWinUSB::getPTT()
