@@ -34,6 +34,7 @@
 # 2012-09-21 dl5di    bugfixes, new comand line option for repeater modules integrated
 # 2012-09-23 dl5di    bugfix, commandline options were overwritten from template
 # 2012-09-24 dl5di    added frequency configuration for UHF-version of DVAP
+# 2012-09-28 dl5di    "udev reload" added whenever udev settings are changed, URI, serPTT added
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -43,7 +44,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120924"
+rev="20120928"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1546,6 +1547,8 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "Velleman K8055 - ${VALUE}"
+	    echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"10cf\", ATTRS{idProduct}==\"5500\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-k8055.rules
+	    /etc/init.d/udev reload
 	    ;;
 	2)
 	    print_text "iface_uri"
@@ -1566,6 +1569,8 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "URI USB - ${VALUE}"
+    	    echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"0d8c\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-uri.rules
+	    /etc/init.d/udev reload
 	    ;;
 	3)
 	    print_text "iface_ser"
@@ -1587,6 +1592,9 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "/dev/ttyS${VALUE}"
+	    echo "KERNEL==\"tty${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-tty${VALUE}.rules
+	    /etc/init.d/udev reload
+	    [ -c /dev/tty${VALUE} ] && chown opendv:opendv /dev/tty${VALUE}
 	    ;;
 	4)
 	    print_text "iface_usb"
@@ -1608,7 +1616,8 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "/dev/ttyUSB${VALUE}"
-	    echo "KERNEL==\"ttyUSB${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/20_udev_ttyUSB${VALUE}.rules
+	    echo "KERNEL==\"ttyUSB${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-ttyUSB${VALUE}.rules
+	    /etc/init.d/udev reload
 	    [ -c /dev/ttyUSB${VALUE} ] && chown opendv:opendv /dev/ttyUSB${VALUE}
 	    ;;
 	*)
@@ -1721,7 +1730,8 @@ function hwtype2(){
 	    ;;
     esac
     write_value $REPEATERCONFIG $var "/dev/ttyACM${VALUE}"
-    echo "KERNEL==\"ttyACM${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/20_udev_ttyACM${VALUE}.rules
+    echo "KERNEL==\"ttyACM${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-ttyACM${VALUE}.rules
+    /etc/init.d/udev reload
     [ -c /dev/ttyACM${VALUE} ] && chown opendv:opendv /dev/ttyACM${VALUE}
 
 #
@@ -1936,7 +1946,8 @@ function hwtype3(){
 	    ;;
     esac
     write_value $REPEATERCONFIG $var "$VALUE"
-    echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"04d8\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"0666\"" > /etc/udev/rules.d/20-udev_gmskmodem.rules
+    echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"04d8\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-gmskmodem.rules
+    /etc/init.d/udev reload
     return
 }
 
@@ -1984,7 +1995,8 @@ function hwtype4(){
 	    ;;
     esac
     write_value $REPEATERCONFIG $var "/dev/ttyUSB${VALUE}"
-    echo "KERNEL==\"ttyUSB${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"0666\"" > /etc/udev/rules.d/20-udev_ttyUSB${VALUE}.rules
+    echo "KERNEL==\"ttyUSB${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-ttyUSB${VALUE}.rules
+    /etc/init.d/udev reload
     [ -c /dev/ttyUSB${VALUE} ] && chown opendv:opendv /dev/ttyUSB${VALUE}
 #
 # dvapFrequency=145500000
