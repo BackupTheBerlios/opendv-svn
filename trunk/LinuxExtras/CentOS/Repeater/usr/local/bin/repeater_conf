@@ -30,6 +30,7 @@
 # 2012-09-21 dl5di    bugfix, new command line option of repeater added
 # 2012-09-23 dl5di    bugfix, commandline options were overwritten from template
 # 2012-09-24 dl5di    added frequency configuration for UHF-version of DVAP
+# 2012-09-29 dl5di    bugfix, reset if logdir
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -39,7 +40,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120924"
+rev="20120929"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2246,6 +2247,9 @@ function logging(){
     print_text $var 
     echo $LOGDIR
     request_input $var 3 80 2 "$LOGDIR"
+    if [ "$?" = 3 ]; then
+        INPUT="/var/log/opendv"
+    fi
     if [ ! -z "$INPUT" ]; then
 	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
     fi

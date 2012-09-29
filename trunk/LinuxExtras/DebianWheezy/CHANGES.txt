@@ -2,6 +2,35 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Swedish language missing
+FOUND: 2012-09-29
+REPORTED: SM0TSC
+VERIFIED: 2012-09-29
+PRIORITY: normal
+SOLVED: 2012-09-29
+COMMIT: 2012-09-29
+
+- menus and language index extended to cover Swedish language in Timeserver
+- typo in ircddbgateway install script: DSM was not stopped
+- bugfix logging: reset to default logdir
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: Startup slow when DD_mode_dhcp is set to "yes" ?
+FOUND: 2012-09-10
+REPORTED: ON4TOP
+VERIFIED: 2012-09-29
+PRIORITY: standard
+SOLVED: 2012-09-29
+COMMIT: 2012-09-29
+
+issue only appeared when "reload" was selected, not on start and stop. 
+
+${IRCDDBGATEWAY_DDENABLED} is set to "no" by default.
+${IRCDDBGATEWAY_DDDHCP} is set to "yes" by default, but only used if ${IRCDDBGATEWAY_DDENABLED} = "yes".
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: UHF version of DVAP
 FOUND: 2012-09-24
 REPORTED: DL5DI

@@ -48,12 +48,14 @@
 # 2012-09-15 dl5di    logging options added
 # 2012-09-21 dl5di    bugfix logging settings
 # 2012-09-23 dl5di    improved command line handling
+# 2012-09-28 dl5di    bugfix/typo stopping DSM
+# 2012-09-29 dl5di    language selection extended, logdir setting fixed
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20120915"
+rev="20120929"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -291,7 +293,7 @@ function request_callsign(){
 	    unset INPUT
 	fi
     fi
-    INPUT=$(echo "$INPUT" | tr [[:lower:]] [[:upper:]])
+    INPUT=$(echo "$INPUT" | tr "[[:lower:]]" "[[:upper:]]")
     if [ "$2" -gt 2 ]; then    
 	if [ ${#INPUT} -ge 6 ]; then
 	    pattern=$(echo "$INPUT" | sed "s!STN!!g" | tr "[[:alpha:]]" "A" | tr "[[:digit:]]" "N")
@@ -773,7 +775,7 @@ function quit_icomG2(){
     /etc/init.d/dplus stop
 
     print_text "icom_quit4"
-    /sbin/chkconfig --del dsl
+    /sbin/chkconfig --del dsm
     /sbin/chkconfig --del dplus
     if [ $REGSRV = 0 ]; then
 	/sbin/chkconfig --del postgresql
@@ -1331,7 +1333,7 @@ function repeater_setup(){
 		esac
     		return 0
 	    else
-		INPUT=$(echo $INPUT | tr [[:lower:]] [[:upper:]])    
+		INPUT=$(echo $INPUT | tr "[[:lower:]]" "[[:upper:]]")    
 		valid_band $var $INPUT
 		VALID=$?
 	    fi
@@ -2424,7 +2426,7 @@ function timeserver_setup(){
         RET=0
         while [ $RET -eq 0 ]; do
 	    print_text "tsrv_language"
-    	    select_item $var 6 "$VALUE"
+    	    select_item $var 8 "$VALUE"
 	    RET=$?
 	    case $RET in
 		1)

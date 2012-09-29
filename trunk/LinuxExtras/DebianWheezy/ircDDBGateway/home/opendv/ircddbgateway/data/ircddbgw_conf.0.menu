@@ -813,8 +813,8 @@ tsrv_language: 3   English (US) 2
 tsrv_language: 4   Deutsch 1
 tsrv_language: 5   Deutsch 2
 tsrv_language: 6   Francais
-tsrv_language: 7   Francais
-tsrv_language: 8   Nederlands
+tsrv_language: 7   Nederlands
+tsrv_language: 8   Svenska
 tsrv_language:
 
 interval:
