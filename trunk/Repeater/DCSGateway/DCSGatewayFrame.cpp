@@ -238,7 +238,7 @@ void CDCSGatewayFrame::onAbout(wxCommandEvent& event)
 	info.SetCopyright(wxT("(C) 2012 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
-	info.SetDescription(_("This program allows a computer running a homebrew\nrepeater to access DCS reflectors."));
+	info.SetDescription(_("This program allows a computer running a homebrew\nrepeater to access DCS reflectors and CCS routing."));
 
 	::wxAboutBox(info);
 }
@@ -254,9 +254,6 @@ void CDCSGatewayFrame::onTimer(wxTimerEvent& event)
 
 	wxString text;
 	switch (status->getState()) {
-		case LINK_NONE:
-			m_state->SetLabel(_("Not linked"));
-			break;
 		case LINK_LINKING:
 			text.Printf(_("Linking to %s"), status->getReflector().c_str());
 			m_state->SetLabel(text);
@@ -264,6 +261,9 @@ void CDCSGatewayFrame::onTimer(wxTimerEvent& event)
 		case LINK_LINKED:
 			text.Printf(_("Linked to %s"), status->getReflector().c_str());
 			m_state->SetLabel(text);
+			break;
+		default:
+			m_state->SetLabel(_("Not linked"));
 			break;
 	}
 
