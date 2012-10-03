@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,15 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-          
-#ifndef	Version_H
-#define	Version_H
 
-#include <wx/wx.h>
+#include "LocatorTextCtrl.h"
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+CLocatorTextCtrl::CLocatorTextCtrl(wxWindow* parent, int id, const wxString& value, const wxPoint& pos, const wxSize& size, long style) :
+CRestrictedTextCtrl(parent, id, value, pos, size, style, LOCATOR_CHARS)
+{
+}
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+CLocatorTextCtrl::~CLocatorTextCtrl()
+{
+}
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20120920 - DEBUG");
-#else
-const wxString VERSION = wxT("20120920");
-#endif
-
-#endif

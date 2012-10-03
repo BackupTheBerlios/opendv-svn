@@ -35,8 +35,8 @@ public:
 #endif
 	~CDCSGatewayConfig();
 
-	virtual void getReflector(wxString& callsign, wxString& reflector, bool& atStartup, RECONNECT& reconnect, TEXT_LANG& language) const;
-	virtual void setReflector(const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language);
+	virtual void getReflector(wxString& callsign, wxString& locator, wxString& reflector, bool& atStartup, RECONNECT& reconnect, TEXT_LANG& language) const;
+	virtual void setReflector(const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language);
 
 	void getRepeater(wxString& repeaterCallsign, wxString& repeaterAddress, unsigned int& repeaterPort, wxString& localAddress, unsigned int& localPort) const;
 	void setRepeater(const wxString& repeaterCallsign, const wxString& repeaterAddress, unsigned int repeaterPort, const wxString& localAddress, unsigned int localPort);
@@ -54,6 +54,7 @@ private:
 	wxFileName    m_fileName;
 #endif
 	wxString      m_callsign;
+	wxString      m_locator;
 	wxString      m_reflector;
 	bool          m_atStartup;
 	RECONNECT     m_reconnect;

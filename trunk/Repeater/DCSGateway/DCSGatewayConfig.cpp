@@ -19,6 +19,7 @@
 #include "DCSGatewayConfig.h"
 
 const wxString KEY_CALLSIGN          = wxT("callsign");
+const wxString KEY_LOCATOR           = wxT("locator");
 const wxString KEY_REFLECTOR         = wxT("reflector");
 const wxString KEY_ATSTARTUP         = wxT("atStartup");
 const wxString KEY_RECONNECT         = wxT("reconnect");
@@ -33,6 +34,7 @@ const wxString KEY_WINDOW_Y          = wxT("windowY");
 
 
 const wxString     DEFAULT_CALLSIGN          = wxEmptyString;
+const wxString     DEFAULT_LOCATOR           = wxEmptyString;
 const wxString     DEFAULT_REFLECTOR         = wxEmptyString;
 const bool         DEFAULT_ATSTARTUP         = false;
 const RECONNECT    DEFAULT_RECONNECT         = RECONNECT_FIXED;
@@ -52,6 +54,7 @@ CDCSGatewayConfig::CDCSGatewayConfig(wxConfigBase* config, const wxString& name)
 m_config(config),
 m_name(wxT("/")),
 m_callsign(DEFAULT_CALLSIGN),
+m_locator(DEFAULT_LOCATOR),
 m_reflector(DEFAULT_REFLECTOR),
 m_atStartup(DEFAULT_ATSTARTUP),
 m_reconnect(DEFAULT_RECONNECT),
@@ -70,6 +73,8 @@ m_y(DEFAULT_WINDOW_Y)
 		m_name = wxT("/") + name + wxT("/");
 
 	m_config->Read(m_name + KEY_CALLSIGN, &m_callsign, DEFAULT_CALLSIGN);
+
+	m_config->Read(m_name + KEY_LOCATOR, &m_locator, DEFAULT_LOCATOR);
 
 	m_config->Read(m_name + KEY_REFLECTOR, &m_reflector, DEFAULT_REFLECTOR);
 
@@ -111,6 +116,7 @@ CDCSGatewayConfig::~CDCSGatewayConfig()
 CDCSGatewayConfig::CDCSGatewayConfig(const wxString& dir, const wxString& name) :
 m_fileName(),
 m_callsign(DEFAULT_CALLSIGN),
+m_locator(DEFAULT_LOCATOR),
 m_reflector(DEFAULT_REFLECTOR),
 m_atStartup(DEFAULT_ATSTARTUP),
 m_reconnect(DEFAULT_RECONNECT),
@@ -167,6 +173,8 @@ m_y(DEFAULT_WINDOW_Y)
 			m_callsign = val;
 		} else if (key.IsSameAs(KEY_REFLECTOR)) {
 			m_reflector = val;
+		} else if (key.IsSameAs(KEY_LOCATOR)) {
+			m_locator = val;
 		} else if (key.IsSameAs(KEY_ATSTARTUP)) {
 			val.ToLong(&temp1);
 			m_atStartup = temp1 == 1L;
@@ -208,18 +216,20 @@ CDCSGatewayConfig::~CDCSGatewayConfig()
 
 #endif
 
-void CDCSGatewayConfig::getReflector(wxString& callsign, wxString& reflector, bool& atStartup, RECONNECT& reconnect, TEXT_LANG& language) const
+void CDCSGatewayConfig::getReflector(wxString& callsign, wxString& locator, wxString& reflector, bool& atStartup, RECONNECT& reconnect, TEXT_LANG& language) const
 {
 	callsign  = m_callsign;
+	locator   = m_locator;
 	reflector = m_reflector;
 	atStartup = m_atStartup;
 	reconnect = m_reconnect;
 	language  = m_language;
 }
 
-void CDCSGatewayConfig::setReflector(const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language)
+void CDCSGatewayConfig::setReflector(const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language)
 {
 	m_callsign  = callsign;
+	m_locator   = locator;
 	m_reflector = reflector;
 	m_atStartup = atStartup;
 	m_reconnect = reconnect;
@@ -261,6 +271,7 @@ void CDCSGatewayConfig::setPosition(int x, int y)
 bool CDCSGatewayConfig::write()
 {
 	m_config->Write(m_name + KEY_CALLSIGN, m_callsign);
+	m_config->Write(m_name + KEY_LOCATOR, m_locator);
 	m_config->Write(m_name + KEY_REFLECTOR, m_reflector);
 	m_config->Write(m_name + KEY_ATSTARTUP, m_atStartup);
 	m_config->Write(m_name + KEY_RECONNECT, long(m_reconnect));
@@ -303,6 +314,7 @@ bool CDCSGatewayConfig::write()
 
 	wxString buffer;
 	buffer.Printf(wxT("%s=%s"), KEY_CALLSIGN.c_str(), m_callsign.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_LOCATOR.c_str(), m_locator.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REFLECTOR.c_str(), m_reflector.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_ATSTARTUP.c_str(), m_atStartup ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RECONNECT.c_str(), int(m_reconnect)); file.AddLine(buffer);

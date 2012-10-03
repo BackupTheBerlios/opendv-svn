@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define	DCSGatewayReflectorSet_H
 
 #include "CallsignTextCtrl.h"
+#include "LocatorTextCtrl.h"
 #include "DCSGatewayDefs.h"
 #include "DStarDefines.h"
 
@@ -27,12 +28,14 @@
 
 class CDCSGatewayReflectorSet : public wxPanel {
 public:
-	CDCSGatewayReflectorSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language);
+	CDCSGatewayReflectorSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language);
 	virtual ~CDCSGatewayReflectorSet();
 
 	virtual bool Validate();
 
 	virtual wxString  getCallsign() const;
+
+	virtual wxString  getLocator() const;
 
 	virtual wxString  getReflector() const;
 
@@ -45,6 +48,7 @@ public:
 private:
 	wxString           m_title;
 	CCallsignTextCtrl* m_callsign;
+	CLocatorTextCtrl*  m_locator;
 	wxChoice*          m_reflector;
 	wxChoice*          m_channel;
 	wxChoice*          m_startup;

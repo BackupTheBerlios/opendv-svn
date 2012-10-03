@@ -36,6 +36,10 @@ DCSGatewayD.o:	DCSGatewayD.cpp DCSGatewayD.h DCSGatewayThread.h DCSGatewayDefs.h
 DCSGatewayConfig.o:	DCSGatewayConfig.cpp DCSGatewayConfig.h DCSGatewayDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DCSGatewayConfig.cpp
 
+DCSGatewayCCSProtocolHandler.o:	DCSGatewayCCSProtocolHandler.cpp DCSGatewayCCSProtocolHandler.h DCSGatewayHeaderData.h \
+						DCSGatewayAMBEData.h ../Common/UDPReaderWriter.h ../Common/DStarDefines.h ../Common/Timer.h ../Common/Utils.h ../Common/Version.h
+				$(CC) $(CFLAGS) -c DCSGatewayCCSProtocolHandler.cpp
+
 DCSGatewayDCSProtocolHandler.o:	DCSGatewayDCSProtocolHandler.cpp DCSGatewayDCSProtocolHandler.h DCSGatewayHeaderData.h \
 						DCSGatewayAMBEData.h ../Common/UDPReaderWriter.h ../Common/DStarDefines.h ../Common/Timer.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c DCSGatewayDCSProtocolHandler.cpp
@@ -59,7 +63,7 @@ DCSGatewayPreferences.o:	DCSGatewayPreferences.cpp DCSGatewayPreferences.h DCSGa
 				$(CC) $(CFLAGS) -c DCSGatewayPreferences.cpp
 
 DCSGatewayReflectorSet.o:	DCSGatewayReflectorSet.cpp DCSGatewayReflectorSet.h DCSGatewayHostFile.h DCSGatewayDefs.h \
-						../Common/CallsignTextCtrl.h
+						../Common/CallsignTextCtrl.h ../Common/LocatorTextCtrl.h
 				$(CC) $(CFLAGS) -c DCSGatewayReflectorSet.cpp
 
 DCSGatewayRepeaterProtocolHandler.o:	DCSGatewayRepeaterProtocolHandler.cpp DCSGatewayRepeaterProtocolHandler.h DCSGatewayHeaderData.h \
@@ -76,10 +80,10 @@ DCSGatewayStatusData.o:	DCSGatewayStatusData.cpp DCSGatewayStatusData.h DCSGatew
 DCSGatewayTextCollector.o:	DCSGatewayTextCollector.cpp DCSGatewayTextCollector.h DCSGatewayAMBEData.h DCSGatewayDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DCSGatewayTextCollector.cpp
 
-DCSGatewayThread.o:	DCSGatewayThread.cpp DCSGatewayThread.h DCSGatewayDefs.h DCSGatewayApp.h DCSGatewayStatusData.h \
-						DCSGatewayHeaderData.h DCSGatewayAMBEData.h DCSGatewayHostFile.h DCSGatewayRepeaterProtocolHandler.h \
-						DCSGatewayDCSProtocolHandler.h DCSGatewayAudioUnit.h DCSGatewayEchoUnit.h DCSGatewayCallback.h DCSGatewayTextCollector.h \
-						../Common/DStarDefines.h ../Common/Utils.h ../Common/Timer.h
+DCSGatewayThread.o:	DCSGatewayThread.cpp DCSGatewayThread.h DCSGatewayDefs.h DCSGatewayApp.h DCSGatewayStatusData.h DCSGatewayDCSProtocolHandler.h \
+						DCSGatewayHeaderData.h DCSGatewayAMBEData.h DCSGatewayHostFile.h DCSGatewayRepeaterProtocolHandler.h DCSGatewayCCSProtocolHandler.h \
+						DCSGatewayAudioUnit.h DCSGatewayEchoUnit.h DCSGatewayCallback.h DCSGatewayTextCollector.h ../Common/DStarDefines.h ../Common/Utils.h \
+						../Common/Timer.h
 				$(CC) $(CFLAGS) -c DCSGatewayThread.cpp
 
 install:	dcsgateway dcsgatewayd

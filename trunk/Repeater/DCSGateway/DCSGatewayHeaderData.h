@@ -29,9 +29,11 @@ public:
 
 	bool setRepeaterData(const unsigned char* data, unsigned int length, bool check);
 	bool setDCSData(const unsigned char* data, unsigned int length);
+	bool setCCSData(const unsigned char* data, unsigned int length);
 
 	unsigned int getRepeaterData(unsigned char* data, unsigned int length, bool check) const;
 	unsigned int getDCSData(unsigned char* data, unsigned int length) const;
+	unsigned int getCCSData(unsigned char* data, unsigned int length) const;
 
 	unsigned int getId() const;
 	void setId(unsigned int id);

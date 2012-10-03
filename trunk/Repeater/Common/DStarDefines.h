@@ -14,6 +14,8 @@
 #ifndef	DStarDefines_H
 #define	DStarDefines_H
 
+#include <wx/wx.h>
+
 const unsigned int DSTAR_GMSK_SYMBOL_RATE = 4800U;
 const float        DSTAR_GMSK_BT          = 0.5F;
 
@@ -95,6 +97,7 @@ const unsigned int DSTAR_RADIO_SAMPLE_RATE = 48000U;
 const unsigned int DSTAR_RADIO_BLOCK_SIZE  = 960U;
 const unsigned int DSTAR_AUDIO_BLOCK_SIZE  = 160U;
 
+const unsigned int LOCATOR_LENGTH        = 6U;
 const unsigned int LONG_CALLSIGN_LENGTH  = 8U;
 const unsigned int SHORT_CALLSIGN_LENGTH = 4U;
 
@@ -134,6 +137,9 @@ const unsigned int  DSTAR_TICKS_PER_SEC = DSTAR_RADIO_SAMPLE_RATE / DSTAR_RADIO_
 
 const unsigned int  DEXTRA_PORT = 30001U;
 const unsigned int  DCS_PORT    = 30051U;
+const unsigned int  CCS_PORT    = 30061U;
+
+const wxString      CCS_HOST    = wxT("ccs001.xreflector.net");
 
 const unsigned int  GMSK_MODEM_DATA_LENGTH = 8U;
 

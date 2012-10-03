@@ -125,6 +125,29 @@ bool CDCSGatewayAMBEData::setDCSData(const unsigned char *data, unsigned int len
 	return true;
 }
 
+bool CDCSGatewayAMBEData::setCCSData(const unsigned char *data, unsigned int length)
+{
+	wxASSERT(data != NULL);
+
+	if (length < 100U) {
+		wxLogMessage(wxT("AMBE data from CCS is too short, %u < 100"), length);
+		return false;
+	}
+
+	if (data[0] != '0' || data[1] != '0' || data[2] != '0' || data[3] != '1') {
+		CUtils::dump(wxT("Invalid signature from CCS"), data, length);
+		return false;
+	}
+
+	m_rptSeq = data[60U] * 65536U + data[59U] * 256U + data[58U];
+	m_id     = data[43U] * 256U + data[44U];
+	m_outSeq = data[45U];
+
+	::memcpy(m_data, data + 46U, DV_FRAME_LENGTH_BYTES);
+
+	return true;
+}
+
 unsigned int CDCSGatewayAMBEData::getRepeaterData(unsigned char *data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
@@ -216,6 +239,52 @@ unsigned int CDCSGatewayAMBEData::getDCSData(unsigned char* data, unsigned int l
 	::memcpy(data + 100U, m_html, ::strlen(m_html));
 
 	return 600U;
+}
+
+unsigned int CDCSGatewayAMBEData::getCCSData(unsigned char* data, unsigned int length) const
+{
+	wxASSERT(data != NULL);
+	wxASSERT(length >= 100U);
+
+	data[43U] = m_id % 256U;			// Unique session id
+	data[44U] = m_id / 256U;
+
+	data[45U] = m_outSeq;
+
+	::memcpy(data + 46U, m_data, DV_FRAME_LENGTH_BYTES);
+
+	if (isEnd()) {
+		data[55U] = 0x55U;
+		data[56U] = 0x55U;
+		data[57U] = 0x55U;
+	}
+
+	data[58U] = (m_rptSeq >> 0)  & 0xFFU;
+	data[59U] = (m_rptSeq >> 8)  & 0xFFU;
+	data[60U] = (m_rptSeq >> 16) & 0xFFU;
+
+	data[64U] = m_text[0U];
+	data[65U] = m_text[1U];
+	data[66U] = m_text[2U];
+	data[67U] = m_text[3U];
+	data[68U] = m_text[4U];
+	data[69U] = m_text[5U];
+	data[70U] = m_text[6U];
+	data[71U] = m_text[7U];
+	data[72U] = m_text[8U];
+	data[73U] = m_text[9U];
+	data[74U] = m_text[10U];
+	data[75U] = m_text[11U];
+	data[76U] = m_text[12U];
+	data[77U] = m_text[13U];
+	data[78U] = m_text[14U];
+	data[79U] = m_text[15U];
+	data[80U] = m_text[16U];
+	data[81U] = m_text[17U];
+	data[82U] = m_text[18U];
+	data[83U] = m_text[19U];
+
+	return 100U;
 }
 
 void CDCSGatewayAMBEData::setData(const unsigned char *data, unsigned int length)

@@ -259,7 +259,7 @@ bool CGMSKModemWinUSB::setPTT(bool on)
 {
 	int ret = io(SET_PTT, 0x40U, on ? PTT_ON : PTT_OFF, NULL, 0U);
 	if (ret < 0) {
-		wxLogError(wxT("SET_PTT returned %d"), -ret);
+		wxLogError(wxT("SET_PTT(%d) returned %d"), on ? 1 : 0, -ret);
 		return false;
 	}
 

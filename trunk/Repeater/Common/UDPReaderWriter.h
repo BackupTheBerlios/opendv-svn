@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ class CUDPReaderWriter {
 public:
 	CUDPReaderWriter(const wxString& remoteAddress, unsigned int remotePort, const wxString& localAddress = wxEmptyString, unsigned int localPort = 0U);
 	~CUDPReaderWriter();
+
+	static in_addr lookup(const wxString& hostName);
 
 	bool open();
 

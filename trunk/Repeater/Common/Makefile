@@ -4,7 +4,7 @@ OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AudioDelay.o BeaconSet.o Bea
 		CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
 		DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o DVAPController.o \
 		DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o FIRFilter.o \
-		GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LogEvent.o Logger.o NCO.o MessageTextCtrl.o \
+		GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o NCO.o MessageTextCtrl.o \
 		NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
 		RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o \
 		SoundCardReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
@@ -132,6 +132,9 @@ K8055Controller.o:	K8055Controller.cpp K8055Controller.h HardwareController.h
 
 LimitedLengthBuffer.o:	LimitedLengthBuffer.cpp LimitedLengthBuffer.h
 		$(CC) $(CFLAGS) -c LimitedLengthBuffer.cpp
+
+LocatorTextCtrl.o:	LocatorTextCtrl.cpp LocatorTextCtrl.h RestrictedTextCtrl.h
+		$(CC) $(CFLAGS) -c LocatorTextCtrl.cpp
 
 LogEvent.o:	LogEvent.cpp LogEvent.h
 		$(CC) $(CFLAGS) -c LogEvent.cpp

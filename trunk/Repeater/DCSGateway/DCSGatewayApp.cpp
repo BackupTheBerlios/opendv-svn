@@ -178,14 +178,14 @@ CDCSGatewayStatusData* CDCSGatewayApp::getStatus() const
 	return m_thread->getStatus();
 }
 
-void CDCSGatewayApp::getReflector(wxString& callsign, wxString& reflector, bool& atStartup, RECONNECT& reconnect, TEXT_LANG& language) const
+void CDCSGatewayApp::getReflector(wxString& callsign, wxString& locator, wxString& reflector, bool& atStartup, RECONNECT& reconnect, TEXT_LANG& language) const
 {
-	m_config->getReflector(callsign, reflector, atStartup, reconnect, language);
+	m_config->getReflector(callsign, locator, reflector, atStartup, reconnect, language);
 }
 
-void CDCSGatewayApp::setReflector(const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language)
+void CDCSGatewayApp::setReflector(const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language)
 {
-	m_config->setReflector(callsign, reflector, atStartup, reconnect, language);
+	m_config->setReflector(callsign, locator, reflector, atStartup, reconnect, language);
 }
 
 void CDCSGatewayApp::getRepeater(wxString& repeaterCallsign, wxString& repeaterAddress, unsigned int& repeaterPort, wxString& localAddress, unsigned int& localPort) const
@@ -217,13 +217,13 @@ void CDCSGatewayApp::createThread()
 {
 	m_thread = new CDCSGatewayThread;
 
-	wxString callsign, reflector;
+	wxString callsign, locator, reflector;
 	bool atStartup;
 	RECONNECT reconnect;
 	TEXT_LANG language;
-	getReflector(callsign, reflector, atStartup, reconnect, language);
-	wxLogInfo(wxT("Callsign set to %s, reflector set to %s, at startup: %d, reconnect: %d, language: %d"), callsign.c_str(), reflector.c_str(), atStartup, reconnect, language);
-	m_thread->setReflector(callsign, reflector, atStartup, reconnect, language);
+	getReflector(callsign, locator, reflector, atStartup, reconnect, language);
+	wxLogInfo(wxT("Callsign set to %s, locator set to: %s, reflector set to %s, at startup: %d, reconnect: %d, language: %d"), callsign.c_str(), locator.c_str(), reflector.c_str(), atStartup, reconnect, language);
+	m_thread->setReflector(callsign, locator, reflector, atStartup, reconnect, language);
 
 	wxString repeaterCallsign, repeaterAddress, localAddress;
 	unsigned int repeaterPort, localPort;

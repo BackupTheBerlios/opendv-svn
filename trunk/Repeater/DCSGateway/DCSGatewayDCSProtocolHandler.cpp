@@ -61,8 +61,13 @@ CDCSGatewayDCSProtocolHandler::~CDCSGatewayDCSProtocolHandler()
 
 void CDCSGatewayDCSProtocolHandler::setCallsign(const wxString& callsign)
 {
+	::memset(m_callsign, ' ', LONG_CALLSIGN_LENGTH);
+
 	for (unsigned int i = 0U; i < callsign.Len(); i++)
 		m_callsign[i] = callsign.GetChar(i);
+
+	if (m_callsign[7U] == ' ')
+		m_callsign[7U] = 'D';
 }
 
 bool CDCSGatewayDCSProtocolHandler::link(const wxString& reflector, const wxString& address, unsigned int port)

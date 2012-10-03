@@ -25,7 +25,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 			<Tool
@@ -91,7 +90,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 			<Tool
@@ -317,6 +315,10 @@
 			</File>
 			<File
 				RelativePath=".\LimitedLengthBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LocatorTextCtrl.cpp"
 				>
 			</File>
 			<File
@@ -651,6 +653,10 @@
 			</File>
 			<File
 				RelativePath=".\LimitedLengthBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LocatorTextCtrl.h"
 				>
 			</File>
 			<File

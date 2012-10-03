@@ -21,6 +21,7 @@
 
 #include "DCSGatewayRepeaterProtocolHandler.h"
 #include "DCSGatewayDCSProtocolHandler.h"
+#include "DCSGatewayCCSProtocolHandler.h"
 #include "DCSGatewayTextCollector.h"
 #include "DCSGatewayStatusData.h"
 #include "DCSGatewayAudioUnit.h"
@@ -36,7 +37,7 @@ public:
 	CDCSGatewayThread();
 	virtual ~CDCSGatewayThread();
 
-	virtual void setReflector(const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language);
+	virtual void setReflector(const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language);
 	virtual void setRepeater(const wxString& repeaterCallsign, CDCSGatewayRepeaterProtocolHandler* repaterHandler);
 
 	virtual CDCSGatewayStatusData* getStatus();
@@ -54,6 +55,7 @@ private:
 	wxArrayString                       m_hostnames;
 	CDCSGatewayRepeaterProtocolHandler* m_repeaterHandler;
 	CDCSGatewayDCSProtocolHandler       m_dcsHandler;
+	CDCSGatewayCCSProtocolHandler       m_ccsHandler;
 	CDCSGatewayAudioUnit*               m_audioUnit;
 	CDCSGatewayEchoUnit*                m_echoUnit;
 	CDCSGatewayHeaderData               m_header;
@@ -72,6 +74,7 @@ private:
 	TEXT_LANG                           m_language;
 	CTimer                              m_reconnectTimer;
 	CTimer                              m_watchdogTimer;
+	CTimer                              m_ccsTimer;
 	unsigned int                        m_id;
 	unsigned int                        m_seq;
 	bool                                m_echo;

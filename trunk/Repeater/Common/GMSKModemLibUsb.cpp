@@ -375,7 +375,7 @@ bool CGMSKModemLibUsb::setPTT(bool on)
 	int ret = io(0x40, SET_PTT, on ? PTT_ON : PTT_OFF, 0, &c, 0, USB_TIMEOUT);
 	if (ret < 0) {
 		wxString errorText(m_usbStrerror(), wxConvLocal);
-		wxLogMessage(wxT("SET_PTT, ret: %d, err=%s"), ret, errorText.c_str());
+		wxLogMessage(wxT("SET_PTT(%d), ret: %d, err=%s"), on ? 1 : 0, ret, errorText.c_str());
 		return false;
 	}
 
@@ -763,7 +763,7 @@ bool CGMSKModemLibUsb::setPTT(bool on)
 	unsigned char c;
 	int ret = io(0x40, SET_PTT, on ? PTT_ON : PTT_OFF, 0, &c, 0, USB_TIMEOUT);
 	if (ret < 0) {
-		wxLogMessage(wxT("SET_PTT, err=%d"), ret);
+		wxLogMessage(wxT("SET_PTT(%d), err=%d"), on ? 1 : 0, ret);
 		return false;
 	}
 
