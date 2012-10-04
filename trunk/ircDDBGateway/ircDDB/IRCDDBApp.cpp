@@ -192,86 +192,84 @@ IRCDDBApp::IRCDDBApp( const wxString& u_chan )
 
 IRCDDBApp::~IRCDDBApp()
 {
-  if (d->sendQ != NULL)
-  {
-    delete d->sendQ;
-  }
-  delete d;
+	delete d->sendQ;
+	delete d;
 }
 
 
-void IRCDDBApp::rptrQTH( const wxString& callsign, double latitude, double longitude, const wxString& desc1,
-             const wxString& desc2, const wxString& infoURL )
+void IRCDDBApp::rptrQTH(const wxString& callsign, double latitude, double longitude, const wxString& desc1, const wxString& desc2, const wxString& infoURL)
 {
-  wxString pos = wxString::Format(wxT("%+09.5f %+010.5f"), latitude, longitude);
+	wxString pos;
+	pos.Printf(wxT("%+09.5f %+010.5f"), latitude, longitude);
 
-  wxString cs = callsign;
-  wxString d1 = desc1;
-  wxString d2 = desc2;
+	wxString cs = callsign;
+	wxString d1 = desc1;
+	wxString d2 = desc2;
 
-  d1.Append(wxT(' '), 20);
-  d2.Append(wxT(' '), 20);
+	d1.Append(wxT(' '), 20);
+	d2.Append(wxT(' '), 20);
 
-  wxRegEx nonValid(wxT("[^a-zA-Z0-9 +&(),./'-]"));
+	wxRegEx nonValid(wxT("[^a-zA-Z0-9 +&(),./'-]"));
+	nonValid.Replace(&d1, wxEmptyString);
+	nonValid.Replace(&d2, wxEmptyString);
 
-  nonValid.Replace(&d1, wxEmptyString);
-  nonValid.Replace(&d2, wxEmptyString);
+	pos.Replace(wxT(","), wxT("."));
+	d1.Replace(wxT(" "), wxT("_"));
+	d2.Replace(wxT(" "), wxT("_"));
+	cs.Replace(wxT(" "), wxT("_"));
 
-  pos.Replace( wxT(","), wxT("."));
-  d1.Replace(wxT(" "), wxT("_"));
-  d2.Replace(wxT(" "), wxT("_"));
-  cs.Replace(wxT(" "), wxT("_"));
+	wxMutexLocker lock(d->moduleQTHURLMutex);
 
-  wxMutexLocker lock(d->moduleQTHURLMutex);
+	d->moduleQTH[cs] = cs + wxT(" ") + pos + wxT(" ") + d1.Mid(0, 20) + wxT(" ") + d2.Mid(0, 20);
 
-  d->moduleQTH[cs] = cs + wxT(" ") + pos + wxT(" ") + d1.Mid(0, 20) + wxT(" ") + d2.Mid(0, 20);
+	wxLogVerbose(wxT("QTH: ") + d->moduleQTH[cs]);
 
-  wxLogVerbose(wxT("QTH: ") + d->moduleQTH[cs]);
+	wxString url = infoURL;
 
-  wxString url = infoURL;
+	wxRegEx urlNonValid(wxT("[^[:graph:]]"));
+	urlNonValid.Replace(&url, wxEmptyString);
 
-  wxRegEx urlNonValid(wxT("[^[:graph:]]"));
-  urlNonValid.Replace(&url, wxEmptyString);
+	if (!url.IsEmpty()) {
+		d->moduleURL[cs] = cs + wxT(" ") + url;
 
-  d->moduleURL[cs] = cs + wxT(" ") + url;
+		wxLogVerbose(wxT("URL: ") + d->moduleURL[cs]);
+	}
 
-  wxLogVerbose(wxT("URL: ") + d->moduleURL[cs].Mid(0, 120));
-
-  d->infoTimer = 5; // send info in 5 seconds
+	d->infoTimer = 5; // send info in 5 seconds
 }
 
 
-void IRCDDBApp::rptrQRG( const wxString& callsign, double txFrequency, double duplexShift,
-    double range, double agl )
+void IRCDDBApp::rptrQRG(const wxString& callsign, double txFrequency, double duplexShift, double range, double agl)
 {
 	wxString cs = callsign;
 	cs.Replace(wxT(" "), wxT("_"));
 
-    wxString f = cs + wxT(" ") + wxString::Format(wxT("%011.5f %+010.5f %06.2f %06.1f"),
-	      txFrequency, duplexShift, range / 1609.344, agl );
+	wxString f;
+	f.Printf(wxT("%011.5f %+010.5f %06.2f %06.1f"), txFrequency, duplexShift, range / 1609.344, agl);
+	f.Replace(wxT(","), wxT("."));
 
-    f.Replace(wxT(","), wxT("."));
+	wxMutexLocker lock(d->moduleQRGMutex);
 
-    wxMutexLocker lock(d->moduleQRGMutex);
-    d->moduleQRG[cs] = f;
+	d->moduleQRG[cs] = cs + wxT(" ") + f;
 
-    wxLogVerbose(wxT("QRG: ") + f);
+	wxLogVerbose(wxT("QRG: ") + d->moduleQRG[cs]);
 
-    d->infoTimer = 5; // send info in 5 seconds
+	d->infoTimer = 5; // send info in 5 seconds
 }
 
 void IRCDDBApp::kickWatchdog(const wxString& callsign, const wxString& s)
 {
-	if (s.Len() > 0U) {
+	wxString text = s;
+
+	wxRegEx nonValid(wxT("[^[:graph:]]"));
+	nonValid.Replace(&text, wxEmptyString);
+
+	if (!text.IsEmpty()) {
 		wxString cs = callsign;
 		cs.Replace(wxT(" "), wxT("_"));
 
-		wxString text = s;
-
-		wxRegEx nonValid(wxT("[^[:graph:]]"));
-		nonValid.Replace(&text, wxEmptyString);
-
 		wxMutexLocker lock(d->moduleWDMutex);
+
 		d->moduleWD[cs] = cs + wxT(" ") + text;
 
 		d->wdTimer = 60;
@@ -281,63 +279,45 @@ void IRCDDBApp::kickWatchdog(const wxString& callsign, const wxString& s)
 
 int IRCDDBApp::getConnectionState()
 {
-  return d->state;
+	return d->state;
 }
 
 IRCDDB_RESPONSE_TYPE IRCDDBApp::getReplyMessageType()
 {
-  IRCMessage * m = d->replyQ.peekFirst();
-  if (m == NULL)
-  {
-    return IDRT_NONE;
-  }
+	IRCMessage* m = d->replyQ.peekFirst();
+	if (m == NULL)
+		return IDRT_NONE;
 
-  wxString msgType = m->getCommand();
+	wxString msgType = m->getCommand();
 
-  if (msgType.IsSameAs(wxT("IDRT_USER")))
-  {
-    return IDRT_USER;
-  }
-  else if (msgType.IsSameAs(wxT("IDRT_REPEATER")))
-  {
-    return IDRT_REPEATER;
-  }
-  else if (msgType.IsSameAs(wxT("IDRT_GATEWAY")))
-  {
-    return IDRT_GATEWAY;
-  }
+	if (msgType.IsSameAs(wxT("IDRT_USER")))
+		return IDRT_USER;
 
-  wxLogError(wxT("IRCDDBApp::getMessageType: unknown msg type"));
+	if (msgType.IsSameAs(wxT("IDRT_REPEATER")))
+		return IDRT_REPEATER;
 
-  return IDRT_NONE;
+	if (msgType.IsSameAs(wxT("IDRT_GATEWAY")))
+		return IDRT_GATEWAY;
+
+	wxLogError(wxT("IRCDDBApp::getMessageType: unknown msg type: %s"), msgType.c_str());
+
+	return IDRT_NONE;
 }
 
 
-IRCMessage *  IRCDDBApp::getReplyMessage()
+IRCMessage* IRCDDBApp::getReplyMessage()
 {
-  return d->replyQ.getMessage();
+	return d->replyQ.getMessage();
 }
 
 
 
-bool IRCDDBApp::startWork()
+void IRCDDBApp::startWork()
 {
+	d->terminateThread = false;
 
-  if (Create() != wxTHREAD_NO_ERROR)
-  {
-    wxLogError(wxT("IRCClient::startWork: Could not create the worker thread!"));
-    return false;
-  }
-
-  d->terminateThread = false;
-
-  if (Run() != wxTHREAD_NO_ERROR)
-  {
-    wxLogError(wxT("IRCClient::startWork: Could not run the worker thread!"));
-    return false;
-  }
-
-  return true;
+	Create();
+	Run();
 }
 
 void IRCDDBApp::stopWork()

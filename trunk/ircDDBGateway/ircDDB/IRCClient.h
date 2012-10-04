@@ -43,7 +43,7 @@ class IRCClient : public wxThread
   virtual ~IRCClient();
 
 
-  virtual bool startWork();
+  virtual void startWork();
 
   virtual void stopWork();
 

@@ -91,38 +91,26 @@ IRCClient::IRCClient( IRCApplication * app, const wxString& update_channel,
 
 IRCClient::~IRCClient()
 {
-  delete proto;
+	delete proto;
 
 #if defined(__WINDOWS__)
 	::WSACleanup();
 #endif
 }
 
-bool IRCClient::startWork()
+void IRCClient::startWork()
 {
+	terminateThread = false;
 
-  if (Create() != wxTHREAD_NO_ERROR)
-  {
-    wxLogError(wxT("IRCClient::startWork: Could not create the worker thread!"));
-    return false;
-  }
-
-  terminateThread = false;
-
-  if (Run() != wxTHREAD_NO_ERROR)
-  {
-    wxLogError(wxT("IRCClient::startWork: Could not run the worker thread!"));
-    return false;
-  }
-
-  return true;
+	Create();
+	Run();
 }
 
 void IRCClient::stopWork()
 {
-  terminateThread = true;
+	terminateThread = true;
 
-  Wait();
+	Wait();
 }
 
 wxThread::ExitCode IRCClient::Entry ()

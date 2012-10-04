@@ -51,31 +51,19 @@ IRCReceiver::~IRCReceiver()
 {
 }
 
-bool IRCReceiver::startWork()
+void IRCReceiver::startWork()
 {
+	terminateThread = false;
 
-  if (Create() != wxTHREAD_NO_ERROR)
-  {
-    wxLogError(wxT("IRCReceiver::startWork: Could not create the worker thread!"));
-    return false;
-  }
-
-  terminateThread = false;
-
-  if (Run() != wxTHREAD_NO_ERROR)
-  {
-    wxLogError(wxT("IRCReceiver::startWork: Could not run the worker thread!"));
-    return false;
-  }
-
-  return true;
+	Create();
+	Run();
 }
 
 void IRCReceiver::stopWork()
 {
-  terminateThread = true;
+	terminateThread = true;
 
-  Wait();
+	Wait();
 }
 
 static int doRead( int sock, char * buf, int buf_size )

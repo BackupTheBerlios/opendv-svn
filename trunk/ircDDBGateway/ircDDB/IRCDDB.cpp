@@ -60,34 +60,36 @@ CIRCDDB::~CIRCDDB()
 	// A false return implies a network error, or unable to log in
 bool CIRCDDB::open()
 {
-  wxLogVerbose(wxT("start"));
-  return d->client -> startWork()   &&   d->app->startWork();
+	wxLogVerbose(wxT("start"));
+
+	d->client->startWork();
+	d->app->startWork();
+
+	return true;
 }
 
 
 int CIRCDDB::getConnectionState()
 {
-  return d->app->getConnectionState();
+	return d->app->getConnectionState();
 }
 
 
-void CIRCDDB::rptrQTH( const wxString& callsign, double latitude, double longitude, const wxString& desc1,
-            const wxString& desc2, const wxString& infoURL )
+void CIRCDDB::rptrQTH(const wxString& callsign, double latitude, double longitude, const wxString& desc1, const wxString& desc2, const wxString& infoURL)
 {
-  d->app->rptrQTH(callsign, latitude, longitude, desc1, desc2, infoURL);
+	d->app->rptrQTH(callsign, latitude, longitude, desc1, desc2, infoURL);
 }
 
 
-void CIRCDDB::rptrQRG( const wxString& callsign, double txFrequency, double duplexShift,
-    double range, double agl )
+void CIRCDDB::rptrQRG(const wxString& callsign, double txFrequency, double duplexShift, double range, double agl)
 {
-  d->app->rptrQRG(callsign, txFrequency, duplexShift, range, agl);
+	d->app->rptrQRG(callsign, txFrequency, duplexShift, range, agl);
 }
 
 
-void CIRCDDB::kickWatchdog ( const wxString& callsign, const wxString& wdInfo )
+void CIRCDDB::kickWatchdog(const wxString& callsign, const wxString& wdInfo)
 {
-  d->app->kickWatchdog( callsign, wdInfo );
+	d->app->kickWatchdog(callsign, wdInfo);
 }
 
 

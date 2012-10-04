@@ -39,7 +39,7 @@ class IRCReceiver : public wxThread
   virtual ~IRCReceiver();
 
 
-  virtual bool startWork();
+  virtual void startWork();
 
   virtual void stopWork();
 

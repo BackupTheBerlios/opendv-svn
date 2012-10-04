@@ -56,7 +56,7 @@ class IRCDDBApp : public IRCApplication, wxThread
     virtual void setSendQ( IRCMessageQueue * s );
     virtual IRCMessageQueue * getSendQ ();
 
-    bool startWork();
+    void startWork();
     void stopWork();
 
     IRCDDB_RESPONSE_TYPE getReplyMessageType();
