@@ -1005,16 +1005,6 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_HB_PORT)) {
 			val.ToULong(&temp2);
 			m_hbPort = (unsigned int)temp2;
-		} else if (key.IsSameAs(KEY_LATITUDE)) {
-			val.ToDouble(&m_latitude);
-		} else if (key.IsSameAs(KEY_LONGITUDE)) {
-			val.ToDouble(&m_longitude);
-		} else if (key.IsSameAs(KEY_DESCRIPTION1)) {
-			m_description1 = val;
-		} else if (key.IsSameAs(KEY_DESCRIPTION2)) {
-			m_description2 = val;
-		} else if (key.IsSameAs(KEY_URL)) {
-			m_url = val;
 		} else if (key.IsSameAs(KEY_REPEATER_CALL1)) {
 			m_repeater1Callsign = val;
 		} else if (key.IsSameAs(KEY_REPEATER_BAND1)) {
@@ -1047,6 +1037,12 @@ m_y(DEFAULT_WINDOW_Y)
 			val.ToDouble(&m_repeater1Longitude);
 		} else if (key.IsSameAs(KEY_AGL1)) {
 			val.ToDouble(&m_repeater1Agl);
+		} else if (key.IsSameAs(KEY_DESCRIPTION11)) {
+			m_repeater1Description1 = val;
+		} else if (key.IsSameAs(KEY_DESCRIPTION12)) {
+			m_repeater1Description2 = val;
+		} else if (key.IsSameAs(KEY_URL1)) {
+			m_repeater1URL = val;
 		} else if (key.IsSameAs(KEY_BAND11)) {
 			val.ToULong(&temp2);
 			m_repeater1Band1 = (unsigned char)temp2;
@@ -1088,6 +1084,12 @@ m_y(DEFAULT_WINDOW_Y)
 			val.ToDouble(&m_repeater2Longitude);
 		} else if (key.IsSameAs(KEY_AGL2)) {
 			val.ToDouble(&m_repeater2Agl);
+		} else if (key.IsSameAs(KEY_DESCRIPTION21)) {
+			m_repeater2Description1 = val;
+		} else if (key.IsSameAs(KEY_DESCRIPTION22)) {
+			m_repeater2Description2 = val;
+		} else if (key.IsSameAs(KEY_URL2)) {
+			m_repeater2URL = val;
 		} else if (key.IsSameAs(KEY_BAND21)) {
 			val.ToULong(&temp2);
 			m_repeater2Band1 = (unsigned char)temp2;
@@ -1129,6 +1131,12 @@ m_y(DEFAULT_WINDOW_Y)
 			val.ToDouble(&m_repeater3Longitude);
 		} else if (key.IsSameAs(KEY_AGL3)) {
 			val.ToDouble(&m_repeater3Agl);
+		} else if (key.IsSameAs(KEY_DESCRIPTION31)) {
+			m_repeater3Description1 = val;
+		} else if (key.IsSameAs(KEY_DESCRIPTION32)) {
+			m_repeater3Description2 = val;
+		} else if (key.IsSameAs(KEY_URL3)) {
+			m_repeater3URL = val;
 		} else if (key.IsSameAs(KEY_BAND31)) {
 			val.ToULong(&temp2);
 			m_repeater3Band1 = (unsigned char)temp2;
@@ -1170,6 +1178,12 @@ m_y(DEFAULT_WINDOW_Y)
 			val.ToDouble(&m_repeater4Longitude);
 		} else if (key.IsSameAs(KEY_AGL4)) {
 			val.ToDouble(&m_repeater4Agl);
+		} else if (key.IsSameAs(KEY_DESCRIPTION41)) {
+			m_repeater4Description1 = val;
+		} else if (key.IsSameAs(KEY_DESCRIPTION42)) {
+			m_repeater4Description2 = val;
+		} else if (key.IsSameAs(KEY_URL4)) {
+			m_repeater4URL = val;
 		} else if (key.IsSameAs(KEY_BAND41)) {
 			val.ToULong(&temp2);
 			m_repeater4Band1 = (unsigned char)temp2;
