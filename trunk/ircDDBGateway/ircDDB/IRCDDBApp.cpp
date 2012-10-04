@@ -228,11 +228,12 @@ void IRCDDBApp::rptrQTH( const wxString& callsign, double latitude, double longi
 
   wxLogVerbose(wxT("QTH: ") + d->moduleQTH[cs]);
 
+  wxString url = infoURL;
+
   wxRegEx urlNonValid(wxT("[^[:graph:]]"));
+  urlNonValid.Replace(&url, wxEmptyString);
 
-  d->moduleURL[cs] = cs + wxT(" ") + infoURL;
-
-  urlNonValid.Replace( & d->moduleURL[cs], wxEmptyString );
+  d->moduleURL[cs] = cs + wxT(" ") + url;
 
   wxLogVerbose(wxT("URL: ") + d->moduleURL[cs].Mid(0, 120));
 
@@ -259,22 +260,22 @@ void IRCDDBApp::rptrQRG( const wxString& callsign, double txFrequency, double du
     d->infoTimer = 5; // send info in 5 seconds
 }
 
-void IRCDDBApp::kickWatchdog( const wxString& callsign, const wxString& s )
+void IRCDDBApp::kickWatchdog(const wxString& callsign, const wxString& s)
 {
-  if (s.Len() > 0)
-  {
-	wxString cs = callsign;
-	cs.Replace(wxT(" "), wxT("_"));
+	if (s.Len() > 0U) {
+		wxString cs = callsign;
+		cs.Replace(wxT(" "), wxT("_"));
 
-    wxRegEx nonValid(wxT("[^[:graph:]]"));
+		wxString text = s;
 
-	wxMutexLocker lock(d->moduleWDMutex);
-    d->moduleWD[cs] = cs + wxT(" ") + s;
+		wxRegEx nonValid(wxT("[^[:graph:]]"));
+		nonValid.Replace(&text, wxEmptyString);
 
-	nonValid.Replace(& d->moduleWD[cs], wxEmptyString);
+		wxMutexLocker lock(d->moduleWDMutex);
+		d->moduleWD[cs] = cs + wxT(" ") + text;
 
-	d->wdTimer = 60;
-  }
+		d->wdTimer = 60;
+	}
 }
 
 
