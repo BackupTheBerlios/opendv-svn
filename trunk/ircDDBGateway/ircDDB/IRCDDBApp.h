@@ -3,6 +3,7 @@
 CIRCDDB - ircDDB client library in C++
 
 Copyright (C) 2010-2011   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+Copyright (C) 2012        Jonathan Naylor, G4KLX
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -75,13 +76,13 @@ class IRCDDBApp : public IRCApplication, wxThread
 
     int getConnectionState();
 
-    void rptrQRG( const wxString& module, double txFrequency, double duplexShift,
+    void rptrQRG( const wxString& callsign, double txFrequency, double duplexShift,
 	double range, double agl );
 
-    void rptrQTH( double latitude, double longitude, const wxString& desc1,
+    void rptrQTH( const wxString& callsign, double latitude, double longitude, const wxString& desc1,
                  const wxString& desc2, const wxString& infoURL );
 
-    void kickWatchdog( const wxString& wdInfo );
+    void kickWatchdog( const wxString& callsign, const wxString& wdInfo );
 
   protected:
     virtual wxThread::ExitCode Entry();

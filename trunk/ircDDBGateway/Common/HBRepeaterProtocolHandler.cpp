@@ -165,12 +165,14 @@ bool CHBRepeaterProtocolHandler::readPackets()
 	return true;
 }
 
-wxString CHBRepeaterProtocolHandler::readPoll()
+CPollData* CHBRepeaterProtocolHandler::readPoll()
 {
 	if (m_type != RT_POLL)
-		return wxEmptyString;
+		return NULL;
 
-	return wxString((char*)(m_buffer + 5U), wxConvLocal);
+	wxString text = wxString((char*)(m_buffer + 5U), wxConvLocal);
+
+	return new CPollData(text, wxEmptyString, m_address, m_port);
 }
 
 CHeaderData* CHBRepeaterProtocolHandler::readHeader()

@@ -45,9 +45,6 @@ class IRCApplication
 
   virtual void setSendQ( IRCMessageQueue * s ) = 0;
   virtual IRCMessageQueue * getSendQ (void) = 0;
-	
-  virtual ~IRCApplication() {}
-
 };
 
 

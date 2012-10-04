@@ -20,17 +20,15 @@
 #include "IRCDDBGatewayGatewaySet.h"
 #include <cctype>
 
-const unsigned int DESCRIPTION_WIDTH = 120U;
 const unsigned int ADDRESS_WIDTH     = 120U;
 const unsigned int PORT_WIDTH        = 80U;
 
-const unsigned int DESCRIPTION_LENGTH = 20U;
 const unsigned int ADDRESS_LENGTH     = 15U;
 const unsigned int PORT_LENGTH        = 5U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CIRCDDBGatewayGatewaySet::CIRCDDBGatewayGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url) :
+CIRCDDBGatewayGatewaySet::CIRCDDBGatewayGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
@@ -38,12 +36,7 @@ m_address(NULL),
 m_icomAddress(NULL),
 m_icomPort(NULL),
 m_hbAddress(NULL),
-m_hbPort(NULL),
-m_latitude(NULL),
-m_longitude(NULL),
-m_description1(NULL),
-m_description2(NULL),
-m_url(NULL)
+m_hbPort(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(3);
 
@@ -113,57 +106,6 @@ m_url(NULL)
 	m_hbPort->SetMaxLength(PORT_LENGTH);
 	sizer->Add(m_hbPort, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	wxStaticText* dummy4Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy4Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* latitudeLabel = new wxStaticText(this, -1, _("Latitude"));
-	sizer->Add(latitudeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%lf"), latitude);
-
-	m_latitude = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(PORT_WIDTH, -1));
-	sizer->Add(m_latitude, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy5Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy5Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* longitudeLabel = new wxStaticText(this, -1, _("Longitude"));
-	sizer->Add(longitudeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%lf"), longitude);
-
-	m_longitude = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(PORT_WIDTH, -1));
-	sizer->Add(m_longitude, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy6Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy6Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("QTH"));
-	sizer->Add(descriptionLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	m_description1 = new wxTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
-	m_description1->SetMaxLength(DESCRIPTION_LENGTH);
-	sizer->Add(m_description1, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy7Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy7Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* dummy8Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy8Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	m_description2 = new wxTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
-	m_description2->SetMaxLength(DESCRIPTION_LENGTH);
-	sizer->Add(m_description2, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy9Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy9Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* urlLabel = new wxStaticText(this, -1, _("URL"));
-	sizer->Add(urlLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	m_url = new wxTextCtrl(this, -1, url, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
-	sizer->Add(m_url, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
 	SetAutoLayout(true);
 
 	SetSizer(sizer);
@@ -196,22 +138,6 @@ bool CIRCDDBGatewayGatewaySet::Validate()
 
 	if (port == 0U || port > 65535U) {
 		wxMessageDialog dialog(this, _("The Homebrew Port is not valid"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
-	double latitude = getLatitude();
-
-	if (latitude < -90.0 || latitude > 90.0) {
-		wxMessageDialog dialog(this, _("The Latitude is invalid"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
-	double longitude = getLongitude();
-
-	if (longitude < -180.0 || longitude > 180.0) {
-		wxMessageDialog dialog(this, _("The Longitude is invalid"), m_title + _(" Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		return false;
 	}
@@ -257,37 +183,4 @@ unsigned int CIRCDDBGatewayGatewaySet::getHBPort() const
 	m_hbPort->GetValue().ToULong(&n);
 
 	return n;
-}
-
-double CIRCDDBGatewayGatewaySet::getLatitude() const
-{
-	double val;
-	
-	m_latitude->GetValue().ToDouble(&val);
-
-	return val;
-}
-
-double CIRCDDBGatewayGatewaySet::getLongitude() const
-{
-	double val;
-	
-	m_longitude->GetValue().ToDouble(&val);
-
-	return val;
-}
-
-wxString CIRCDDBGatewayGatewaySet::getDescription1() const
-{
-	return m_description1->GetValue();
-}
-
-wxString CIRCDDBGatewayGatewaySet::getDescription2() const
-{
-	return m_description2->GetValue();
-}
-
-wxString CIRCDDBGatewayGatewaySet::getURL() const
-{
-	return m_url->GetValue();
 }

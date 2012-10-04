@@ -31,7 +31,7 @@ unsigned int        CStarNetHandler::m_maxStarNets = 0U;
 CStarNetHandler**   CStarNetHandler::m_starNets = NULL;
 
 CG2ProtocolHandler* CStarNetHandler::m_g2Handler = NULL;
-IIRC*               CStarNetHandler::m_irc = NULL;
+CIRCDDB*            CStarNetHandler::m_irc = NULL;
 CCacheManager*      CStarNetHandler::m_cache = NULL;
 wxString            CStarNetHandler::m_gateway;
 
@@ -224,7 +224,7 @@ void CStarNetHandler::setG2Handler(CG2ProtocolHandler* handler)
 	m_g2Handler = handler;
 }
 
-void CStarNetHandler::setIRC(IIRC* irc)
+void CStarNetHandler::setIRC(CIRCDDB* irc)
 {
 	wxASSERT(irc != NULL);
 

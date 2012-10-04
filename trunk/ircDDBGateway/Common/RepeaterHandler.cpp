@@ -34,7 +34,7 @@ CRepeaterHandler**        CRepeaterHandler::m_repeaters = NULL;
 
 wxString                  CRepeaterHandler::m_localAddress;
 CG2ProtocolHandler*       CRepeaterHandler::m_g2Handler = NULL;
-IIRC*                     CRepeaterHandler::m_irc = NULL;
+CIRCDDB*                  CRepeaterHandler::m_irc = NULL;
 CCacheManager*            CRepeaterHandler::m_cache = NULL;
 wxString                  CRepeaterHandler::m_gateway;
 TEXT_LANG                 CRepeaterHandler::m_language = TL_ENGLISH_UK;
@@ -49,7 +49,7 @@ CHeaderLogger*            CRepeaterHandler::m_headerLogger = NULL;
 
 CAPRSWriter*              CRepeaterHandler::m_aprsWriter  = NULL;
 
-CRepeaterHandler::CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double agl, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3) :
+CRepeaterHandler::CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3) :
 m_callsign(),
 m_band(' '),
 m_address(),
@@ -59,7 +59,12 @@ m_repeaterHandler(handler),
 m_frequency(frequency),
 m_offset(offset),
 m_range(range),
+m_latitude(latitude),
+m_longitude(longitude),
 m_agl(agl),
+m_description1(description1),
+m_description2(description2),
+m_url(url),
 m_band1(band1),
 m_band2(band2),
 m_band3(band3),
@@ -203,13 +208,13 @@ void CRepeaterHandler::initialise(unsigned int maxRepeaters)
 		m_repeaters[i] = NULL;
 }
 
-void CRepeaterHandler::add(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double agl, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3)
+void CRepeaterHandler::add(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3)
 {
 	wxASSERT(!callsign.IsEmpty());
 	wxASSERT(port > 0U);
 	wxASSERT(handler != NULL);
 
-	CRepeaterHandler* repeater = new CRepeaterHandler(callsign, band, address, port, hwType, reflector, atStartup, reconnect, dratsEnabled, frequency, offset, range, agl, handler, band1, band2, band3);
+	CRepeaterHandler* repeater = new CRepeaterHandler(callsign, band, address, port, hwType, reflector, atStartup, reconnect, dratsEnabled, frequency, offset, range, latitude, longitude, agl, description1, description2, url, handler, band1, band2, band3);
 
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		if (m_repeaters[i] == NULL) {
@@ -237,7 +242,7 @@ void CRepeaterHandler::setCache(CCacheManager* cache)
 	m_cache = cache;
 }
 
-void CRepeaterHandler::setIRC(IIRC* irc)
+void CRepeaterHandler::setIRC(CIRCDDB* irc)
 {
 	wxASSERT(irc != NULL);
 
@@ -407,6 +412,22 @@ CRepeaterHandler* CRepeaterHandler::findDVRepeater(const wxString& callsign)
 	return NULL;
 }
 
+CRepeaterHandler* CRepeaterHandler::findRepeater(const CPollData& data)
+{
+	in_addr   address = data.getAddress();
+	unsigned int port = data.getPort();
+
+	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
+		CRepeaterHandler* repeater = m_repeaters[i];
+		if (repeater != NULL) {
+			if (repeater->m_address.s_addr == address.s_addr && repeater->m_port == port)
+				return repeater;
+		}
+	}
+
+	return NULL;
+}
+
 CRepeaterHandler* CRepeaterHandler::findDDRepeater(const CDDData& data)
 {
 	wxString rpt1 = data.getRptCall1();
@@ -446,6 +467,15 @@ wxArrayString CRepeaterHandler::listDVRepeaters()
 	}
 
 	return repeaters;
+}
+
+void CRepeaterHandler::pollAllIcom(CPollData& data)
+{
+	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
+		CRepeaterHandler* repeater = m_repeaters[i];
+		if (repeater != NULL && repeater->m_hwType == HW_ICOM)
+			repeater->processRepeater(data);
+	}
 }
 
 CRemoteRepeaterData* CRepeaterHandler::getInfo() const
@@ -883,6 +913,17 @@ void CRepeaterHandler::processRepeater(CHeardData& heard)
 	m_heardRepeater = heard.getRepeater();
 
 	m_heardTimer.start();
+}
+
+void CRepeaterHandler::processRepeater(CPollData& data)
+{
+	wxString callsign = m_callsign;
+	if (m_ddMode)
+		callsign.Append(wxT("D"));
+
+	wxString text = data.getData1();
+
+	m_irc->kickWatchdog(callsign, text);
 }
 
 void CRepeaterHandler::processRepeater(CDDData& data)
@@ -1922,13 +1963,16 @@ void CRepeaterHandler::sendToIncoming(const CAMBEData& data)
 void CRepeaterHandler::startupInt()
 {
 	// Report our existence to ircDDB
-	if (m_irc != NULL && m_frequency > 0.0) {
-		wxString band = m_callsign.Mid(LONG_CALLSIGN_LENGTH - 1U);
-
+	if (m_irc != NULL) {
+		wxString callsign = m_callsign;
 		if (m_ddMode)
-			band.Append(wxT("D"));
+			callsign.Append(wxT("D"));
 
-		m_irc->rptrQRG(band, m_frequency, m_offset, m_range * 1000.0, m_agl);
+		if (m_frequency > 0.0)
+			m_irc->rptrQRG(callsign, m_frequency, m_offset, m_range * 1000.0, m_agl);
+
+		if (m_latitude != 0.0 && m_longitude != 0.0)
+			m_irc->rptrQTH(callsign, m_latitude, m_longitude, m_description1, m_description2, m_url);
 	}
 
 	if (m_linkAtStartup && !m_linkStartup.IsEmpty()) {

@@ -28,6 +28,7 @@
 #include "HeardData.h"
 #include "AMBEData.h"
 #include "TextData.h"
+#include "PollData.h"
 #include "DDData.h"
 #include "Timer.h"
 
@@ -137,7 +138,7 @@ public:
 	virtual bool writeStatus(CStatusData& status);
 
 	virtual REPEATER_TYPE read();
-	virtual wxString      readPoll();
+	virtual CPollData*    readPoll();
 	virtual CHeardData*   readHeard();
 	virtual CHeaderData*  readHeader();
 	virtual CAMBEData*    readAMBE();

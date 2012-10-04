@@ -34,20 +34,20 @@ public:
 #endif
 	~CIRCDDBGatewayConfig();
 
-	void getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort, double& latitude, double& longitude, wxString& description1, wxString& description2, wxString& url) const;
-	void setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
+	void getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort) const;
+	void setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort);
 
-	void getRepeater1(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const;
-	void setRepeater1(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl);
+	void getRepeater1(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const;
+	void setRepeater1(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url);
 
-	void getRepeater2(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const;
-	void setRepeater2(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl);
+	void getRepeater2(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const;
+	void setRepeater2(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url);
 
-	void getRepeater3(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const;
-	void setRepeater3(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl);
+	void getRepeater3(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const;
+	void setRepeater3(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url);
 
-	void getRepeater4(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const;
-	void setRepeater4(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl);
+	void getRepeater4(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const;
+	void setRepeater4(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url);
 
 	void getIrcDDB(wxString& hostname, wxString& username, wxString& password) const;
 	void setIrcDDB(const wxString& hostname, const wxString& username, const wxString& password);
@@ -120,11 +120,6 @@ private:
 	unsigned int  m_icomPort;
 	wxString      m_hbAddress;
 	unsigned int  m_hbPort;
-	double        m_latitude;
-	double        m_longitude;
-	wxString      m_description1;
-	wxString      m_description2;
-	wxString      m_url;
 	wxString      m_repeater1Callsign;
 	wxString      m_repeater1Band;
 	HW_TYPE       m_repeater1Type;
@@ -139,6 +134,9 @@ private:
 	double        m_repeater1Latitude;
 	double        m_repeater1Longitude;
 	double        m_repeater1Agl;
+	wxString      m_repeater1Description1;
+	wxString      m_repeater1Description2;
+	wxString      m_repeater1URL;
 	unsigned char m_repeater1Band1;
 	unsigned char m_repeater1Band2;
 	unsigned char m_repeater1Band3;
@@ -156,6 +154,9 @@ private:
 	double        m_repeater2Latitude;
 	double        m_repeater2Longitude;
 	double        m_repeater2Agl;
+	wxString      m_repeater2Description1;
+	wxString      m_repeater2Description2;
+	wxString      m_repeater2URL;
 	unsigned char m_repeater2Band1;
 	unsigned char m_repeater2Band2;
 	unsigned char m_repeater2Band3;
@@ -173,6 +174,9 @@ private:
 	double        m_repeater3Latitude;
 	double        m_repeater3Longitude;
 	double        m_repeater3Agl;
+	wxString      m_repeater3Description1;
+	wxString      m_repeater3Description2;
+	wxString      m_repeater3URL;
 	unsigned char m_repeater3Band1;
 	unsigned char m_repeater3Band2;
 	unsigned char m_repeater3Band3;
@@ -190,6 +194,9 @@ private:
 	double        m_repeater4Latitude;
 	double        m_repeater4Longitude;
 	double        m_repeater4Agl;
+	wxString      m_repeater4Description1;
+	wxString      m_repeater4Description2;
+	wxString      m_repeater4URL;
 	unsigned char m_repeater4Band1;
 	unsigned char m_repeater4Band2;
 	unsigned char m_repeater4Band3;

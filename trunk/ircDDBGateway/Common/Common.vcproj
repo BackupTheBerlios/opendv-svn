@@ -25,7 +25,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 			<Tool
@@ -90,7 +89,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 			<Tool
@@ -578,10 +576,6 @@
 			</File>
 			<File
 				RelativePath=".\IcomRepeaterProtocolHandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IRC.h"
 				>
 			</File>
 			<File

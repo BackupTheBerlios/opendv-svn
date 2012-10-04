@@ -1,14 +1,12 @@
 all:				libircDDB.a
 
-CFLAGS :=			-I../Common $(CFLAGS)
-
 libircDDB.a:		IRCClient.o IRCDDB.o IRCDDBApp.o IRCMessage.o IRCMessageQueue.o IRCProtocol.o IRCReceiver.o IRCutils.o
 					ar rcs libircDDB.a IRCClient.o IRCDDB.o IRCDDBApp.o IRCMessage.o IRCMessageQueue.o IRCProtocol.o IRCReceiver.o IRCutils.o
 
 IRCClient.o:		IRCClient.cpp IRCClient.h IRCReceiver.h IRCProtocol.h IRCutils.h IRCMessageQueue.h IRCApplication.h
 					$(CC) $(CFLAGS) -c IRCClient.cpp
 
-IRCDDB.o:			IRCDDB.cpp IRCDDB.h IRCClient.h IRCDDBApp.h ../Common/IRC.h ../Common/DStarDefines.h
+IRCDDB.o:			IRCDDB.cpp IRCDDB.h IRCClient.h IRCDDBApp.h
 					$(CC) $(CFLAGS) -c IRCDDB.cpp
 
 IRCDDBApp.o:		IRCDDBApp.cpp IRCDDBApp.h IRCDDB.h IRCApplication.h IRCutils.h

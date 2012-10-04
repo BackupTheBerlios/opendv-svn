@@ -30,9 +30,9 @@
 #include "RemoteHandler.h"
 #include "CacheManager.h"
 #include "APRSWriter.h"
+#include "IRCDDB.h"
 #include "Timer.h"
 #include "Defs.h"
-#include "IRC.h"
 
 #include <wx/wx.h>
 
@@ -41,8 +41,8 @@ public:
 	CIRCDDBGatewayThread(const wxString& logDir, const wxString& name);
 	virtual ~CIRCDDBGatewayThread();
 
-	virtual void setGateway(const wxString& callsign, const wxString& address, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
-	virtual void addRepeater(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double agl, IRepeaterProtocolHandler* handler, unsigned char band1 = 0x00U, unsigned char band2 = 0x00U, unsigned char band3 = 0x00U);
+	virtual void setGateway(const wxString& callsign, const wxString& address);
+	virtual void addRepeater(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1 = 0x00U, unsigned char band2 = 0x00U, unsigned char band3 = 0x00U);
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	virtual void addStarNet(const wxString& callsign, const wxString& logoff, const wxString& repeater, const wxString& infoText, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector);
 #else
@@ -50,7 +50,7 @@ public:
 #endif
 	virtual void setIcomRepeaterHandler(CIcomRepeaterProtocolHandler* handler);
 	virtual void setHBRepeaterHandler(CHBRepeaterProtocolHandler* handler);
-	virtual void setIRC(IIRC* irc);
+	virtual void setIRC(CIRCDDB* irc);
 	virtual void setLanguage(TEXT_LANG language);
 	virtual void setDExtra(bool enabled, unsigned int maxDongles);
 	virtual void setDPlus(bool enabled, unsigned int maxDongles, const wxString& login);
@@ -75,11 +75,6 @@ private:
 	bool                      m_stopped;
 	wxString                  m_gatewayCallsign;
 	wxString                  m_gatewayAddress;
-	double                    m_latitude;
-	double                    m_longitude;
-	wxString                  m_description1;
-	wxString                  m_description2;
-	wxString                  m_url;
 	CIcomRepeaterProtocolHandler* m_icomRepeaterHandler;
 	CHBRepeaterProtocolHandler*   m_hbRepeaterHandler;
 	CDExtraProtocolHandler*   m_dextraHandler;
@@ -87,7 +82,7 @@ private:
 	CDCSProtocolHandler*      m_dcsHandler;
 	CG2ProtocolHandler*       m_g2Handler;
 	CAPRSWriter*              m_aprsWriter;
-	IIRC*                     m_irc;
+	CIRCDDB*                  m_irc;
 	CCacheManager             m_cache;
 	TEXT_LANG                 m_language;
 	bool                      m_dextraEnabled;

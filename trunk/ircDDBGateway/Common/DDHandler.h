@@ -21,8 +21,8 @@
 
 #include "HeaderLogger.h"
 #include "DDData.h"
+#include "IRCDDB.h"
 #include "Timer.h"
-#include "IRC.h"
 
 #include <wx/wx.h>
 
@@ -45,7 +45,7 @@ public:
 
 	static void setLogging(bool enabled, const wxString& dir);
 	static void setHeaderLogger(CHeaderLogger* logger);
-	static void setIRC(IIRC* irc);
+	static void setIRC(CIRCDDB* irc);
 
 	static void process(CDDData& data);
 
@@ -56,7 +56,7 @@ public:
 	static void finalise();
 
 private:
-	static IIRC*          m_irc;
+	static CIRCDDB*       m_irc;
 	static CHeaderLogger* m_headerLogger;
 	static int            m_fd;
 	static unsigned int   m_maxRoutes;

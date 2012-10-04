@@ -36,12 +36,11 @@
 class CIRCDDBGatewayPreferences : public wxDialog {
 public:
 	CIRCDDBGatewayPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress,
-				 unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude,
-				 const wxString& description1, const wxString& description2, const wxString& url,
-				 const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1,
-				 const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2,
-				 const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3,
-				 const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4,
+				 unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort,
+				 const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1, const wxString& description11, const wxString& description12, const wxString& url1,
+				 const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2, const wxString& description21, const wxString& description22, const wxString& url2,
+				 const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3, const wxString& description31, const wxString& description32, const wxString& url3,
+				 const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4, const wxString& description41, const wxString& description42, const wxString& url4,
 				 const wxString& hostname, const wxString& username, const wxString& password, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled,
 				 bool dratsEnabled, bool dtmfEnabled, bool aprsEnabled, const wxString& aprsHostname,
 				 unsigned int aprsPort, bool dextraEnabled, unsigned int maxDExtraDongles,
@@ -71,11 +70,6 @@ public:
 	virtual unsigned int getIcomPort() const;
 	virtual wxString     getHBAddress() const;
 	virtual unsigned int getHBPort() const;
-	virtual double       getLatitude() const;
-	virtual double       getLongitude() const;
-	virtual wxString     getDescription1() const;
-	virtual wxString     getDescription2() const;
-	virtual wxString     getURL() const;
 
 	virtual wxString     getRepeaterBand1() const;
 	virtual HW_TYPE      getRepeaterType1() const;
@@ -93,6 +87,9 @@ public:
 	virtual double       getLatitude1() const;
 	virtual double       getLongitude1() const;
 	virtual double       getAGL1() const;
+	virtual wxString     getDescription11() const;
+	virtual wxString     getDescription12() const;
+	virtual wxString     getURL1() const;
 
 	virtual wxString     getRepeaterBand2() const;
 	virtual HW_TYPE      getRepeaterType2() const;
@@ -110,6 +107,9 @@ public:
 	virtual double       getLatitude2() const;
 	virtual double       getLongitude2() const;
 	virtual double       getAGL2() const;
+	virtual wxString     getDescription21() const;
+	virtual wxString     getDescription22() const;
+	virtual wxString     getURL2() const;
 
 	virtual wxString     getRepeaterBand3() const;
 	virtual HW_TYPE      getRepeaterType3() const;
@@ -127,6 +127,9 @@ public:
 	virtual double       getLatitude3() const;
 	virtual double       getLongitude3() const;
 	virtual double       getAGL3() const;
+	virtual wxString     getDescription31() const;
+	virtual wxString     getDescription32() const;
+	virtual wxString     getURL3() const;
 
 	virtual wxString     getRepeaterBand4() const;
 	virtual HW_TYPE      getRepeaterType4() const;
@@ -144,6 +147,9 @@ public:
 	virtual double       getLatitude4() const;
 	virtual double       getLongitude4() const;
 	virtual double       getAGL4() const;
+	virtual wxString     getDescription41() const;
+	virtual wxString     getDescription42() const;
+	virtual wxString     getURL4() const;
 
 	virtual wxString     getHostname() const;
 	virtual wxString     getUsername() const;

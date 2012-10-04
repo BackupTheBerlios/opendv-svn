@@ -27,8 +27,8 @@
 #include "CacheManager.h"
 #include "HeaderData.h"
 #include "AMBEData.h"
+#include "IRCDDB.h"
 #include "Timer.h"
-#include "IRC.h"
 
 #if defined(__WINDOWS__)
 #include "Inaddr.h"
@@ -121,7 +121,7 @@ public:
 #endif
 
 	static void setG2Handler(CG2ProtocolHandler* handler);
-	static void setIRC(IIRC* irc);
+	static void setIRC(CIRCDDB* irc);
 	static void setCache(CCacheManager* cache);
 	static void setGateway(const wxString& gateway);
 	static void setLogging(bool enable, const wxString& dir);
@@ -176,7 +176,7 @@ private:
 	static CStarNetHandler**   m_starNets;
 
 	static CG2ProtocolHandler* m_g2Handler;
-	static IIRC*               m_irc;
+	static CIRCDDB*            m_irc;
 	static CCacheManager*      m_cache;
 	static wxString            m_gateway;
 

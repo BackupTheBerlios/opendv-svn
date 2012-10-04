@@ -53,11 +53,6 @@ m_killed(false),
 m_stopped(true),
 m_gatewayCallsign(),
 m_gatewayAddress(),
-m_latitude(0.0),
-m_longitude(0.0),
-m_description1(),
-m_description2(),
-m_url(),
 m_icomRepeaterHandler(NULL),
 m_hbRepeaterHandler(NULL),
 m_dextraHandler(NULL),
@@ -276,10 +271,6 @@ void CIRCDDBGatewayThread::run()
 
 	m_statusFileTimer.start();
 
-	// Report our existence to ircDDB
-	if (m_irc != NULL && m_latitude != 0.0 && m_longitude != 0.0)
-		m_irc->rptrQTH(m_latitude, m_longitude, m_description1, m_description2, m_url);
-
 	CCallsignServer* server = NULL;
 	if (m_dextraEnabled || m_dcsEnabled) {
 		server = new CCallsignServer(m_gatewayCallsign, m_gatewayAddress, &m_cache);
@@ -397,23 +388,18 @@ void CIRCDDBGatewayThread::kill()
 	m_killed = true;
 }
 
-void CIRCDDBGatewayThread::setGateway(const wxString& gatewayCallsign, const wxString& gatewayAddress, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url)
+void CIRCDDBGatewayThread::setGateway(const wxString& gatewayCallsign, const wxString& gatewayAddress)
 {
 	if (!m_stopped)
 		return;
 
 	m_gatewayCallsign = gatewayCallsign;
 	m_gatewayAddress  = gatewayAddress;
-	m_latitude        = latitude;
-	m_longitude       = longitude;
-	m_description1    = description1;
-	m_description2    = description2;
-	m_url             = url;
 }
 
-void CIRCDDBGatewayThread::addRepeater(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double agl, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3)
+void CIRCDDBGatewayThread::addRepeater(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3)
 {
-	CRepeaterHandler::add(callsign, band, address, port, hwType, reflector, atStartup, reconnect, dratsEnabled, frequency, offset, range, agl, handler, band1, band2, band3);
+	CRepeaterHandler::add(callsign, band, address, port, hwType, reflector, atStartup, reconnect, dratsEnabled, frequency, offset, range, latitude, longitude, agl, description1, description2, url, handler, band1, band2, band3);
 
 	wxString repeater = callsign;
 	repeater.Truncate(LONG_CALLSIGN_LENGTH - 1U);
@@ -447,7 +433,7 @@ void CIRCDDBGatewayThread::setHBRepeaterHandler(CHBRepeaterProtocolHandler* hand
 	m_hbRepeaterHandler = handler;
 }
 
-void CIRCDDBGatewayThread::setIRC(IIRC* irc)
+void CIRCDDBGatewayThread::setIRC(CIRCDDB* irc)
 {
 	wxASSERT(irc != NULL);
 
@@ -603,8 +589,7 @@ void CIRCDDBGatewayThread::processIrcDDB()
 
 			case IDRT_REPEATER: {
 					wxString repeater, gateway, address;
-					DSTAR_PROTOCOL protocol;
-					bool res = m_irc->receiveRepeater(repeater, gateway, address, protocol);
+					bool res = m_irc->receiveRepeater(repeater, gateway, address);
 					if (!res)
 						break;
 
@@ -620,8 +605,7 @@ void CIRCDDBGatewayThread::processIrcDDB()
 
 			case IDRT_GATEWAY: {
 					wxString gateway, address;
-					DSTAR_PROTOCOL protocol;
-					bool res = m_irc->receiveGateway(gateway, address, protocol);
+					bool res = m_irc->receiveGateway(gateway, address);
 					if (!res)
 						break;
 
@@ -649,8 +633,16 @@ void CIRCDDBGatewayThread::processRepeater(IRepeaterProtocolHandler* handler)
 				return;
 
 			case RT_POLL: {
-					wxString text = handler->readPoll();
-					m_irc->kickWatchdog(text);
+					CPollData* poll = handler->readPoll();
+					if (poll != NULL) {
+						CRepeaterHandler* handler = CRepeaterHandler::findRepeater(*poll);
+						if (handler != NULL)
+							handler->processRepeater(*poll);
+						else
+							CRepeaterHandler::pollAllIcom(*poll);
+
+						delete poll;
+					}
 				}
 				break;
 

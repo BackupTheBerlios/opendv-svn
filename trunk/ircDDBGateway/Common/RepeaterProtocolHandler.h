@@ -24,6 +24,7 @@
 #include "HeardData.h"
 #include "AMBEData.h"
 #include "TextData.h"
+#include "PollData.h"
 #include "DDData.h"
 
 #include <wx/wx.h>
@@ -50,7 +51,7 @@ public:
 	virtual bool writeStatus(CStatusData& status) = 0;
 
 	virtual REPEATER_TYPE read() = 0;
-	virtual wxString      readPoll() = 0;
+	virtual CPollData*    readPoll() = 0;
 	virtual CHeardData*   readHeard() = 0;
 	virtual CHeaderData*  readHeader() = 0;
 	virtual CAMBEData*    readAMBE() = 0;

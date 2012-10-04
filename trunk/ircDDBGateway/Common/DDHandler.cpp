@@ -42,7 +42,7 @@ const int MINIMUM_DD_FRAME_LENGTH = 60;
 
 const unsigned char ETHERNET_BROADCAST_ADDRESS[] = {0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU};
 
-IIRC*          CDDHandler::m_irc          = NULL;
+CIRCDDB*       CDDHandler::m_irc          = NULL;
 CHeaderLogger* CDDHandler::m_headerLogger = NULL;
 int            CDDHandler::m_fd           = -1;
 unsigned int   CDDHandler::m_maxRoutes    = 0U;
@@ -153,7 +153,7 @@ void CDDHandler::setHeaderLogger(CHeaderLogger* logger)
 	m_headerLogger = logger;
 }
 
-void CDDHandler::setIRC(IIRC* irc)
+void CDDHandler::setIRC(CIRCDDB* irc)
 {
 	wxASSERT(irc != NULL);
 

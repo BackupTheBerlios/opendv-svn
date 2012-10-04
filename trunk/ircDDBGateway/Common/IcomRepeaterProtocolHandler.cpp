@@ -378,26 +378,29 @@ REPEATER_TYPE CIcomRepeaterProtocolHandler::read()
 	return m_type;
 }
 
-wxString CIcomRepeaterProtocolHandler::readPoll()
+CPollData* CIcomRepeaterProtocolHandler::readPoll()
 {
 	if (m_type != RT_POLL)
-		return wxEmptyString;
+		return NULL;
 
 	CDataQueue* dq = m_rptrQueue.getData();
 	if (dq == NULL) {
 		wxLogError(wxT("Missing DataQueue in readPoll"));
-		return wxEmptyString;
+		return NULL;
 	}
 
 	if (dq->getType() != RT_POLL) {
 		wxLogError(wxT("Wrong DataQueue type in readPoll"));
 		delete dq;
-		return wxEmptyString;
+		return NULL;
 	}
 
 	delete dq;
 
-	return wxT("icom_rp2c");
+	CPollData* data = new CPollData;
+	data->setData1(wxT("icom_rp2c"));
+
+	return data;
 }
 
 CHeaderData* CIcomRepeaterProtocolHandler::readHeader()

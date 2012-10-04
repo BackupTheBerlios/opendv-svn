@@ -3,6 +3,7 @@
 CIRCDDB - ircDDB client library in C++
 
 Copyright (C) 2010-2011   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+Copyright (C) 2012        Jonathan Naylor, G4KLX
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -108,7 +109,10 @@ wxDateTime IRCDDBAppRptrObject::maxTime((time_t) 950000000);  // February 2000
 
 WX_DECLARE_STRING_HASH_MAP( IRCDDBAppRptrObject, IRCDDBAppRptrMap );
 
-WX_DECLARE_STRING_HASH_MAP( wxString, IRCDDBAppModuleMap );
+WX_DECLARE_STRING_HASH_MAP( wxString, IRCDDBAppModuleQRG );
+WX_DECLARE_STRING_HASH_MAP( wxString, IRCDDBAppModuleQTH );
+WX_DECLARE_STRING_HASH_MAP( wxString, IRCDDBAppModuleURL );
+WX_DECLARE_STRING_HASH_MAP( wxString, IRCDDBAppModuleWD );
 
 class IRCDDBAppPrivate
 {
@@ -118,11 +122,8 @@ class IRCDDBAppPrivate
   : tablePattern(wxT("^[0-9]$")),
     datePattern(wxT("^20[0-9][0-9]-((1[0-2])|(0[1-9]))-((3[01])|([12][0-9])|(0[1-9]))$")),
     timePattern(wxT("^((2[0-3])|([01][0-9])):[0-5][0-9]:[0-5][0-9]$")),
-    dbPattern(wxT("^[0-9A-Z_]{8}$")),
-    modulePattern(wxT("^[ABCDE]D?$"))
+    dbPattern(wxT("^[0-9A-Z_]{8}$"))
   {
-    wdTimer = 0;
-    wdCounter = 0;
   }
 
   IRCMessageQueue * sendQ;
@@ -137,8 +138,7 @@ class IRCDDBAppPrivate
   wxRegEx datePattern;
   wxRegEx timePattern;
   wxRegEx dbPattern;
-  wxRegEx modulePattern;
-
+ 
   int state;
   int timer;
   int infoTimer;
@@ -156,15 +156,17 @@ class IRCDDBAppPrivate
 
   IRCMessageQueue replyQ;
 
-  IRCDDBAppModuleMap moduleMap;
-  wxMutex moduleMapMutex;
+  IRCDDBAppModuleQRG moduleQRG;
+  wxMutex moduleQRGMutex;
 
-  wxString rptrLocation;
-  wxString rptrInfoURL;
+  IRCDDBAppModuleQTH moduleQTH;
+  IRCDDBAppModuleURL moduleURL;
+  wxMutex moduleQTHURLMutex;
 
-  wxString wdInfo;
+  IRCDDBAppModuleWD moduleWD;
+  wxMutex moduleWDMutex;
+
   int wdTimer;
-  int wdCounter;
 };
 
 	
@@ -198,12 +200,12 @@ IRCDDBApp::~IRCDDBApp()
 }
 
 
-void IRCDDBApp::rptrQTH( double latitude, double longitude, const wxString& desc1,
+void IRCDDBApp::rptrQTH( const wxString& callsign, double latitude, double longitude, const wxString& desc1,
              const wxString& desc2, const wxString& infoURL )
 {
-
   wxString pos = wxString::Format(wxT("%+09.5f %+010.5f"), latitude, longitude);
 
+  wxString cs = callsign;
   wxString d1 = desc1;
   wxString d2 = desc2;
 
@@ -218,60 +220,60 @@ void IRCDDBApp::rptrQTH( double latitude, double longitude, const wxString& desc
   pos.Replace( wxT(","), wxT("."));
   d1.Replace(wxT(" "), wxT("_"));
   d2.Replace(wxT(" "), wxT("_"));
+  cs.Replace(wxT(" "), wxT("_"));
 
-  d->rptrLocation = pos + wxT(" ") + d1.Mid(0, 20) + wxT(" ") + d2.Mid(0, 20);
+  wxMutexLocker lock(d->moduleQTHURLMutex);
 
-  wxLogVerbose(wxT("QTH: ") + d->rptrLocation);
+  d->moduleQTH[cs] = cs + wxT(" ") + pos + wxT(" ") + d1.Mid(0, 20) + wxT(" ") + d2.Mid(0, 20);
+
+  wxLogVerbose(wxT("QTH: ") + d->moduleQTH[cs]);
 
   wxRegEx urlNonValid(wxT("[^[:graph:]]"));
 
-  d->rptrInfoURL = infoURL;
+  d->moduleURL[cs] = cs + wxT(" ") + infoURL;
 
-  urlNonValid.Replace( & d->rptrInfoURL, wxEmptyString );
+  urlNonValid.Replace( & d->moduleURL[cs], wxEmptyString );
 
-  wxLogVerbose(wxT("URL: ") + d->rptrInfoURL.Mid(0, 120));
+  wxLogVerbose(wxT("URL: ") + d->moduleURL[cs].Mid(0, 120));
 
   d->infoTimer = 5; // send info in 5 seconds
 }
 
 
-void IRCDDBApp::rptrQRG( const wxString& module, double txFrequency, double duplexShift,
+void IRCDDBApp::rptrQRG( const wxString& callsign, double txFrequency, double duplexShift,
     double range, double agl )
 {
+	wxString cs = callsign;
+	cs.Replace(wxT(" "), wxT("_"));
 
-  if (d->modulePattern.Matches(module))
-  {
-    wxString f = module + wxT(" ") + wxString::Format(wxT("%011.5f %+010.5f %06.2f %06.1f"),
+    wxString f = cs + wxT(" ") + wxString::Format(wxT("%011.5f %+010.5f %06.2f %06.1f"),
 	      txFrequency, duplexShift, range / 1609.344, agl );
 
-    f.Replace( wxT(","), wxT("."));
+    f.Replace(wxT(","), wxT("."));
 
-    wxMutexLocker lock(d->moduleMapMutex);
-    d->moduleMap[module] = f;
+    wxMutexLocker lock(d->moduleQRGMutex);
+    d->moduleQRG[cs] = f;
 
     wxLogVerbose(wxT("QRG: ") + f);
 
     d->infoTimer = 5; // send info in 5 seconds
-  }
 }
 
-void IRCDDBApp::kickWatchdog( const wxString& s )
+void IRCDDBApp::kickWatchdog( const wxString& callsign, const wxString& s )
 {
   if (s.Len() > 0)
   {
+	wxString cs = callsign;
+	cs.Replace(wxT(" "), wxT("_"));
+
     wxRegEx nonValid(wxT("[^[:graph:]]"));
-    d->wdInfo = s;
-    nonValid.Replace(& d->wdInfo, wxEmptyString);
 
-    if (d->wdInfo.Len() > 0)
-    {
-      if (d->wdTimer == 0)
-      {
-	d->wdTimer ++;
-      }
+	wxMutexLocker lock(d->moduleWDMutex);
+    d->moduleWD[cs] = cs + wxT(" ") + s;
 
-      d->wdCounter ++;
-    }
+	nonValid.Replace(& d->moduleWD[cs], wxEmptyString);
+
+	d->wdTimer = 60;
   }
 }
 
@@ -1245,38 +1247,11 @@ wxThread::ExitCode IRCDDBApp::Entry()
 
 	if (d->infoTimer == 0)
 	{
-	if (d->rptrLocation.Len() > 0)
-	{
-	  IRCMessage * m = new IRCMessage(d->currentServer,
-	    wxT("IRCDDB QTH: ") + d->rptrLocation);
-
-	  IRCMessageQueue * q = getSendQ();
-	  if (q != NULL)
-	  {
-	    q->putMessage(m);
-	  }
-	}
-
-	if (d->rptrInfoURL.Len() > 0)
-	{
-	  IRCMessage * m = new IRCMessage(d->currentServer,
-	    wxT("IRCDDB URL: ") + d->rptrInfoURL);
-
-	  IRCMessageQueue * q = getSendQ();
-	  if (q != NULL)
-	  {
-	    q->putMessage(m);
-	  }
-	}
-
-	wxMutexLocker lock(d->moduleMapMutex);
-
-	IRCDDBAppModuleMap::iterator it;
-	for( it = d->moduleMap.begin(); it != d->moduleMap.end(); ++it )
+	d->moduleQTHURLMutex.Lock();
+	for (IRCDDBAppModuleQTH::iterator it = d->moduleQTH.begin(); it != d->moduleQTH.end(); ++it)
 	{
 	  wxString value = it->second;
-	  IRCMessage * m = new IRCMessage(d->currentServer,
-	    wxT("IRCDDB QRG: ") + value);
+	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRQTH: ") + value);
 
 	  IRCMessageQueue * q = getSendQ();
 	  if (q != NULL)
@@ -1284,27 +1259,56 @@ wxThread::ExitCode IRCDDBApp::Entry()
 	    q->putMessage(m);
 	  }
 	}
+
+	for (IRCDDBAppModuleURL::iterator it = d->moduleURL.begin(); it != d->moduleURL.end(); ++it)
+	{
+	  wxString value = it->second;
+	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRURL: ") + value);
+
+	  IRCMessageQueue * q = getSendQ();
+	  if (q != NULL)
+	  {
+	    q->putMessage(m);
+	  }
+	}
+	d->moduleQTHURLMutex.Unlock();
+
+	d->moduleQRGMutex.Lock();
+	for (IRCDDBAppModuleQRG::iterator it = d->moduleQRG.begin(); it != d->moduleQRG.end(); ++it)
+	{
+	  wxString value = it->second;
+	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRQRG: ") + value);
+
+	  IRCMessageQueue * q = getSendQ();
+	  if (q != NULL)
+	  {
+	    q->putMessage(m);
+	  }
+	}
+	d->moduleQRGMutex.Unlock();
+
 	}
       }
 
       if (d->wdTimer > 0)
       {
 	d->wdTimer --;
+
 	if (d->wdTimer == 0)
 	{
-	  d->wdTimer = 900;  // 15 minutes
-
-	  IRCMessage * m = new IRCMessage(d->currentServer,
-	              wxT("IRCDDB WATCHDOG: ") + getCurrentTime() +
-		      wxT(" ") + d->wdInfo.Mid(0,120) +
-		      wxString::Format(wxT(" %d"), d->wdCounter ));
+	d->moduleWDMutex.Lock();
+	for (IRCDDBAppModuleWD::iterator it = d->moduleWD.begin(); it != d->moduleWD.end(); ++it)
+	{
+	  wxString value = it->second;
+	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRSW: ") + value);
 
 	  IRCMessageQueue * q = getSendQ();
 	  if (q != NULL)
 	  {
 	    q->putMessage(m);
-	    d->wdCounter = 0;
 	  }
+	}
+	d->moduleWDMutex.Unlock();
 	}
       }
       break;

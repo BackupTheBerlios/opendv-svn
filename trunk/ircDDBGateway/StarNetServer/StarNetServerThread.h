@@ -24,9 +24,9 @@
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
+#include "IRCDDB.h"
 #include "Timer.h"
 #include "Defs.h"
-#include "IRC.h"
 
 #include <wx/wx.h>
 
@@ -43,7 +43,7 @@ public:
 	virtual void addStarNet(const wxString& callsign, const wxString& logoff, const wxString& repeater, const wxString& infoText, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch);
 #endif
 	virtual void setRemote(bool enabled, const wxString& password, unsigned int port);
-	virtual void setIRC(IIRC* irc);
+	virtual void setIRC(CIRCDDB* irc);
 	virtual void setLog(bool enabled);
 
 	virtual void run();
@@ -63,7 +63,7 @@ private:
 	CDCSProtocolHandler*    m_dcsHandler;
 #endif
 	CG2ProtocolHandler*     m_g2Handler;
-	IIRC*                   m_irc;
+	CIRCDDB*                m_irc;
 	CCacheManager           m_cache;
 	bool                    m_logEnabled;
 	CTimer                  m_statusTimer;

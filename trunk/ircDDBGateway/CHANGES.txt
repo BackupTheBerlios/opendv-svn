@@ -1118,3 +1118,8 @@ Sort the reflector list in the Remote Control by protocol.
 Changed the way that the SVN revision is included.
 Change D-RATS handling of incoming network data.
 Make the linked/linking/not linked announcement more timely.
+
+2012xxxx
+--------
+
+Make information per repeater.

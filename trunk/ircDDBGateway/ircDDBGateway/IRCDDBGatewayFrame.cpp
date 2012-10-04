@@ -199,46 +199,45 @@ void CIRCDDBGatewayFrame::onClose(wxCloseEvent& event)
 
 void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 {
-	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress, description1, description2, url;
+	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress;
 	unsigned int icomPort, hbPort;
-	double latitude, longitude;
-	::wxGetApp().getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	::wxGetApp().getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort);
 
-	wxString repeaterCall1, repeaterBand1, repeaterAddress1, reflector1;
+	wxString repeaterCall1, repeaterBand1, repeaterAddress1, reflector1, description11, description12, url1;
 	double frequency1, offset1, range1, latitude1, longitude1, agl1;
 	unsigned char band11, band12, band13;
 	unsigned int repeaterPort1;
 	HW_TYPE repeaterType1;
 	bool atStartup1;
 	RECONNECT reconnect1;
-	::wxGetApp().getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1);
+	::wxGetApp().getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
 
-	wxString repeaterCall2, repeaterBand2, repeaterAddress2, reflector2;
+	wxString repeaterCall2, repeaterBand2, repeaterAddress2, reflector2, description21, description22, url2;
 	double frequency2, offset2, range2, latitude2, longitude2, agl2;
 	unsigned char band21, band22, band23;
 	unsigned int repeaterPort2;
 	HW_TYPE repeaterType2;
 	bool atStartup2;
 	RECONNECT reconnect2;
-	::wxGetApp().getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2);
+	::wxGetApp().getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
 
-	wxString repeaterCall3, repeaterBand3, repeaterAddress3, reflector3;
+	wxString repeaterCall3, repeaterBand3, repeaterAddress3, reflector3, description31, description32, url3;
 	double frequency3, offset3, range3, latitude3, longitude3, agl3;
 	unsigned char band31, band32, band33;
 	unsigned int repeaterPort3;
 	HW_TYPE repeaterType3;
 	bool atStartup3;
 	RECONNECT reconnect3;
-	::wxGetApp().getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3);
+	::wxGetApp().getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
 
-	wxString repeaterCall4, repeaterBand4, repeaterAddress4, reflector4;
+	wxString repeaterCall4, repeaterBand4, repeaterAddress4, reflector4, description41, description42, url4;
 	double frequency4, offset4, range4, latitude4, longitude4, agl4;
 	unsigned char band41, band42, band43;
 	unsigned int repeaterPort4;
 	HW_TYPE repeaterType4;
 	bool atStartup4;
 	RECONNECT reconnect4;
-	::wxGetApp().getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4);
+	::wxGetApp().getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 
 	wxString hostname, username, password;
 	::wxGetApp().getIrcDDB(hostname, username, password);
@@ -300,11 +299,11 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	bool starNetTXMsgSwitch5;
 	::wxGetApp().getStarNet5(starNetBand5, starNetCallsign5, starNetLogoff5, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5, starNetLink5);
 
-	CIRCDDBGatewayPreferences dialog1(this, -1, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url,
-		repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1,
-		repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2,
-		repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3,
-		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4,
+	CIRCDDBGatewayPreferences dialog1(this, -1, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort,
+		repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1,
+		repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2,
+		repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3,
+		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
 		hostname, username, password, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
 		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled,
@@ -345,11 +344,11 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	bool starNetTXMsgSwitch5;
 	::wxGetApp().getStarNet5(starNetBand5, starNetCallsign5, starNetLogoff5, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5);
 
-	CIRCDDBGatewayPreferences dialog1(this, -1, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url,
-		repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1,
-		repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2,
-		repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3,
-		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4,
+	CIRCDDBGatewayPreferences dialog1(this, -1, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort,
+		repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1,
+		repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2,
+		repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3,
+		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
 		hostname, username, password, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
 		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled,
@@ -369,11 +368,6 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	icomPort         = dialog1.getIcomPort();
 	hbAddress        = dialog1.getHBAddress();
 	hbPort           = dialog1.getHBPort();
-	latitude         = dialog1.getLatitude();
-	longitude        = dialog1.getLongitude();
-	description1     = dialog1.getDescription1();
-	description2     = dialog1.getDescription2();
-	url              = dialog1.getURL();
 
 	repeaterBand1    = dialog1.getRepeaterBand1();
 	repeaterType1    = dialog1.getRepeaterType1();
@@ -391,6 +385,9 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	latitude1        = dialog1.getLatitude1();
 	longitude1       = dialog1.getLongitude1();
 	agl1             = dialog1.getAGL1();
+	description11    = dialog1.getDescription11();
+	description12    = dialog1.getDescription12();
+	url1             = dialog1.getURL1();
 
 	repeaterBand2    = dialog1.getRepeaterBand2();
 	repeaterType2    = dialog1.getRepeaterType2();
@@ -408,6 +405,9 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	latitude2        = dialog1.getLatitude2();
 	longitude2       = dialog1.getLongitude2();
 	agl2             = dialog1.getAGL2();
+	description21    = dialog1.getDescription21();
+	description22    = dialog1.getDescription22();
+	url2             = dialog1.getURL2();
 
 	repeaterBand3    = dialog1.getRepeaterBand3();
 	repeaterType3    = dialog1.getRepeaterType3();
@@ -425,6 +425,9 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	latitude3        = dialog1.getLatitude3();
 	longitude3       = dialog1.getLongitude3();
 	agl3             = dialog1.getAGL3();
+	description31    = dialog1.getDescription31();
+	description32    = dialog1.getDescription32();
+	url3             = dialog1.getURL3();
 
 	repeaterBand4    = dialog1.getRepeaterBand4();
 	repeaterType4    = dialog1.getRepeaterType4();
@@ -442,6 +445,9 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	latitude4        = dialog1.getLatitude4();
 	longitude4       = dialog1.getLongitude4();
 	agl4             = dialog1.getAGL4();
+	description41    = dialog1.getDescription41();
+	description42    = dialog1.getDescription42();
+	url4             = dialog1.getURL4();
 
 	hostname         = dialog1.getHostname();
 	username         = dialog1.getUsername();
@@ -538,11 +544,11 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	dratsEnabled        = dialog1.getDRATSEnabled();
 	dtmfEnabled         = dialog1.getDTMFEnabled();
 
-	::wxGetApp().setGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
-	::wxGetApp().setRepeater1(repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1);
-	::wxGetApp().setRepeater2(repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2);
-	::wxGetApp().setRepeater3(repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3);
-	::wxGetApp().setRepeater4(repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4);
+	::wxGetApp().setGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort);
+	::wxGetApp().setRepeater1(repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
+	::wxGetApp().setRepeater2(repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
+	::wxGetApp().setRepeater3(repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
+	::wxGetApp().setRepeater4(repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 	::wxGetApp().setIrcDDB(hostname, username, password);
 	::wxGetApp().setDPRS(aprsEnabled, aprsHostname, aprsPort);
 	::wxGetApp().setDExtra(dextraEnabled, maxDExtraDongles);

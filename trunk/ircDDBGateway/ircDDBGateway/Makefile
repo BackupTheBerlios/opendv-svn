@@ -57,8 +57,8 @@ IRCDDBGatewayThread.o:		IRCDDBGatewayThread.cpp IRCDDBGatewayThread.h IRCDDBGate
 				../Common/DCSHandler.h ../Common/DExtraHandler.h ../Common/DPlusHandler.h ../Common/ConnectData.h ../Common/DStarDefines.h \
 				../Common/Utils.h ../Common/Timer.h ../Common/G2Handler.h ../Common/RepeaterHandler.h ../Common/PollData.h ../Common/HeaderLogger.h \
 				../Common/APRSWriter.h ../Common/AudioUnit.h ../Common/StarNetHandler.h ../Common/DDData.h ../Common/RemoteHandler.h \
-				../Common/DDHandler.h ../Common/IRC.h ../Common/HBRepeaterProtocolHandler.h ../Common/IcomRepeaterProtocolHandler.h \
-				../Common/StatusData.h ../Common/CallsignServer.h ../Common/HeardData.h
+				../Common/DDHandler.h ../Common/HBRepeaterProtocolHandler.h ../Common/IcomRepeaterProtocolHandler.h \
+				../Common/StatusData.h ../Common/CallsignServer.h ../Common/HeardData.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayThread.cpp
 
 install:		ircddbgateway ircddbgatewayd

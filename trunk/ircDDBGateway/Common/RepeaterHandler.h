@@ -37,11 +37,12 @@
 #include "HeardData.h"
 #include "AudioUnit.h"
 #include "EchoUnit.h"
+#include "PollData.h"
 #include "DDData.h"
+#include "IRCDDB.h"
 #include "Timer.h"
 #include "DTMF.h"
 #include "Defs.h"
-#include "IRC.h"
 
 #if defined(__WINDOWS__)
 #include "Inaddr.h"
@@ -55,11 +56,11 @@ class CRepeaterHandler : public IRepeaterCallback, public IReflectorCallback {
 public:
 	static void initialise(unsigned int maxRepeaters);
 
-	static void add(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double agl, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);
+	static void add(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);
 
 	static void setLocalAddress(const wxString& address);
 	static void setG2Handler(CG2ProtocolHandler* handler);
-	static void setIRC(IIRC* irc);
+	static void setIRC(CIRCDDB* irc);
 	static void setCache(CCacheManager* cache);
 	static void setGateway(const wxString& gateway);
 	static void setLanguage(TEXT_LANG language);
@@ -81,8 +82,13 @@ public:
 	static CRepeaterHandler* findDVRepeater(const CHeaderData& header);
 	static CRepeaterHandler* findDVRepeater(const CAMBEData& data, bool busy);
 	static CRepeaterHandler* findDVRepeater(const wxString& callsign);
+
+	static CRepeaterHandler* findRepeater(const CPollData& data);
+
 	static CRepeaterHandler* findDDRepeater(const CDDData& data);
 	static CRepeaterHandler* findDDRepeater();
+
+	static void pollAllIcom(CPollData& data);
 
 	static void writeStatus(CStatusData& statusData);
 
@@ -96,6 +102,7 @@ public:
 	void processRepeater(CHeaderData& header);
 	void processRepeater(CHeardData& heard);
 	void processRepeater(CAMBEData& data);
+	void processRepeater(CPollData& data);
 	void processRepeater(CDDData& data);
 
 	void processBusy(CHeaderData& header);
@@ -113,7 +120,7 @@ public:
 	virtual bool linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable);
 
 protected:
-	CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double agl, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);
+	CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);
 	~CRepeaterHandler();
 
 	void resolveUserInt(const wxString& user, const wxString& repeater, const wxString& gateway, const wxString& address);
@@ -130,7 +137,7 @@ private:
 	static wxString  m_localAddress;
 	static CG2ProtocolHandler* m_g2Handler;
 	static CCacheManager* m_cache;
-	static IIRC*     m_irc;
+	static CIRCDDB*  m_irc;
 	static wxString  m_gateway;
 	static TEXT_LANG m_language;
 	static bool      m_dextraEnabled;
@@ -154,7 +161,12 @@ private:
 	double                    m_frequency;
 	double                    m_offset;
 	double                    m_range;
+	double                    m_latitude;
+	double                    m_longitude;
 	double                    m_agl;
+	wxString                  m_description1;
+	wxString                  m_description2;
+	wxString                  m_url;
 	unsigned char             m_band1;
 	unsigned char             m_band2;
 	unsigned char             m_band3;

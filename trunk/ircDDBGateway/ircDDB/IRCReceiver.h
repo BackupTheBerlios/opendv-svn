@@ -3,6 +3,7 @@
 CIRCDDB - ircDDB client library in C++
 
 Copyright (C) 2010   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+Copyright (C) 2012   Jonathan Naylor, G4KLX
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,12 +36,12 @@ class IRCReceiver : public wxThread
 
   IRCReceiver(int sock, IRCMessageQueue * q);
 
-  ~IRCReceiver();
+  virtual ~IRCReceiver();
 
 
-  bool startWork();
+  virtual bool startWork();
 
-  void stopWork();
+  virtual void stopWork();
 
 
   protected:

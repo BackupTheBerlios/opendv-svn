@@ -21,11 +21,11 @@
 
 const unsigned int BORDER_SIZE = 5U;
 
-CIRCDDBGatewayPreferences::CIRCDDBGatewayPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url, 
-						   const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1,
-						   const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2,
-						   const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3,
-						   const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4,
+CIRCDDBGatewayPreferences::CIRCDDBGatewayPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort,
+						   const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1, const wxString& description11, const wxString& description12, const wxString& url1,
+						   const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2, const wxString& description21, const wxString& description22, const wxString& url2,
+						   const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3, const wxString& description31, const wxString& description32, const wxString& url3,
+						   const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4, const wxString& description41, const wxString& description42, const wxString& url4,
 						   const wxString& hostname, const wxString& username, const wxString& password, TEXT_LANG language, bool infoEnabled, bool echoEnabled,
 						   bool logEnabled, bool dratsEnabled, bool dtmfEnabled, bool aprsEnabled, const wxString& aprsHostname, unsigned int aprsPort, bool dextraEnabled,
 						   unsigned int maxDExtraDongles, bool dplusEnabled, unsigned int maxDPlusDongles, const wxString& dplusLogin, bool dcsEnabled,
@@ -66,19 +66,19 @@ m_miscellaneous(NULL)
 
 	wxNotebook* noteBook = new wxNotebook(this, -1);
 
-	m_gateway = new CIRCDDBGatewayGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_gateway = new CIRCDDBGatewayGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort);
 	noteBook->AddPage(m_gateway, _("Gateway"), true);
 
-	m_repeater1 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, dplusEnabled, dextraEnabled, dcsEnabled, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1);
+	m_repeater1 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, dplusEnabled, dextraEnabled, dcsEnabled, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
 	noteBook->AddPage(m_repeater1, _("Repeater 1"), false);
 
-	m_repeater2 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, dplusEnabled, dextraEnabled, dcsEnabled, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2);
+	m_repeater2 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, dplusEnabled, dextraEnabled, dcsEnabled, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
 	noteBook->AddPage(m_repeater2, _("Repeater 2"), false);
 
-	m_repeater3 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, dplusEnabled, dextraEnabled, dcsEnabled, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3);
+	m_repeater3 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, dplusEnabled, dextraEnabled, dcsEnabled, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
 	noteBook->AddPage(m_repeater3, _("Repeater 3"), false);
 
-	m_repeater4 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, dplusEnabled, dextraEnabled, dcsEnabled, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4);
+	m_repeater4 = new CRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, dplusEnabled, dextraEnabled, dcsEnabled, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 	noteBook->AddPage(m_repeater4, _("Repeater 4"), false);
 
 	m_ircDDB = new CIrcDDBSet(noteBook, -1, APPLICATION_NAME, hostname, username, password);
@@ -231,31 +231,6 @@ unsigned int CIRCDDBGatewayPreferences::getHBPort() const
 	return m_gateway->getHBPort();
 }
 
-double CIRCDDBGatewayPreferences::getLatitude() const
-{
-	return m_gateway->getLatitude();
-}
-
-double CIRCDDBGatewayPreferences::getLongitude() const
-{
-	return m_gateway->getLongitude();
-}
-
-wxString CIRCDDBGatewayPreferences::getDescription1() const
-{
-	return m_gateway->getDescription1();
-}
-
-wxString CIRCDDBGatewayPreferences::getDescription2() const
-{
-	return m_gateway->getDescription2();
-}
-
-wxString CIRCDDBGatewayPreferences::getURL() const
-{
-	return m_gateway->getURL();
-}
-
 wxString CIRCDDBGatewayPreferences::getRepeaterBand1() const
 {
 	return m_repeater1->getBand();
@@ -334,6 +309,21 @@ double CIRCDDBGatewayPreferences::getLongitude1() const
 double CIRCDDBGatewayPreferences::getAGL1() const
 {
 	return m_repeater1->getAGL();
+}
+
+wxString CIRCDDBGatewayPreferences::getDescription11() const
+{
+	return m_repeater1->getDescription1();
+}
+
+wxString CIRCDDBGatewayPreferences::getDescription12() const
+{
+	return m_repeater1->getDescription2();
+}
+
+wxString CIRCDDBGatewayPreferences::getURL1() const
+{
+	return m_repeater1->getURL();
 }
 
 wxString CIRCDDBGatewayPreferences::getRepeaterBand2() const
@@ -416,6 +406,21 @@ double CIRCDDBGatewayPreferences::getAGL2() const
 	return m_repeater2->getAGL();
 }
 
+wxString CIRCDDBGatewayPreferences::getDescription21() const
+{
+	return m_repeater2->getDescription1();
+}
+
+wxString CIRCDDBGatewayPreferences::getDescription22() const
+{
+	return m_repeater2->getDescription2();
+}
+
+wxString CIRCDDBGatewayPreferences::getURL2() const
+{
+	return m_repeater2->getURL();
+}
+
 wxString CIRCDDBGatewayPreferences::getRepeaterBand3() const
 {
 	return m_repeater3->getBand();
@@ -496,6 +501,21 @@ double CIRCDDBGatewayPreferences::getAGL3() const
 	return m_repeater3->getAGL();
 }
 
+wxString CIRCDDBGatewayPreferences::getDescription31() const
+{
+	return m_repeater3->getDescription1();
+}
+
+wxString CIRCDDBGatewayPreferences::getDescription32() const
+{
+	return m_repeater3->getDescription2();
+}
+
+wxString CIRCDDBGatewayPreferences::getURL3() const
+{
+	return m_repeater3->getURL();
+}
+
 wxString CIRCDDBGatewayPreferences::getRepeaterBand4() const
 {
 	return m_repeater4->getBand();
@@ -574,6 +594,21 @@ double CIRCDDBGatewayPreferences::getLongitude4() const
 double CIRCDDBGatewayPreferences::getAGL4() const
 {
 	return m_repeater4->getAGL();
+}
+
+wxString CIRCDDBGatewayPreferences::getDescription41() const
+{
+	return m_repeater4->getDescription1();
+}
+
+wxString CIRCDDBGatewayPreferences::getDescription42() const
+{
+	return m_repeater4->getDescription2();
+}
+
+wxString CIRCDDBGatewayPreferences::getURL4() const
+{
+	return m_repeater4->getURL();
 }
 
 wxString CIRCDDBGatewayPreferences::getHostname() const

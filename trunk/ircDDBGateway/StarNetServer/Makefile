@@ -6,8 +6,7 @@ starnetserver:	StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig
 				StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o StarNetServerThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a
 				$(CC) $(LDFLAGS) -o starnetserver StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o \
 				StarNetServerLogRedirect.o StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o StarNetServerThreadHelper.o \
-				../ircDDB/libircDDB.a \
-				../Common/Common.a $(LIBS)
+				../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
 
 starnetserverd:	StarNetServerAppD.o StarNetServerConfig.o StarNetServerThread.o ../ircDDB/libircDDB.a ../Common/Common.a
 				$(CC) $(LDFLAGS) -o starnetserverd StarNetServerAppD.o StarNetServerConfig.o StarNetServerThread.o ../ircDDB/libircDDB.a ../Common/Common.a \
@@ -48,7 +47,7 @@ StarNetServerThreadHelper.o:		StarNetServerThreadHelper.cpp StarNetServerThreadH
 StarNetServerThread.o:		StarNetServerThread.cpp StarNetServerThread.h StarNetServerApp.h ../Common/Defs.h ../Common/CacheManager.h \
 							../Common/HeaderData.h ../Common/AMBEData.h ../Common/G2ProtocolHandler.h ../Common/DStarDefines.h ../Common/Utils.h \
 							../Common/Timer.h ../Common/G2Handler.h ../Common/HeaderLogger.h ../Common/StarNetHandler.h ../Common/RemoteHandler.h \
-							../Common/IRC.h
+							 ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c StarNetServerThread.cpp
 
 install:	starnetserver starnetserverd

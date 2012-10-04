@@ -3,7 +3,7 @@
 CIRCDDB - ircDDB client library in C++
 
 Copyright (C) 2010-2011   Michael Dirska, DL1BFF (dl1bff@mdx.de)
-Copyright (C) 2011   Jonathan Naylor, G4KLX
+Copyright (C) 2011,2012   Jonathan Naylor, G4KLX
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -71,23 +71,23 @@ int CIRCDDB::getConnectionState()
 }
 
 
-void CIRCDDB::rptrQTH( double latitude, double longitude, const wxString& desc1,
+void CIRCDDB::rptrQTH( const wxString& callsign, double latitude, double longitude, const wxString& desc1,
             const wxString& desc2, const wxString& infoURL )
 {
-  d->app->rptrQTH(latitude, longitude, desc1, desc2, infoURL);
+  d->app->rptrQTH(callsign, latitude, longitude, desc1, desc2, infoURL);
 }
 
 
-void CIRCDDB::rptrQRG( const wxString& module, double txFrequency, double duplexShift,
+void CIRCDDB::rptrQRG( const wxString& callsign, double txFrequency, double duplexShift,
     double range, double agl )
 {
-  d->app->rptrQRG(module, txFrequency, duplexShift, range, agl);
+  d->app->rptrQRG(callsign, txFrequency, duplexShift, range, agl);
 }
 
 
-void CIRCDDB::kickWatchdog ( const wxString& wdInfo )
+void CIRCDDB::kickWatchdog ( const wxString& callsign, const wxString& wdInfo )
 {
-  d->app->kickWatchdog( wdInfo );
+  d->app->kickWatchdog( callsign, wdInfo );
 }
 
 
@@ -342,7 +342,7 @@ IRCDDB_RESPONSE_TYPE CIRCDDB::getMessageType()
 
 // Get a gateway message, as a result of IDRT_REPEATER returned from getMessageType()
 // A false return implies a network error
-bool CIRCDDB::receiveRepeater(wxString& repeaterCallsign, wxString& gatewayCallsign, wxString& address, DSTAR_PROTOCOL& protocol)
+bool CIRCDDB::receiveRepeater(wxString& repeaterCallsign, wxString& gatewayCallsign, wxString& address)
 {
   IRCDDB_RESPONSE_TYPE rt = d->app->getReplyMessageType();
 
@@ -385,7 +385,7 @@ bool CIRCDDB::receiveRepeater(wxString& repeaterCallsign, wxString& gatewayCalls
 
 // Get a gateway message, as a result of IDRT_GATEWAY returned from getMessageType()
 // A false return implies a network error
-bool CIRCDDB::receiveGateway(wxString& gatewayCallsign, wxString& address, DSTAR_PROTOCOL& protocol)
+bool CIRCDDB::receiveGateway(wxString& gatewayCallsign, wxString& address)
 {
   IRCDDB_RESPONSE_TYPE rt = d->app->getReplyMessageType();
 

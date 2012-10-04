@@ -26,10 +26,11 @@ const unsigned int CONTROL_WIDTH1 = 130U;
 const unsigned int CONTROL_WIDTH2 = 80U;
 const unsigned int CONTROL_WIDTH3 = 40U;
 
-const unsigned int ADDRESS_LENGTH   = 15U;
-const unsigned int PORT_LENGTH      = 5U;
-const unsigned int FREQUENCY_LENGTH = 8U;
-const unsigned int OFFSET_LENGTH    = 6U;
+const unsigned int DESCRIPTION_LENGTH = 20U;
+const unsigned int ADDRESS_LENGTH     = 15U;
+const unsigned int PORT_LENGTH        = 5U;
+const unsigned int FREQUENCY_LENGTH   = 8U;
+const unsigned int OFFSET_LENGTH      = 6U;
 
 const unsigned int BORDER_SIZE = 5U;
 
@@ -43,7 +44,7 @@ BEGIN_EVENT_TABLE(CRepeaterSet, wxPanel)
 END_EVENT_TABLE()
 
 
-CRepeaterSet::CRepeaterSet(wxWindow* parent, int id, const wxString& title, const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, bool dplusEnabled, bool dExtraEnabled, bool dcsEnabled, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl) :
+CRepeaterSet::CRepeaterSet(wxWindow* parent, int id, const wxString& title, const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, bool dplusEnabled, bool dExtraEnabled, bool dcsEnabled, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url) :
 wxPanel(parent, id),
 m_title(title),
 m_band(NULL),
@@ -62,7 +63,10 @@ m_offset(NULL),
 m_range(NULL),
 m_latitude(NULL),
 m_longitude(NULL),
-m_agl(NULL)
+m_agl(NULL),
+m_description1(NULL),
+m_description2(NULL),
+m_url(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(3);
 
@@ -348,6 +352,35 @@ m_agl(NULL)
 	m_agl->SetMaxLength(PORT_LENGTH);
 	sizer->Add(m_agl, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
+	wxStaticText* dummy12Label = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy12Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("QTH"));
+	sizer->Add(descriptionLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_description1 = new wxTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_description1->SetMaxLength(DESCRIPTION_LENGTH);
+	sizer->Add(m_description1, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* dummy13Label = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy13Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	wxStaticText* dummy14Label = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy14Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_description2 = new wxTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_description2->SetMaxLength(DESCRIPTION_LENGTH);
+	sizer->Add(m_description2, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* dummy15Label = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy15Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	wxStaticText* urlLabel = new wxStaticText(this, -1, _("URL"));
+	sizer->Add(urlLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_url = new wxTextCtrl(this, -1, url, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	sizer->Add(m_url, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
 	if (isDDMode()) {
 		m_type->SetSelection(1);
 		m_reflector->SetSelection(0);
@@ -431,7 +464,26 @@ bool CRepeaterSet::Validate()
 	if (m_startup->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	return m_reconnect->GetCurrentSelection() != wxNOT_FOUND;
+	if (m_reconnect->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+
+	double latitude = getLatitude();
+
+	if (latitude < -90.0 || latitude > 90.0) {
+		wxMessageDialog dialog(this, _("The Latitude is invalid"), m_title + _(" Error"), wxICON_ERROR);
+		dialog.ShowModal();
+		return false;
+	}
+
+	double longitude = getLongitude();
+
+	if (longitude < -180.0 || longitude > 180.0) {
+		wxMessageDialog dialog(this, _("The Longitude is invalid"), m_title + _(" Error"), wxICON_ERROR);
+		dialog.ShowModal();
+		return false;
+	}
+
+	return true;
 }
 
 wxString CRepeaterSet::getBand() const
@@ -598,6 +650,21 @@ double CRepeaterSet::getLongitude() const
 	m_longitude->GetValue().ToDouble(&val);
 
 	return val;
+}
+
+wxString CRepeaterSet::getDescription1() const
+{
+	return m_description1->GetValue();
+}
+
+wxString CRepeaterSet::getDescription2() const
+{
+	return m_description2->GetValue();
+}
+
+wxString CRepeaterSet::getURL() const
+{
+	return m_url->GetValue();
 }
 
 double CRepeaterSet::getAGL() const

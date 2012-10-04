@@ -286,7 +286,7 @@ void CStarNetServerThread::addStarNet(const wxString& callsign, const wxString& 
 }
 #endif
 
-void CStarNetServerThread::setIRC(IIRC* irc)
+void CStarNetServerThread::setIRC(CIRCDDB* irc)
 {
 	wxASSERT(irc != NULL);
 
@@ -366,13 +366,12 @@ void CStarNetServerThread::processIrcDDB()
 
 			case IDRT_REPEATER: {
 					wxString repeater, gateway, address;
-					DSTAR_PROTOCOL protocol;
-					bool res = m_irc->receiveRepeater(repeater, gateway, address, protocol);
+					bool res = m_irc->receiveRepeater(repeater, gateway, address);
 					if (!res)
 						break;
 
 					if (!address.IsEmpty()) {
-						wxLogMessage(wxT("REPEATER: %s %s %s %d"), repeater.c_str(), gateway.c_str(), address.c_str(), protocol);
+						wxLogMessage(wxT("REPEATER: %s %s %s"), repeater.c_str(), gateway.c_str(), address.c_str());
 						m_cache.updateRepeater(repeater, gateway, address, DP_DEXTRA, false, false);
 					} else {
 						wxLogMessage(wxT("REPEATER: %s NOT FOUND"), repeater.c_str());
@@ -382,8 +381,7 @@ void CStarNetServerThread::processIrcDDB()
 
 			case IDRT_GATEWAY: {
 					wxString gateway, address;
-					DSTAR_PROTOCOL protocol;
-					bool res = m_irc->receiveGateway(gateway, address, protocol);
+					bool res = m_irc->receiveGateway(gateway, address);
 					if (!res)
 						break;
 
@@ -395,7 +393,7 @@ void CStarNetServerThread::processIrcDDB()
 #endif
 
 					if (!address.IsEmpty()) {
-						wxLogMessage(wxT("GATEWAY: %s %s %d"), gateway.c_str(), address.c_str(), protocol);
+						wxLogMessage(wxT("GATEWAY: %s %s"), gateway.c_str(), address.c_str());
 						m_cache.updateGateway(gateway, address, DP_DEXTRA, false, false);
 					} else {
 						wxLogMessage(wxT("GATEWAY: %s NOT FOUND"), gateway.c_str());

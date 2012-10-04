@@ -191,54 +191,54 @@ CIRCDDBGatewayStatusData* CIRCDDBGatewayApp::getStatus() const
 	return m_thread->getStatus();
 }
 
-void CIRCDDBGatewayApp::getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort, double& latitude, double& longitude, wxString& description1, wxString& description2, wxString& url) const
+void CIRCDDBGatewayApp::getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort) const
 {
-	m_config->getGateway(callsign, address, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_config->getGateway(callsign, address, icomAddress, icomPort, hbAddress, hbPort);
 }
 
-void CIRCDDBGatewayApp::setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url)
+void CIRCDDBGatewayApp::setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort)
 {
-	m_config->setGateway(callsign, address, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_config->setGateway(callsign, address, icomAddress, icomPort, hbAddress, hbPort);
 }
 
-void CIRCDDBGatewayApp::getRepeater1(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const
+void CIRCDDBGatewayApp::getRepeater1(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
 {
-	m_config->getRepeater1(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->getRepeater1(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::setRepeater1(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl)
+void CIRCDDBGatewayApp::setRepeater1(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
 {
-	m_config->setRepeater1(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->setRepeater1(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::getRepeater2(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const
+void CIRCDDBGatewayApp::getRepeater2(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
 {
-	m_config->getRepeater2(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->getRepeater2(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::setRepeater2(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl)
+void CIRCDDBGatewayApp::setRepeater2(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
 {
-	m_config->setRepeater2(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->setRepeater2(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::getRepeater3(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const
+void CIRCDDBGatewayApp::getRepeater3(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
 {
-	m_config->getRepeater3(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->getRepeater3(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::setRepeater3(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl)
+void CIRCDDBGatewayApp::setRepeater3(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
 {
-	m_config->setRepeater3(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->setRepeater3(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::getRepeater4(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl) const
+void CIRCDDBGatewayApp::getRepeater4(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
 {
-	m_config->getRepeater4(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->getRepeater4(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
-void CIRCDDBGatewayApp::setRepeater4(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl)
+void CIRCDDBGatewayApp::setRepeater4(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
 {
-	m_config->setRepeater4(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl);
+	m_config->setRepeater4(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
 }
 
 void CIRCDDBGatewayApp::getIrcDDB(wxString& hostname, wxString& username, wxString& password) const
@@ -432,10 +432,9 @@ void CIRCDDBGatewayApp::createThread()
 {
 	CIRCDDBGatewayThread* thread = new CIRCDDBGatewayThread(m_logDir, m_name);
 
-	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress, description1, description2, url;
+	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress;
 	unsigned int icomPort, hbPort;
-	double latitude, longitude;
-	getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort);
 
 	gatewayCallsign.MakeUpper();
 	gatewayCallsign.Append(wxT("        "));
@@ -446,9 +445,9 @@ void CIRCDDBGatewayApp::createThread()
 
 	gatewayCallsign.Append(wxT("G"));
 
-	wxLogInfo(wxT("Gateway callsign: \"%s\", address: %s, Icom address: %s:%u, homebrew address: %s:%u, latitude: %lf, longitude: %lf, description: \"%s %s\", URL: \"%s\""), gatewayCallsign.c_str(), gatewayAddress.c_str(), icomAddress.c_str(), icomPort, hbAddress.c_str(), hbPort, latitude, longitude, description1.c_str(), description2.c_str(), url.c_str());
+	wxLogInfo(wxT("Gateway callsign: \"%s\", address: %s, Icom address: %s:%u, homebrew address: %s:%u"), gatewayCallsign.c_str(), gatewayAddress.c_str(), icomAddress.c_str(), icomPort, hbAddress.c_str(), hbPort);
 
-	thread->setGateway(gatewayCallsign, gatewayAddress, latitude, longitude, description1, description2, url);
+	thread->setGateway(gatewayCallsign, gatewayAddress);
 
 	wxString aprsHostname;
 	unsigned int aprsPort;
@@ -477,14 +476,14 @@ void CIRCDDBGatewayApp::createThread()
 
 	unsigned int icomCount = 0U;
 
-	wxString repeaterCall1, repeaterBand1, repeaterAddress1, reflector1;
+	wxString repeaterCall1, repeaterBand1, repeaterAddress1, reflector1, description11, description12, url1;
 	double frequency1, offset1, range1, latitude1, longitude1, agl1;
 	unsigned char band11, band12, band13;
 	unsigned int repeaterPort1;
 	HW_TYPE repeaterType1;
 	bool atStartup1;
 	RECONNECT reconnect1;
-	getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1);
+	getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
 	if (!repeaterBand1.IsSameAs(wxT(" "))) {
 		wxString callsign1 = callsign;
 		if (!repeaterCall1.IsEmpty()) {
@@ -496,6 +495,7 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 1 callsign: \"%.7s%s\", hardware type: %d, address: %s:%u"), callsign1.c_str(), repeaterBand1.c_str(), int(repeaterType1), repeaterAddress1.c_str(), repeaterPort1);
 		wxLogInfo(wxT("Repeater 1 reflector: %s, at startup: %d, reconnect: %d"), reflector1.c_str(), atStartup1, reconnect1);
 		wxLogInfo(wxT("Repeater 1 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude1, longitude1, range1, agl1, frequency1, offset1);
+		wxLogInfo(wxT("Repeater 1 description: \"%s %s\", URL: \"%s\""), description11.c_str(), description12.c_str(), url1.c_str());
 
 		if (repeaterType1 == HW_ICOM && !icomAddress.IsEmpty()) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress1, repeaterPort1);
@@ -517,42 +517,28 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType1 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 1 bands: %u %u %u"), band11, band12, band13);
-			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, agl1, icomRepeaterHandler, band11, band12, band13);
+			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1, icomRepeaterHandler, band11, band12, band13);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude1 != 0.0)
-					lat = latitude1;
-				if (longitude1 != 0.0)
-					lon = longitude1;
-				aprs->setPort(callsign1, repeaterBand1, frequency1, offset1, range1, lat, lon, agl1);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign1, repeaterBand1, frequency1, offset1, range1, latitude1, longitude1, agl1);
 
 			icomCount++;
 		} else if (repeaterType1 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, agl1, hbRepeaterHandler);
+			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1, hbRepeaterHandler);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude1 != 0.0)
-					lat = latitude1;
-				if (longitude1 != 0.0)
-					lon = longitude1;
-				aprs->setPort(callsign1, repeaterBand1, frequency1, offset1, range1, lat, lon, agl1);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign1, repeaterBand1, frequency1, offset1, range1, latitude1, longitude1, agl1);
 		}
 	}
 
-	wxString repeaterCall2, repeaterBand2, repeaterAddress2, reflector2;
+	wxString repeaterCall2, repeaterBand2, repeaterAddress2, reflector2, description21, description22, url2;
 	double frequency2, offset2, range2, latitude2, longitude2, agl2;
 	unsigned char band21, band22, band23;
 	unsigned int repeaterPort2;
 	HW_TYPE repeaterType2;
 	bool atStartup2;
 	RECONNECT reconnect2;
-	getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2);
+	getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
 	if (!repeaterBand2.IsSameAs(wxT(" "))) {
 		wxString callsign2 = callsign;
 		if (!repeaterCall2.IsEmpty()) {
@@ -564,6 +550,7 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 2 callsign: \"%.7s%s\", hardware type: %d, address: %s:%u"), callsign2.c_str(), repeaterBand2.c_str(), int(repeaterType2), repeaterAddress2.c_str(), repeaterPort2);
 		wxLogInfo(wxT("Repeater 2 reflector: %s, at startup: %d, reconnect: %d"), reflector2.c_str(), atStartup2, reconnect2);
 		wxLogInfo(wxT("Repeater 2 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude2, longitude2, range2, agl2, frequency2, offset2);
+		wxLogInfo(wxT("Repeater 2 description: \"%s %s\", URL: \"%s\""), description21.c_str(), description22.c_str(), url2.c_str());
 
 		if (repeaterType2 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress2, repeaterPort2);
@@ -585,42 +572,28 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType2 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 2 bands: %u %u %u"), band21, band22, band23);
-			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, agl2, icomRepeaterHandler, band21, band22, band23);
+			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2, icomRepeaterHandler, band21, band22, band23);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude2 != 0.0)
-					lat = latitude2;
-				if (longitude2 != 0.0)
-					lon = longitude2;
-				aprs->setPort(callsign2, repeaterBand2, frequency2, offset2, range2, lat, lon, agl2);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign2, repeaterBand2, frequency2, offset2, range2, latitude2, longitude2, agl2);
 
 			icomCount++;
 		} else if (repeaterType2 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, agl2, hbRepeaterHandler);
+			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2, hbRepeaterHandler);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude2 != 0.0)
-					lat = latitude2;
-				if (longitude2 != 0.0)
-					lon = longitude2;
-				aprs->setPort(callsign2, repeaterBand2, frequency2, offset2, range2, lat, lon, agl2);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign2, repeaterBand2, frequency2, offset2, range2, latitude2, longitude2, agl2);
 		}
 	}
 
-	wxString repeaterCall3, repeaterBand3, repeaterAddress3, reflector3;
+	wxString repeaterCall3, repeaterBand3, repeaterAddress3, reflector3, description31, description32, url3;
 	double frequency3, offset3, range3, latitude3, longitude3, agl3;
 	unsigned char band31, band32, band33;
 	unsigned int repeaterPort3;
 	HW_TYPE repeaterType3;
 	bool atStartup3;
 	RECONNECT reconnect3;
-	getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3);
+	getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
 	if (!repeaterBand3.IsSameAs(wxT(" "))) {
 		wxString callsign3 = callsign;
 		if (!repeaterCall3.IsEmpty()) {
@@ -632,6 +605,7 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 3 callsign: \"%.7s%s\", hardware type: %d, address: %s:%u"), callsign3.c_str(), repeaterBand3.c_str(), int(repeaterType3), repeaterAddress3.c_str(), repeaterPort3);
 		wxLogInfo(wxT("Repeater 3 reflector: %s, at startup: %d, reconnect: %d"), reflector3.c_str(), atStartup3, reconnect3);
 		wxLogInfo(wxT("Repeater 3 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude3, longitude3, range3, agl3, frequency3, offset3);
+		wxLogInfo(wxT("Repeater 3 description: \"%s %s\", URL: \"%s\""), description31.c_str(), description32.c_str(), url3.c_str());
 
 		if (repeaterType3 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress3, repeaterPort3);
@@ -653,42 +627,28 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType3 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 3 bands: %u %u %u"), band31, band32, band33);
-			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, agl3, icomRepeaterHandler, band31, band32, band33);
+			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3, icomRepeaterHandler, band31, band32, band33);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude3 != 0.0)
-					lat = latitude3;
-				if (longitude3 != 0.0)
-					lon = longitude3;
-				aprs->setPort(callsign3, repeaterBand3, frequency3, offset3, range3, lat, lon, agl3);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign3, repeaterBand3, frequency3, offset3, range3, latitude3, longitude3, agl3);
 
 			icomCount++;
 		} else if (repeaterType3 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, agl3, hbRepeaterHandler);
+			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3, hbRepeaterHandler);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude3 != 0.0)
-					lat = latitude3;
-				if (longitude3 != 0.0)
-					lon = longitude3;
-				aprs->setPort(callsign3, repeaterBand3, frequency3, offset3, range3, lat, lon, agl3);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign3, repeaterBand3, frequency3, offset3, range3, latitude3, longitude3, agl3);
 		}
 	}
 
-	wxString repeaterCall4, repeaterBand4, repeaterAddress4, reflector4;
+	wxString repeaterCall4, repeaterBand4, repeaterAddress4, reflector4, description41, description42, url4;
 	double frequency4, offset4, range4, latitude4, longitude4, agl4;
 	unsigned char band41, band42, band43;
 	unsigned int repeaterPort4;
 	HW_TYPE repeaterType4;
 	bool atStartup4;
 	RECONNECT reconnect4;
-	getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4);
+	getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 	if (!repeaterBand4.IsSameAs(wxT(" "))) {
 		wxString callsign4 = callsign;
 		if (!repeaterCall4.IsEmpty()) {
@@ -700,6 +660,7 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 4 callsign: \"%.7s%s\", hardware type: %d, address: %s:%u"), callsign4.c_str(), repeaterBand4.c_str(), int(repeaterType4), repeaterAddress4.c_str(), repeaterPort4);
 		wxLogInfo(wxT("Repeater 4 reflector: %s, at startup: %d, reconnect: %d"), reflector4.c_str(), atStartup4, reconnect4);
 		wxLogInfo(wxT("Repeater 4 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude4, longitude4, range4, agl4, frequency4, offset4);
+		wxLogInfo(wxT("Repeater 4 description: \"%s %s\", URL: \"%s\""), description41.c_str(), description42.c_str(), url4.c_str());
 
 		if (repeaterType4 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress4, repeaterPort4);
@@ -721,31 +682,17 @@ void CIRCDDBGatewayApp::createThread()
 
 		if (repeaterType4 == HW_ICOM && icomRepeaterHandler != NULL) {
 			wxLogInfo(wxT("Repeater 4 bands: %u %u %u"), band41, band42, band43);
-			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, agl4, icomRepeaterHandler, band41, band42, band43);
+			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4, icomRepeaterHandler, band41, band42, band43);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude4 != 0.0)
-					lat = latitude4;
-				if (longitude4 != 0.0)
-					lon = longitude4;
-				aprs->setPort(callsign4, repeaterBand4, frequency4, offset4, range4, lat, lon, agl4);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign4, repeaterBand4, frequency4, offset4, range4, latitude4, longitude4, agl4);
 
 			icomCount++;
 		} else if (repeaterType4 == HW_HOMEBREW && hbRepeaterHandler != NULL) {
-			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, agl4, hbRepeaterHandler);
+			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4, hbRepeaterHandler);
 
-			if (aprs != NULL) {
-				double lat = latitude;
-				double lon = longitude;
-				if (latitude4 != 0.0)
-					lat = latitude4;
-				if (longitude4 != 0.0)
-					lon = longitude4;
-				aprs->setPort(callsign4, repeaterBand4, frequency4, offset4, range4, lat, lon, agl4);
-			}
+			if (aprs != NULL)
+				aprs->setPort(callsign4, repeaterBand4, frequency4, offset4, range4, latitude4, longitude4, agl4);
 		}
 	}
 

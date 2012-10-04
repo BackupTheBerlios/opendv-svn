@@ -27,7 +27,7 @@
 
 class CRepeaterSet : public wxPanel {
 public:
-	CRepeaterSet(wxWindow* parent, int id, const wxString& title, const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, bool dplusEnabled, bool dExtraEnabled, bool dcsEnabled, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl);
+	CRepeaterSet(wxWindow* parent, int id, const wxString& title, const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, bool dplusEnabled, bool dExtraEnabled, bool dcsEnabled, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url);
 	virtual ~CRepeaterSet();
 
 	virtual bool Validate();
@@ -49,9 +49,14 @@ public:
 	virtual double       getFrequency() const;
 	virtual double       getOffset() const;
 	virtual double       getRange() const;
+
 	virtual double       getLatitude() const;
 	virtual double       getLongitude() const;
 	virtual double       getAGL() const;
+
+	virtual wxString     getDescription1() const;
+	virtual wxString     getDescription2() const;
+	virtual wxString     getURL() const;
 
 	virtual void onBand(wxCommandEvent& event);
 	virtual void onType(wxCommandEvent& event);
@@ -75,6 +80,9 @@ private:
 	wxTextCtrl*        m_latitude;
 	wxTextCtrl*        m_longitude;
 	wxTextCtrl*        m_agl;
+	wxTextCtrl*        m_description1;
+	wxTextCtrl*        m_description2;
+	wxTextCtrl*        m_url;
 
 	bool isDDMode() const;
 
