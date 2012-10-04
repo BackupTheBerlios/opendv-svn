@@ -1739,4 +1739,3 @@ Updated DCS protocol.
 Added support for the 70cms DVAP.
 Use the DVAP to validate its own frequency.
 Add a pause in the GMSK Repeater before PTT is set to on.
-Added CCS to the DCS Gateway.

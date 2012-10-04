@@ -191,22 +191,21 @@ void CDCSGatewayFrame::onClose(wxCloseEvent& event)
 
 void CDCSGatewayFrame::onPreferences(wxCommandEvent& event)
 {
-	wxString callsign, locator, reflector;
+	wxString callsign, reflector;
 	bool atStartup;
 	RECONNECT reconnect;
 	TEXT_LANG language;
-	::wxGetApp().getReflector(callsign, locator, reflector, atStartup, reconnect, language);
+	::wxGetApp().getReflector(callsign, reflector, atStartup, reconnect, language);
 
 	wxString repeaterCallsign, repeaterAddress, localAddress;
 	unsigned int repeaterPort, localPort;
 	::wxGetApp().getRepeater(repeaterCallsign, repeaterAddress, repeaterPort, localAddress, localPort);
 
-	CDCSGatewayPreferences dialog1(this, -1, callsign, locator, reflector, atStartup, reconnect, language, repeaterCallsign, repeaterAddress, repeaterPort, localAddress, localPort);
+	CDCSGatewayPreferences dialog1(this, -1, callsign, reflector, atStartup, reconnect, language, repeaterCallsign, repeaterAddress, repeaterPort, localAddress, localPort);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
 	callsign  = dialog1.getCallsign();
-	locator   = dialog1.getLocator();
 	reflector = dialog1.getReflector();
 	atStartup = dialog1.atStartup();
 	reconnect = dialog1.getReconnect();
@@ -218,7 +217,7 @@ void CDCSGatewayFrame::onPreferences(wxCommandEvent& event)
 	localAddress     = dialog1.getLocalAddress();
 	localPort        = dialog1.getLocalPort();
 
-	::wxGetApp().setReflector(callsign, locator, reflector, atStartup, reconnect, language);
+	::wxGetApp().setReflector(callsign, reflector, atStartup, reconnect, language);
 	::wxGetApp().setRepeater(repeaterCallsign, repeaterAddress, repeaterPort, localAddress, localPort);
 	::wxGetApp().writeConfig();
 
@@ -238,7 +237,7 @@ void CDCSGatewayFrame::onAbout(wxCommandEvent& event)
 	info.SetCopyright(wxT("(C) 2012 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
-	info.SetDescription(_("This program allows a computer running a homebrew\nrepeater to access DCS reflectors and CCS routing."));
+	info.SetDescription(_("This program allows a computer running a homebrew\nrepeater to access DCS reflectors."));
 
 	::wxAboutBox(info);
 }
@@ -254,6 +253,9 @@ void CDCSGatewayFrame::onTimer(wxTimerEvent& event)
 
 	wxString text;
 	switch (status->getState()) {
+		case LINK_NONE:
+			m_state->SetLabel(_("Not linked"));
+			break;
 		case LINK_LINKING:
 			text.Printf(_("Linking to %s"), status->getReflector().c_str());
 			m_state->SetLabel(text);
@@ -261,9 +263,6 @@ void CDCSGatewayFrame::onTimer(wxTimerEvent& event)
 		case LINK_LINKED:
 			text.Printf(_("Linked to %s"), status->getReflector().c_str());
 			m_state->SetLabel(text);
-			break;
-		default:
-			m_state->SetLabel(_("Not linked"));
 			break;
 	}
 

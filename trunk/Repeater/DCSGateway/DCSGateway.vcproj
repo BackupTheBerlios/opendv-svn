@@ -189,10 +189,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DCSGatewayCCSProtocolHandler.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DCSGatewayConfig.cpp"
 				>
 			</File>
@@ -264,10 +260,6 @@
 			</File>
 			<File
 				RelativePath=".\DCSGatewayCallback.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DCSGatewayCCSProtocolHandler.h"
 				>
 			</File>
 			<File

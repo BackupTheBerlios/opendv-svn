@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,16 +27,15 @@
 
 class CDCSGatewayPreferences : public wxDialog {
 public:
-	CDCSGatewayPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& locator,
-		const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language,
-		const wxString& repeaterCallsign, const wxString& repeaterAddress, unsigned int repeaterPort,
-		const wxString& localAddress, unsigned int localPort);
+	CDCSGatewayPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& reflector,
+		bool atStartup, RECONNECT reconnect, TEXT_LANG language, const wxString& repeaterCallsign,
+		const wxString& repeaterAddress, unsigned int repeaterPort, const wxString& localAddress,
+		unsigned int localPort);
 	virtual ~CDCSGatewayPreferences();
 
 	virtual bool Validate();
 
 	virtual wxString     getCallsign() const;
-	virtual wxString     getLocator() const;
 	virtual wxString     getReflector() const;
 	virtual bool         atStartup() const;
 	virtual RECONNECT    getReconnect() const;

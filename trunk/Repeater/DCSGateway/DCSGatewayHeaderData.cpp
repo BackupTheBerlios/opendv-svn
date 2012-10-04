@@ -151,29 +151,6 @@ bool CDCSGatewayHeaderData::setDCSData(const unsigned char *data, unsigned int l
 	return true;
 }
 
-bool CDCSGatewayHeaderData::setCCSData(const unsigned char *data, unsigned int length)
-{
-	wxASSERT(data != NULL);
-
-	if (length < 100U) {
-		wxLogMessage(wxT("Header data from CCS is too short, %u < 100"), length);
-		return false;
-	}
-
-	if (data[0] != '0' || data[1] != '0' || data[2] != '0' || data[3] != '1') {
-		CUtils::dump(wxT("Invalid signature from CCS"), data, length);
-		return false;
-	}
-
-	m_id = data[43U] * 256U + data[44U];
-
-	::memcpy(m_yourCall, data + 23U, LONG_CALLSIGN_LENGTH);
-	::memcpy(m_myCall1,  data + 31U, LONG_CALLSIGN_LENGTH);
-	::memcpy(m_myCall2,  data + 39U, SHORT_CALLSIGN_LENGTH);
-
-	return true;
-}
-
 unsigned int CDCSGatewayHeaderData::getRepeaterData(unsigned char *data, unsigned int length, bool check) const
 {
 	wxASSERT(data != NULL);
@@ -227,58 +204,6 @@ unsigned int CDCSGatewayHeaderData::getDCSData(unsigned char* data, unsigned int
 	::memcpy(data + 23U, "CQCQCQ  ", LONG_CALLSIGN_LENGTH);
 	::memcpy(data + 31U, m_myCall1,  LONG_CALLSIGN_LENGTH);
 	::memcpy(data + 39U, m_myCall2,  SHORT_CALLSIGN_LENGTH);
-
-	return 100U;
-}
-
-unsigned int CDCSGatewayHeaderData::getCCSData(unsigned char* data, unsigned int length) const
-{
-	wxASSERT(data != NULL);
-	wxASSERT(length >= 100U);
-
-	::memset(data, ' ', 100U);
-
-	data[0U]  = '0';
-	data[1U]  = '0';
-	data[2U]  = '0';
-	data[3U]  = '1';
-
-	data[4U]  = 0x00U;
-	data[5U]  = 0x00U;
-	data[6U]  = 0x00U;
-
-	::memcpy(data + 23U, "CQCQCQ  ", LONG_CALLSIGN_LENGTH);
-	::memcpy(data + 31U, m_myCall1,  LONG_CALLSIGN_LENGTH);
-	::memcpy(data + 39U, m_myCall2,  SHORT_CALLSIGN_LENGTH);
-
-	data[43U] = 0xFFU;
-	data[44U] = 0xFFU;
-
-	for (unsigned int i = 45U; i < 61U; i++)
-		data[i] = 0x00U;
-
-	data[61U] = 0x01U;
-	data[62U] = 0x00U;
-	data[63U] = 0x21U;
-
-	data[84U] = 0x00U;
-	data[85U] = 0x00U;
-	data[86U] = 0x00U;
-	data[87U] = 0x00U;
-	data[88U] = 0x00U;
-	data[89U] = 0x00U;
-	data[90U] = 0x00U;
-	data[91U] = 0x00U;
-	data[92U] = 0x00U;
-
-	data[93U] = 0x30U;
-
-	data[94U] = 0x00U;
-	data[95U] = 0x00U;
-	data[96U] = 0x00U;
-	data[97U] = 0x00U;
-	data[98U] = 0x00U;
-	data[99U] = 0x00U;
 
 	return 100U;
 }

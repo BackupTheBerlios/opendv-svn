@@ -38,7 +38,6 @@ m_reflectors(),
 m_hostnames(),
 m_repeaterHandler(NULL),
 m_dcsHandler(),
-m_ccsHandler(),
 m_audioUnit(NULL),
 m_echoUnit(NULL),
 m_header(),
@@ -57,7 +56,6 @@ m_reconnect(RECONNECT_NEVER),
 m_language(TL_ENGLISH_UK),
 m_reconnectTimer(1000U, 0U),
 m_watchdogTimer(1000U, 2U),
-m_ccsTimer(1000U, 300U),
 m_id(0U),
 m_seq(0U),
 m_echo(false),
@@ -116,8 +114,6 @@ void* CDCSGatewayThread::Entry()
 		link(m_startupReflector);
 	}
 
-	m_ccsHandler.registration(CCS_HOST, CCS_PORT);
-
 	wxStopWatch timer;
 
 	while (!m_killed) {
@@ -129,7 +125,6 @@ void* CDCSGatewayThread::Entry()
 
 			bool rptData = true;
 			bool dcsData = true;
-			bool ccsData = true;
 
 			REPEATER_TYPE rptType = m_repeaterHandler->read();
 			switch (rptType) {
@@ -143,7 +138,6 @@ void* CDCSGatewayThread::Entry()
 						wxLogMessage(wxT("Repeater header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
 						showHeader(*header);
 						commandHandler(header->getYourCall());
-						m_ccsHandler.writeUserStatus(*header);
 						if (m_echo)
 							m_echoUnit->writeHeader(*header);
 						delete header;
@@ -156,33 +150,24 @@ void* CDCSGatewayThread::Entry()
 				case RT_DATA:
 					data = m_repeaterHandler->readData();
 					if (data != NULL) {
-						// Get the slow data text
-						if (m_text.IsEmpty()) {
-							m_textCollector.writeData(*data);
+						if (m_state == LINK_LINKED && !m_echo && !m_info) {
+							// Get the slow data text
+							if (m_text.IsEmpty()) {
+								m_textCollector.writeData(*data);
 
-							bool hasData = m_textCollector.hasData();
-							if (hasData) {
-								m_text = m_textCollector.getData();
-								CDCSGatewayAMBEData::setText(m_text);
+								bool hasData = m_textCollector.hasData();
+								if (hasData) {
+									m_text = m_textCollector.getData();
+									CDCSGatewayAMBEData::setText(m_text);
+								}
 							}
-						}
 
-						if (m_echo) {
+							data->setRptSeq(m_seq);
+							m_seq++;
+
+							m_dcsHandler.writeData(m_header, *data);
+						} else if (m_echo) {
 							m_echoUnit->writeData(*data);
-						} else if (m_info) {
-							// Do nothing
-						} else {
-							if (m_state == LINK_LINKED && (m_yourCall.Right(1U).IsSameAs(wxT("L")) || m_yourCall.Left(4U).IsSameAs(wxT("CQCQ")))) {
-								data->setRptSeq(m_seq);
-								m_seq++;
-
-								m_dcsHandler.writeData(m_header, *data);
-							} else if (m_state == LINK_CCS) {
-								data->setRptSeq(m_seq);
-								m_seq++;
-
-								m_ccsHandler.writeData(m_header, *data);
-							}
 						}
 
 						bool end = data->isEnd();
@@ -245,77 +230,12 @@ void* CDCSGatewayThread::Entry()
 					break;
 			}
 
-			CCS_TYPE ccsType = m_ccsHandler.read();
-			switch (ccsType) {
-				case CT_NONE:
-					ccsData = false;
-					break;
-				case CT_DATA:
-					data = m_ccsHandler.readData();
-					if (data != NULL) {
-						unsigned int id = data->getId();
-						if (m_id == 0x00U) {
-							CDCSGatewayHeaderData* header = m_ccsHandler.getHeader();
-							if (header != NULL) {
-								wxLogMessage(wxT("CCS header - My: %s/%s  Your: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str());
-								m_id = id;
-								showHeader(*header);
-								writeHeader(*header);
-								m_watchdogTimer.start();
-							}
-							delete header;
-						}
-
-						if (id == m_id) {
-							unsigned int seq = data->getRptSeq();
-
-							// Repeat the header every two seconds
-							if ((seq % 100U) == 0U) {
-								CDCSGatewayHeaderData* header = m_ccsHandler.getHeader();
-								writeHeader(*header);
-								delete header;
-							}
-
-							writeData(*data);
-							m_watchdogTimer.reset();
-
-							bool end = data->isEnd();
-							if (end) {
-								m_watchdogTimer.stop();
-								clearHeader();
-								m_id = 0x00U;
-							}
-						}
-						delete data;
-					}
-					break;
-				case CT_TERMINATE:
-					if (m_state == LINK_CCS) {
-						wxLogMessage(wxT("CCS routing terminated by remote system"));
-						m_ccsTimer.stop();
-						m_state = LINK_NONE;
-					}
-					ccsData = false;
-					break;
-				case CT_QUERY:
-					ccsData = false;
-					m_ccsHandler.writeQueryReply(m_state == LINK_CCS, m_yourCall, m_ccsTimer.getRemaining());
-					break;
-				case CT_QUERY_REPLY:
-					ccsData = false;
-					break;
-			}
-
 			// Any activity resets the reconnect timer
-			if (rptData || dcsData || ccsData) {
-				if (m_state == LINK_CCS)
-					m_ccsTimer.start();
-
+			if (rptData || dcsData)
 				m_reconnectTimer.start();
-			}
 
 			// No more work to be done?
-			if (!rptData && !dcsData && !ccsData)
+			if (!rptData && !dcsData)
 				break;
 		}
 
@@ -324,12 +244,6 @@ void* CDCSGatewayThread::Entry()
 			clearHeader();
 			m_watchdogTimer.stop();
 			m_id = 0x00U;
-		}
-
-		if (m_ccsTimer.isRunning() && m_ccsTimer.hasExpired()) {
-			wxLogMessage(wxT("CCS timer has expired"));
-			m_ccsHandler.writeTerminate();
-			m_ccsTimer.stop();
 		}
 
 		if (m_reconnectTimer.isRunning() && m_reconnectTimer.hasExpired()) {
@@ -342,7 +256,7 @@ void* CDCSGatewayThread::Entry()
 			}
 		}
 
-		if (m_state == LINK_LINKING || m_state == LINK_LINKED) {
+		if (m_state != LINK_NONE) {
 			bool connected = m_dcsHandler.isConnected();
 
 			if (m_state == LINK_LINKING && connected) {
@@ -368,7 +282,6 @@ void* CDCSGatewayThread::Entry()
 		m_dcsHandler.clock(ms);
 		m_reconnectTimer.clock(ms);
 		m_watchdogTimer.clock(ms);
-		m_ccsTimer.clock(ms);
 
 		m_audioUnit->clock(ms);
 		m_echoUnit->clock(ms);
@@ -377,7 +290,6 @@ void* CDCSGatewayThread::Entry()
 	wxLogMessage(wxT("Stopping the DCS Gateway thread"));
 
 	m_dcsHandler.unlink();
-	m_ccsHandler.cancelation();
 
 	m_repeaterHandler->close();
 	delete m_repeaterHandler;
@@ -396,12 +308,9 @@ void CDCSGatewayThread::kill()
 	m_killed = true;
 }
 
-void CDCSGatewayThread::setReflector(const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language)
+void CDCSGatewayThread::setReflector(const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language)
 {
 	m_dcsHandler.setCallsign(callsign);
-	m_ccsHandler.setCallsign(callsign);
-
-	m_ccsHandler.setLocator(locator);
 
 	m_startupReflector = reflector;
 	m_atStartup        = atStartup;
@@ -465,83 +374,56 @@ void CDCSGatewayThread::commandHandler(const wxString& yourCall)
 		return;
 	}
 
-	if (yourCall.IsSameAs(wxT("       X"))) {
-		if (m_state == LINK_CCS) {
-			wxLogMessage(wxT("CCS routing ended by %s"), m_myCall.c_str());
-			m_ccsHandler.writeTerminate();
-			m_ccsTimer.stop();
-			m_state = LINK_NONE;
-		}
-		return;
-	}
-
 	if (m_reconnect == RECONNECT_FIXED)
 		return;
 
-	wxString letter = yourCall.Right(1U);
+	wxString letter = yourCall.Right(1);
 
 	if (letter.IsSameAs(wxT("U"))) {
-		if (m_state == LINK_LINKING || m_state == LINK_LINKED) {
-			writeNotLinked();
+		writeNotLinked();
 
-			wxLogMessage(wxT("Unlink command issued by %s"), m_myCall.c_str());
-			unlink();
-		}
+		wxLogMessage(wxT("Unlink command issued by %s"), m_myCall.c_str());
+		unlink();
 	} else if (letter.IsSameAs(wxT("L"))) {
-		if (m_state != LINK_CCS) {
-			// Extract the callsign "1234567L" -> "123456 7"
-			wxString reflector = yourCall.Left(LONG_CALLSIGN_LENGTH - 2U);
-			reflector.Append(wxT(" "));
-			reflector.Append(yourCall.Mid(LONG_CALLSIGN_LENGTH - 2U, 1));
+		// Extract the callsign "1234567L" -> "123456 7"
+		wxString reflector = yourCall.Left(LONG_CALLSIGN_LENGTH - 2U);
+		reflector.Append(wxT(" "));
+		reflector.Append(yourCall.Mid(LONG_CALLSIGN_LENGTH - 2U, 1));
 
-			// Check for a duplicate link command
-			if (m_reflector.IsSameAs(reflector))
-				return;
+		// Check for a duplicate link command
+		if (m_reflector.IsSameAs(reflector))
+			return;
 
-			// Validate the reflector callsign
-			wxString baseName = reflector.Left(LONG_CALLSIGN_LENGTH - 1U).Trim();
-			int index = m_reflectors.Index(baseName);
-			if (index == wxNOT_FOUND) {
-				wxLogMessage(wxT("Invalid link command to %s issued by %s"), reflector.c_str(), m_myCall.c_str());
-				return;
-			}
-
-			wxLogMessage(wxT("Link command to %s issued by %s"), reflector.c_str(), m_myCall.c_str());
-			unlink();
-			link(reflector);
-
-			writeLinkingTo(reflector);
-		}
-	} else if (!yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
-		if (m_state != LINK_CCS) {
-			wxLogMessage(wxT("CCS route started by %s -> %s"), m_myCall.c_str(), yourCall.c_str());
-
-			writeNotLinked();
-			unlink();
-
-			m_state = LINK_CCS;
+		// Validate the reflector callsign
+		wxString baseName = reflector.Left(LONG_CALLSIGN_LENGTH - 1U).Trim();
+		int index = m_reflectors.Index(baseName);
+		if (index == wxNOT_FOUND) {
+			wxLogMessage(wxT("Invalid link command to %s issued by %s"), reflector.c_str(), m_myCall.c_str());
+			return;
 		}
 
-		m_ccsTimer.start();
-		m_ccsHandler.setRemote(yourCall);
+		wxLogMessage(wxT("Link command to %s issued by %s"), reflector.c_str(), m_myCall.c_str());
+		unlink();
+		link(reflector);
+
+		writeLinkingTo(reflector);
 	}
 }
 
 void CDCSGatewayThread::unlink()
 {
 	// Anything to do?
-	if (m_state != LINK_LINKING && m_state != LINK_LINKED)
+	if (m_state == LINK_NONE)
 		return;
 
 	m_dcsHandler.unlink();
-	m_ccsHandler.setReflector(wxEmptyString);
 
 	m_state = LINK_NONE;
 }
 
 bool CDCSGatewayThread::link(const wxString &reflector)
 {
-	if (m_state == LINK_LINKING || m_state == LINK_LINKED)
+	if (m_state != LINK_NONE)
 		unlink();
 
 	wxString baseName = reflector.Left(LONG_CALLSIGN_LENGTH - 1U).Trim();
@@ -560,7 +442,6 @@ bool CDCSGatewayThread::link(const wxString &reflector)
 		m_state     = LINK_LINKING;
 		m_header.setRptCall2(reflector);
 		m_header.setRptCall1(m_repeaterCall);
-		m_ccsHandler.setReflector(reflector);
 	}
 
 	return res;

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 const unsigned int BORDER_SIZE = 5U;
 
-CDCSGatewayPreferences::CDCSGatewayPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& locator,
+CDCSGatewayPreferences::CDCSGatewayPreferences(wxWindow* parent, int id, const wxString& callsign,
 													 const wxString& reflector, bool atStartup,
 													 RECONNECT reconnect, TEXT_LANG language,
 													 const wxString& repeaterCallsign,
@@ -36,7 +36,7 @@ m_repeater(NULL)
 
 	wxNotebook* noteBook = new wxNotebook(this, -1);
 
-	m_reflector = new CDCSGatewayReflectorSet(noteBook, -1, APPLICATION_NAME, callsign, locator, reflector, atStartup, reconnect, language);
+	m_reflector = new CDCSGatewayReflectorSet(noteBook, -1, APPLICATION_NAME, callsign, reflector, atStartup, reconnect, language);
 	noteBook->AddPage(m_reflector, _("Reflector"), true);
 
 	m_repeater = new CDCSGatewayRepeaterSet(noteBook, -1, APPLICATION_NAME, repeaterCallsign, repeaterAddress, repeaterPort, localAddress, localPort);
@@ -70,11 +70,6 @@ bool CDCSGatewayPreferences::Validate()
 wxString CDCSGatewayPreferences::getCallsign() const
 {
 	return m_reflector->getCallsign();
-}
-
-wxString CDCSGatewayPreferences::getLocator() const
-{
-	return m_reflector->getLocator();
 }
 
 wxString CDCSGatewayPreferences::getReflector() const

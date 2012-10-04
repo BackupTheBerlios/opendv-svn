@@ -166,13 +166,13 @@ bool CDCSGatewayD::createThread()
 
 	m_thread = new CDCSGatewayThread;
 
-	wxString callsign, locator, reflector;
+	wxString callsign, reflector;
 	bool atStartup;
 	RECONNECT reconnect;
 	TEXT_LANG language;
-	config.getReflector(callsign, locator, reflector, atStartup, reconnect, language);
-	wxLogInfo(wxT("Callsign set to %s, locator set to %s, reflector set to %s, at startup: %d, reconnect: %d, language: %d"), callsign.c_str(), locator.c_str(), reflector.c_str(), atStartup, reconnect, language);
-	m_thread->setReflector(callsign, locator, reflector, atStartup, reconnect, language);
+	config.getReflector(callsign, reflector, atStartup, reconnect, language);
+	wxLogInfo(wxT("Callsign set to %s, reflector set to %s, at startup: %d, reconnect: %d, language: %d"), callsign.c_str(), reflector.c_str(), atStartup, reconnect, language);
+	m_thread->setReflector(callsign, reflector, atStartup, reconnect, language);
 
 	wxString repeaterCallsign, repeaterAddress, localAddress;
 	unsigned int repeaterPort, localPort;

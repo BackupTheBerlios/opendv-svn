@@ -25,11 +25,10 @@ const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 130U;
 const unsigned int CONTROL_WIDTH2 = 60U;
 
-CDCSGatewayReflectorSet::CDCSGatewayReflectorSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& locator, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language) :
+CDCSGatewayReflectorSet::CDCSGatewayReflectorSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& reflector, bool atStartup, RECONNECT reconnect, TEXT_LANG language) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
-m_locator(NULL),
 m_reflector(NULL),
 m_channel(NULL),
 m_startup(NULL),
@@ -44,16 +43,6 @@ m_language(NULL)
 	m_callsign = new CCallsignTextCtrl(this, -1, callsign, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_callsign->SetMaxLength(LONG_CALLSIGN_LENGTH);
 	sizer->Add(m_callsign, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy0Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy0Label, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* locatorLabel = new wxStaticText(this, -1, _("Locator"));
-	sizer->Add(locatorLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	m_locator = new CLocatorTextCtrl(this, -1, locator, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_locator->SetMaxLength(LOCATOR_LENGTH);
-	sizer->Add(m_locator, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* dummy1Label = new wxStaticText(this, -1, wxEmptyString);
 	sizer->Add(dummy1Label, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -194,13 +183,6 @@ bool CDCSGatewayReflectorSet::Validate()
 		return false;
 	}
 
-	res = getLocator().IsEmpty();
-	if (res) {
-		wxMessageDialog dialog(this, _("The Locator may not be empty"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
 	if (m_reflector->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
@@ -219,11 +201,6 @@ bool CDCSGatewayReflectorSet::Validate()
 wxString CDCSGatewayReflectorSet::getCallsign() const
 {
 	return m_callsign->GetValue();
-}
-
-wxString CDCSGatewayReflectorSet::getLocator() const
-{
-	return m_locator->GetValue();
 }
 
 wxString CDCSGatewayReflectorSet::getReflector() const
