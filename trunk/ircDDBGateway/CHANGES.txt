@@ -1,4 +1,4 @@
-ircDDB Gateway - 20120908
+ircDDB Gateway - 20121004
 =========================
 
 20101010
@@ -1111,7 +1111,7 @@ More changes to the DCS protocol.
 Added XRF018 and XRF250.
 Added SVN revsion number to the log file.
 
-2012xxxx
+20121004
 --------
 
 Sort the reflector list in the Remote Control by protocol.

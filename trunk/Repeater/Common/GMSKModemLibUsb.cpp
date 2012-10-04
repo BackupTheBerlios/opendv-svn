@@ -236,11 +236,11 @@ int CGMSKModemLibUsb::readData(unsigned char* data, unsigned int length, bool& e
 
 	int ret = io(0xC0, GET_DATA, 0, 0, (char*)data, GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
 	if (ret < 0) {
-		wxString errorText(m_usbStrerror(), wxConvLocal);
-		wxLogMessage(wxT("GET_DATA, ret: %d, err=%s"), ret, errorText.c_str());
-
-		if (ret == -19)		// -ENODEV
+		if (ret == -19) {		// -ENODEV
+			wxString errorText(m_usbStrerror(), wxConvLocal);
+			wxLogMessage(wxT("GET_DATA, ret: %d, err=%s"), ret, errorText.c_str());
 			return ret;
+		}
 
 		return 0;
 	} else if (ret == 0) {
@@ -635,10 +635,10 @@ int CGMSKModemLibUsb::readData(unsigned char* data, unsigned int length, bool& e
 
 	int ret = io(0xC0, GET_DATA, 0, 0, data, GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
 	if (ret < 0) {
-		wxLogMessage(wxT("GET_DATA, err=%d"), ret);
-
-		if (ret == LIBUSB_ERROR_NO_DEVICE)
+		if (ret == LIBUSB_ERROR_NO_DEVICE) {
+			wxLogMessage(wxT("GET_DATA, err=%d"), ret);
 			return ret;
+		}
 
 		return 0;
 	} else if (ret == 0) {
