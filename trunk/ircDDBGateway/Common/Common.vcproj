@@ -349,11 +349,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RepeaterDataSet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\RepeaterHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RepeaterSet.cpp"
+				RelativePath=".\RepeaterInfoSet.cpp"
 				>
 			</File>
 			<File
@@ -639,15 +643,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RepeaterDataSet.h"
+				>
+			</File>
+			<File
 				RelativePath=".\RepeaterHandler.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RepeaterProtocolHandler.h"
+				RelativePath=".\RepeaterInfoSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RepeaterSet.h"
+				RelativePath=".\RepeaterProtocolHandler.h"
 				>
 			</File>
 			<File

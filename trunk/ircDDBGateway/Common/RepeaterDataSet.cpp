@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "RepeaterDataSet.h"
 #include "DStarDefines.h"
-#include "RepeaterSet.h"
 #include "HostFile.h"
 
 #include <wx/filename.h>
@@ -26,11 +26,8 @@ const unsigned int CONTROL_WIDTH1 = 130U;
 const unsigned int CONTROL_WIDTH2 = 80U;
 const unsigned int CONTROL_WIDTH3 = 40U;
 
-const unsigned int DESCRIPTION_LENGTH = 20U;
-const unsigned int ADDRESS_LENGTH     = 15U;
-const unsigned int PORT_LENGTH        = 5U;
-const unsigned int FREQUENCY_LENGTH   = 8U;
-const unsigned int OFFSET_LENGTH      = 6U;
+const unsigned int ADDRESS_LENGTH = 15U;
+const unsigned int PORT_LENGTH    = 5U;
 
 const unsigned int BORDER_SIZE = 5U;
 
@@ -38,13 +35,13 @@ const unsigned int BORDER_SIZE = 5U;
 const int CHOICE_BAND = 8745;
 const int CHOICE_TYPE = 8746;
 
-BEGIN_EVENT_TABLE(CRepeaterSet, wxPanel)
-	EVT_CHOICE(CHOICE_BAND, CRepeaterSet::onBand)
-	EVT_CHOICE(CHOICE_TYPE, CRepeaterSet::onType)
+BEGIN_EVENT_TABLE(CRepeaterDataSet, wxPanel)
+	EVT_CHOICE(CHOICE_BAND, CRepeaterDataSet::onBand)
+	EVT_CHOICE(CHOICE_TYPE, CRepeaterDataSet::onType)
 END_EVENT_TABLE()
 
 
-CRepeaterSet::CRepeaterSet(wxWindow* parent, int id, const wxString& title, const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, bool dplusEnabled, bool dExtraEnabled, bool dcsEnabled, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url) :
+CRepeaterDataSet::CRepeaterDataSet(wxWindow* parent, int id, const wxString& title, const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, bool dplusEnabled, bool dExtraEnabled, bool dcsEnabled, const wxString& reflector, bool atStartup, RECONNECT reconnect) :
 wxPanel(parent, id),
 m_title(title),
 m_band(NULL),
@@ -57,16 +54,7 @@ m_band3(NULL),
 m_reflector(NULL),
 m_channel(NULL),
 m_startup(NULL),
-m_reconnect(NULL),
-m_frequency(NULL),
-m_offset(NULL),
-m_range(NULL),
-m_latitude(NULL),
-m_longitude(NULL),
-m_agl(NULL),
-m_description1(NULL),
-m_description2(NULL),
-m_url(NULL)
+m_reconnect(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(3);
 
@@ -282,126 +270,24 @@ m_url(NULL)
 	sizer->Add(m_reconnect, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_reconnect->SetSelection(int(reconnect));
 
-	wxStaticText* dummy6Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy6Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* frequencyLabel = new wxStaticText(this, -1, _("Frequency (MHz)"));
-	sizer->Add(frequencyLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%.4lf"), frequency);
-
-	m_frequency = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_frequency->SetMaxLength(FREQUENCY_LENGTH);
-	sizer->Add(m_frequency, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy7Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy7Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* offsetLabel = new wxStaticText(this, -1, _("Offset (MHz)"));
-	sizer->Add(offsetLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%.4lf"), offset);
-
-	m_offset = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_offset->SetMaxLength(OFFSET_LENGTH);
-	sizer->Add(m_offset, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy8Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy8Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* rangeLabel = new wxStaticText(this, -1, _("Range (kms)"));
-	sizer->Add(rangeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%.0lf"), range);
-
-	m_range = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1));
-	m_range->SetMaxLength(PORT_LENGTH);
-	sizer->Add(m_range, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy9Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy9Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* latitudeLabel = new wxStaticText(this, -1, _("Latitude"));
-	sizer->Add(latitudeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%lf"), latitude);
-
-	m_latitude = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	sizer->Add(m_latitude, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy10Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy10Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* longitudeLabel = new wxStaticText(this, -1, _("Longitude"));
-	sizer->Add(longitudeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%lf"), longitude);
-
-	m_longitude = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	sizer->Add(m_longitude, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy11Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy11Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* aglLabel = new wxStaticText(this, -1, _("AGL (m)"));
-	sizer->Add(aglLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	buffer.Printf(wxT("%.0lf"), agl);
-
-	m_agl = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1));
-	m_agl->SetMaxLength(PORT_LENGTH);
-	sizer->Add(m_agl, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy12Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy12Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("QTH"));
-	sizer->Add(descriptionLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	m_description1 = new wxTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_description1->SetMaxLength(DESCRIPTION_LENGTH);
-	sizer->Add(m_description1, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy13Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy13Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* dummy14Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy14Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	m_description2 = new wxTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_description2->SetMaxLength(DESCRIPTION_LENGTH);
-	sizer->Add(m_description2, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* dummy15Label = new wxStaticText(this, -1, wxEmptyString);
-	sizer->Add(dummy15Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	wxStaticText* urlLabel = new wxStaticText(this, -1, _("URL"));
-	sizer->Add(urlLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
-
-	m_url = new wxTextCtrl(this, -1, url, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	sizer->Add(m_url, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
 	if (isDDMode()) {
 		m_type->SetSelection(1);
 		m_reflector->SetSelection(0);
 		m_channel->SetSelection(0);
 		m_startup->SetSelection(0);
 		m_reconnect->SetSelection(0);
-		m_offset->Clear();
 
 		m_type->Disable();
 		m_reflector->Disable();
 		m_channel->Disable();
 		m_startup->Disable();
 		m_reconnect->Disable();
-		m_offset->Disable();
 	} else {
 		m_type->Enable();
 		m_reflector->Enable();
 		m_channel->Enable();
 		m_startup->Enable();
 		m_reconnect->Enable();
-		m_offset->Enable();
 	}
 
 	if (type == HW_ICOM) {
@@ -420,11 +306,11 @@ m_url(NULL)
 }
 
 
-CRepeaterSet::~CRepeaterSet()
+CRepeaterDataSet::~CRepeaterDataSet()
 {
 }
 
-bool CRepeaterSet::Validate()
+bool CRepeaterDataSet::Validate()
 {
 	int band = m_band->GetCurrentSelection();
 	if (band == wxNOT_FOUND)
@@ -467,26 +353,10 @@ bool CRepeaterSet::Validate()
 	if (m_reconnect->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	double latitude = getLatitude();
-
-	if (latitude < -90.0 || latitude > 90.0) {
-		wxMessageDialog dialog(this, _("The Latitude is invalid"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
-	double longitude = getLongitude();
-
-	if (longitude < -180.0 || longitude > 180.0) {
-		wxMessageDialog dialog(this, _("The Longitude is invalid"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
 	return true;
 }
 
-wxString CRepeaterSet::getBand() const
+wxString CRepeaterDataSet::getBand() const
 {
 	int c = m_band->GetCurrentSelection();
 
@@ -518,12 +388,12 @@ wxString CRepeaterSet::getBand() const
 	}
 }
 
-wxString CRepeaterSet::getAddress() const
+wxString CRepeaterDataSet::getAddress() const
 {
 	return m_address->GetValue();
 }
 
-HW_TYPE CRepeaterSet::getType() const
+HW_TYPE CRepeaterDataSet::getType() const
 {
 	if (isDDMode())
 		return HW_ICOM;
@@ -535,7 +405,7 @@ HW_TYPE CRepeaterSet::getType() const
 	return HW_TYPE(n);
 }
 
-unsigned int CRepeaterSet::getPort() const
+unsigned int CRepeaterDataSet::getPort() const
 {
 	unsigned long n;
 	m_port->GetValue().ToULong(&n);
@@ -543,7 +413,7 @@ unsigned int CRepeaterSet::getPort() const
 	return n;
 }
 
-unsigned char CRepeaterSet::getBand1() const
+unsigned char CRepeaterDataSet::getBand1() const
 {
 	unsigned long n;
 	m_band1->GetValue().ToULong(&n);
@@ -551,7 +421,7 @@ unsigned char CRepeaterSet::getBand1() const
 	return n;
 }
 
-unsigned char CRepeaterSet::getBand2() const
+unsigned char CRepeaterDataSet::getBand2() const
 {
 	unsigned long n;
 	m_band2->GetValue().ToULong(&n);
@@ -559,7 +429,7 @@ unsigned char CRepeaterSet::getBand2() const
 	return n;
 }
 
-unsigned char CRepeaterSet::getBand3() const
+unsigned char CRepeaterDataSet::getBand3() const
 {
 	unsigned long n;
 	m_band3->GetValue().ToULong(&n);
@@ -567,7 +437,7 @@ unsigned char CRepeaterSet::getBand3() const
 	return n;
 }
 
-wxString CRepeaterSet::getReflector() const
+wxString CRepeaterDataSet::getReflector() const
 {
 	if (isDDMode())
 		return wxEmptyString;
@@ -587,7 +457,7 @@ wxString CRepeaterSet::getReflector() const
 	return reflector;
 }
 
-bool CRepeaterSet::atStartup() const
+bool CRepeaterDataSet::atStartup() const
 {
 	if (isDDMode())
 		return false;
@@ -597,7 +467,7 @@ bool CRepeaterSet::atStartup() const
 	return n == 1;
 }
 
-RECONNECT CRepeaterSet::getReconnect() const
+RECONNECT CRepeaterDataSet::getReconnect() const
 {
 	if (isDDMode())
 		return RECONNECT_NEVER;
@@ -607,75 +477,7 @@ RECONNECT CRepeaterSet::getReconnect() const
 	return RECONNECT(n);
 }
 
-double CRepeaterSet::getFrequency() const
-{
-	double n;
-	m_frequency->GetValue().ToDouble(&n);
-
-	return n;
-}
-
-double CRepeaterSet::getOffset() const
-{
-	if (isDDMode())
-		return 0.0;
-
-	double n;
-	m_offset->GetValue().ToDouble(&n);
-
-	return n;
-}
-
-double CRepeaterSet::getRange() const
-{
-	double n;
-	m_range->GetValue().ToDouble(&n);
-
-	return n;
-}
-
-double CRepeaterSet::getLatitude() const
-{
-	double val;
-	
-	m_latitude->GetValue().ToDouble(&val);
-
-	return val;
-}
-
-double CRepeaterSet::getLongitude() const
-{
-	double val;
-	
-	m_longitude->GetValue().ToDouble(&val);
-
-	return val;
-}
-
-wxString CRepeaterSet::getDescription1() const
-{
-	return m_description1->GetValue();
-}
-
-wxString CRepeaterSet::getDescription2() const
-{
-	return m_description2->GetValue();
-}
-
-wxString CRepeaterSet::getURL() const
-{
-	return m_url->GetValue();
-}
-
-double CRepeaterSet::getAGL() const
-{
-	double n;
-	m_agl->GetValue().ToDouble(&n);
-
-	return n;
-}
-
-void CRepeaterSet::onBand(wxCommandEvent &event)
+void CRepeaterDataSet::onBand(wxCommandEvent &event)
 {
 	if (isDDMode()) {
 		m_type->SetSelection(1);
@@ -683,25 +485,22 @@ void CRepeaterSet::onBand(wxCommandEvent &event)
 		m_channel->SetSelection(0);
 		m_startup->SetSelection(0);
 		m_reconnect->SetSelection(0);
-		m_offset->Clear();
 
 		m_type->Disable();
 		m_reflector->Disable();
 		m_channel->Disable();
 		m_startup->Disable();
 		m_reconnect->Disable();
-		m_offset->Disable();
 	} else {
 		m_type->Enable();
 		m_reflector->Enable();
 		m_channel->Enable();
 		m_startup->Enable();
 		m_reconnect->Enable();
-		m_offset->Enable();
 	}
 }
 
-void CRepeaterSet::onType(wxCommandEvent &event)
+void CRepeaterDataSet::onType(wxCommandEvent &event)
 {
 	int n = m_type->GetCurrentSelection();
 	if (n != 1) {
@@ -715,7 +514,7 @@ void CRepeaterSet::onType(wxCommandEvent &event)
 	}
 }
 
-bool CRepeaterSet::isDDMode() const
+bool CRepeaterDataSet::isDDMode() const
 {
 	int c = m_band->GetCurrentSelection();
 

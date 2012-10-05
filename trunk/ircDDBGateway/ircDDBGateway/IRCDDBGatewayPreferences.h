@@ -24,7 +24,8 @@
 
 #include "IRCDDBGatewayMiscellaneousSet.h"
 #include "IRCDDBGatewayGatewaySet.h"
-#include "RepeaterSet.h"
+#include "RepeaterInfoSet.h"
+#include "RepeaterDataSet.h"
 #include "StarNetSet.h"
 #include "RemoteSet.h"
 #include "IrcDDBSet.h"
@@ -81,6 +82,7 @@ public:
 	virtual wxString     getReflector1() const;
 	virtual bool         atStartup1() const;
 	virtual RECONNECT    getReconnect1() const;
+
 	virtual double       getFrequency1() const;
 	virtual double       getOffset1() const;
 	virtual double       getRange1() const;
@@ -101,6 +103,7 @@ public:
 	virtual wxString     getReflector2() const;
 	virtual bool         atStartup2() const;
 	virtual RECONNECT    getReconnect2() const;
+
 	virtual double       getFrequency2() const;
 	virtual double       getOffset2() const;
 	virtual double       getRange2() const;
@@ -121,6 +124,7 @@ public:
 	virtual wxString     getReflector3() const;
 	virtual bool         atStartup3() const;
 	virtual RECONNECT    getReconnect3() const;
+
 	virtual double       getFrequency3() const;
 	virtual double       getOffset3() const;
 	virtual double       getRange3() const;
@@ -141,6 +145,7 @@ public:
 	virtual wxString     getReflector4() const;
 	virtual bool         atStartup4() const;
 	virtual RECONNECT    getReconnect4() const;
+
 	virtual double       getFrequency4() const;
 	virtual double       getOffset4() const;
 	virtual double       getRange4() const;
@@ -246,10 +251,14 @@ public:
 
 private:
 	CIRCDDBGatewayGatewaySet*       m_gateway;
-	CRepeaterSet*                   m_repeater1;
-	CRepeaterSet*                   m_repeater2;
-	CRepeaterSet*                   m_repeater3;
-	CRepeaterSet*                   m_repeater4;
+	CRepeaterDataSet*               m_repeaterData1;
+	CRepeaterInfoSet*               m_repeaterInfo1;
+	CRepeaterDataSet*               m_repeaterData2;
+	CRepeaterInfoSet*               m_repeaterInfo2;
+	CRepeaterDataSet*               m_repeaterData3;
+	CRepeaterInfoSet*               m_repeaterInfo3;
+	CRepeaterDataSet*               m_repeaterData4;
+	CRepeaterInfoSet*               m_repeaterInfo4;
 	CIrcDDBSet*                     m_ircDDB;
 	CDPRSSet*                       m_dprs;
 	CDExtraSet*                     m_dextra;

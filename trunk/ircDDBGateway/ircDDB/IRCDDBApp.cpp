@@ -1229,43 +1229,53 @@ wxThread::ExitCode IRCDDBApp::Entry()
 	if (d->infoTimer == 0)
 	{
 	d->moduleQTHURLMutex.Lock();
+
 	for (IRCDDBAppModuleQTH::iterator it = d->moduleQTH.begin(); it != d->moduleQTH.end(); ++it)
 	{
 	  wxString value = it->second;
-	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRQTH: ") + value);
+	  IRCMessage* m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRQTH: ") + value);
 
-	  IRCMessageQueue * q = getSendQ();
+	  IRCMessageQueue* q = getSendQ();
 	  if (q != NULL)
 	  {
 	    q->putMessage(m);
 	  }
 	}
+
+	d->moduleQTH.clear();
 
 	for (IRCDDBAppModuleURL::iterator it = d->moduleURL.begin(); it != d->moduleURL.end(); ++it)
 	{
 	  wxString value = it->second;
-	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRURL: ") + value);
+	  IRCMessage* m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRURL: ") + value);
 
-	  IRCMessageQueue * q = getSendQ();
+	  IRCMessageQueue* q = getSendQ();
 	  if (q != NULL)
 	  {
 	    q->putMessage(m);
 	  }
 	}
+
+	d->moduleURL.clear();
+
 	d->moduleQTHURLMutex.Unlock();
 
 	d->moduleQRGMutex.Lock();
+
 	for (IRCDDBAppModuleQRG::iterator it = d->moduleQRG.begin(); it != d->moduleQRG.end(); ++it)
 	{
 	  wxString value = it->second;
-	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRQRG: ") + value);
+	  IRCMessage* m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRQRG: ") + value);
 
-	  IRCMessageQueue * q = getSendQ();
+	  IRCMessageQueue* q = getSendQ();
 	  if (q != NULL)
 	  {
 	    q->putMessage(m);
 	  }
 	}
+
+	d->moduleQRG.clear();
+
 	d->moduleQRGMutex.Unlock();
 
 	}
@@ -1278,17 +1288,21 @@ wxThread::ExitCode IRCDDBApp::Entry()
 	if (d->wdTimer == 0)
 	{
 	d->moduleWDMutex.Lock();
+
 	for (IRCDDBAppModuleWD::iterator it = d->moduleWD.begin(); it != d->moduleWD.end(); ++it)
 	{
 	  wxString value = it->second;
-	  IRCMessage * m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRSW: ") + value);
+	  IRCMessage* m = new IRCMessage(d->currentServer, wxT("IRCDDB RPTRSW: ") + value);
 
-	  IRCMessageQueue * q = getSendQ();
+	  IRCMessageQueue* q = getSendQ();
 	  if (q != NULL)
 	  {
 	    q->putMessage(m);
 	  }
 	}
+
+	d->moduleWD.clear();
+
 	d->moduleWDMutex.Unlock();
 	}
       }

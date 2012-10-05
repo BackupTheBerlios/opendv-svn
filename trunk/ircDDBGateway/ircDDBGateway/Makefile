@@ -41,8 +41,8 @@ IRCDDBGatewayMiscellaneousSet.o:	IRCDDBGatewayMiscellaneousSet.cpp IRCDDBGateway
 				$(CC) $(CFLAGS) -c IRCDDBGatewayMiscellaneousSet.cpp
 
 IRCDDBGatewayPreferences.o:	IRCDDBGatewayPreferences.cpp IRCDDBGatewayPreferences.h  IRCDDBGatewayMiscellaneousSet.h IRCDDBGatewayGatewaySet.h \
-				../Common/Defs.h ../Common/RepeaterSet.h ../Common/IrcDDBSet.h ../Common/DPRSSet.h ../Common/DPlusSet.h ../Common/RemoteSet.h \
-				../Common/StarNetSet.h ../Common/DExtraSet.h ../Common/DCSSet.h
+				../Common/Defs.h ../Common/RepeaterDataSet.h ../Common/IrcDDBSet.h ../Common/DPRSSet.h ../Common/DPlusSet.h ../Common/RemoteSet.h \
+				../Common/StarNetSet.h ../Common/DExtraSet.h ../Common/DCSSet.h ../Common/RepeaterInfoSet.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayPreferences.cpp
 
 IRCDDBGatewayStatusData.o:	IRCDDBGatewayStatusData.cpp IRCDDBGatewayStatusData.h ../Common/Defs.h
