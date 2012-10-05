@@ -2218,7 +2218,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_DESCRIPTION1.c_str(), m_description1.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_DESCRIPTION2.c_str(), m_description2.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_URL.c_str(), m_url.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN1.c_str(), m_repeater1Callsign.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALL1.c_str(), m_repeater1Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND1.c_str(), m_repeater1Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE1.c_str(), int(m_repeater1Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS1.c_str(), m_repeater1Address.c_str()); file.AddLine(buffer);
@@ -2238,7 +2238,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND11.c_str(), m_repeater1Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND12.c_str(), m_repeater1Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND13.c_str(), m_repeater1Band3); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN2.c_str(), m_repeater2Callsign.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALL2.c_str(), m_repeater2Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND2.c_str(), m_repeater2Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE2.c_str(), int(m_repeater2Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS2.c_str(), m_repeater2Address.c_str()); file.AddLine(buffer);
@@ -2258,7 +2258,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND21.c_str(), m_repeater2Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND22.c_str(), m_repeater2Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND23.c_str(), m_repeater2Band3); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN3.c_str(), m_repeater3Callsign.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALL3.c_str(), m_repeater3Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND3.c_str(), m_repeater3Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE3.c_str(), int(m_repeater3Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS3.c_str(), m_repeater3Address.c_str()); file.AddLine(buffer);
@@ -2278,7 +2278,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND31.c_str(), m_repeater3Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND32.c_str(), m_repeater3Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND33.c_str(), m_repeater3Band3); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN4.c_str(), m_repeater4Callsign.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALL4.c_str(), m_repeater4Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND4.c_str(), m_repeater4Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE4.c_str(), int(m_repeater4Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS4.c_str(), m_repeater4Address.c_str()); file.AddLine(buffer);
