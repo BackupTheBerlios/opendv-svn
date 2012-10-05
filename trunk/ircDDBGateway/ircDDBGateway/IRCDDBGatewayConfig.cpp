@@ -25,6 +25,11 @@ const wxString  KEY_ICOM_ADDRESS         = wxT("icomAddress");
 const wxString  KEY_ICOM_PORT            = wxT("icomPort");
 const wxString  KEY_HB_ADDRESS           = wxT("hbAddress");
 const wxString  KEY_HB_PORT              = wxT("hbPort");
+const wxString  KEY_LATITUDE             = wxT("latitude");
+const wxString  KEY_LONGITUDE            = wxT("longitude");
+const wxString  KEY_DESCRIPTION1         = wxT("description1");
+const wxString  KEY_DESCRIPTION2         = wxT("description2");
+const wxString  KEY_URL                  = wxT("url");
 const wxString  KEY_REPEATER_CALL1       = wxT("repeaterCall1");
 const wxString  KEY_REPEATER_BAND1       = wxT("repeaterBand1");
 const wxString  KEY_REPEATER_TYPE1       = wxT("repeaterType1");
@@ -254,6 +259,11 @@ m_icomAddress(DEFAULT_ICOM_ADDRESS),
 m_icomPort(DEFAULT_ICOM_PORT),
 m_hbAddress(DEFAULT_HB_ADDRESS),
 m_hbPort(DEFAULT_HB_PORT),
+m_latitude(DEFAULT_LATITUDE),
+m_longitude(DEFAULT_LONGITUDE),
+m_description1(DEFAULT_DESCRIPTION1),
+m_description2(DEFAULT_DESCRIPTION2),
+m_url(DEFAULT_URL),
 m_repeater1Callsign(DEFAULT_REPEATER_CALL),
 m_repeater1Band(DEFAULT_REPEATER_BAND),
 m_repeater1Type(DEFAULT_REPEATER_TYPE),
@@ -428,6 +438,16 @@ m_y(DEFAULT_WINDOW_Y)
 
 	m_config->Read(m_name + KEY_HB_PORT, &temp, long(DEFAULT_HB_PORT));
 	m_hbPort = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_LATITUDE, &m_latitude, DEFAULT_LATITUDE);
+
+	m_config->Read(m_name + KEY_LONGITUDE, &m_longitude, DEFAULT_LONGITUDE);
+
+	m_config->Read(m_name + KEY_DESCRIPTION1, &m_description1, DEFAULT_DESCRIPTION1);
+
+	m_config->Read(m_name + KEY_DESCRIPTION2, &m_description2, DEFAULT_DESCRIPTION2);
+
+	m_config->Read(m_name + KEY_URL, &m_url, DEFAULT_URL);
 
 	m_config->Read(m_name + KEY_REPEATER_CALL1, &m_repeater1Callsign, DEFAULT_REPEATER_CALL);
 
@@ -797,6 +817,11 @@ m_icomAddress(DEFAULT_ICOM_ADDRESS),
 m_icomPort(DEFAULT_ICOM_PORT),
 m_hbAddress(DEFAULT_HB_ADDRESS),
 m_hbPort(DEFAULT_HB_PORT),
+m_latitude(DEFAULT_LATITUDE),
+m_longitude(DEFAULT_LONGITUDE),
+m_description1(DEFAULT_DESCRIPTION1),
+m_description2(DEFAULT_DESCRIPTION2),
+m_url(DEFAULT_URL),
 m_repeater1Callsign(DEFAULT_REPEATER_CALL),
 m_repeater1Band(DEFAULT_REPEATER_BAND),
 m_repeater1Type(DEFAULT_REPEATER_TYPE),
@@ -1005,6 +1030,16 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_HB_PORT)) {
 			val.ToULong(&temp2);
 			m_hbPort = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_LATITUDE)) {
+			val.ToDouble(&m_latitude);
+		} else if (key.IsSameAs(KEY_LONGITUDE)) {
+			val.ToDouble(&m_longitude);
+		} else if (key.IsSameAs(KEY_DESCRIPTION1)) {
+			m_description1 = val;
+		} else if (key.IsSameAs(KEY_DESCRIPTION2)) {
+			m_description2 = val;
+		} else if (key.IsSameAs(KEY_URL)) {
+			m_url = val;
 		} else if (key.IsSameAs(KEY_REPEATER_CALL1)) {
 			m_repeater1Callsign = val;
 		} else if (key.IsSameAs(KEY_REPEATER_BAND1)) {
@@ -1390,7 +1425,7 @@ CIRCDDBGatewayConfig::~CIRCDDBGatewayConfig()
 
 #endif
 
-void CIRCDDBGatewayConfig::getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort) const
+void CIRCDDBGatewayConfig::getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort, double& latitude, double& longitude, wxString& description1, wxString& description2, wxString& url) const
 {
 	callsign     = m_callsign;
 	address      = m_address;
@@ -1398,12 +1433,17 @@ void CIRCDDBGatewayConfig::getGateway(wxString& callsign, wxString& address, wxS
 	icomPort     = m_icomPort;
 	hbAddress    = m_hbAddress;
 	hbPort       = m_hbPort;
+	latitude     = m_latitude;
+	longitude    = m_longitude;
+	description1 = m_description1;
+	description2 = m_description2;
+	url          = m_url;
 
 	if (address.IsSameAs(wxT("127.0.0.1")))
 		address.Clear();
 }
 
-void CIRCDDBGatewayConfig::setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort)
+void CIRCDDBGatewayConfig::setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url)
 {
 	m_callsign     = callsign;
 	m_address      = address;
@@ -1411,6 +1451,11 @@ void CIRCDDBGatewayConfig::setGateway(const wxString& callsign, const wxString& 
 	m_icomPort     = icomPort;
 	m_hbAddress    = hbAddress;
 	m_hbPort       = hbPort;
+	m_latitude     = latitude;
+	m_longitude    = longitude;
+	m_description1 = description1;
+	m_description2 = description2;
+	m_url          = url;
 }
 
 void CIRCDDBGatewayConfig::getRepeater1(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
@@ -1934,6 +1979,15 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_HB_ADDRESS, m_hbAddress);
 	m_config->Write(m_name + KEY_HB_PORT, long(m_hbPort));
 
+	text.Printf(wxT("%.6lf"), m_latitude);
+	m_config->Write(m_name + KEY_LATITUDE, text);
+
+	text.Printf(wxT("%.6lf"), m_longitude);
+	m_config->Write(m_name + KEY_LONGITUDE, text);
+
+	m_config->Write(m_name + KEY_DESCRIPTION1, m_description1);
+	m_config->Write(m_name + KEY_DESCRIPTION2, m_description2);
+	m_config->Write(m_name + KEY_URL, m_url);
 	m_config->Write(m_name + KEY_REPEATER_BAND1, m_repeater1Band);
 	m_config->Write(m_name + KEY_REPEATER_TYPE1, long(m_repeater1Type));
 	m_config->Write(m_name + KEY_REPEATER_ADDRESS1, m_repeater1Address);
@@ -2159,6 +2213,12 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_ICOM_PORT.c_str(), m_icomPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_HB_ADDRESS.c_str(), m_hbAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_HB_PORT.c_str(), m_hbPort); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.6lf"), KEY_LATITUDE.c_str(), m_latitude); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.6lf"), KEY_LONGITUDE.c_str(), m_longitude); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DESCRIPTION1.c_str(), m_description1.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DESCRIPTION2.c_str(), m_description2.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_URL.c_str(), m_url.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN1.c_str(), m_repeater1Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND1.c_str(), m_repeater1Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE1.c_str(), int(m_repeater1Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS1.c_str(), m_repeater1Address.c_str()); file.AddLine(buffer);
@@ -2178,6 +2238,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND11.c_str(), m_repeater1Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND12.c_str(), m_repeater1Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND13.c_str(), m_repeater1Band3); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN2.c_str(), m_repeater2Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND2.c_str(), m_repeater2Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE2.c_str(), int(m_repeater2Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS2.c_str(), m_repeater2Address.c_str()); file.AddLine(buffer);
@@ -2197,6 +2258,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND21.c_str(), m_repeater2Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND22.c_str(), m_repeater2Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND23.c_str(), m_repeater2Band3); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN3.c_str(), m_repeater3Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND3.c_str(), m_repeater3Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE3.c_str(), int(m_repeater3Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS3.c_str(), m_repeater3Address.c_str()); file.AddLine(buffer);
@@ -2216,6 +2278,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND31.c_str(), m_repeater3Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND32.c_str(), m_repeater3Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND33.c_str(), m_repeater3Band3); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_CALLSIGN4.c_str(), m_repeater4Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_BAND4.c_str(), m_repeater4Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_REPEATER_TYPE4.c_str(), int(m_repeater4Type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_REPEATER_ADDRESS4.c_str(), m_repeater4Address.c_str()); file.AddLine(buffer);

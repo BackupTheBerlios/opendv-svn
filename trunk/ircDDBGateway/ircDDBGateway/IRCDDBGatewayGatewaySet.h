@@ -28,7 +28,7 @@
 
 class CIRCDDBGatewayGatewaySet : public wxPanel {
 public:
-	CIRCDDBGatewayGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort);
+	CIRCDDBGatewayGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
 	virtual ~CIRCDDBGatewayGatewaySet();
 
 	virtual bool Validate();
@@ -39,6 +39,11 @@ public:
 	virtual unsigned int getIcomPort() const;
 	virtual wxString     getHBAddress() const;
 	virtual unsigned int getHBPort() const;
+	virtual double       getLatitude() const;
+	virtual double       getLongitude() const;
+	virtual wxString     getDescription1() const;
+	virtual wxString     getDescription2() const;
+	virtual wxString     getURL() const;
 
 private:
 	wxString           m_title;
@@ -48,6 +53,11 @@ private:
 	CPortTextCtrl*     m_icomPort;
 	CAddressTextCtrl*  m_hbAddress;
 	CPortTextCtrl*     m_hbPort;
+	wxTextCtrl*        m_latitude;
+	wxTextCtrl*        m_longitude;
+	wxTextCtrl*        m_description1;
+	wxTextCtrl*        m_description2;
+	wxTextCtrl*        m_url;
 };
 
 #endif

@@ -37,7 +37,8 @@
 class CIRCDDBGatewayPreferences : public wxDialog {
 public:
 	CIRCDDBGatewayPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress,
-				 unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort,
+				 unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude,
+				 const wxString& description1, const wxString& description2, const wxString& url,
 				 const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1, const wxString& description11, const wxString& description12, const wxString& url1,
 				 const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2, const wxString& description21, const wxString& description22, const wxString& url2,
 				 const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3, const wxString& description31, const wxString& description32, const wxString& url3,
@@ -71,6 +72,11 @@ public:
 	virtual unsigned int getIcomPort() const;
 	virtual wxString     getHBAddress() const;
 	virtual unsigned int getHBPort() const;
+	virtual double       getLatitude() const;
+	virtual double       getLongitude() const;
+	virtual wxString     getDescription1() const;
+	virtual wxString     getDescription2() const;
+	virtual wxString     getURL() const;
 
 	virtual wxString     getRepeaterBand1() const;
 	virtual HW_TYPE      getRepeaterType1() const;
