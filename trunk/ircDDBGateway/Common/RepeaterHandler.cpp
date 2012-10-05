@@ -108,6 +108,7 @@ m_audio(NULL),
 m_version(NULL),
 m_drats(NULL),
 m_dtmf(),
+m_pollTimer(1000U, 900U),			// 15 minutes
 m_heardUser(),
 m_heardRepeater(),
 m_heardTimer(1000U, 0U, 100U)		// 100ms
@@ -127,6 +128,8 @@ m_heardTimer(1000U, 0U, 100U)		// 100ms
 	m_callsign.Truncate(LONG_CALLSIGN_LENGTH);
 
 	m_address.s_addr = ::inet_addr(address.mb_str());
+
+	m_pollTimer.start();
 
 	switch (m_linkReconnect) {
 		case RECONNECT_5MINS:
@@ -917,6 +920,9 @@ void CRepeaterHandler::processRepeater(CHeardData& heard)
 
 void CRepeaterHandler::processRepeater(CPollData& data)
 {
+	if (!m_pollTimer.hasExpired())
+		return;
+
 	wxString callsign = m_callsign;
 	if (m_ddMode)
 		callsign.Append(wxT("D"));
@@ -924,6 +930,8 @@ void CRepeaterHandler::processRepeater(CPollData& data)
 	wxString text = data.getData1();
 
 	m_irc->kickWatchdog(callsign, text);
+
+	m_pollTimer.reset();
 }
 
 void CRepeaterHandler::processRepeater(CDDData& data)
@@ -1173,6 +1181,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 	m_watchdogTimer.clock(ms);
 	m_queryTimer.clock(ms);
 	m_heardTimer.clock(ms);
+	m_pollTimer.clock(ms);
 
 	// If the reconnect timer has expired
 	if (m_linkReconnectTimer.isRunning() && m_linkReconnectTimer.hasExpired()) {

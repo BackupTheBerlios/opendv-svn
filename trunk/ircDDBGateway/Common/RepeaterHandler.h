@@ -235,6 +235,9 @@ private:
 	// DTMF commands
 	CDTMF                     m_dtmf;
 
+	// Poll timer
+	CTimer                    m_pollTimer;
+
 	// Icom heard data
 	wxString                  m_heardUser;
 	wxString                  m_heardRepeater;
