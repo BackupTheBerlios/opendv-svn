@@ -60,7 +60,6 @@ m_networkStarted(false),
 m_beacon(NULL),
 m_rptCallsign(),
 m_gwyCallsign(),
-m_dmyCallsign(),
 m_reader(NULL),
 m_demodulator(),
 m_modulator(),
@@ -405,21 +404,15 @@ void CSoundCardRepeaterTRXThread::setCallsign(const wxString& callsign, const wx
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
-	m_rptCallsign.Append(wxT("        "));
-	m_rptCallsign.Truncate(LONG_CALLSIGN_LENGTH);
-
-	// Create the dummy gateway callsign
-	m_dmyCallsign = callsign;
-	m_dmyCallsign.Append(wxT("        "));
-	m_dmyCallsign.Truncate(LONG_CALLSIGN_LENGTH - 1U);
-	m_dmyCallsign.Append(wxT("G"));
+	m_rptCallsign.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
 
 	if (gateway.IsEmpty()) {
-		m_gwyCallsign = m_dmyCallsign;
+		m_gwyCallsign = callsign;
+		m_gwyCallsign.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+		m_gwyCallsign.Append(wxT("G"));
 	} else {
 		m_gwyCallsign = gateway;
-		m_gwyCallsign.Append(wxT("        "));
-		m_gwyCallsign.Truncate(LONG_CALLSIGN_LENGTH);
+		m_gwyCallsign.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
 	}
 
 	m_mode           = mode;
@@ -799,7 +792,7 @@ void CSoundCardRepeaterTRXThread::transmitLocalHeader(CHeaderData& header)
 
 void CSoundCardRepeaterTRXThread::transmitBeaconHeader()
 {
-	CHeaderData header(m_rptCallsign, wxT("RPTR"), wxT("CQCQCQ  "), m_dmyCallsign, m_rptCallsign);
+	CHeaderData header(m_rptCallsign, wxT("RPTR"), wxT("CQCQCQ  "), m_gwyCallsign, m_rptCallsign);
 	transmitLocalHeader(header);
 }
 
@@ -866,7 +859,7 @@ void CSoundCardRepeaterTRXThread::transmitNetworkHeader(CHeaderData& header)
 
 void CSoundCardRepeaterTRXThread::transmitStatus()
 {
-	CHeaderData header(m_rptCallsign, wxT("    "), m_header->getMyCall1(), m_dmyCallsign, m_rptCallsign, RELAY_UNAVAILABLE);
+	CHeaderData header(m_rptCallsign, wxT("    "), m_header->getMyCall1(), m_gwyCallsign, m_rptCallsign, RELAY_UNAVAILABLE);
 	transmitLocalHeader(header);
 
 	// Filler data
@@ -929,31 +922,31 @@ void CSoundCardRepeaterTRXThread::transmitUserStatus(unsigned int n)
 	CSlowDataEncoder* encoder = NULL;
 	switch (n) {
 		case 0U: {
-				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 1"), m_dmyCallsign, m_rptCallsign);
+				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 1"), m_gwyCallsign, m_rptCallsign);
 				transmitLocalHeader(header);
 				encoder = &m_status1Encoder;
 			}
 			break;
 		case 1U: {
-				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 2"), m_dmyCallsign, m_rptCallsign);
+				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 2"), m_gwyCallsign, m_rptCallsign);
 				transmitLocalHeader(header);
 				encoder = &m_status2Encoder;
 			}
 			break;
 		case 2U: {
-				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 3"), m_dmyCallsign, m_rptCallsign);
+				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 3"), m_gwyCallsign, m_rptCallsign);
 				transmitLocalHeader(header);
 				encoder = &m_status3Encoder;
 			}
 			break;
 		case 3U: {
-				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 4"), m_dmyCallsign, m_rptCallsign);
+				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 4"), m_gwyCallsign, m_rptCallsign);
 				transmitLocalHeader(header);
 				encoder = &m_status4Encoder;
 			}
 			break;
 		case 4U: {
-				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 5"), m_dmyCallsign, m_rptCallsign);
+				CHeaderData header(m_rptCallsign, wxT("    "), wxT("STATUS 5"), m_gwyCallsign, m_rptCallsign);
 				transmitLocalHeader(header);
 				encoder = &m_status5Encoder;
 			}
@@ -1692,16 +1685,8 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
 		if (m_protocolHandler != NULL && !m_header->getRptCall2().IsSameAs(wxT("        ")) && !m_header->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CHeaderData netHeader(*m_header);
-
-			// If the user uses the dummy gateway callsign, swap it for the real one
-			if (m_header->getRptCall2().IsSameAs(m_dmyCallsign)) {
-				netHeader.setRptCall1(m_gwyCallsign);
-				netHeader.setRptCall2(m_header->getRptCall1());
-			} else {
-				netHeader.setRptCall1(m_header->getRptCall2());
-				netHeader.setRptCall2(m_header->getRptCall1());
-			}
-
+			netHeader.setRptCall1(m_header->getRptCall2());
+			netHeader.setRptCall2(m_header->getRptCall1());
 			netHeader.setFlag1(m_header->getFlag1() & ~REPEATER_MASK);
 			m_protocolHandler->writeHeader(netHeader);
 		}
@@ -1722,16 +1707,8 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
 		if (m_protocolHandler != NULL && !header->getRptCall2().IsSameAs(wxT("        ")) && !header->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CHeaderData netHeader(*header);
-
-			// If the user uses the dummy gateway callsign, swap it for the real one
-			if (header->getRptCall2().IsSameAs(m_dmyCallsign)) {
-				netHeader.setRptCall1(m_gwyCallsign);
-				netHeader.setRptCall2(header->getRptCall1());
-			} else {
-				netHeader.setRptCall1(header->getRptCall2());
-				netHeader.setRptCall2(header->getRptCall1());
-			}
-
+			netHeader.setRptCall1(header->getRptCall2());
+			netHeader.setRptCall2(header->getRptCall1());
 			netHeader.setFlag1(header->getFlag1() & ~REPEATER_MASK);
 			m_protocolHandler->writeBusyHeader(netHeader);
 
@@ -1776,14 +1753,10 @@ void CSoundCardRepeaterTRXThread::processNetworkHeader(CHeaderData* header)
 			txHeader.setRepeaterMode(true);
 			txHeader.setFlag2(0x01U);
 			txHeader.setRptCall1(m_rptCallsign);
-			txHeader.setRptCall2(m_dmyCallsign);
+			txHeader.setRptCall2(m_gwyCallsign);
 			transmitNetworkHeader(txHeader);
 		} else {
 			CHeaderData header(*m_header);
-
-			if (header.getRptCall1().IsSameAs(m_gwyCallsign))
-				header.setRptCall1(m_dmyCallsign);
-
 			transmitNetworkHeader(header);
 		}
 	} else {
@@ -2393,7 +2366,6 @@ TRISTATE CSoundCardRepeaterTRXThread::checkHeader(CHeaderData& header)
 	// Make sure MyCall is not empty, a silly value, or the repeater or gateway callsigns
 	if (my.IsSameAs(m_rptCallsign) ||
 		my.IsSameAs(m_gwyCallsign) ||
-		my.IsSameAs(m_dmyCallsign) ||
 		my.Left(6U).IsSameAs(wxT("NOCALL")) ||
 		my.Left(6U).IsSameAs(wxT("N0CALL")) ||
 		my.Left(6U).IsSameAs(wxT("MYCALL"))) {

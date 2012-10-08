@@ -74,7 +74,6 @@ private:
 	unsigned int               m_ambeLength;
 	wxString                   m_rptCallsign;
 	wxString                   m_gwyCallsign;
-	wxString                   m_dmyCallsign;
 	CBeaconUnit*               m_beacon;
 	CHeaderData*               m_rxHeader;
 	COutputQueue               m_localQueue;

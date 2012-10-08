@@ -52,7 +52,6 @@ m_receiver2Data(NULL),
 m_stopped(true),
 m_rptCallsign(),
 m_gwyCallsign(),
-m_dmyCallsign(),
 m_beacon(NULL),
 m_beaconId(0x00U),
 m_beaconSeq(0U),
@@ -291,13 +290,10 @@ void CSplitRepeaterThread::setCallsign(const wxString& callsign, const wxString&
 	m_rptCallsign = callsign;
 	m_rptCallsign.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
 
-	// Create the dummy gateway callsign
-	m_dmyCallsign = callsign;
-	m_dmyCallsign.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-	m_dmyCallsign.Append(wxT("G"));
-
 	if (gateway.IsEmpty()) {
-		m_gwyCallsign = m_dmyCallsign;
+		m_gwyCallsign = callsign;
+		m_gwyCallsign.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+		m_gwyCallsign.Append(wxT("G"));
 	} else {
 		m_gwyCallsign = gateway;
 		m_gwyCallsign.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
@@ -580,13 +576,10 @@ void CSplitRepeaterThread::receiveNetwork()
 				unsigned int   id = header->getId();
 
 				if (address.s_addr == m_gatewayAddress.s_addr && port == m_gatewayPort) {
-					if (m_networkId == 0x00U) {
+					if (m_networkId == 0x00U)
 						processNetworkHeader(header);
-					} else if (id == m_networkId) {
-						if (header->getRptCall1().IsSameAs(m_gwyCallsign))
-							header->setRptCall1(m_dmyCallsign);
+					else if (id == m_networkId)
 						transmitHeader(header);
-					}
 				} else if (address.s_addr == m_receiver1Address.s_addr && port == m_receiver1Port) {
 					if (m_receiver1Id == 0x00U)
 						processReceiver1Header(header);
@@ -695,7 +688,7 @@ void CSplitRepeaterThread::transmitStatus()
 {
 	unsigned int id = CSplitRepeaterHeaderData::createId();
 
-	CSplitRepeaterHeaderData header(m_rptCallsign, wxT("    "), m_rxHeader->getMyCall1(), m_dmyCallsign, m_rptCallsign, RELAY_UNAVAILABLE);
+	CSplitRepeaterHeaderData header(m_rptCallsign, wxT("    "), m_rxHeader->getMyCall1(), m_gwyCallsign, m_rptCallsign, RELAY_UNAVAILABLE);
 	header.setId(id);
 
 	wxLogMessage(wxT("Transmitting to - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header.getMyCall1().c_str(), header.getMyCall2().c_str(), header.getYourCall().c_str(), header.getRptCall1().c_str(), header.getRptCall2().c_str(), header.getFlag1(), header.getFlag2(), header.getFlag3());
@@ -780,7 +773,7 @@ void CSplitRepeaterThread::transmitBeaconHeader()
 	m_beaconId  = CSplitRepeaterHeaderData::createId();
 	m_beaconSeq = 0U;
 
-	CSplitRepeaterHeaderData header(m_rptCallsign, wxT("RPTR"), wxT("CQCQCQ  "), m_dmyCallsign, m_rptCallsign);
+	CSplitRepeaterHeaderData header(m_rptCallsign, wxT("RPTR"), wxT("CQCQCQ  "), m_gwyCallsign, m_rptCallsign);
 	header.setId(m_beaconId);
 
 	wxLogMessage(wxT("Transmitting to - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header.getMyCall1().c_str(), header.getMyCall2().c_str(), header.getYourCall().c_str(), header.getRptCall1().c_str(), header.getRptCall2().c_str(), header.getFlag1(), header.getFlag2(), header.getFlag3());
@@ -811,23 +804,23 @@ void CSplitRepeaterThread::transmitUserStatus(unsigned int n)
 	CSplitRepeaterHeaderData* header = NULL;
 	switch (n) {
 		case 0U:
-			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 1"), m_dmyCallsign, m_rptCallsign);
+			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 1"), m_gwyCallsign, m_rptCallsign);
 			encoder = &m_status1Encoder;
 			break;
 		case 1U:
-			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 2"), m_dmyCallsign, m_rptCallsign);
+			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 2"), m_gwyCallsign, m_rptCallsign);
 			encoder = &m_status2Encoder;
 			break;
 		case 2U:
-			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 3"), m_dmyCallsign, m_rptCallsign);
+			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 3"), m_gwyCallsign, m_rptCallsign);
 			encoder = &m_status3Encoder;
 			break;
 		case 3U:
-			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 4"), m_dmyCallsign, m_rptCallsign);
+			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 4"), m_gwyCallsign, m_rptCallsign);
 			encoder = &m_status4Encoder;
 			break;
 		case 4U:
-			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 5"), m_dmyCallsign, m_rptCallsign);
+			header = new CSplitRepeaterHeaderData(m_rptCallsign, wxT("    "), wxT("STATUS 5"), m_gwyCallsign, m_rptCallsign);
 			encoder = &m_status5Encoder;
 			break;
 		default:
@@ -1130,11 +1123,6 @@ void CSplitRepeaterThread::processRadioHeader()
 		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
 		if (!m_txHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_txHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CSplitRepeaterHeaderData netHeader(*m_txHeader);
-
-			// If the user uses the dummy gateway callsign, swap it for the real one
-			if (m_txHeader->getRptCall2().IsSameAs(m_dmyCallsign))
-				netHeader.setRptCall2(m_gwyCallsign);
-
 			netHeader.setFlag1(m_txHeader->getFlag1() & ~REPEATER_MASK);
 			netHeader.setDestination(m_gatewayAddress, m_gatewayPort);
 			netHeader.setId(m_radioId);
@@ -1160,16 +1148,8 @@ void CSplitRepeaterThread::processRadioHeader()
 		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
 		if (!m_txHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_txHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CSplitRepeaterHeaderData netHeader(*m_txHeader);
-
-			// If the user uses the dummy gateway callsign, swap it for the real one
-			if (m_txHeader->getRptCall2().IsSameAs(m_dmyCallsign)) {
-				netHeader.setRptCall1(m_gwyCallsign);
-				netHeader.setRptCall2(m_txHeader->getRptCall1());
-			} else {
-				netHeader.setRptCall1(m_txHeader->getRptCall2());
-				netHeader.setRptCall2(m_txHeader->getRptCall1());
-			}
-
+			netHeader.setRptCall1(m_txHeader->getRptCall2());
+			netHeader.setRptCall2(m_txHeader->getRptCall1());
 			netHeader.setFlag1(m_txHeader->getFlag1() & ~REPEATER_MASK);
 			netHeader.setDestination(m_gatewayAddress, m_gatewayPort);
 			netHeader.setId(m_radioId);
@@ -1266,9 +1246,6 @@ void CSplitRepeaterThread::processNetworkHeader(CSplitRepeaterHeaderData* header
 		m_rxHeader = new CSplitRepeaterHeaderData(*header);
 
 		m_networkId = header->getId();
-
-		if (header->getRptCall1().IsSameAs(m_gwyCallsign))
-			header->setRptCall1(m_dmyCallsign);
 
 		wxLogMessage(wxT("Transmitting to - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
 		transmitHeader(header);
@@ -1751,7 +1728,6 @@ TRISTATE CSplitRepeaterThread::checkHeader(CSplitRepeaterHeaderData& header)
 	// Make sure MyCall is not empty, a silly value, or the repeater or gateway callsigns
 	if (my.IsSameAs(m_rptCallsign) ||
 		my.IsSameAs(m_gwyCallsign) ||
-		my.IsSameAs(m_dmyCallsign) ||
 		my.Left(6U).IsSameAs(wxT("NOCALL")) ||
 		my.Left(6U).IsSameAs(wxT("N0CALL")) ||
 		my.Left(6U).IsSameAs(wxT("MYCALL"))) {

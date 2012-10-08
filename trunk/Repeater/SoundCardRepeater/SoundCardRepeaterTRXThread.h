@@ -102,7 +102,6 @@ private:
 	CBeaconUnit*              m_beacon;
 	wxString                  m_rptCallsign;
 	wxString                  m_gwyCallsign;
-	wxString                  m_dmyCallsign;
 	CWAVFileReader*           m_reader;
 	CDStarGMSKDemodulator     m_demodulator;
 	CDStarGMSKModulator       m_modulator;

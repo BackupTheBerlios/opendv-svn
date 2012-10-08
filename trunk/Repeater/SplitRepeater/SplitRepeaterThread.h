@@ -91,7 +91,6 @@ private:
 	bool                       m_stopped;
 	wxString                   m_rptCallsign;
 	wxString                   m_gwyCallsign;
-	wxString                   m_dmyCallsign;
 	CBeaconUnit*               m_beacon;
 	unsigned int               m_beaconId;
 	unsigned int               m_beaconSeq;

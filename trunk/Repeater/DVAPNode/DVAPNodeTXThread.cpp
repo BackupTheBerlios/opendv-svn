@@ -151,8 +151,7 @@ void CDVAPNodeTXThread::setCallsign(const wxString& callsign, const wxString& ga
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
-	m_rptCallsign.Append(wxT("        "));
-	m_rptCallsign.Truncate(LONG_CALLSIGN_LENGTH);
+	m_rptCallsign.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
 }
 
 void CDVAPNodeTXThread::setProtocolHandler(CRepeaterProtocolHandler* handler)
