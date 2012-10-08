@@ -23,6 +23,7 @@ const wxString KEY_SENDA    = wxT("sendA");
 const wxString KEY_SENDB    = wxT("sendB");
 const wxString KEY_SENDC    = wxT("sendC");
 const wxString KEY_SENDD    = wxT("sendD");
+const wxString KEY_SENDE    = wxT("sendE");
 const wxString KEY_ADDRESS  = wxT("address");
 const wxString KEY_LANGUAGE = wxT("language");
 const wxString KEY_FORMAT   = wxT("format");
@@ -36,6 +37,7 @@ const bool     DEFAULT_SENDA    = false;
 const bool     DEFAULT_SENDB    = false;
 const bool     DEFAULT_SENDC    = false;
 const bool     DEFAULT_SENDD    = false;
+const bool     DEFAULT_SENDE    = false;
 const wxString DEFAULT_ADDRESS  = wxT("127.0.0.1");
 const LANGUAGE DEFAULT_LANGUAGE = LANG_ENGLISH_UK_1;
 const FORMAT   DEFAULT_FORMAT   = FORMAT_VOICE_TIME;
@@ -54,6 +56,7 @@ m_sendA(DEFAULT_SENDA),
 m_sendB(DEFAULT_SENDB),
 m_sendC(DEFAULT_SENDC),
 m_sendD(DEFAULT_SENDD),
+m_sendE(DEFAULT_SENDE),
 m_address(DEFAULT_ADDRESS),
 m_language(DEFAULT_LANGUAGE),
 m_format(DEFAULT_FORMAT),
@@ -75,6 +78,8 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_SENDC, &m_sendC, DEFAULT_SENDC);
 
 	m_config->Read(m_name + KEY_SENDD, &m_sendD, DEFAULT_SENDD);
+
+	m_config->Read(m_name + KEY_SENDE, &m_sendE, DEFAULT_SENDE);
 
 	m_config->Read(m_name + KEY_ADDRESS, &m_address, DEFAULT_ADDRESS);
 
@@ -109,6 +114,7 @@ m_sendA(DEFAULT_SENDA),
 m_sendB(DEFAULT_SENDB),
 m_sendC(DEFAULT_SENDC),
 m_sendD(DEFAULT_SENDD),
+m_sendE(DEFAULT_SENDE),
 m_address(DEFAULT_ADDRESS),
 m_language(DEFAULT_LANGUAGE),
 m_format(DEFAULT_FORMAT),
@@ -169,6 +175,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_SENDD)) {
 			val.ToLong(&temp);
 			m_sendD = temp == 1L;
+		} else if (key.IsSameAs(KEY_SENDE)) {
+			val.ToLong(&temp);
+			m_sendE = temp == 1L;
 		} else if (key.IsSameAs(KEY_ADDRESS)) {
 			m_address = val;
 		} else if (key.IsSameAs(KEY_LANGUAGE)) {
@@ -200,23 +209,25 @@ CTimeServerConfig::~CTimeServerConfig()
 
 #endif
 
-void CTimeServerConfig::getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, wxString& address) const
+void CTimeServerConfig::getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, bool& sendE, wxString& address) const
 {
 	callsign  = m_callsign;
 	sendA     = m_sendA;
 	sendB     = m_sendB;
 	sendC     = m_sendC;
 	sendD     = m_sendD;
+	sendE     = m_sendE;
 	address   = m_address;
 }
 
-void CTimeServerConfig::setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address)
+void CTimeServerConfig::setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address)
 {
 	m_callsign  = callsign;
 	m_sendA     = sendA;
 	m_sendB     = sendB;
 	m_sendC     = sendC;
 	m_sendD     = sendD;
+	m_sendE     = sendE;
 	m_address   = address;
 }
 
@@ -255,6 +266,7 @@ bool CTimeServerConfig::write()
 	m_config->Write(m_name + KEY_SENDB, m_sendB);
 	m_config->Write(m_name + KEY_SENDC, m_sendC);
 	m_config->Write(m_name + KEY_SENDD, m_sendD);
+	m_config->Write(m_name + KEY_SENDE, m_sendE);
 	m_config->Write(m_name + KEY_ADDRESS, m_address);
 	m_config->Write(m_name + KEY_LANGUAGE, long(m_language));
 	m_config->Write(m_name + KEY_FORMAT,   long(m_format));
@@ -296,6 +308,7 @@ bool CTimeServerConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_SENDB.c_str(), m_sendB ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_SENDC.c_str(), m_sendC ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_SENDD.c_str(), m_sendD ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_SENDE.c_str(), m_sendE ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_ADDRESS.c_str(), m_address.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_LANGUAGE.c_str(), int(m_language)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_FORMAT.c_str(),   int(m_format)); file.AddLine(buffer);

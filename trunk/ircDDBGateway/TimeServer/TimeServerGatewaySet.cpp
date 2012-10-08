@@ -22,7 +22,7 @@
 const unsigned int BORDER_SIZE   = 5U;
 const unsigned int CONTROL_WIDTH = 150U;
 
-CTimeServerGatewaySet::CTimeServerGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address) :
+CTimeServerGatewaySet::CTimeServerGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
@@ -30,7 +30,8 @@ m_address(NULL),
 m_sendA(NULL),
 m_sendB(NULL),
 m_sendC(NULL),
-m_sendD(NULL)
+m_sendD(NULL),
+m_sendE(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
@@ -83,6 +84,15 @@ m_sendD(NULL)
 	sizer->Add(m_sendD, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_sendD->SetSelection(sendD ? 1 : 0);
 
+	wxStaticText* sendELabel = new wxStaticText(this, -1, _("Module E"));
+	sizer->Add(sendELabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_sendE = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_sendE->Append(_("No"));
+	m_sendE->Append(_("Yes"));
+	sizer->Add(m_sendE, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_sendE->SetSelection(sendE ? 1 : 0);
+
 	SetAutoLayout(true);
 
 	SetSizer(sizer);
@@ -118,7 +128,10 @@ bool CTimeServerGatewaySet::Validate()
 	if (m_sendC->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	return m_sendD->GetCurrentSelection() != wxNOT_FOUND;
+	if (m_sendD->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+
+	return m_sendE->GetCurrentSelection() != wxNOT_FOUND;
 }
 
 wxString CTimeServerGatewaySet::getCallsign() const
@@ -159,6 +172,13 @@ bool CTimeServerGatewaySet::getSendC() const
 bool CTimeServerGatewaySet::getSendD() const
 {
 	int n = m_sendD->GetCurrentSelection();
+
+	return n == 1;
+}
+
+bool CTimeServerGatewaySet::getSendE() const
+{
+	int n = m_sendE->GetCurrentSelection();
 
 	return n == 1;
 }

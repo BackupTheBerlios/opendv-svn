@@ -34,8 +34,8 @@ public:
 #endif
 	~CTimeServerConfig();
 
-	void getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, wxString& address) const;
-	void setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address);
+	void getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, bool& sendE, wxString& address) const;
+	void setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address);
 
 	void getAnnouncements(LANGUAGE& language, FORMAT& format, INTERVAL& interval) const;
 	void setAnnouncements(LANGUAGE language, FORMAT format, INTERVAL interval);
@@ -57,6 +57,7 @@ private:
 	bool          m_sendB;
 	bool          m_sendC;
 	bool          m_sendD;
+	bool          m_sendE;
 	wxString      m_address;
 	LANGUAGE      m_language;
 	FORMAT        m_format;

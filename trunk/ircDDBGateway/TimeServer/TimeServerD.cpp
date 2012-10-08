@@ -162,11 +162,11 @@ bool CTimeServerD::createThread()
 	m_thread = new CTimeServerThread;
 
 	wxString callsign, address;
-	bool sendA, sendB, sendC, sendD;
-	config.getGateway(callsign, sendA, sendB, sendC, sendD, address);
+	bool sendA, sendB, sendC, sendD, sendE;
+	config.getGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
 	callsign.MakeUpper();
-	m_thread->setGateway(callsign, sendA, sendB, sendC, sendD, address);
-	wxLogInfo(wxT("Callsign set to %s, module %s%s%s%s, address: %s"), callsign.c_str(), sendA ? wxT("A") : wxT(""), sendB ? wxT("B") : wxT(""), sendC ? wxT("C") : wxT(""), sendD ? wxT("D") : wxT(""), address.c_str());
+	m_thread->setGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
+	wxLogInfo(wxT("Callsign set to %s, module %s%s%s%s, address: %s"), callsign.c_str(), sendA ? wxT("A") : wxT(""), sendB ? wxT("B") : wxT(""), sendC ? wxT("C") : wxT(""), sendD ? wxT("D") : wxT(""), sendE ? wxT("E") : wxT(""), address.c_str());
 
 	LANGUAGE language;
 	FORMAT format;

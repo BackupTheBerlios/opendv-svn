@@ -41,6 +41,7 @@ m_callsignA(),
 m_callsignB(),
 m_callsignC(),
 m_callsignD(),
+m_callsignE(),
 m_callsignG(),
 m_address(),
 m_language(LANG_ENGLISH_UK_1),
@@ -79,7 +80,7 @@ CTimeServerThread::~CTimeServerThread()
 void CTimeServerThread::run()
 {
 	// Wait here until we have the essentials to run
-	while (!m_killed && m_address.s_addr == INADDR_NONE && m_callsignA.IsEmpty() && m_callsignB.IsEmpty() && m_callsignC.IsEmpty() && m_callsignD.IsEmpty())
+	while (!m_killed && m_address.s_addr == INADDR_NONE && m_callsignA.IsEmpty() && m_callsignB.IsEmpty() && m_callsignC.IsEmpty() && m_callsignD.IsEmpty() && m_callsignE.IsEmpty())
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -130,7 +131,7 @@ void CTimeServerThread::kill()
 	m_killed = true;
 }
 
-bool CTimeServerThread::setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address)
+bool CTimeServerThread::setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address)
 {
 	m_callsign = callsign;
 	m_callsign.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
@@ -153,6 +154,11 @@ bool CTimeServerThread::setGateway(const wxString& callsign, bool sendA, bool se
 	if (sendD) {
 		m_callsignD = m_callsign;
 		m_callsignD.Append(wxT("D"));
+	}
+
+	if (sendE) {
+		m_callsignE = m_callsign;
+		m_callsignE.Append(wxT("E"));
 	}
 
 	m_callsign.Append(wxT(" "));
@@ -1018,6 +1024,7 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 	unsigned int idB = CHeaderData::createId();
 	unsigned int idC = CHeaderData::createId();
 	unsigned int idD = CHeaderData::createId();
+	unsigned int idE = CHeaderData::createId();
 
 	CHeaderData header;
 	header.setMyCall1(m_callsign);
@@ -1159,6 +1166,12 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 		sendHeader(header);
 	}
 
+	if (!m_callsignE.IsEmpty()) {
+		header.setRptCall2(m_callsignE);
+		header.setId(idE);
+		sendHeader(header);
+	}
+
 	unsigned int out = 0U;
 
 	wxStopWatch timer;
@@ -1189,6 +1202,11 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 
 			if (!m_callsignD.IsEmpty()) {
 				data->setId(idD);
+				sendData(*data);
+			}
+
+			if (!m_callsignE.IsEmpty()) {
+				data->setId(idE);
 				sendData(*data);
 			}
 

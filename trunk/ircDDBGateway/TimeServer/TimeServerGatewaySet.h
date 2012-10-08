@@ -27,7 +27,7 @@
 class CTimeServerGatewaySet : public wxPanel {
 public:
 	CTimeServerGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, bool sendA, bool sendB,
-		bool sendC, bool sendD, const wxString& address);
+		bool sendC, bool sendD, bool sendE, const wxString& address);
 	virtual ~CTimeServerGatewaySet();
 
 	virtual bool Validate();
@@ -40,6 +40,7 @@ public:
 	virtual bool     getSendB() const;
 	virtual bool     getSendC() const;
 	virtual bool     getSendD() const;
+	virtual bool     getSendE() const;
 
 private:
 	wxString           m_title;
@@ -49,6 +50,7 @@ private:
 	wxChoice*          m_sendB;
 	wxChoice*          m_sendC;
 	wxChoice*          m_sendD;
+	wxChoice*          m_sendE;
 };
 
 #endif

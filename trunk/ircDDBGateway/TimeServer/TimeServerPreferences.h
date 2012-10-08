@@ -29,7 +29,7 @@
 class CTimeServerPreferences : public wxDialog {
 public:
 	CTimeServerPreferences(wxWindow* parent, int id, const wxString& callsign, bool sendA, bool sendB,
-		bool sendC, bool sendD, const wxString& address, LANGUAGE language, FORMAT format, INTERVAL interval);
+		bool sendC, bool sendD, bool sendE, const wxString& address, LANGUAGE language, FORMAT format, INTERVAL interval);
 	virtual ~CTimeServerPreferences();
 
 	virtual bool Validate();
@@ -40,6 +40,7 @@ public:
 	virtual bool     getSendB() const;
 	virtual bool     getSendC() const;
 	virtual bool     getSendD() const;
+	virtual bool     getSendE() const;
 
 	virtual LANGUAGE getLanguage() const;
 	virtual FORMAT   getFormat() const;

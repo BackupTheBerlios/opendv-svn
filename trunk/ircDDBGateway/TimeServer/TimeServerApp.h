@@ -45,8 +45,8 @@ public:
 
 	virtual void showLog(const wxString& text);
 
-	virtual void getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, wxString& address) const;
-	virtual void setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address);
+	virtual void getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, bool& sendE, wxString& address) const;
+	virtual void setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address);
 
 	virtual void getAnnouncements(LANGUAGE& language, FORMAT& format, INTERVAL& interval) const;
 	virtual void setAnnouncements(LANGUAGE language, FORMAT format, INTERVAL interval);

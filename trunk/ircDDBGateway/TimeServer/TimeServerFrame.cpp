@@ -136,15 +136,15 @@ void CTimeServerFrame::onClose(wxCloseEvent& event)
 void CTimeServerFrame::onPreferences(wxCommandEvent& event)
 {
 	wxString callsign, address;
-	bool sendA, sendB, sendC, sendD;
-	::wxGetApp().getGateway(callsign, sendA, sendB, sendC, sendD, address);
+	bool sendA, sendB, sendC, sendD, sendE;
+	::wxGetApp().getGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
 
 	LANGUAGE language;
 	FORMAT format;
 	INTERVAL interval;
 	::wxGetApp().getAnnouncements(language, format, interval);
 
-	CTimeServerPreferences dialog1(this, -1, callsign, sendA, sendB, sendC, sendD, address, language, format, interval);
+	CTimeServerPreferences dialog1(this, -1, callsign, sendA, sendB, sendC, sendD, sendE, address, language, format, interval);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -153,12 +153,13 @@ void CTimeServerFrame::onPreferences(wxCommandEvent& event)
 	sendB     = dialog1.getSendB();
 	sendC     = dialog1.getSendC();
 	sendD     = dialog1.getSendD();
+	sendE     = dialog1.getSendE();
 	address   = dialog1.getAddress();
 	language  = dialog1.getLanguage();
 	format    = dialog1.getFormat();
 	interval  = dialog1.getInterval();
 
-	::wxGetApp().setGateway(callsign, sendA, sendB, sendC, sendD, address);
+	::wxGetApp().setGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
 	::wxGetApp().setAnnouncements(language, format, interval);
 	::wxGetApp().writeConfig();
 

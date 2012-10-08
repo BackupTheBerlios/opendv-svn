@@ -181,14 +181,14 @@ void CTimeServerApp::showLog(const wxString& text)
 	m_frame->showLog(text);
 }
 
-void CTimeServerApp::getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, wxString& address) const
+void CTimeServerApp::getGateway(wxString& callsign, bool& sendA, bool& sendB, bool& sendC, bool& sendD, bool& sendE, wxString& address) const
 {
-	m_config->getGateway(callsign, sendA, sendB, sendC, sendD, address);
+	m_config->getGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
 }
 
-void CTimeServerApp::setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address)
+void CTimeServerApp::setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address)
 {
-	m_config->setGateway(callsign, sendA, sendB, sendC, sendD, address);
+	m_config->setGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
 }
 
 void CTimeServerApp::getAnnouncements(LANGUAGE& language, FORMAT& format, INTERVAL& interval) const
@@ -221,11 +221,11 @@ void CTimeServerApp::createThread()
 	CTimeServerThread* thread = new CTimeServerThread;
 
 	wxString callsign, address;
-	bool sendA, sendB, sendC, sendD;
-	getGateway(callsign, sendA, sendB, sendC, sendD, address);
+	bool sendA, sendB, sendC, sendD, sendE;
+	getGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
 	callsign.MakeUpper();
-	thread->setGateway(callsign, sendA, sendB, sendC, sendD, address);
-	wxLogInfo(wxT("Callsign set to %s, module %s%s%s%s, address: %s"), callsign.c_str(), sendA ? wxT("A") : wxT(""), sendB ? wxT("B") : wxT(""), sendC ? wxT("C") : wxT(""), sendD ? wxT("D") : wxT(""), address.c_str());
+	thread->setGateway(callsign, sendA, sendB, sendC, sendD, sendE, address);
+	wxLogInfo(wxT("Callsign set to %s, module %s%s%s%s, address: %s"), callsign.c_str(), sendA ? wxT("A") : wxT(""), sendB ? wxT("B") : wxT(""), sendC ? wxT("C") : wxT(""), sendD ? wxT("D") : wxT(""), sendE ? wxT("E") : wxT(""), address.c_str());
 
 	LANGUAGE language;
 	FORMAT format;

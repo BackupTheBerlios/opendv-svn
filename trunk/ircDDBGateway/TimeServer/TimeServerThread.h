@@ -64,7 +64,7 @@ public:
 	CTimeServerThread();
 	virtual ~CTimeServerThread();
 
-	virtual bool setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address);
+	virtual bool setGateway(const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address);
 	virtual void setAnnouncements(LANGUAGE language, FORMAT format, INTERVAL interval);
 
 	virtual void run();
@@ -77,6 +77,7 @@ private:
 	wxString         m_callsignB;
 	wxString         m_callsignC;
 	wxString         m_callsignD;
+	wxString         m_callsignE;
 	wxString         m_callsignG;
 	in_addr          m_address;
 	LANGUAGE         m_language;

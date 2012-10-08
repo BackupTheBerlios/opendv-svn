@@ -22,7 +22,7 @@
 const unsigned int BORDER_SIZE   = 5U;
 const unsigned int CONTROL_WIDTH = 150U;
 
-CTimeServerPreferences::CTimeServerPreferences(wxWindow* parent, int id, const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, const wxString& address, LANGUAGE language, FORMAT format, INTERVAL interval) :
+CTimeServerPreferences::CTimeServerPreferences(wxWindow* parent, int id, const wxString& callsign, bool sendA, bool sendB, bool sendC, bool sendD, bool sendE, const wxString& address, LANGUAGE language, FORMAT format, INTERVAL interval) :
 wxDialog(parent, id, wxString(_("Time Server Preferences"))),
 m_gateway(NULL),
 m_announcements(NULL)
@@ -31,7 +31,7 @@ m_announcements(NULL)
 
 	wxNotebook* noteBook = new wxNotebook(this, -1);
 
-	m_gateway = new CTimeServerGatewaySet(noteBook, -1, APPLICATION_NAME, callsign, sendA, sendB, sendC, sendD, address);
+	m_gateway = new CTimeServerGatewaySet(noteBook, -1, APPLICATION_NAME, callsign, sendA, sendB, sendC, sendD, sendE, address);
 	noteBook->AddPage(m_gateway, _("Gateway"), true);
 
 	m_announcements = new CTimeServerAnnouncementsSet(noteBook, -1, APPLICATION_NAME, language, format, interval);
@@ -91,6 +91,11 @@ bool CTimeServerPreferences::getSendC() const
 bool CTimeServerPreferences::getSendD() const
 {
 	return m_gateway->getSendD();
+}
+
+bool CTimeServerPreferences::getSendE() const
+{
+	return m_gateway->getSendE();
 }
 
 LANGUAGE CTimeServerPreferences::getLanguage() const
