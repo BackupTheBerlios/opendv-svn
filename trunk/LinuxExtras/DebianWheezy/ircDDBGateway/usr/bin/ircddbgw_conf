@@ -1117,7 +1117,7 @@ function repeater_setup(){
         let rptr=$inp-1
         let rptrmax=$inp
     else
-	rptr=1
+	rptr=0
 	rptrmax=5
     fi
     echo ""
