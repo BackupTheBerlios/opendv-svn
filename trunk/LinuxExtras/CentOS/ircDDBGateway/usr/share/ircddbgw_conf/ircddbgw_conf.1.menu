@@ -128,6 +128,30 @@ description2:keine Frequenzangaben, Software-Versionen etc. verwenden, hierfuer 
 description2:andere Felder vorgesehen!
 description2: 
 
+description1R: 
+description1R:DIESE EINGABE IST OPTIONAL:
+description1R: 
+description1R:Gib eine aussagekraeftige Angabe zum Repeater-Standort ein, max. 20 Zeichen.
+description1R:Dieser Text ersetzt den Text des Gateways fuer diesen Repeater. Er wird auf 
+description1R:der ircDDB-Webseite angezeigt, in Repeaterlisten und im Display von Geraeten,
+description1R:die die automatisch generierten Speicherlisten verwenden.
+description1R:Bitte keine Sonderzeichen, Umlaute und keinen HTML-Code verwenden! 
+description1R:Hier sollte eine Angabe stehen, die im Display des mobilen Benutzers die
+description1R:Auswahl eines Gateways erleichtert.
+description1R:Weitere 20 Zeichen koennen nachfolgend in 'description2' eingegeben werden.
+description1R:'description2' wird nur auf Webseiten angezeigt.
+description1R: 
+
+description2R:
+description2R:DIESE EINGABE IST OPTIONAL:
+description2R:
+description2R:Hier kannst Du weitere Details zum Repeaterstandort angeben, max. 20 Zeichen.
+description2R:Dieser Text wird zusaetzlich zu 'description1' auf Webseiten angezeigt. 
+description2R:Bitte keine Sonderzeichen, Umlaute, keinen HTML-Code, keine Geo-Position,
+description2R:keine Frequenzangaben, Software-Versionen etc. verwenden, hierfuer sind 
+description2R:andere Felder vorgesehen!
+description2R: 
+
 url: 
 url:Hier kann eine URL eingegeben werden, wo weitere Informationen zum Gateway zu
 url:finden sind.
@@ -135,6 +159,16 @@ url:Diese URL wird auf der ircDDB Statusseite angezeigt und auch in 'Dashboard'-
 url:Software. 
 url:Bitte keine Links auf Seiten mit kommerziellem Inhalt verwenden! 
 url: 
+
+urlR: 
+urlR:DIESE EINGABE IST OPTIONAL:
+urlR: 
+urlR:Hier kann eine URL eingegeben werden, wo weitere Informationen zu diesem Repeater
+urlR:zu finden sind. Eine Eingabe ersetzt die Angaben des Gateways fuer diesen Repeater.
+urlR:Diese URL wird auf der ircDDB Statusseite angezeigt und auch in 'Dashboard'-
+urlR:Software. 
+urlR:Bitte keine Links auf Seiten mit kommerziellem Inhalt verwenden! 
+urlR: 
 
 hw_setup: 
 hw_setup: 
@@ -357,9 +391,11 @@ rptr_setup:
 rptr_setup:********************************************************************************
 
 rptr_num:
-rptr_num:Wieviele Repeater-Module sollen verwendet werden? (1-4).
-rptr_num:Bitte beachte, dass die die Hardware-Informationen und Device-Namen beboetigen 
+rptr_num:Welches Repeater-Modul soll konfiguriert werden? (1-4).
+rptr_num:Bitte beachte, dass Du die Hardware-Informationen und Device-Namen benoetigen 
 rptr_num:wirst.
+rptr_num:Die Reihenfolge der Module spielt keine Rolle (egal ob A,B,C,D oder D,A,C,B),
+rptr_num:jedoch muss die Konfiguration lueckenlos sein!
 rptr_num: 
 rptr_num: 0 oder <ENTER> um die Konfiguration der Repeater-Module zu ueberspringen.
 rptr_num: 

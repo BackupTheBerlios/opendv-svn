@@ -106,27 +106,58 @@ longitude:Please enter accurate values and check the location on http://www.aprs
 longitude: 
 
 description1: 
-description1:Enter a meaningful description of your repeater location, max. 20 characters. 
-description1:This text will be shown on the webpage, in repeater lists and on the display
+description1:Enter a meaningful description of your gateway location, max. 20 characters. 
+description1:This text will be shown on the webpage, in gateway lists and on the display
 description1:of Icom units. 
 description1:No special characters, no HTML code! 
-description1:Choose useful information for the display of mobile users and repeater lists. 
+description1:Choose useful information for the display of mobile users and gateway lists. 
 description1:Another 20 characters for more details will follow in description2.
 description1:description2 will only be shown the web. 
 description1: 
 
 description2:  
-description2:Here you can add more details of your repeater location, max. 20 characters. 
+description2:Here you can add more details of your gateway location, max. 20 characters. 
 description2:This text will be shown on the webpage in addition to 'description1'. 
 description2:No special characters, no HTML code, no Geoposition, no QRG, no software
 description2:version this will be stored at a different place. 
 description2: 
 
+description1R: 
+description1R:THIS INPUT IS OPTIONAL
+description1R: 
+description1R:Enter a meaningful description of your repeater location, max. 20 characters. 
+description1R:If set, this text will overwrite the description of the gateway and be shown 
+description1R:on the webpage, in repeater lists and on the display of Icom units. 
+description1R:No special characters, no HTML code! 
+description1R:Choose useful information for the display of mobile users and repeater lists. 
+description1R:Another 20 characters for more details will follow in description2.
+description1R:description2 will only be shown the web. 
+description1R: 
+
+description2R:  
+description2R:THIS INPUT IS OPTIONAL
+description2R:  
+description2R:Here you can add more details of your repeater location, max. 20 characters. 
+description2R:If set, this text will overwrite the description of the gateway and be shown
+description2R:on the webpage in addition to 'description1'. 
+description2R:No special characters, no HTML code, no Geoposition, no QRG, no software
+description2R:version this will be stored at a different place. 
+description2R: 
+
 url: 
-url:Enter a URL of a webpage which provides more information about your system. 
+url:Enter a URL of a webpage which provides more information about your gateway. 
 url:This URL will be shown on the webpage and is used by dashboard software. 
 url:Please no links to commercial advertising! 
 url: 
+
+urlR: 
+urlR: THIS INPUT IS OPTIONAL!
+urlR: 
+urlR:Enter a URL of a webpage which provides more information about this repeater. 
+urlR:If set, this text will overwrite the setting from the gateway.
+urlR:This URL will be shown on the webpage and is used by dashboard software. 
+urlR:Please no links to commercial advertising! 
+urlR: 
 
 hw_setup: 
 hw_setup: 
@@ -331,11 +362,13 @@ rptr_setup:
 rptr_setup:********************************************************************************
 
 rptr_num: 
-rptr_num: Enter the number of required repeater modules (1-4).
+rptr_num: Enter the number of the repeater module which should be configured (1-4).
 rptr_num: Note that you will need hardware information / devicenames for homebrew hardware. 
+rptr_num: The order of modules is variable (no matter if A,B,C,D or D,A,C,B) but repeater
+rptr_num: modules have to be configured in sequence (1-4) without gap!
 rptr_num: 
 rptr_num: 0 or <ENTER> to skip the repeater module setup.
-rptr_num: 
+rptr_num:
 
 rptr_stop:  
 rptr_stop: Stop repeater configuration! 
