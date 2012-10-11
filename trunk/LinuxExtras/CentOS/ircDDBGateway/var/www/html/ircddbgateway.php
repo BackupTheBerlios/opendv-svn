@@ -14,7 +14,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 
 }
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20120504";
+$rev="20121011";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -38,7 +38,14 @@ $col[1] = "#f0f0a0";
     </head>
 <body>
 <?php
-    print "<iframe src=\"http://status.ircddb.net/lhhead.php?call=$MYCALL\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" width=\"100%\" height=\"260\" scrolling=\"no\"></iframe>\n";
+// calculate size of included repeater table
+    $nummod = 1;
+    for($i = 1;$i < 5; $i++){
+	$param="repeaterBand" . $i;
+	if(isset($configs[$param])) { $nummod++; }
+    }	
+    $tabh = ($nummod - 1) * 36 + 230;
+    print "<iframe src=\"http://status.ircddb.net/lhhead.php?call=$MYCALL\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" width=\"100%\" height=\"$tabh\" scrolling=\"no\"></iframe>\n";
 ?>
     <br><font size=+1><b>Configuration</b></font><br>
     <table BORDER=0 BGCOLOR=white>
@@ -74,7 +81,7 @@ $col[1] = "#f0f0a0";
     <table BORDER=0 BGCOLOR=white>
     <font size=-1>
     <tr bgcolor=black>
-    <th width=40><a class=tooltip href="#"><font color=white><center><b>Module</b></center></font><span><b>Gateway Module</b></span></a></th>
+    <th width=70><a class=tooltip href="#"><font color=white><center><b>Repeater</b></center></font><span><b>Callsign of connected repeater</b></span></a></th>
     <th width=80><a class=tooltip href="#"><font color=white><center><b>Default</b></center></font><span><b>Default Link Destination</b></span></a></th>
     <th width=40><a class=tooltip href="#"><font color=white><center><b>Auto</b></center></font><span><b>AutoLink</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=50><a class=tooltip href="#"><font color=white><center><b>Timer</b></center></font><span><b>Reset/Restart Timer</b></span></a></th>
@@ -97,8 +104,10 @@ $col[1] = "#f0f0a0";
 	    print "<tr bgcolor=\"$col[$ci]\">";
 	    $tr = 1;
 	    $module = $configs[$param];
-	    print "<td align=center>$module</td>";
-	    $rcall = sprintf("%-7.7s%-1.1s",$MYCALL,$configs[$param]);
+	    $rcall = sprintf("%-7.7s%-2.2s",$MYCALL,$module);
+	    $param="repeaterCall" . $i;
+	    if(isset($configs[$param])) { $rptrcall=sprintf("%-7.7s%-2.2s",$configs[$param],$module); } else { $rptrcall = $rcall;}
+	    print "<td>$rptrcall</td>";
 	    $param="reflector" . $i;
 	    if(isset($configs[$param])) { print "<td>$configs[$param]</td>"; } else { print "<td>&nbsp;</td>";}
 	    $param="atStartup" . $i;
