@@ -136,6 +136,9 @@ bool CTimeServerThread::setGateway(const wxString& callsign, bool sendA, bool se
 	m_callsign = callsign;
 	m_callsign.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
 
+	m_callsignG = m_callsign;
+	m_callsignG.Append(wxT("G"));
+
 	if (sendA) {
 		m_callsignA = m_callsign;
 		m_callsignA.Append(wxT("A"));
