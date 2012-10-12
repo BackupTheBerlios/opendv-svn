@@ -221,7 +221,6 @@ void CIRCDDBGatewayThread::run()
 	if (m_dplusEnabled)
 		CDPlusHandler::startAuthenticator(m_gatewayAddress, &m_cache);
 
-	CDCSHandler::setCallsign(m_gatewayCallsign);
 	CDCSHandler::setDCSProtocolHandler(m_dcsHandler);
 	CDCSHandler::setHeaderLogger(headerLogger);
 

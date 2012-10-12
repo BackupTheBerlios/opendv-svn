@@ -24,7 +24,6 @@
 unsigned int         CDCSHandler::m_maxReflectors = 0U;
 CDCSHandler**        CDCSHandler::m_reflectors = NULL;
 
-wxString             CDCSHandler::m_callsign;
 CDCSProtocolHandler* CDCSHandler::m_handler = NULL;
 
 bool                 CDCSHandler::m_stateChange = false;
@@ -126,12 +125,6 @@ void CDCSHandler::initialise(unsigned int maxReflectors)
 		m_reflectors[i] = NULL;
 }
 
-void CDCSHandler::setCallsign(const wxString& callsign)
-{
-	m_callsign = callsign;
-	m_callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-}
-
 void CDCSHandler::setDCSProtocolHandler(CDCSProtocolHandler* handler)
 {
 	wxASSERT(handler != NULL);
@@ -207,8 +200,11 @@ void CDCSHandler::process(CPollData& poll)
 				found = true;
 
 				if (handler->m_direction == DIR_OUTGOING) {
+					wxString repeater = handler->m_repeater;
+					repeater.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+
 					wxString data = poll.getData1();
-					poll.setData1(handler->m_callsign);
+					poll.setData1(repeater);
 					poll.setData2(data);
 					m_handler->writePoll(poll);
 				}

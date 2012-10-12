@@ -48,7 +48,6 @@ class CDCSHandler {
 public:
 	static void initialise(unsigned int maxReflectors);
 
-	static void setCallsign(const wxString& callsign);
 	static void setDCSProtocolHandler(CDCSProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
 
@@ -92,7 +91,6 @@ private:
 	static unsigned int         m_maxReflectors;
 	static CDCSHandler**        m_reflectors;
 
-	static wxString             m_callsign;
 	static CDCSProtocolHandler* m_handler;
 
 	static bool                 m_stateChange;

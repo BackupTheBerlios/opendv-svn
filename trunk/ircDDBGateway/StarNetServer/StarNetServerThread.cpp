@@ -164,7 +164,6 @@ void CStarNetServerThread::run()
 	CDExtraHandler::setHeaderLogger(headerLogger);
 #endif
 #if defined(DCS_LINK)
-	CDCSHandler::setCallsign(m_callsign);
 	CDCSHandler::setDCSProtocolHandler(m_dcsHandler);
 	CDCSHandler::setHeaderLogger(headerLogger);
 #endif
