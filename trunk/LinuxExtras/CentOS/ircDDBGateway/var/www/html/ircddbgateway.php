@@ -14,7 +14,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 
 }
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20121011";
+$rev="20121012";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -45,6 +45,7 @@ $col[1] = "#f0f0a0";
 	if(isset($configs[$param])) { $nummod++; }
     }	
     $tabh = ($nummod - 1) * 36 + 230;
+
     print "<iframe src=\"http://status.ircddb.net/lhhead.php?call=$MYCALL\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" width=\"100%\" height=\"$tabh\" scrolling=\"no\"></iframe>\n";
 ?>
     <br><font size=+1><b>Configuration</b></font><br>
@@ -98,15 +99,15 @@ $col[1] = "#f0f0a0";
     $tr = 0;
     for($i = 1;$i < 5; $i++){
 	$param="repeaterBand" . $i;
-	if(isset($configs[$param])) {
+	if((isset($configs[$param])) && strlen($configs[$param]) == 1) {
 	    $ci++;
 	    if($ci > 1) { $ci = 0; }
 	    print "<tr bgcolor=\"$col[$ci]\">";
 	    $tr = 1;
 	    $module = $configs[$param];
-	    $rcall = sprintf("%-7.7s%-2.2s",$MYCALL,$module);
+	    $rcall = sprintf("%-7.7s%-1.1s",$MYCALL,$module);
 	    $param="repeaterCall" . $i;
-	    if(isset($configs[$param])) { $rptrcall=sprintf("%-7.7s%-2.2s",$configs[$param],$module); } else { $rptrcall = $rcall;}
+	    if(isset($configs[$param])) { $rptrcall=sprintf("%-7.7s%-1.1s",$configs[$param],$module); } else { $rptrcall = $rcall;}
 	    print "<td>$rptrcall</td>";
 	    $param="reflector" . $i;
 	    if(isset($configs[$param])) { print "<td>$configs[$param]</td>"; } else { print "<td>&nbsp;</td>";}
