@@ -14,7 +14,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 
 }
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20121012";
+$rev="20121013";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -128,9 +128,8 @@ $col[1] = "#f0f0a0";
                     $linkRefl = "&nbsp;";
 // Reflector-Link, sample:
 // 2011-09-22 02:15:06: DExtra link - Type: Repeater Rptr: DB0LJ  B Refl: XRF023 A Dir: Outgoing
-// 2012-04-03 08:40:07: DPlus link - Type: Dongle Rptr: DB0ERK B Refl: REF006 D Dir: Outgoing
-// 2012-04-03 08:40:07: DCS link - Type: Repeater Rptr: DB0ERK C Refl: DCS001 C Dir: Outgoing
-// 2012-05-27 05:15:07: DCS link - Type: Repeater Rptr: DB0LJ  B Refl: DCS001 S Dir: Outgoing
+// 2012-10-12 17:15:45: DCS link - Type: Repeater Rptr: DB0LJ  B Refl: DCS001 L Dir: Outgoing
+// 2012-10-12 17:56:10: DCS link - Type: Repeater Rptr: DB0RPL B Refl: DCS015 B Dir: Outgoing
                     if(preg_match_all('/^(.{19}).*(D[A-Za-z]*).*Type: ([A-Za-z]*).*Rptr: (.{8}).*Refl: (.{8}).*Dir: Outgoing$/',$linkLine,$linx) > 0){
 			$statimg = "<img src=\"images/20green.png\">";
                         $linkDate = $linx[1][0];
@@ -138,7 +137,7 @@ $col[1] = "#f0f0a0";
                         $linkType = $linx[3][0];
                         $linkRptr = $linx[4][0];
                         $linkRefl = $linx[5][0];
-			if($linkRptr == $rcall){
+			if($linkRptr == $rptrcall){
 			    print "<td align=center width=40>$statimg</td>";
 			    print "<td>$linkRefl</td>";
 			    print "<td>$protocol</td>";
@@ -152,7 +151,8 @@ $col[1] = "#f0f0a0";
 		fclose($linkLog);
 	    }
 
-// 2012-05-08 21:16:31: DExtra link - Type: Repeater Rptr: DB0LJ  B Refl: DB0MYK B Dir: Incoming
+// 2012-05-08 21:16:31: DExtra link - Type: Repeater Rptr: DB0LJ  A Refl: DB0MYK B Dir: Incoming
+
 	    if ($linkLog = fopen($linkLogPath,'r')) {
 		while ($linkLine = fgets($linkLog)) {
 		    $statimg = "<img src=\"images/20red.png\">";
@@ -168,7 +168,7 @@ $col[1] = "#f0f0a0";
                         $linkType = $linx[3][0];
                         $linkRptr = $linx[4][0];
                         $linkRefl = $linx[5][0];
-			if($linkRptr == $rcall){
+			if($linkRptr == $rptrcall){
 			    $ci++;
 			    if($ci > 1) { $ci = 0; }
 			    print "<tr bgcolor=\"$col[$ci]\">";
