@@ -6,4 +6,8 @@ $starLogPath = $logPath . '/STARnet.log';
 $linkLogPath = $logPath . '/Links.log';
 $hdrLogPath = $logPath . '/Headers.log';
 $gatewayConfigPath = '/home/opendv/ircddbgateway/ircddbgateway';
+//
+// Setting only needed if DD-Mode is in use:
+// Location of dhcpd.leases file
+$dhcpd_leases_file = "/var/lib/dhcpd/dhcpd.leases";
 ?>

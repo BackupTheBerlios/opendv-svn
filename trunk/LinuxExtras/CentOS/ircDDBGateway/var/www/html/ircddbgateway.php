@@ -14,7 +14,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 
 }
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20121013";
+$rev="20121020";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -192,7 +192,8 @@ $col[1] = "#f0f0a0";
 	}
     }
 ?>
-</table>
+    </table>
+    <p>    
     <font size=+1><b>Dongle Connects</b></font>
     <table BORDER=0 BGCOLOR=white>
     <font size=-1>
@@ -241,11 +242,10 @@ $col[1] = "#f0f0a0";
     print "<td>&nbsp;</td>";
     print "<td>&nbsp;</td>";
     print "</tr>";    
-?>
-</tr>
-</table>
+    print "</table>";
 
-<?php
+    include_once("dhcpleases.php");
+
     $stn_is_set = 0;
     for($i = 1;$i < 6; $i++){
 	$param="starNetCallsign" . $i;
