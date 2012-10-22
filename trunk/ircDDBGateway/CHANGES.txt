@@ -1126,3 +1126,4 @@ Make information per repeater.
 TimeServer extended for module E
 Added DCS016, DCS017, and DCS018.
 Fixed bug in the Time Server that only affected Icom systems.
+Changed default APRS host to rotate.aprs2.net.

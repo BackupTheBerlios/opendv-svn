@@ -344,7 +344,9 @@ void CDExtraHandler::process(CConnectData& connect)
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_ACK, address, port);
 		m_handler->writeConnect(reply);
 
-		CPollData poll(m_callsign, wxEmptyString, address, port);
+		wxString callsign = repeaterCallsign;
+		callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+		CPollData poll(callsign, wxEmptyString, address, port);
 		m_handler->writePoll(poll);
 	} else {
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port);
@@ -750,7 +752,9 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		if (m_linkState == DEXTRA_LINKED) {
-			CPollData poll(m_callsign, wxEmptyString, m_address, m_port);
+			wxString callsign = m_repeater;
+			callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+			CPollData poll(callsign, wxEmptyString, m_address, m_port);
 			m_handler->writePoll(poll);
 		}
 
