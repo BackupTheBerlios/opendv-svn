@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121004
+ircDDB Gateway - 20121023
 =========================
 
 20101010
@@ -1119,11 +1119,12 @@ Changed the way that the SVN revision is included.
 Change D-RATS handling of incoming network data.
 Make the linked/linking/not linked announcement more timely.
 
-2012xxxx
+20121023
 --------
 
 Make information per repeater.
-TimeServer extended for module E
+TimeServer extended for module E.
 Added DCS016, DCS017, and DCS018.
 Fixed bug in the Time Server that only affected Icom systems.
 Changed default APRS host to rotate.aprs2.net.
+Changed the announcement audio for B and D for UK English.
