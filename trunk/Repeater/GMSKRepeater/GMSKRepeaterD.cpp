@@ -230,6 +230,8 @@ bool CGMSKRepeaterD::createThread()
 	bool beaconVoice;
 	TEXT_LANG language;
 	config.getBeacon(beaconTime, beaconText, beaconVoice, language);
+	if (mode == MODE_GATEWAY)
+		beaconTime = 0U;
 	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
