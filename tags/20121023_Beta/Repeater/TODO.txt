@@ -1,0 +1,4 @@
+Repeater - 20121004
+===================
+
+Investigate the Arduino for hardware control.
