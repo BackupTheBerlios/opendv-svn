@@ -86,7 +86,7 @@ void CTimeServerThread::run()
 	if (m_killed)
 		return;
 
-	if (m_format == FORMAT_VOICE_TIME) {
+	if (m_format != FORMAT_TEXT_TIME) {
 		bool ret = loadAMBE();
 		if (!ret) {
 			wxLogWarning(wxT("Cannot load the AMBE data, using text only time"));

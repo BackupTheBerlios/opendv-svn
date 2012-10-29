@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121023
+ircDDB Gateway - 20121029
 =========================
 
 Windows

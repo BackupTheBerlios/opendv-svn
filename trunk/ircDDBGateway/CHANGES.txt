@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121023
+ircDDB Gateway - 20121029
 =========================
 
 20101010
@@ -1128,3 +1128,10 @@ Added DCS016, DCS017, and DCS018.
 Fixed bug in the Time Server that only affected Icom systems.
 Changed default APRS host to rotate.aprs2.net.
 Changed the announcement audio for B and D for UK English.
+
+20121029
+--------
+
+Fix to the Time Server to make it talk again.
+Removed XRF018 and XRF250.
+Updated DCS007s IP address.
