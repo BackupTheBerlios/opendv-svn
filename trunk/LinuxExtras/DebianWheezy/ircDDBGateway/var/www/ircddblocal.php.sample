@@ -8,6 +8,8 @@ $hdrLogPath = $logPath . '/Headers.log';
 $gatewayConfigPath = '/home/opendv/ircddbgateway/ircddbgateway';
 //
 // Setting only needed if DD-Mode is in use:
-// Location of dhcpd.leases file
-$dhcpd_leases_file = "/var/lib/dhcpd/dhcpd.leases";
+// Location of dhcpd.leases file, use the line that your system requires:
+$dhcpd_leases_file = "/var/dhcpd/dhcpd.leases";
+//$dhcpd_leases_file = "/var/lib/dhcp3/dhcpd.leases";
+$ddmode_log = $logPath . '/DDMode.log'; 
 ?>

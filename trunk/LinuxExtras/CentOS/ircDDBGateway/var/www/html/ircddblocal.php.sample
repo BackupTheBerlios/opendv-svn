@@ -9,5 +9,6 @@ $gatewayConfigPath = '/etc/ircddbgateway';
 //
 // Setting only needed if DD-Mode is in use:
 // Location of dhcpd.leases file
+$ddmode_log = $logPath . '/DDMode.log';
 $dhcpd_leases_file = "/var/lib/dhcpd/dhcpd.leases";
 ?>
