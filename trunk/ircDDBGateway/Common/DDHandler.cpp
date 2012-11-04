@@ -214,6 +214,8 @@ void CDDHandler::process(CDDData& data)
 			if (m_list[i] == NULL) {
 				m_list[i] = ethernet;
 				found = true;
+				if (m_logEnabled)
+					writeStatus(*ethernet);
 				break;
 			}
 		}
@@ -314,9 +316,6 @@ CDDData* CDDHandler::read()
 	// wxLogMessage(wxT("Mapping ethernet address %02X:%02X:%02X:%02X:%02X:%02X to user %s"),
 	//				address[0], address[1], address[2], address[3], address[4], address[5],
 	//				ethernet->getCallsign().c_str());
-
-	if (m_logEnabled)
-		writeStatus(*ethernet);
 
 	CDDData* data = new CDDData;
 	data->setEthernetFrame(m_buffer, len);
