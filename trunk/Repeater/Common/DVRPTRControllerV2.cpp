@@ -183,12 +183,12 @@ void* CDVRPTRControllerV2::Entry()
 						data[0U] = DQT_DATA;
 						data[1U] = DV_FRAME_LENGTH_BYTES;
 						m_rxData.addData(data, 2U);
-						m_rxData.addData(m_buffer + 51U, DV_FRAME_LENGTH_BYTES);
+						m_rxData.addData(m_buffer + 5U, DV_FRAME_LENGTH_BYTES);
 
 						m_rx = true;
 
 						// End of transmission?
-						if ((m_buffer[50U] & 0x40U) == 0x40) {
+						if ((m_buffer[19U] & 0x20U) == 0x20) {
 							data[0U] = DQT_EOT;
 							data[1U] = 0U;
 							m_rxData.addData(data, 2U);
@@ -352,7 +352,7 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 
 bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int length, bool end)
 {
-	unsigned char buffer[105U];
+	unsigned char buffer[20U];
 
 	::memset(buffer, 0x00U, 105U);
 
@@ -360,26 +360,22 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	buffer[1U] = 'E';
 	buffer[2U] = 'A';
 	buffer[3U] = 'D';
-	buffer[4U] = 'X';
-	buffer[5U] = '0';
-	buffer[6U] = '0';
-	buffer[7U] = '0';
-	buffer[8U] = '1';
+	buffer[4U] = 'Z';
 
-	buffer[50U] = m_counter;
+	buffer[19U] = m_counter;
 	if (end)
-		buffer[50U] |= 0x40U;
+		buffer[19U] |= 0x20U;
 
 	m_counter++;
 	if (m_counter == 21U)
 		m_counter = 0U;
 
-	::memcpy(buffer + 51U, data, DV_FRAME_LENGTH_BYTES);
+	::memcpy(buffer + 5U, data, DV_FRAME_LENGTH_BYTES);
 
 	if (end) {
-		buffer[60U] = 0x55U;
-		buffer[61U] = 0x55U;
-		buffer[62U] = 0x55U;
+		buffer[14U] = 0x55U;
+		buffer[15U] = 0x55U;
+		buffer[16U] = 0x55U;
 
 		m_ptt = false;
 	}
@@ -387,13 +383,13 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	wxMutexLocker locker(m_mutex);
 
 	unsigned int space = m_txData.freeSpace();
-	if (space < 106U)
+	if (space < 21U)
 		return false;
 
-	unsigned char len = 105U;
+	unsigned char len = 20U;
 	m_txData.addData(&len, 1U);
 
-	m_txData.addData(buffer, 105U);
+	m_txData.addData(buffer, 20U);
 
 	return true;
 }
@@ -497,11 +493,13 @@ bool CDVRPTRControllerV2::setConfig()
 	buffer[7U] = '0';
 	buffer[8U] = '1';
 
-	buffer[65U] = m_duplex ? 0x01U : 0x00U;
+	buffer[65U] = m_duplex ? 0x03U : 0x00U;
 
 	buffer[66U] = m_txInvert ? 0x01U : 0x00U;
 
 	buffer[73U] = (m_modLevel * 256U) / 100U;
+
+	buffer[87U] = 0x01U;
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 
@@ -557,6 +555,8 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 		length = 105U;
 	} else if (buffer[4U] == 'Y') {
 		length = 10U;
+	} else if (buffer[4U] == 'Z') {
+		length = 20U;
 	} else {
 		wxLogError(wxT("DV-RPTR frame type is incorrect - 0x%02X"), buffer[4U]);
 		return RT2_UNKNOWN;
@@ -580,11 +580,10 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 
 	// CUtils::dump(wxT("Received"), buffer, length);
 
-	if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
-		if (buffer[104U] == 0x01U)
-			return RT2_HEADER;
-		else
-			return RT2_DATA;
+	if (::memcmp(buffer + 0U, "HEADZ", 5U) == 0) {
+		return RT2_DATA;
+	} else if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
+		return RT2_HEADER;
 	} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
 		return RT2_QUERY;
 	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
