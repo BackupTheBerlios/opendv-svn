@@ -171,8 +171,38 @@ void* CDVRPTRControllerV2::Entry()
 				}
 				break;
 
-			case RT2_DATA: {
-					// CUtils::dump(wxT("RT2_DATA"), m_buffer, length);
+			case RT2_DATA_LONG: {
+					// CUtils::dump(wxT("RT2_DATA_LONG"), m_buffer, length);
+					m_mutex.Lock();
+
+					unsigned int space = m_rxData.freeSpace();
+					if (space < 16U) {
+						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
+					} else {
+						unsigned char data[2U];
+						data[0U] = DQT_DATA;
+						data[1U] = DV_FRAME_LENGTH_BYTES;
+						m_rxData.addData(data, 2U);
+						m_rxData.addData(m_buffer + 51U, DV_FRAME_LENGTH_BYTES);
+
+						m_rx = true;
+
+						// End of transmission?
+						if ((m_buffer[50U] & 0x40U) == 0x40) {
+							data[0U] = DQT_EOT;
+							data[1U] = 0U;
+							m_rxData.addData(data, 2U);
+
+							m_rx = false;
+						}
+					}
+
+					m_mutex.Unlock();
+				}
+				break;
+
+			case RT2_DATA_SHORT: {
+					// CUtils::dump(wxT("RT2_DATA_SHORT"), m_buffer, length);
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -352,7 +382,7 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 
 bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int length, bool end)
 {
-	unsigned char buffer[20U];
+	unsigned char buffer[105U];
 
 	::memset(buffer, 0x00U, 105U);
 
@@ -360,22 +390,26 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	buffer[1U] = 'E';
 	buffer[2U] = 'A';
 	buffer[3U] = 'D';
-	buffer[4U] = 'Z';
+	buffer[4U] = 'X';
+	buffer[5U] = '0';
+	buffer[6U] = '0';
+	buffer[7U] = '0';
+	buffer[8U] = '1';
 
-	buffer[19U] = m_counter;
+	buffer[50U] = m_counter;
 	if (end)
-		buffer[19U] |= 0x20U;
+		buffer[50U] |= 0x40U;
 
 	m_counter++;
 	if (m_counter == 21U)
 		m_counter = 0U;
 
-	::memcpy(buffer + 5U, data, DV_FRAME_LENGTH_BYTES);
+	::memcpy(buffer + 51U, data, DV_FRAME_LENGTH_BYTES);
 
 	if (end) {
-		buffer[14U] = 0x55U;
-		buffer[15U] = 0x55U;
-		buffer[16U] = 0x55U;
+		buffer[60U] = 0x55U;
+		buffer[61U] = 0x55U;
+		buffer[62U] = 0x55U;
 
 		m_ptt = false;
 	}
@@ -383,13 +417,13 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	wxMutexLocker locker(m_mutex);
 
 	unsigned int space = m_txData.freeSpace();
-	if (space < 21U)
+	if (space < 106U)
 		return false;
 
-	unsigned char len = 20U;
+	unsigned char len = 105U;
 	m_txData.addData(&len, 1U);
 
-	m_txData.addData(buffer, 20U);
+	m_txData.addData(buffer, 105U);
 
 	return true;
 }
@@ -499,8 +533,6 @@ bool CDVRPTRControllerV2::setConfig()
 
 	buffer[73U] = (m_modLevel * 256U) / 100U;
 
-	buffer[87U] = 0x01U;
-
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 
 	int ret = m_serial.write(buffer, 105U);
@@ -581,9 +613,12 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 	// CUtils::dump(wxT("Received"), buffer, length);
 
 	if (::memcmp(buffer + 0U, "HEADZ", 5U) == 0) {
-		return RT2_DATA;
+		return RT2_DATA_SHORT;
 	} else if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
-		return RT2_HEADER;
+		if (buffer[104U] == 0x01U)
+			return RT2_HEADER;
+		else
+			return RT2_DATA_LONG;
 	} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
 		return RT2_QUERY;
 	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
