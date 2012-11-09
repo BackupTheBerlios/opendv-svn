@@ -67,6 +67,7 @@ m_serial(port, SERIAL_115200),
 m_buffer(NULL),
 m_rxData(1000U),
 m_txData(1000U),
+m_id(0x00U),
 m_counter(0U),
 m_ptt(false),
 m_rx(false),
@@ -75,6 +76,9 @@ m_stopped(false),
 m_mutex()
 {
 	wxASSERT(!port.IsEmpty());
+
+	wxDateTime now = wxDateTime::UNow();
+	::srand(now.GetMillisecond());
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
@@ -363,7 +367,12 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 	for (unsigned int i = 0U; i < my2.Len() && i < SHORT_CALLSIGN_LENGTH; i++)
 		buffer[i + 44U] = my2.GetChar(i);
 
+	// Create a random id for this transmission
+	m_id = (::rand() % 65535U) + 1U;
 	m_counter = 0U;
+
+	buffer[48U] = m_id / 256U;	// Unique session id
+	buffer[49U] = m_id % 256U;
 
 	wxMutexLocker locker(m_mutex);
 
@@ -402,6 +411,9 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 		m_counter = 0U;
 
 	::memcpy(buffer + 5U, data, DV_FRAME_LENGTH_BYTES);
+
+	buffer[17U] = m_id / 256U;	// Unique session id
+	buffer[18U] = m_id % 256U;
 
 	if (end) {
 		buffer[14U] = 0x55U;
