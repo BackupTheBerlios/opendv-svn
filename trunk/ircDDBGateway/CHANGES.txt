@@ -1135,3 +1135,8 @@ Changed the announcement audio for B and D for UK English.
 Fix to the Time Server to make it talk again.
 Removed XRF018 and XRF250.
 Updated DCS007s IP address.
+
+2012xxxx
+--------
+
+Allow the repeater callsign with a G affixed as the gateway callsign.

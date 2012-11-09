@@ -137,8 +137,8 @@ private:
 	static wxString  m_localAddress;
 	static CG2ProtocolHandler* m_g2Handler;
 	static CCacheManager* m_cache;
-	static CIRCDDB*  m_irc;
 	static wxString  m_gateway;
+	static CIRCDDB*  m_irc;
 	static TEXT_LANG m_language;
 	static bool      m_dextraEnabled;
 	static bool      m_dplusEnabled;
@@ -152,7 +152,8 @@ private:
 	static CAPRSWriter*     m_aprsWriter;
 
 	// Repeater info
-	wxString                  m_callsign;
+	wxString                  m_rptCallsign;
+	wxString                  m_gwyCallsign;
 	unsigned char             m_band;
 	in_addr                   m_address;
 	unsigned int              m_port;

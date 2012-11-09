@@ -50,7 +50,8 @@ CHeaderLogger*            CRepeaterHandler::m_headerLogger = NULL;
 CAPRSWriter*              CRepeaterHandler::m_aprsWriter  = NULL;
 
 CRepeaterHandler::CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3) :
-m_callsign(),
+m_rptCallsign(),
+m_gwyCallsign(),
 m_band(' '),
 m_address(),
 m_port(port),
@@ -121,11 +122,16 @@ m_heardTimer(1000U, 0U, 100U)		// 100ms
 
 	m_band = band.GetChar(0U);
 
-	m_callsign = callsign;
-	m_callsign.Append(wxT("        "));
-	m_callsign.Truncate(LONG_CALLSIGN_LENGTH - 1U);
-	m_callsign.Append(band);
-	m_callsign.Truncate(LONG_CALLSIGN_LENGTH);
+	m_rptCallsign = callsign;
+	m_rptCallsign.Append(wxT("        "));
+	m_rptCallsign.Truncate(LONG_CALLSIGN_LENGTH - 1U);
+	m_rptCallsign.Append(band);
+	m_rptCallsign.Truncate(LONG_CALLSIGN_LENGTH);
+
+	m_gwyCallsign = callsign;
+	m_gwyCallsign.Append(wxT("        "));
+	m_gwyCallsign.Truncate(LONG_CALLSIGN_LENGTH - 1U);
+	m_gwyCallsign.Append(wxT("G"));
 
 	m_address.s_addr = ::inet_addr(address.mb_str());
 
@@ -315,7 +321,7 @@ bool CRepeaterHandler::getRepeater(unsigned int n, wxString& callsign, LINK_STAT
 	if (m_repeaters[n] == NULL)
 		return false;
 
-	callsign     = m_repeaters[n]->m_callsign;
+	callsign     = m_repeaters[n]->m_rptCallsign;
 	linkStatus   = m_repeaters[n]->m_linkStatus;
 	linkCallsign = m_repeaters[n]->m_linkRepeater;
 
@@ -377,7 +383,7 @@ CRepeaterHandler* CRepeaterHandler::findDVRepeater(const CHeaderData& header)
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];
 		if (repeater != NULL) {
-			if (!repeater->m_ddMode && repeater->m_address.s_addr == address.s_addr && repeater->m_callsign.IsSameAs(rpt1))
+			if (!repeater->m_ddMode && repeater->m_address.s_addr == address.s_addr && repeater->m_rptCallsign.IsSameAs(rpt1))
 				return repeater;
 		}
 	}
@@ -407,7 +413,7 @@ CRepeaterHandler* CRepeaterHandler::findDVRepeater(const wxString& callsign)
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];
 		if (repeater != NULL) {
-			if (!repeater->m_ddMode && repeater->m_callsign.IsSameAs(callsign))
+			if (!repeater->m_ddMode && repeater->m_rptCallsign.IsSameAs(callsign))
 				return repeater;
 		}
 	}
@@ -438,7 +444,7 @@ CRepeaterHandler* CRepeaterHandler::findDDRepeater(const CDDData& data)
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];
 		if (repeater != NULL) {
-			if (repeater->m_ddMode && repeater->m_callsign.IsSameAs(rpt1))
+			if (repeater->m_ddMode && repeater->m_rptCallsign.IsSameAs(rpt1))
 				return repeater;
 		}
 	}
@@ -466,7 +472,7 @@ wxArrayString CRepeaterHandler::listDVRepeaters()
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];
 		if (repeater != NULL && !repeater->m_ddMode)
-			repeaters.Add(repeater->m_callsign);
+			repeaters.Add(repeater->m_rptCallsign);
 	}
 
 	return repeaters;
@@ -483,7 +489,7 @@ void CRepeaterHandler::pollAllIcom(CPollData& data)
 
 CRemoteRepeaterData* CRepeaterHandler::getInfo() const
 {
-	return new CRemoteRepeaterData(m_callsign, m_linkReconnect, m_linkStartup);
+	return new CRemoteRepeaterData(m_rptCallsign, m_linkReconnect, m_linkStartup);
 }
 
 void CRepeaterHandler::processRepeater(CHeaderData& header)
@@ -548,7 +554,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 
 	// Reset the APRS Writer if it's enabled
 	if (m_aprsWriter != NULL)
-		m_aprsWriter->reset(m_callsign);
+		m_aprsWriter->reset(m_rptCallsign);
 
 	// Write to Header.log if it's enabled
 	if (m_headerLogger != NULL)
@@ -582,20 +588,20 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	m_g2Gateway.Clear();
 
 	// Reject silly RPT2 values
-	if (m_rptCall2.IsSameAs(m_callsign) || m_rptCall2.IsSameAs(wxT("        ")))
+	if (m_rptCall2.IsSameAs(m_rptCallsign) || m_rptCall2.IsSameAs(wxT("        ")))
 		return;
 
-	// Do cross-band routing if RPT2 is not the gateway callsign
-	if (!m_rptCall2.IsSameAs(m_gateway)) {
+	// Do cross-band routing if RPT2 is not one of the gateway callsigns
+	if (!m_rptCall2.IsSameAs(m_gwyCallsign) && !m_rptCall2.IsSameAs(m_gateway)) {
 		CRepeaterHandler* repeater = findDVRepeater(m_rptCall2);
 		if (repeater != NULL) {
-			wxLogMessage(wxT("Cross-band routing by %s from %s to %s"), m_myCall1.c_str(), m_callsign.c_str(), m_rptCall2.c_str());
+			wxLogMessage(wxT("Cross-band routing by %s from %s to %s"), m_myCall1.c_str(), m_rptCallsign.c_str(), m_rptCall2.c_str());
 			m_xBandRptr = repeater;
 			m_xBandRptr->process(header, AS_XBAND);
 			m_g2Status = G2_XBAND;
 		} else {
 			// Keep the transmission local
-			wxLogMessage(wxT("Invalid cross-band route by %s from %s to %s"), m_myCall1.c_str(), m_callsign.c_str(), m_rptCall2.c_str());
+			wxLogMessage(wxT("Invalid cross-band route by %s from %s to %s"), m_myCall1.c_str(), m_rptCallsign.c_str(), m_rptCall2.c_str());
 			m_g2Status = G2_LOCAL;
 		}
 		return;
@@ -694,7 +700,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 		m_drats->writeData(data);
 
 	if (m_aprsWriter != NULL)
-		m_aprsWriter->writeData(m_callsign, data);
+		m_aprsWriter->writeData(m_rptCallsign, data);
 
 	if (m_text.IsEmpty() && !data.isEnd()) {
 		m_textCollector.writeData(data);
@@ -846,8 +852,8 @@ void CRepeaterHandler::processBusy(CHeaderData& header)
 		return;
 	}
 
-	// Reject the header if the RPT2 value is not the gateway callsign
-	if (!rptCall2.IsSameAs(m_gateway))
+	// Reject the header if the RPT2 value is not one of the gateway callsigns
+	if (!rptCall2.IsSameAs(m_gwyCallsign) && !rptCall2.IsSameAs(m_gateway))
 		return;
 
 	m_myCall1  = header.getMyCall1();
@@ -923,7 +929,7 @@ void CRepeaterHandler::processRepeater(CPollData& data)
 	if (!m_pollTimer.hasExpired())
 		return;
 
-	wxString callsign = m_callsign;
+	wxString callsign = m_rptCallsign;
 	if (m_ddMode)
 		callsign.Append(wxT("D"));
 
@@ -951,9 +957,9 @@ bool CRepeaterHandler::process(CDDData& data)
 {
 	unsigned char* address = data.getDestinationAddress();
 	if (::memcmp(address, ETHERNET_BROADCAST_ADDRESS, ETHERNET_ADDRESS_LENGTH) == 0)
-		data.setRepeaters(m_gateway, wxT("        "));
+		data.setRepeaters(m_gwyCallsign, wxT("        "));
 	else
-		data.setRepeaters(m_gateway, m_callsign);
+		data.setRepeaters(m_gwyCallsign, m_rptCallsign);
 
 	data.setDestination(m_address, m_port);
 	data.setFlags(0xC0U, 0x00U, 0x00U);
@@ -975,7 +981,7 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 	if (source != AS_DUP || (source == AS_DUP && m_hwType == HW_HOMEBREW)) {
 		header.setBands(m_band1, m_band2, m_band3);
 		header.setDestination(m_address, m_port);
-		header.setRepeaters(m_gateway, m_callsign);
+		header.setRepeaters(m_gwyCallsign, m_rptCallsign);
 
 		m_repeaterHandler->writeHeader(header);
 	}
@@ -1039,7 +1045,7 @@ void CRepeaterHandler::resolveUserInt(const wxString& user, const wxString& repe
 
 		if (!address.IsEmpty()) {
 			// No point routing to self
-			if (repeater.IsSameAs(m_callsign)) {
+			if (repeater.IsSameAs(m_rptCallsign)) {
 				m_g2Status = G2_LOCAL;
 				delete m_g2Header;
 				m_g2Header = NULL;
@@ -1114,7 +1120,7 @@ void CRepeaterHandler::resolveRepeaterInt(const wxString& repeater, const wxStri
 					if (m_dplusEnabled) {
 						m_linkGateway = gateway;
 						addr.s_addr = ::inet_addr(address.mb_str());
-						CDPlusHandler::link(this, m_callsign, m_linkRepeater, addr);
+						CDPlusHandler::link(this, m_rptCallsign, m_linkRepeater, addr);
 						m_linkStatus = LS_LINKING_DPLUS;
 					} else {
 						wxLogMessage(wxT("Require D-Plus for linking to %s, but D-Plus is disabled"), repeater.c_str());
@@ -1130,7 +1136,7 @@ void CRepeaterHandler::resolveRepeaterInt(const wxString& repeater, const wxStri
 					if (m_dcsEnabled) {
 						m_linkGateway = gateway;
 						addr.s_addr = ::inet_addr(address.mb_str());
-						CDCSHandler::link(this, m_callsign, m_linkRepeater, addr);
+						CDCSHandler::link(this, m_rptCallsign, m_linkRepeater, addr);
 						m_linkStatus = LS_LINKING_DCS;
 					} else {
 						wxLogMessage(wxT("Require DCS for linking to %s, but DCS is disabled"), repeater.c_str());
@@ -1146,7 +1152,7 @@ void CRepeaterHandler::resolveRepeaterInt(const wxString& repeater, const wxStri
 					if (m_dextraEnabled) {
 						m_linkGateway = gateway;
 						addr.s_addr = ::inet_addr(address.mb_str());
-						CDExtraHandler::link(this, m_callsign, m_linkRepeater, addr);
+						CDExtraHandler::link(this, m_rptCallsign, m_linkRepeater, addr);
 						m_linkStatus = LS_LINKING_DEXTRA;
 					} else {
 						wxLogMessage(wxT("Require DExtra for linking to %s, but DExtra is disabled"), repeater.c_str());
@@ -1187,7 +1193,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 	if (m_linkReconnectTimer.isRunning() && m_linkReconnectTimer.hasExpired()) {
 		if (m_linkStatus != LS_NONE && (m_linkStartup.IsEmpty() || m_linkStartup.IsSameAs(wxT("        ")))) {
 			// Unlink if linked to something
-			wxLogMessage(wxT("Reconnect timer has expired, unlinking %s from %s"), m_callsign.c_str(), m_linkRepeater.c_str());
+			wxLogMessage(wxT("Reconnect timer has expired, unlinking %s from %s"), m_rptCallsign.c_str(), m_linkRepeater.c_str());
 
 			CDExtraHandler::unlink(this);
 			CDPlusHandler::unlink(this);
@@ -1202,7 +1208,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 		} else if ((m_linkStatus == LS_NONE && !m_linkStartup.IsEmpty() && !m_linkStartup.IsSameAs(wxT("        "))) ||
 				   (m_linkStatus != LS_NONE && !m_linkRepeater.IsSameAs(m_linkStartup))) {
 			// Relink if not linked or linked to the wrong reflector
-			wxLogMessage(wxT("Reconnect timer has expired, relinking %s to %s"), m_callsign.c_str(), m_linkStartup.c_str());
+			wxLogMessage(wxT("Reconnect timer has expired, relinking %s to %s"), m_rptCallsign.c_str(), m_linkStartup.c_str());
 
 			// Check for just a change of letter
 			if (m_linkStatus != LS_NONE) {
@@ -1301,7 +1307,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 
 	// If the watchdog timer has expired, clean up
 	if (m_watchdogTimer.isRunning() && m_watchdogTimer.hasExpired()) {
-		wxLogMessage(wxT("Radio watchdog timer for %s has expired"), m_callsign.c_str());
+		wxLogMessage(wxT("Radio watchdog timer for %s has expired"), m_rptCallsign.c_str());
 		m_watchdogTimer.stop();
 
 		if (m_repeaterId != 0x00U) {
@@ -1391,7 +1397,7 @@ bool CRepeaterHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsig
 	// Is relink to another module required?
 	if (!isRecoverable && m_linkRelink) {
 		m_linkRelink = false;
-		wxLogMessage(wxT("Relinking %s from %s to %s"), m_callsign.c_str(), callsign.c_str(), m_linkRepeater.c_str());
+		wxLogMessage(wxT("Relinking %s from %s to %s"), m_rptCallsign.c_str(), callsign.c_str(), m_linkRepeater.c_str());
 		linkInt(m_linkRepeater);
 		return false;
 	}
@@ -1537,7 +1543,7 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 
 	// Handle unlinking
 	if (m_linkStatus != LS_NONE && (reflector.IsEmpty() || reflector.IsSameAs(wxT("        ")))) {
-		wxLogMessage(wxT("Unlinking %s from %s"), m_callsign.c_str(), m_linkRepeater.c_str());
+		wxLogMessage(wxT("Unlinking %s from %s"), m_rptCallsign.c_str(), m_linkRepeater.c_str());
 
 		CDExtraHandler::unlink(this);
 		CDPlusHandler::unlink(this);
@@ -1552,7 +1558,7 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 		return;
 	}
 
-	wxLogMessage(wxT("Linking %s to %s"), m_callsign.c_str(), reflector.c_str());
+	wxLogMessage(wxT("Linking %s to %s"), m_rptCallsign.c_str(), reflector.c_str());
 
 	// Check for just a change of letter
 	if (m_linkStatus != LS_NONE) {
@@ -1622,7 +1628,7 @@ void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString
 		repeater.Append(wxT(" "));
 		repeater.Append(callsign.Right(1));
 
-		if (repeater.IsSameAs(m_callsign)) {
+		if (repeater.IsSameAs(m_rptCallsign)) {
 			wxLogMessage(wxT("%s is trying to G2 route to self, ignoring"), user.c_str());
 			m_g2Status = G2_LOCAL;
 			return;
@@ -1674,7 +1680,7 @@ void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString
 			m_queryTimer.start();
 		} else {
 			// No point G2 routing to yourself
-			if (data->getRepeater().IsSameAs(m_callsign)) {
+			if (data->getRepeater().IsSameAs(m_rptCallsign)) {
 				m_g2Status = G2_LOCAL;
 				delete data;
 				return;
@@ -1732,7 +1738,7 @@ void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const w
 		}
 
 		// We can't link to ourself
-		if (reflector.IsSameAs(m_callsign)) {
+		if (reflector.IsSameAs(m_rptCallsign)) {
 			wxLogMessage(wxT("%s is trying to link with self via %s, ignoring"), user.c_str(), type.c_str());
 			triggerInfo();
 			return;
@@ -1749,7 +1755,7 @@ void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const w
 		//	}
 		// }
 
-		wxLogMessage(wxT("Link command from %s to %s issued via %s by %s"), m_callsign.c_str(), reflector.c_str(), type.c_str(), user.c_str());
+		wxLogMessage(wxT("Link command from %s to %s issued via %s by %s"), m_rptCallsign.c_str(), reflector.c_str(), type.c_str(), user.c_str());
 
 		// Check for just a change of letter
 		if (m_linkStatus != LS_NONE) {
@@ -1832,7 +1838,7 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 			case DP_DPLUS:
 				if (m_dplusEnabled) {
 					m_linkStatus = LS_LINKING_DPLUS;
-					CDPlusHandler::link(this, m_callsign, m_linkRepeater, data->getAddress());
+					CDPlusHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
 					writeLinkingTo(m_linkRepeater);
 					triggerInfo();
 				} else {
@@ -1846,7 +1852,7 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 			case DP_DCS:
 				if (m_dcsEnabled) {
 					m_linkStatus = LS_LINKING_DCS;
-					CDCSHandler::link(this, m_callsign, m_linkRepeater, data->getAddress());
+					CDCSHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
 					writeLinkingTo(m_linkRepeater);
 					triggerInfo();
 				} else {
@@ -1860,7 +1866,7 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 			default:
 				if (m_dextraEnabled) {
 					m_linkStatus = LS_LINKING_DEXTRA;
-					CDExtraHandler::link(this, m_callsign, m_linkRepeater, data->getAddress());
+					CDExtraHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
 					writeLinkingTo(m_linkRepeater);
 					triggerInfo();
 				} else {
@@ -1908,12 +1914,12 @@ void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 	// Outgoing DExtra links have the currently linked repeater/gateway
 	// as the RPT1 and RPT2 values
 	temp.setRepeaters(m_linkGateway, m_linkRepeater);
-	CDExtraHandler::writeHeader(m_callsign, temp, DIR_OUTGOING);
+	CDExtraHandler::writeHeader(m_rptCallsign, temp, DIR_OUTGOING);
 
 	// Outgoing DCS links have the currently linked repeater and repeater callsign
 	// as the RPT1 and RPT2 values
-	temp.setRepeaters(m_callsign, m_linkRepeater);
-	CDCSHandler::writeHeader(m_callsign, temp, DIR_OUTGOING);
+	temp.setRepeaters(m_rptCallsign, m_linkRepeater);
+	CDCSHandler::writeHeader(m_rptCallsign, temp, DIR_OUTGOING);
 }
 
 void CRepeaterHandler::sendToOutgoing(const CAMBEData& data)
@@ -1935,16 +1941,16 @@ void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
 	temp.setFlags(0x00U, 0x00U, 0x00U);
 
 	// Incoming DPlus links
-	temp.setRepeaters(m_callsign, m_gateway);
+	temp.setRepeaters(m_rptCallsign, m_gateway);
 	CDPlusHandler::writeHeader(this, temp, DIR_INCOMING);
 
 	// Incoming DExtra links have RPT1 and RPT2 swapped
-	temp.setRepeaters(m_gateway, m_callsign);
-	CDExtraHandler::writeHeader(m_callsign, temp, DIR_INCOMING);
+	temp.setRepeaters(m_gwyCallsign, m_rptCallsign);
+	CDExtraHandler::writeHeader(m_rptCallsign, temp, DIR_INCOMING);
 
 	// Incoming DCS links have RPT1 and RPT2 swapped
-	temp.setRepeaters(m_gateway, m_callsign);
-	CDCSHandler::writeHeader(m_callsign, temp, DIR_INCOMING);
+	temp.setRepeaters(m_gwyCallsign, m_rptCallsign);
+	CDCSHandler::writeHeader(m_rptCallsign, temp, DIR_INCOMING);
 }
 
 void CRepeaterHandler::sendToLoopback(CAMBEData& data)
@@ -1973,7 +1979,7 @@ void CRepeaterHandler::startupInt()
 {
 	// Report our existence to ircDDB
 	if (m_irc != NULL) {
-		wxString callsign = m_callsign;
+		wxString callsign = m_rptCallsign;
 		if (m_ddMode)
 			callsign.Append(wxT("D"));
 
@@ -1985,7 +1991,7 @@ void CRepeaterHandler::startupInt()
 	}
 
 	if (m_linkAtStartup && !m_linkStartup.IsEmpty()) {
-		wxLogMessage(wxT("Linking %s at startup to %s"), m_callsign.c_str(), m_linkStartup.c_str());
+		wxLogMessage(wxT("Linking %s at startup to %s"), m_rptCallsign.c_str(), m_linkStartup.c_str());
 
 		// Find the repeater to link to
 		CRepeaterData* data = m_cache->findRepeater(m_linkStartup);
@@ -2000,7 +2006,7 @@ void CRepeaterHandler::startupInt()
 				case DP_DPLUS:
 					if (m_dplusEnabled) {
 						m_linkStatus = LS_LINKING_DPLUS;
-						CDPlusHandler::link(this, m_callsign, m_linkRepeater, data->getAddress());
+						CDPlusHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
 						writeLinkingTo(m_linkRepeater);
 						triggerInfo();
 					} else {
@@ -2014,7 +2020,7 @@ void CRepeaterHandler::startupInt()
 				case DP_DCS:
 					if (m_dcsEnabled) {
 						m_linkStatus = LS_LINKING_DCS;
-						CDCSHandler::link(this, m_callsign, m_linkRepeater, data->getAddress());
+						CDCSHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
 						writeLinkingTo(m_linkRepeater);
 						triggerInfo();
 					} else {
@@ -2028,7 +2034,7 @@ void CRepeaterHandler::startupInt()
 				default:
 					if (m_dextraEnabled) {
 						m_linkStatus = LS_LINKING_DEXTRA;
-						CDExtraHandler::link(this, m_callsign, m_linkRepeater, data->getAddress());
+						CDExtraHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
 						writeLinkingTo(m_linkRepeater);
 						triggerInfo();
 					} else {
