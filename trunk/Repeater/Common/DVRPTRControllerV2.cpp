@@ -392,9 +392,9 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 
 bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int length, bool end)
 {
-	unsigned char buffer[20U];
+	unsigned char buffer[17U];
 
-	::memset(buffer, 0x00U, 20U);
+	::memset(buffer, 0x00U, 17U);
 
 	buffer[0U] = 'H';
 	buffer[1U] = 'E';
@@ -402,18 +402,7 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	buffer[3U] = 'D';
 	buffer[4U] = 'Z';
 
-	buffer[19U] = m_counter;
-	if (end)
-		buffer[19U] |= 0x40U;
-
-	m_counter++;
-	if (m_counter == 21U)
-		m_counter = 0U;
-
 	::memcpy(buffer + 5U, data, DV_FRAME_LENGTH_BYTES);
-
-	buffer[17U] = m_id / 256U;	// Unique session id
-	buffer[18U] = m_id % 256U;
 
 	if (end) {
 		buffer[14U] = 0x55U;
@@ -426,13 +415,13 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	wxMutexLocker locker(m_mutex);
 
 	unsigned int space = m_txData.freeSpace();
-	if (space < 21U)
+	if (space < 18U)
 		return false;
 
-	unsigned char len = 20U;
+	unsigned char len = 17U;
 	m_txData.addData(&len, 1U);
 
-	m_txData.addData(buffer, 20U);
+	m_txData.addData(buffer, 17U);
 
 	return true;
 }
