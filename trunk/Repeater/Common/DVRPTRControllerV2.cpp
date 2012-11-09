@@ -55,13 +55,14 @@ wxArrayString CDVRPTRControllerV2::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDVRPTRControllerV2::CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex) :
+CDVRPTRControllerV2::CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
 wxThread(wxTHREAD_JOINABLE),
 m_port(port),
 m_path(path),
 m_txInvert(txInvert),
 m_modLevel(modLevel),
 m_duplex(duplex),
+m_callsign(callsign),
 m_serial(port, SERIAL_115200),
 m_buffer(NULL),
 m_rxData(1000U),
@@ -382,34 +383,30 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 
 bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int length, bool end)
 {
-	unsigned char buffer[105U];
+	unsigned char buffer[20U];
 
-	::memset(buffer, 0x00U, 105U);
+	::memset(buffer, 0x00U, 20U);
 
 	buffer[0U] = 'H';
 	buffer[1U] = 'E';
 	buffer[2U] = 'A';
 	buffer[3U] = 'D';
-	buffer[4U] = 'X';
-	buffer[5U] = '0';
-	buffer[6U] = '0';
-	buffer[7U] = '0';
-	buffer[8U] = '1';
+	buffer[4U] = 'Z';
 
-	buffer[50U] = m_counter;
+	buffer[19U] = m_counter;
 	if (end)
-		buffer[50U] |= 0x40U;
+		buffer[19U] |= 0x20U;
 
 	m_counter++;
 	if (m_counter == 21U)
 		m_counter = 0U;
 
-	::memcpy(buffer + 51U, data, DV_FRAME_LENGTH_BYTES);
+	::memcpy(buffer + 5U, data, DV_FRAME_LENGTH_BYTES);
 
 	if (end) {
-		buffer[60U] = 0x55U;
-		buffer[61U] = 0x55U;
-		buffer[62U] = 0x55U;
+		buffer[14U] = 0x55U;
+		buffer[15U] = 0x55U;
+		buffer[16U] = 0x55U;
 
 		m_ptt = false;
 	}
@@ -417,13 +414,13 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 	wxMutexLocker locker(m_mutex);
 
 	unsigned int space = m_txData.freeSpace();
-	if (space < 106U)
+	if (space < 21U)
 		return false;
 
-	unsigned char len = 105U;
+	unsigned char len = 20U;
 	m_txData.addData(&len, 1U);
 
-	m_txData.addData(buffer, 105U);
+	m_txData.addData(buffer, 20U);
 
 	return true;
 }
@@ -527,11 +524,17 @@ bool CDVRPTRControllerV2::setConfig()
 	buffer[7U] = '0';
 	buffer[8U] = '1';
 
+	::memset(buffer + 9U, ' ', LONG_CALLSIGN_LENGTH);
+	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH && i < m_callsign.Len(); i++)
+		buffer[9U + i] = m_callsign.GetChar(i);
+
 	buffer[65U] = m_duplex ? 0x03U : 0x00U;
 
 	buffer[66U] = m_txInvert ? 0x01U : 0x00U;
 
 	buffer[73U] = (m_modLevel * 256U) / 100U;
+
+	buffer[87U] = 0x01U;
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 

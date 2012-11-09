@@ -40,7 +40,7 @@ enum RESP_TYPE_V2 {
 
 class CDVRPTRControllerV2 : public IDVRPTRController, public wxThread {
 public:
-	CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex);
+	CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign);
 	virtual ~CDVRPTRControllerV2();
 
 	virtual void* Entry();
@@ -71,6 +71,7 @@ private:
 	bool                       m_txInvert;
 	unsigned int               m_modLevel;
 	bool                       m_duplex;
+	wxString                   m_callsign;
 	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
