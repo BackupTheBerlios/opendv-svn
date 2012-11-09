@@ -189,7 +189,7 @@ void* CDVRPTRControllerV2::Entry()
 						m_rx = true;
 
 						// End of transmission?
-						if ((m_buffer[50U] & 0x40U) == 0x40) {
+						if ((m_buffer[50U] & 0x40U) == 0x40U) {
 							data[0U] = DQT_EOT;
 							data[1U] = 0U;
 							m_rxData.addData(data, 2U);
@@ -219,7 +219,7 @@ void* CDVRPTRControllerV2::Entry()
 						m_rx = true;
 
 						// End of transmission?
-						if ((m_buffer[19U] & 0x20U) == 0x20) {
+						if ((m_buffer[19U] & 0x40U) == 0x40U) {
 							data[0U] = DQT_EOT;
 							data[1U] = 0U;
 							m_rxData.addData(data, 2U);
@@ -395,7 +395,7 @@ bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int leng
 
 	buffer[19U] = m_counter;
 	if (end)
-		buffer[19U] |= 0x20U;
+		buffer[19U] |= 0x40U;
 
 	m_counter++;
 	if (m_counter == 21U)
