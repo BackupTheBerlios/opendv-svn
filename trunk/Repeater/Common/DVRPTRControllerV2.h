@@ -76,7 +76,6 @@ private:
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
-	wxUint16                   m_id;
 	unsigned char              m_counter;
 	bool                       m_ptt;
 	bool                       m_rx;
