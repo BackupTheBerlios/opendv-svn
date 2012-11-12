@@ -26,8 +26,11 @@
 #include "AMBEData.h"
 #include "Utils.h"
 
-const unsigned char ETHERNET_BROADCAST_ADDRESS[] = {0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU};
 const unsigned int  ETHERNET_ADDRESS_LENGTH = 6U;
+
+const unsigned char ETHERNET_BROADCAST_ADDRESS[] = {0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU};
+// Multicast address '01:00:5E:00:00:01' - IP: '224.0.0.1'
+const unsigned char ETHERNET_MULTICAST_ADDRESS[] = {0x01U, 0x00U, 0x5EU, 0x00U, 0x00U, 0x01U};
 
 unsigned int              CRepeaterHandler::m_maxRepeaters = 0U;
 CRepeaterHandler**        CRepeaterHandler::m_repeaters = NULL;
@@ -958,7 +961,10 @@ bool CRepeaterHandler::process(CDDData& data)
 	unsigned char* address = data.getDestinationAddress();
 	if (::memcmp(address, ETHERNET_BROADCAST_ADDRESS, ETHERNET_ADDRESS_LENGTH) == 0)
 		data.setRepeaters(m_gwyCallsign, wxT("        "));
-	else
+	else if (::memcmp(address, ETHERNET_MULTICAST_ADDRESS, ETHERNET_ADDRESS_LENGTH) == 0){
+		data.setRepeaters(m_gwyCallsign, wxT("CQCQCQ  "));
+		data.setRptCall2(m_rptCallsign);
+	} else
 		data.setRepeaters(m_gwyCallsign, m_rptCallsign);
 
 	data.setDestination(m_address, m_port);

@@ -41,6 +41,8 @@ const unsigned int MIN_HEARD_TIME_SECS     = 120U;
 const int MINIMUM_DD_FRAME_LENGTH = 60;
 
 const unsigned char ETHERNET_BROADCAST_ADDRESS[] = {0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU};
+// Multicast address '01:00:5E:00:00:01' - IP: '224.0.0.1'
+const unsigned char ETHERNET_MULTICAST_ADDRESS[] = {0x01U, 0x00U, 0x5EU, 0x00U, 0x00U, 0x01U};
 
 CIRCDDB*       CDDHandler::m_irc          = NULL;
 CHeaderLogger* CDDHandler::m_headerLogger = NULL;
@@ -94,6 +96,8 @@ void CDDHandler::initialise(unsigned int maxRoutes, const wxString& name)
 
 	// Add a dummy entry for broadcasts
 	m_list[0] = new CEthernet(ETHERNET_BROADCAST_ADDRESS, wxT("        "));
+	// Add a dummy entry for multicasts
+	m_list[1] = new CEthernet(ETHERNET_MULTICAST_ADDRESS, wxT("CQCQCQ  "));
 
 #if !defined(WIN32)
 	m_fd = ::open("/dev/net/tun", O_RDWR);
@@ -130,7 +134,7 @@ void CDDHandler::initialise(unsigned int maxRoutes, const wxString& name)
 	::memset(&ifr2, 0x00, sizeof(struct ifreq));
 	::strcpy(ifr2.ifr_name, ifr1.ifr_name);
 
-	ifr2.ifr_flags = IFF_UP | IFF_BROADCAST;
+	ifr2.ifr_flags = IFF_UP | IFF_BROADCAST | IFF_MULTICAST;
 	if (::ioctl(fd, SIOCSIFFLAGS, (void *)&ifr2) < 0) {
 		wxLogError(wxT("SIOCSIFFLAGS ioctl failed, closing the tap device"));
 		::close(m_fd);
@@ -360,7 +364,7 @@ void CDDHandler::writeStatus(const CEthernet& ethernet)
 	wxFileName fileName(m_logDir, fullName, wxT("log"));
 
 	wxFFile file;
-	bool ret = file.Open(fileName.GetFullPath(), wxT("wt"));
+	bool ret = file.Open(fileName.GetFullPath(), wxT("at"));
 	if (!ret) {
 		wxLogError(wxT("Unable to open %s for writing"), fileName.GetFullPath().c_str());
 		return;
@@ -373,7 +377,7 @@ void CDDHandler::writeStatus(const CEthernet& ethernet)
 	struct tm* tm = ::gmtime(&timeNow);
 
 	wxString text;
-	text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: %02X:%02X:%02X:%02X:%02X:%02X %s"),
+	text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: %02X:%02X:%02X:%02X:%02X:%02X %s\n"),
 		tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec,
 		address[0], address[1], address[2], address[3], address[4], address[5],	callsign.c_str());
 
