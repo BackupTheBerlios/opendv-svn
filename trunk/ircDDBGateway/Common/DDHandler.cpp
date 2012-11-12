@@ -41,8 +41,10 @@ const unsigned int MIN_HEARD_TIME_SECS     = 120U;
 const int MINIMUM_DD_FRAME_LENGTH = 60;
 
 const unsigned char ETHERNET_BROADCAST_ADDRESS[] = {0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU};
-// Multicast address '01:00:5E:00:00:01' - IP: '224.0.0.1'
-const unsigned char ETHERNET_MULTICAST_ADDRESS[] = {0x01U, 0x00U, 0x5EU, 0x00U, 0x00U, 0x01U};
+// Multicast address '01:00:5E:00:00:01' - IP: '224.0.0.1' (send to all)
+const unsigned char TOALL_MULTICAST_ADDRESS[] = {0x01U, 0x00U, 0x5EU, 0x00U, 0x00U, 0x01U};
+// Multicast address '01:00:5E:00:00:23' - IP: '224.0.0.35' (DX-Cluster)
+const unsigned char DX_MULTICAST_ADDRESS[] = {0x01U, 0x00U, 0x5EU, 0x00U, 0x00U, 0x23U};
 
 CIRCDDB*       CDDHandler::m_irc          = NULL;
 CHeaderLogger* CDDHandler::m_headerLogger = NULL;
@@ -96,8 +98,10 @@ void CDDHandler::initialise(unsigned int maxRoutes, const wxString& name)
 
 	// Add a dummy entry for broadcasts
 	m_list[0] = new CEthernet(ETHERNET_BROADCAST_ADDRESS, wxT("        "));
-	// Add a dummy entry for multicasts
-	m_list[1] = new CEthernet(ETHERNET_MULTICAST_ADDRESS, wxT("CQCQCQ  "));
+	// Add a dummy entry for "to all" multicast
+	m_list[1] = new CEthernet(TOALL_MULTICAST_ADDRESS, wxT("CQCQCQ  "));
+	// Add a dummy entry for "DX-Cluster" multicast
+	m_list[2] = new CEthernet(DX_MULTICAST_ADDRESS, wxT("CQCQCQ  "));
 
 #if !defined(WIN32)
 	m_fd = ::open("/dev/net/tun", O_RDWR);
