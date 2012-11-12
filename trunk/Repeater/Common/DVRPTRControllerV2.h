@@ -34,8 +34,7 @@ enum RESP_TYPE_V2 {
 	RT2_QUERY,
 	RT2_CONFIG,
 	RT2_HEADER,
-	RT2_DATA_SHORT,
-	RT2_DATA_LONG
+	RT2_DATA
 };
 
 class CDVRPTRControllerV2 : public IDVRPTRController, public wxThread {
@@ -76,7 +75,6 @@ private:
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
-	unsigned char              m_counter;
 	bool                       m_ptt;
 	bool                       m_rx;
 	unsigned int               m_space;

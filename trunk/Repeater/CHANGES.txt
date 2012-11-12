@@ -1,4 +1,4 @@
-Repeater - 20121027
+Repeater - 20121112
 ===================
 
 20090530
@@ -1747,7 +1747,7 @@ Added DCS016, DCS017, and DCS018.
 Changed the announcement audio for B and D for UK English.
 Removed the beacon in Gateway mode.
 
-2012xxxx
+20121112
 --------
 
 Removed XRF018 and XRF250.

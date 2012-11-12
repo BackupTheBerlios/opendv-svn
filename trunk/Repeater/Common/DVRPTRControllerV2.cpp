@@ -67,7 +67,6 @@ m_serial(port, SERIAL_115200),
 m_buffer(NULL),
 m_rxData(1000U),
 m_txData(1000U),
-m_counter(0U),
 m_ptt(false),
 m_rx(false),
 m_space(0U),
@@ -172,38 +171,8 @@ void* CDVRPTRControllerV2::Entry()
 				}
 				break;
 
-			case RT2_DATA_LONG: {
-					// CUtils::dump(wxT("RT2_DATA_LONG"), m_buffer, length);
-					m_mutex.Lock();
-
-					unsigned int space = m_rxData.freeSpace();
-					if (space < 16U) {
-						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-					} else {
-						unsigned char data[2U];
-						data[0U] = DQT_DATA;
-						data[1U] = DV_FRAME_LENGTH_BYTES;
-						m_rxData.addData(data, 2U);
-						m_rxData.addData(m_buffer + 51U, DV_FRAME_LENGTH_BYTES);
-
-						m_rx = true;
-
-						// End of transmission?
-						if ((m_buffer[50U] & 0x40U) == 0x40U) {
-							data[0U] = DQT_EOT;
-							data[1U] = 0U;
-							m_rxData.addData(data, 2U);
-
-							m_rx = false;
-						}
-					}
-
-					m_mutex.Unlock();
-				}
-				break;
-
-			case RT2_DATA_SHORT: {
-					// CUtils::dump(wxT("RT2_DATA_SHORT"), m_buffer, length);
+			case RT2_DATA: {
+					// CUtils::dump(wxT("RT2_DATA"), m_buffer, length);
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -606,12 +575,10 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 	// CUtils::dump(wxT("Received"), buffer, length);
 
 	if (::memcmp(buffer + 0U, "HEADZ", 5U) == 0) {
-		return RT2_DATA_SHORT;
+		return RT2_DATA;
 	} else if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
 		if (buffer[104U] == 0x01U)
 			return RT2_HEADER;
-		else
-			return RT2_DATA_LONG;
 	} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
 		return RT2_QUERY;
 	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
