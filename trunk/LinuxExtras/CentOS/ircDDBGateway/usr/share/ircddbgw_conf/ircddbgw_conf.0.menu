@@ -360,14 +360,24 @@ rptr_setup: that you confgured before. The gateway supports both systems paralle
 rptr_setup: 
 rptr_setup:********************************************************************************
 
-rptr_num: 
-rptr_num: Enter the number of the repeater module which should be configured (1-4).
-rptr_num: Note that you will need hardware information / devicenames for homebrew hardware. 
-rptr_num: The order of modules is variable (no matter if A,B,C,D or D,A,C,B) but repeater
-rptr_num: modules have to be configured in sequence (1-4) without gap!
-rptr_num: 
-rptr_num: 0 or <ENTER> to skip the repeater module setup.
-rptr_num: 
+rptr_edit: 
+rptr_edit: Enter the index of the repeater module which should be configured.
+rptr_edit: Note that you will need hardware information / devicenames for homebrew hardware. 
+rptr_edit: The order of modules is variable (no matter if A,B,C,D or D,A,C,B) but repeater
+rptr_edit: modules have to be configured in sequence (1-4) without gap!
+rptr_edit: 
+rptr_edit: Press 0 or <ENTER> to skip the repeater module setup.
+rptr_edit: The following modules are already configured:
+rptr_edit:
+
+rptr_init: 
+rptr_init: Enter the number of repeater modules that you want to configure (1-4).
+rptr_init: Note that you will need hardware information / devicenames for homebrew hardware. 
+rptr_init: The order of modules is variable (no matter if A,B,C,D or D,A,C,B) but repeater
+rptr_init: modules have to be configured in sequence (1-4) without gap!
+rptr_init: 
+rptr_init: Press 0 or <ENTER> to skip the repeater module setup.
+rptr_init: 
 
 rptr_stop:  
 rptr_stop: Stop repeater configuration! 
@@ -415,6 +425,17 @@ repeaterPort:This is the UDP port where the repeater module listens for our gate
 repeaterPort:The portnumber must be unique. 
 repeaterPort:It is secure to keep the default values. 
 repeaterPort: 
+
+extraOptions:
+extraOptions: ircDDBGateway allows to attach remote repeater modules.
+extraOptions: The following extra options allow to set parameters like callsign
+extraOptions: and location for such special installations.
+extraOptions: If the repeatermodule is located at the gateway and the base callsign
+extraOptions: is the same, press '0' here to skip the 'Extra Options'.
+extraOptions:
+extraOptions: Do you want to enter 'Extra Options' ?
+extraOptions: 0 = NO, 1 = YES
+extraOptions:
 
 repeaterCall:
 repeaterCall: !!! ATTENTION !!! ATTENTION !!! ATTENTION !!! ATTENTION !!! ATTENTION !!!
@@ -901,16 +922,26 @@ dtmfEnabled:
 dtmfEnabled:(DTMF is used to controle repeater status, linking, unlinking) 
 dtmfEnabled: 
 
-nolog:
-nolog: Switch logging on/off
-nolog:
-nolog: 0  NOLOG DISABLED    (logging is on)
-nolog: 1  NOLOG ENDABLED    (logging is off)
-nolog:
-nolog: Note: Growing logfiles may need a lot of disk space.
-nolog: Logging may be necessary for add-on software like some dashboards
-nolog: The dashboard of the package does not need local logfiles.
-nolog:
+nolog_ircddbgateway:
+nolog_ircddbgateway: Switch logging of ircDDBGateway on/off
+nolog_ircddbgateway:
+nolog_ircddbgateway: 0  NOLOG DISABLED    (logging is on)
+nolog_ircddbgateway: 1  NOLOG ENDABLED    (logging is off)
+nolog_ircddbgateway:
+nolog_ircddbgateway: Note: Growing logfiles may need a lot of disk space.
+nolog_ircddbgateway: Logging may be necessary for add-on software like some dashboards
+nolog_ircddbgateway: The dashboard of the package does not need local logfiles.
+nolog_ircddbgateway:
+
+nolog_timeserver:
+nolog_timeserver: Switch logging if the Timeserver on/off
+nolog_timeserver:
+nolog_timeserver: 0  NOLOG DISABLED    (logging is on)
+nolog_timeserver: 1  NOLOG ENDABLED    (logging is off)
+nolog_timeserver:
+nolog_timeserver: Note: Growing logfiles may need a lot of disk space.
+nolog_timeserver:
+
 
 logpath:
 logpath: Enter the directory where logfiles are created.
@@ -920,13 +951,12 @@ logpath: because it is also used for statusfiles.
 logpath: It is save to keep the default path like it was installed automatically.
 logpath:
 
-
-logpath:
-logpath: Enter the directory where logfiles are created.
-logpath: This directory needs to exist and have write permissions.
-logpath: The path needs to be set even when logging was switched off
-logpath: because it is also used for statusfiles.
-logpath:
+logdir:
+logdir: Enter the directory where logfiles are created.
+logdir: The path needs to be set even when logging was switched off
+logdir: because it is also used for statusfiles.
+logdir: It is save to keep the default path like it was installed automatically.
+logdir:
 
 log_path:
 log_path: The logdir for ircddbgateway will be changed:

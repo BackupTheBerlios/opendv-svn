@@ -30,12 +30,14 @@
 # 2012-09-23 dl5di    improved command line handling
 # 2012-09-29 dl5di    language selection extended, logdir setting fixed
 # 2012-10-09 dl5di    module specific description and url added
+# 2012-10-23 dl5di    minor fix in dashboard configuration
+# 2012-11-15 dl5di    bugfixes and rework of initial repeater input loop
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-2012109"
+rev="dvrptrnet-20121115"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -664,6 +666,34 @@ function print_text(){
   grep "^$1:" $MENUFILE | sed "s!$1:!!g"
 }
 
+function list_modules(){
+#
+# 1 parameter: 0=quiet / 1=list
+# return: number of modules
+#
+  i=1
+  num=0
+  while [ $i -le 5 ]; do
+    read_value $IRCDDBGWCONFIG repeaterBand$i
+    if [ $VALUE ]; then
+	let num=$num+1
+	MOD=$VALUE
+	if [ $1 = "1" ]; then
+	    read_value $IRCDDBGWCONFIG repeaterCall$i
+	    if [ $VALUE ]; then
+		echo "$num $VALUE $MOD"
+	    else
+		read_value $IRCDDBGWCONFIG gatewayCallsign
+		echo "$num $VALUE $MOD"
+	    fi
+	fi
+    else
+	let i=5
+    fi
+    let i=$i+1
+  done 
+  return $num
+}
 
 function set_language(){
 #
@@ -1102,20 +1132,18 @@ function hb_setup(){
     write_value $IRCDDBGWCONFIG $var "$INPUT"
 }
 
-##################### repeater port setup  ####################
+##################### repeater setup  ####################
 
-function repeater_setup(){
+function repeater_init(){
 
-    print_text "rptr_setup" 
-    print_text "rptr_num" 
+    print_text "rptr_init" 
     DEFAULT=0
     read -r -e -n 1 -p "(0-4) [$DEFAULT] > " inp
     
     if [ -z "$inp" ]; then
 	inp=0
     elif [ "$inp" -le 4 ]; then
-        let rptr=$inp-1
-        let rptrmax=$inp
+	rptrmax=$inp
     else
 	rptr=0
 	rptrmax=5
@@ -1127,147 +1155,171 @@ function repeater_setup(){
     fi
     echo ""
 
-
 # start loop
-    rptr=0
     while [ $rptr -lt $rptrmax ]; do
 	let rptr=$rptr+1
 	echo ""
 	echo "Repeater Mod $rptr / $rptrmax"
 	echo ""
+	repeater_setup "$rptr"
+    done
+}
 
+function repeater_edit(){
+
+    print_text "rptr_edit" 
+    DEFAULT=0
+    read -r -e -n 1 -p "(0-4) [$DEFAULT] > " inp
+    
+    if [[ -z "$inp" ]] || [[ $inp = 0 ]]; then
+	print_text "rptr_stop" 
+	return 2
+    elif [ "$inp" -le 4 ]; then
+	repeater_setup "$inp"
+	return 1
+    fi
+}
+
+function repeater_setup(){
+#
+# set/change repeater settings
+# 1 parameter: repeater number (1-4)
+# returns 0=error 1=OK
+#
+    rptr=$1
+    
 #
 # repeaterBand#=A
 # (A, B, C, D, E, AD, BD, CD, DD, ED)
 #
-	var="repeaterBand$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-	    VALUE=$DEFAULT
-	fi
-	VALID=1
-	while [ "$VALID" != 0 ]; do
-	    print_text "repeaterBand" 
-	    request_input $var 1 2 1 "$VALUE"
-	    if [ "$?" = 3 ]; then
-		echo "(Repeater Modul $rptr) "
-		print_text "repeaterReset"
-		request_selection "Delete Repeater Modul $rptr?" 0 0
-		INPUT=$?
-		case $INPUT in
-		    0)
-    			return 0
-			;;
-		    1)
-			reset_value "repeaterBand$rptr"
-		        reset_value "repeaterType$rptr"
-		        reset_value "repeaterAddress$rptr"
-			reset_value "repeaterPort$rptr"
-		        reset_value "repeaterCall$rptr"
-			reset_value "description1_$rptr"
-			reset_value "description2_$rptr"
-			reset_value "url$rptr"
-			reset_value "frequency$rptr"
-		        reset_value "offset$rptr"
-			reset_value "rangeKms$rptr"
-		        reset_value "latitude$rptr"
-			reset_value "longitude$rptr"
-		        reset_value "agl$rptr"
-			reset_value "reflector$rptr"
-		        reset_value "atStartup$rptr"
-			reset_value "reconnect$rptr"
-    			return 1
-			;;
-		    *)
+    var="repeaterBand$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    VALID=1
+    while [ "$VALID" != 0 ]; do
+	print_text "repeaterBand" 
+	request_input $var 1 2 1 "$VALUE"
+	if [ "$?" = 3 ]; then
+	    echo "(Repeater Modul $rptr) "
+	    print_text "repeaterReset"
+	    request_selection "Delete Repeater Modul $rptr?" 0 0
+	    INPUT=$?
+	    case $INPUT in
+		0)
+    		    return 0
+		    ;;
+		1)
+		    reset_value "repeaterBand$rptr"
+		    reset_value "repeaterType$rptr"
+		    reset_value "repeaterAddress$rptr"
+		    reset_value "repeaterPort$rptr"
+		    reset_value "repeaterCall$rptr"
+		    reset_value "description1_$rptr"
+		    reset_value "description2_$rptr"
+		    reset_value "url$rptr"
+		    reset_value "frequency$rptr"
+		    reset_value "offset$rptr"
+		    reset_value "rangeKms$rptr"
+		    reset_value "latitude$rptr"
+		    reset_value "longitude$rptr"
+		    reset_value "agl$rptr"
+		    reset_value "reflector$rptr"
+		    reset_value "atStartup$rptr"
+		    reset_value "reconnect$rptr"
+    		    return 1
+		    ;;
+		*)
 
-			;;
-		esac
-    		return 0
-	    else
-		INPUT=$(echo $INPUT | tr "[[:lower:]]" "[[:upper:]]")    
-		valid_band $var $INPUT
-		VALID=$?
-	    fi
-	done
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
+		    ;;
+	    esac
+    	    return 0
+	else
+	    INPUT=$(echo $INPUT | tr "[[:lower:]]" "[[:upper:]]")    
+	    valid_band $var $INPUT
+	    VALID=$?
+	fi
+    done
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
 
 #
 # repeaterType#=0
 #
-	var="repeaterType$rptr"
+    var="repeaterType$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    VALID=1
+    while [ "$VALID" != 0 ]; do
+	print_text "repeaterType"
+	request_selection $var "$DEFAULT" "$VALUE"
+	INPUT=$?
+	case $INPUT in
+	    [0-1])
+		VALID=0
+		;;
+	    2)   
+		INPUT="$VALUE"
+		VALID=0
+		;;
+	    3)
+    		INPUT=$DEFAULT
+		VALID=0
+		;;
+	    *)
+		VALID=1
+		;;
+	esac
+    	write_value $IRCDDBGWCONFIG $var "$INPUT"
+
+    done
+
+    if [ "$INPUT" -eq 0 ]; then
+#
+# hardware configuration
+# type = 0 / homebrew
+#
+	if [ -f /usr/bin/repeater_conf ]; then
+	    Dat=`date +%Y%m%d%H%M`
+	    echo "$Dat: Switchung to repeater_conf" >> $LOG
+	    /usr/bin/repeater_conf $rptr AUTO
+	    Dat=`date +%Y%m%d%H%M`
+	    echo "$Dat: Returning from repeater_conf" >> $LOG
+	fi
+
+#
+# repeaterAddress#=127.0.0.1
+#
+	var="repeaterAddress$rptr"
 	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
+
 	read_default $var
-        read_value $IRCDDBGWCONFIG $var
+	read_value $IRCDDBGWCONFIG $var
 	if [ "$?" = 0 ]; then
     	    VALUE=$DEFAULT
 	fi
 	VALID=1
 	while [ "$VALID" != 0 ]; do
-	    print_text "repeaterType"
-	    request_selection $var "$DEFAULT" "$VALUE"
-	    INPUT=$?
-	    case $INPUT in
-		[0-1])
-		    VALID=0
-		    ;;
-		2)   
-		    INPUT="$VALUE"
-		    VALID=0
-		    ;;
-		3)
-    		    INPUT=$DEFAULT
-		    VALID=0
-		    ;;
-		*)
-		    VALID=1
-		    ;;
-	    esac
-    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-
+	    print_text "repeaterAddress" 
+	    request_input $var 7 15 2 "$VALUE"
+	    if [ "$?" = 3 ]; then
+		VALID=0
+		INPUT=$DEFAULT
+	    else
+		valid_ip $INPUT
+		VALID=$?
+	    fi
 	done
-
-	if [ "$INPUT" -eq 0 ]; then
-#
-# hardware configuration
-# type = 0 / homebrew
-#
-	    if [ -f /usr/bin/repeater_conf ]; then
-		Dat=`date +%Y%m%d%H%M`
-		echo "$Dat: Switchung to repeater_conf" >> $LOG
-		/usr/bin/repeater_conf $rptr AUTO
-		Dat=`date +%Y%m%d%H%M`
-		echo "$Dat: Returning from repeater_conf" >> $LOG
-	    fi
-
-#
-# repeaterAddress#=127.0.0.1
-#
-	    var="repeaterAddress$rptr"
-	    Dat=`date +%Y%m%d%H%M`
-	    echo "$Dat: $var" >> $LOG
-
-	    read_default $var
-	    read_value $IRCDDBGWCONFIG $var
-	    if [ "$?" = 0 ]; then
-    		VALUE=$DEFAULT
-	    fi
-	    VALID=1
-	    while [ "$VALID" != 0 ]; do
-		print_text "repeaterAddress" 
-		request_input $var 7 15 2 "$VALUE"
-		if [ "$?" = 3 ]; then
-		    VALID=0
-		    INPUT=$DEFAULT
-		else
-		    valid_ip $INPUT
-		    VALID=$?
-		fi
-	    done
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
 
 #
 # repeaterPort1=20011
@@ -1275,324 +1327,348 @@ function repeater_setup(){
 # repeaterPort3=20013
 # repeaterPort4=20014
 #
-	    var="repeaterPort$rptr"
-	    Dat=`date +%Y%m%d%H%M`
-	    echo "$Dat: $var" >> $LOG
-	    read_default $var
-	    read_value $IRCDDBGWCONFIG $var
-	    if [ "$?" = 0 ]; then
-    		VALUE=$DEFAULT
+	var="repeaterPort$rptr"
+	Dat=`date +%Y%m%d%H%M`
+	echo "$Dat: $var" >> $LOG
+	read_default $var
+	read_value $IRCDDBGWCONFIG $var
+	if [ "$?" = 0 ]; then
+    	    VALUE=$DEFAULT
+	fi
+	VALID=1
+	while [ "$VALID" != 0 ]; do
+	    print_text "repeaterPort" 
+	    request_input $var 3 5 2 "$VALUE"
+	    if [ "$?" = 3 ]; then
+		VALID=0
+		INPUT=$DEFAULT
+	    else
+		valid_port $INPUT
+		VALID=$?
 	    fi
-	    VALID=1
-	    while [ "$VALID" != 0 ]; do
-		print_text "repeaterPort" 
-		request_input $var 3 5 2 "$VALUE"
-		if [ "$?" = 3 ]; then
-		    VALID=0
-		    INPUT=$DEFAULT
-		else
-		    valid_port $INPUT
-		    VALID=$?
-		fi
-	    done
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	done
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
 
-	else
+    else
 #
 # hardware configuration
 # type = 1 / Icom:
 # /opt/products/dstar/dstargw/dsgwd/dsgwd.conf:ZR_ADDR
 #
-	    read_value $CFG "rp2cAddress" 
-	    if [ "$?" = 0 ]; then
-		print_text icom_addr_err
-		read dummy
-		return 1
-	    else
-		echo "repeaterAddress$rptr:"
-		write_value $IRCDDBGWCONFIG "repeaterAddress$rptr" "$VALUE"
-	    fi
+	read_value $CFG "rp2cAddress" 
+	if [ "$?" = 0 ]; then
+	    print_text icom_addr_err
+	    read dummy
+	    return 1
+	else
+	    echo "repeaterAddress$rptr:"
+	    write_value $IRCDDBGWCONFIG "repeaterAddress$rptr" "$VALUE"
+	fi
 
 # /opt/products/dstar/dstargw/dsgwd/dsgwd.conf:ZR_PORT
 
-	    read_value $CFG "rp2cPort"
-	    if [ "$?" = 0 ]; then
-		print_text icom_port_err
-		read dummy
-		return 1
-	    else
-		echo "repeaterPort$rptr:"
-		write_value $IRCDDBGWCONFIG "repeaterPort$rptr" "$VALUE"
-	    fi
-	fi
-#
-# repeaterCall=DB0LJ
-# ONLY IF DIFFERENT FROM BASIC CALLSIGN
-#
-	var="repeaterCall$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	read_default $var
-	echo "$Dat: $var" >> $LOG
-	print_text "repeaterCall"
-	read_value $IRCDDBGWCONFIG $var
+	read_value $CFG "rp2cPort"
 	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
+	    print_text icom_port_err
+	    read dummy
+	    return 1
+	else
+	    echo "repeaterPort$rptr:"
+	    write_value $IRCDDBGWCONFIG "repeaterPort$rptr" "$VALUE"
 	fi
-	request_callsign $var 0 0 "$VALUE"
-    	if [ "$?" = 1 ]; then
-	    INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
-#'
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	fi
-#
-# description1_1=Kruft
-#
-	var="description1_$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_value $IRCDDBGWCONFIG $var
-	print_text "description1R"
-	request_input $var 5 20 0 "$VALUE"
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
-#
-# description2=Mayen-Koblenz
-#
-	var="description2_$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_value $IRCDDBGWCONFIG $var
-	print_text "description2R"
-	request_input $var 5 20 0 "$VALUE"
-	if [ "$?" -ne 2 ]; then
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	fi
-#
-# url1=
-#
-	var="url$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_value $IRCDDBGWCONFIG $var
-	print_text "urlR" 
-	request_input $var 5 120 0 "$VALUE"
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
 #
 # frequency#=439.8250
 # /etc/ircddbd/ircDDB.properties:rptr_freq_<B>
 #
-	var="frequency$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
+    var="frequency$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    VALID=1
+    while [ "$VALID" != 0 ]; do
+	print_text "frequency" 
+	request_input $var 3 10 1 "$VALUE"
+	if [ "$?" = 3 ]; then
+	    VALID=0
+	    INPUT=$DEFAULT
+	else
+	    valid_freq $INPUT
+	    VALID=$?
 	fi
-	VALID=1
-	while [ "$VALID" != 0 ]; do
-	    print_text "frequency" 
-	    request_input $var 3 10 1 "$VALUE"
-	    if [ "$?" = 3 ]; then
-		VALID=0
-		INPUT=$DEFAULT
-	    else
-		valid_freq $INPUT
-		VALID=$?
-	    fi
-	done
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    done
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
 #
 # offset#=-9.4000
 # /etc/ircddbd/ircDDB.properties:rptr_duplex_shift_<B>
 #
-	var="offset$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
+    var="offset$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    VALID=1
+    while [ "$VALID" != 0 ]; do
+	print_text "offset" 
+	request_input $var 3 10 2 "$VALUE"
+	if [ "$?" = 3 ]; then
+	    VALID=0
+	    INPUT=$DEFAULT
+	else
+	    valid_offset $INPUT
+	    VALID=$?
 	fi
-	VALID=1
-	while [ "$VALID" != 0 ]; do
-	    print_text "offset" 
-	    request_input $var 3 10 2 "$VALUE"
-	    if [ "$?" = 3 ]; then
-		VALID=0
-		INPUT=$DEFAULT
-	    else
-		valid_offset $INPUT
-		VALID=$?
-	    fi
-	done
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    done
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
 #
 # rangeKms#=15.000
 # /etc/ircddbd/ircDDB.properties:rptr_range_<B>
 #
-	var="rangeKms$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	print_text "rangeKms" 
-	request_input $var 1 10 1 "$VALUE"
-        if [ "$?" = 3 ]; then
-	    reset_value $var
-	else
-	    INPUT=$(echo $INPUT | tr '[,]' '[.]' | tr -d [[:alpha:]])
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	fi
+    var="rangeKms$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    print_text "rangeKms" 
+    request_input $var 1 10 1 "$VALUE"
+    if [ "$?" = 3 ]; then
+	reset_value $var
+    else
+        INPUT=$(echo $INPUT | tr '[,]' '[.]' | tr -d [[:alpha:]])
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
 
-#
-# latitude#=0.000000
-#
-	var="latitude$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	VALID=1
-	while [ "$VALID" != 0 ]; do
-	    print_text "latitudeR" 
-	    request_input $var 3 9 2 "$VALUE"
-	    if [ "$?" = 3 ]; then
-		VALID=0
-		INPUT=$DEFAULT
-	    else
-		valid_lat $INPUT
-		VALID=$?
-	    fi
-	done
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
-#
-# longitude#=0.000000
-#
-	var="longitude$rptr"
-	Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	VALID=1
-	while [ "$VALID" != 0 ]; do
-	    print_text "longitudeR" 
-	    request_input $var 3 10 2 "$VALUE"
-	    if [ "$?" = 3 ]; then
-		VALID=0
-		INPUT=$DEFAULT
-	    else
-		valid_lon $INPUT
-		VALID=$?
-	    fi
-	done
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
 #
 # agl#=15.000
 #
-	var="agl$rptr"
-        Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	print_text "agl" 
-	request_input $var 1 10 1 "$VALUE"
-        if [ "$?" = 3 ]; then
-	    reset_value $var
-	else
-	    INPUT=$(echo $INPUT | tr '[,]' '[.]')
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	fi
+    var="agl$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    print_text "agl" 
+    request_input $var 1 10 1 "$VALUE"
+    if [ "$?" = 3 ]; then
+	reset_value $var
+    else
+	INPUT=$(echo $INPUT | tr '[,]' '[.]')
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
 
 #
 # reflector#=XRF023 D
 #
-	var="reflector$rptr"
-        Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-	read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	print_text "reflector" 
-	request_input $var 8 8 0 "$VALUE"
-	if [ "$?" = 3 ]; then
-	    reset_value $var
-	elif [ "$?" -ne 2 ]; then
-	    INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
+    var="reflector$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    print_text "reflector" 
+    request_input $var 8 8 0 "$VALUE"
+    if [ "$?" = 3 ]; then
+	reset_value $var
+    elif [ "$?" -ne 2 ]; then
+	INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
 #'
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	fi
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
 
 #
 # atStartup#=1
 #
-	var="atStartup$rptr"
-        Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-        read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	print_text "atStartup" 
-	request_selection $var "$DEFAULT" "$VALUE"
-	INPUT=$?
-	case $INPUT in
-	    [0-1])
-    		write_value $IRCDDBGWCONFIG $var "$INPUT"
-		;;
-	    2)   
-		write_value $IRCDDBGWCONFIG $var "$VALUE"
-		;;
-	    *)
-    		reset_value $var
-		;;
-	esac
+    var="atStartup$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    print_text "atStartup" 
+    request_selection $var "$DEFAULT" "$VALUE"
+    INPUT=$?
+    case $INPUT in
+	[0-1])
+    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $IRCDDBGWCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
 
 #
 # reconnect#=7
 #
-	var="reconnect$rptr"
-        Dat=`date +%Y%m%d%H%M`
-	echo "$Dat: $var" >> $LOG
-	read_default $var
-        read_value $IRCDDBGWCONFIG $var
-	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
-	fi
-	RET=0
-	while [ $RET -eq 0 ]; do
-	    print_text "reconnect" 
-	    select_item $var 11 $VALUE
-	    RET=$?
-	    case $RET in
-		1)
-		    write_value $IRCDDBGWCONFIG $var "$SELECT"
-		    ;;
-		2)
-		    write_value $IRCDDBGWCONFIG $var "$VALUE"
-		    ;;
-		3)
-		    write_value $IRCDDBGWCONFIG $var "$DEFAULT"
-		    ;;
-		*)
-		    ;;
-	    esac
-	done
+    var="reconnect$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    RET=0
+    while [ $RET -eq 0 ]; do
+	print_text "reconnect" 
+	select_item $var 11 $VALUE
+	RET=$?
+	case $RET in
+	    1)
+		write_value $IRCDDBGWCONFIG $var "$SELECT"
+		;;
+	    2)
+		write_value $IRCDDBGWCONFIG $var "$VALUE"
+		;;
+	    3)
+		write_value $IRCDDBGWCONFIG $var "$DEFAULT"
+		;;
+	    *)
+		;;
+	esac
     done
+#
+# Extra repeater options
+# only used if repeater location/callsign is different from gateway location/callsign
+#
+    print_text "extraOptions"
+
+    request_selection "ExtraOptions" 0 0
+    EXTRAS=$?
+    if [ $EXTRAS = 0 ]; then
+	reset_value "repeaterCall$rptr"
+	reset_value "description1_$rptr"
+	reset_value "description2_$rptr"
+	reset_value "url$rptr"
+	reset_value "latitude$rptr"
+	reset_value "longitude$rptr"
+	return 1
+    fi
+
+#
+# repeaterCall=DB0LJ
+# ONLY IF DIFFERENT FROM BASIC CALLSIGN
+#
+    var="repeaterCall$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    read_default $var
+    echo "$Dat: $var" >> $LOG
+    print_text "repeaterCall"
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    request_callsign $var 0 0 "$VALUE"
+    if [ "$?" = 1 ]; then
+	INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
+#'
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
+#
+# description1_1=Kruft
+# ONLY IF DIFFERENT FROM GATEWAY
+#
+    var="description1_$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_value $IRCDDBGWCONFIG $var
+    print_text "description1R"
+    request_input $var 5 20 0 "$VALUE"
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
+#
+# description2=Mayen-Koblenz
+# ONLY IF DIFFERENT FROM GATEWAY
+#
+    var="description2_$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_value $IRCDDBGWCONFIG $var
+    print_text "description2R"
+    request_input $var 5 20 0 "$VALUE"
+    if [ "$?" -ne 2 ]; then
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
+#
+# url1=
+# ONLY IF DIFFERENT FROM GATEWAY
+#
+    var="url$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_value $IRCDDBGWCONFIG $var
+    print_text "urlR" 
+    request_input $var 5 120 0 "$VALUE"
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
+
+#
+# latitude#=0.000000
+# ONLY IF DIFFERENT FROM GATEWAY
+#
+    var="latitude$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    VALID=1
+    while [ "$VALID" != 0 ]; do
+	print_text "latitudeR" 
+	request_input $var 3 9 2 "$VALUE"
+	if [ "$?" = 3 ]; then
+	    VALID=0
+	    INPUT=$DEFAULT
+	else
+	    valid_lat $INPUT
+	    VALID=$?
+	fi
+    done
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
+#
+# longitude#=0.000000
+# ONLY IF DIFFERENT FROM GATEWAY
+#
+    var="longitude$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    VALID=1
+    while [ "$VALID" != 0 ]; do
+	print_text "longitudeR" 
+	request_input $var 3 10 2 "$VALUE"
+	if [ "$?" = 3 ]; then
+	    VALID=0
+	    INPUT=$DEFAULT
+	else
+	    valid_lon $INPUT
+	    VALID=$?
+	fi
+    done
+    write_value $IRCDDBGWCONFIG $var "$INPUT"
+    return 1
 }
 ##################### ircDDB setup  ####################
 
@@ -2271,6 +2347,7 @@ function timeserver_setup(){
 #sendB=0
 #sendC=0
 #sendD=0
+#sendE=0
 	    read_value $IRCDDBGWCONFIG "repeaterBand$i" 
 	    case $VALUE in
 		[A-D])
@@ -2364,9 +2441,9 @@ function timeserver_setup(){
 function logging(){
 
 #
-# command line options for logging / logdir / audiodir
+# command line options for logging / logdir / audiodir of ircddbgateway
 #
-    var="nolog"
+    var="nolog_ircddbgateway"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
 
@@ -2381,7 +2458,7 @@ function logging(){
 	case "${options[$i]}" in
 	    logdir)
 	        let i+=1
-		LOGDIR=${options[$i]}
+		LOGDIR=$(echo ${options[$i]} | tr -d '\"')
 		;;
 	    nolog)
 		NOLOG=1
@@ -2411,6 +2488,11 @@ function logging(){
     fi
     if [ ! -z "$INPUT" ]; then
 	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
+        LOGDIR=$INPUT
+	if [ ! -d $INPUT ]; then
+		mkdir $INPUT
+		chown opendv.opendv $INPUT
+	fi
     fi
     
     NEW_ARGS="DAEMON_ARGS=\"$NEW_ARGS $MODULE\""
@@ -2419,11 +2501,66 @@ function logging(){
     echo "$DAEMON_ARGS -> $NEW_ARGS"
     sed -i "s|$DAEMON_ARGS|$NEW_ARGS|g" /etc/default/ircddbgateway
 
-    OLD=$(grep "^\$logPath" /var/www/ircddblocal.php)
-    NEW="\$logPath='$INPUT';"
-    print_text "dashboard_path"
-    echo "$OLD -> $NEW"
-    sed -i "s|$OLD|$NEW|g" /var/www/ircddblocal.php
+# command line options for logging / logdir of timeserver
+
+    var="nolog_timeserver"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    DAEMON_ARGS=$(grep "^DAEMON_ARGS" /etc/default/timeserver)
+    print_text $var 
+
+    options=( ${DAEMON_ARGS//-/ } )
+    i=0
+    NOLOG=0
+    while [ ! -z "${options[$i]}" ]; do
+
+	case "${options[$i]}" in
+	    logdir)
+	        let i+=1
+		LOGDIR=$(echo ${options[$i]} | tr -d '\"')
+		;;
+	    nolog)
+		NOLOG=1
+		;;
+	    daemon)
+		;;
+	    *)
+		;;
+	esac
+	let i+=1
+    done
+
+    NEW_ARGS="-daemon"
+    request_selection $var "1" "$NOLOG"
+    if [ "$?" != 0 ]; then
+    	NEW_ARGS="$NEW_ARGS -nolog"
+    fi
+    
+    if [ ! -z "$LOGDIR" ]; then
+	NEW_ARGS="$NEW_ARGS -logdir $LOGDIR"
+    fi
+    
+    NEW_ARGS="DAEMON_ARGS=\"$NEW_ARGS $MODULE\""
+    echo "OK!"
+    print_text "cmd_options"
+    echo "$DAEMON_ARGS -> $NEW_ARGS"
+    sed -i "s|$DAEMON_ARGS|$NEW_ARGS|g" /etc/default/timeserver
+
+# dashboard configuration
+
+    read_value $CONFIGFILE "DASHBOARDCFG"
+    if [ $? = 1 ]; then
+	DASHBOARDCFG=$VALUE
+	if [ ! -f "$DASHBOARDCFG" ]; then
+	    cp $DASHBOARDCFG.sample $DASHBOARDCFG
+	fi
+	OLD=$(grep "^\$logPath" $DASHBOARDCFG)
+	NEW="\$logPath='$LOGDIR';"
+	print_text "dashboard_path"
+	echo "$OLD -> $NEW"
+	sed -i "s|$OLD|$NEW|g" $DASHBOARDCFG
+    fi
 }
 
 ##################### Misc feature settings  ####################
@@ -2719,7 +2856,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    icom_setup
 	    hb_setup
 	    print_text "hw_setup"
-	    repeater_setup
+	    repeater_init
 	    ircddb_setup
 	    aprs_setup
 	    dextra_setup
@@ -2740,7 +2877,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    hb_setup
 	    ;;
 	6)
-	    repeater_setup
+	    repeater_edit
 	    ;;
 	7)
 	    ircddb_setup

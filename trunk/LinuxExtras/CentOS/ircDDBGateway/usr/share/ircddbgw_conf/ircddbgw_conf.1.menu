@@ -390,15 +390,24 @@ rptr_setup:Schritten vorher konfiguriert wurden.
 rptr_setup: 
 rptr_setup:********************************************************************************
 
-rptr_num:
-rptr_num:Welches Repeater-Modul soll konfiguriert werden? (1-4).
-rptr_num:Bitte beachte, dass Du die Hardware-Informationen und Device-Namen benoetigen 
-rptr_num:wirst.
-rptr_num:Die Reihenfolge der Module spielt keine Rolle (egal ob A,B,C,D oder D,A,C,B),
-rptr_num:jedoch muss die Konfiguration lueckenlos sein!
-rptr_num: 
-rptr_num: 0 oder <ENTER> um die Konfiguration der Repeater-Module zu ueberspringen.
-rptr_num: 
+rptr_init:
+rptr_init:Wie viele Repeater-Module sollen konfiguriert werden? (1-4).
+rptr_init:Bitte beachte, dass Du die Hardware-Informationen und Device-Namen benoetigst. 
+rptr_init:Die Reihenfolge der Module spielt keine Rolle (egal ob A,B,C,D oder D,A,C,B),
+rptr_init:jedoch muss die Konfiguration lueckenlos sein!
+rptr_init: 
+rptr_init: 0 oder <ENTER> um die Konfiguration der Repeater-Module zu ueberspringen.
+rptr_init: 
+
+rptr_edit:
+rptr_edit:Welches Repeater-Modul soll neu konfiguriert werden?
+rptr_edit:Bitte beachte, dass Du die Hardware-Informationen und Device-Namen benoetigst. 
+rptr_edit:Die Reihenfolge der Module spielt keine Rolle (egal ob A,B,C,D oder D,A,C,B),
+rptr_edit:jedoch muss die Konfiguration lueckenlos sein!
+rptr_edit: 
+rptr_edit: 0 oder <ENTER> um die Konfiguration der Repeater-Module zu ueberspringen.
+rptr_edit: Folgende Module sind derzeit konfiguriert:
+rptr_edit:
 
 rptr_stop:  
 rptr_stop:Die Repeater-Konfiguration wird abgebrochen! 
@@ -447,15 +456,26 @@ repeaterPort:Diese Portnummer darf nicht mehrfach vorkommen.
 repeaterPort:Es ist sicher den vorgegebenen Wert zu uebernehmen. 
 repeaterPort: 
 
+extraOptions:
+extraOptions: ircDDBGateway erlaubt den Anschluss von abgesetzten Repeatern.
+extraOptions: Die folgenden Zusatzoptionen erlauben die Eingabe von Parametern wie
+extraOptions: Rufzeichen und Standort fuer solche speziellen Installationen.
+extraOptions: Wenn das Repeatermodul am gleichen Standort steht wie das Gateway und
+extraOptions: das Basisrufzeichen gleich ist, druecke '0' um die 'Extra Optionen'
+extraOptions: zu ueberspringen.
+extraOptions:
+extraOptions: Willst Du 'Extra Optionen' eingeben ?
+extraOptions: 0 = NEIN, 1 = JA
+extraOptions:
+
 repeaterCall:
 repeaterCall: !!! ACHTUNG !!! ACHTUNG !!! ACHTUNG !!! ACHTUNG !!! ACHTUNG !!!
 repeaterCall:
 repeaterCall: GIB HIER KEIN RUFZEICHEN EIN, ES SEI DENN, DAS CALLS DES REPEATERMODULS
 repeaterCall:            WEICHT VOM CALL DES GATEWAYS AB !!
 repeaterCall:
-repeaterCall:Dies ist eine Spezialfunktion, die in manchen Laendern benoetigt wird,
-repeaterCall:wo Repeater auf unterschiedlichen Baendern unterschiedliche Rufzeichen
-repeaterCall:verwenden muessen oder wenn sie an abweichenden Orten stehen.
+repeaterCall:Dies ist eine Spezialfunktion, die benoetigt wird falls Gateway und 
+repeaterCall:Repeater an unterschiedlichen Orten stehen.
 repeaterCall:Dieser Spezialfall benoetigt auch eine spezielle Konfiguration im ircDDB-
 repeaterCall:Netz, bitte kontaktiere das ircDDB-Team in einem solchen Fall.
 repeaterCall:
@@ -939,17 +959,35 @@ dtmfEnabled:
 dtmfEnabled:(DTMF is used to controle repeater status, linking, unlinking) 
 dtmfEnabled: 
 
-nolog:
-nolog: Logbuchabschaltung
-nolog:
-nolog: Die Groesse von Logfiles kann sehr schnell anwachsen.
-nolog: Mit dieser Funktion kann das Logbuch abgeschaltet werden.
-nolog: Logfiles werden teilweise von Zusatzsoftware benoetigt (z.B. Dashboard)
-nolog: Das Dashboard aus dem Installationspaket benoetigt kein Logfile.
-nolog:
-nolog: 0  LOGBUCHABSCHALTUNG AUS
-nolog: 1  LOGBUCHABSCHAlTUNG EIN
-nolog:
+nolog_ircddbgateway:
+nolog_ircddbgateway: Logbuchabschaltung fuer ircDDBGateway
+nolog_ircddbgateway:
+nolog_ircddbgateway: Die Groesse von Logfiles kann sehr schnell anwachsen.
+nolog_ircddbgateway: Mit dieser Funktion kann das Logbuch abgeschaltet werden.
+nolog_ircddbgateway: Logfiles werden teilweise von Zusatzsoftware benoetigt (z.B. Dashboard)
+nolog_ircddbgateway: Das Dashboard aus dem Installationspaket benoetigt kein Logfile.
+nolog_ircddbgateway:
+nolog_ircddbgateway: 0  LOGBUCHABSCHALTUNG AUS
+nolog_ircddbgateway: 1  LOGBUCHABSCHAlTUNG EIN
+nolog_ircddbgateway:
+
+nolog_timeserver:
+nolog_timeserver: Logbuchabschaltung fuer den Timeserver
+nolog_timeserver:
+nolog_timeserver: Die Groesse von Logfiles kann sehr schnell anwachsen.
+nolog_timeserver: Mit dieser Funktion kann das Logbuch abgeschaltet werden.
+nolog_timeserver:
+nolog_timeserver: 0  LOGBUCHABSCHALTUNG AUS
+nolog_timeserver: 1  LOGBUCHABSCHAlTUNG EIN
+nolog_timeserver:
+
+logdir:
+logdir: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
+logdir: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
+logdir: Die Einstellung ist auch erforderlich, wenn das Logbuch abgeschaltet wurde,
+logdir: da es auch für wichtige Statusfiles verwendet wird.
+logdir: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
+logdir:
 
 logpath:
 logpath: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
@@ -1033,7 +1071,7 @@ mainmenu:99    Ende
 mainmenu: 
 
 final: 
-final:Fertig! Alle Programmteile konfigurt! 
+final:Fertig! Alle Programmteile konfiguriert! 
 final: 
 	     
 scr_act: 
