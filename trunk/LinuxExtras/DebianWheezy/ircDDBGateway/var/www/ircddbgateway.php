@@ -172,7 +172,7 @@ $col[1] = "#f0f0a0";
 			    $ci++;
 			    if($ci > 1) { $ci = 0; }
 			    print "<tr bgcolor=\"$col[$ci]\">";
-			    print "<td align=center>$module</td>";
+			    print "<td align=left>$rptrcall</td>";
 			    print "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
 			    print "<td align=center width=40>$statimg</td>";
 			    print "<td>$linkRefl</td>";
