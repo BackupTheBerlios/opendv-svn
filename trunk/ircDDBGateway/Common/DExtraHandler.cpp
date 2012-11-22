@@ -268,7 +268,7 @@ void CDExtraHandler::process(const CPollData& poll)
 
 	if (found) {
 		// Return the poll
-		CPollData poll(m_callsign, wxEmptyString, address, port);
+		CPollData poll(m_callsign, address, port);
 		m_handler->writePoll(poll);
 	} else {
 		wxLogError(wxT("No space to add new DExtra Dongle, ignoring"));
@@ -346,7 +346,7 @@ void CDExtraHandler::process(CConnectData& connect)
 
 		wxString callsign = repeaterCallsign;
 		callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-		CPollData poll(callsign, wxEmptyString, address, port);
+		CPollData poll(callsign, address, port);
 		m_handler->writePoll(poll);
 	} else {
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port);
@@ -754,7 +754,7 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 		if (m_linkState == DEXTRA_LINKED) {
 			wxString callsign = m_repeater;
 			callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-			CPollData poll(callsign, wxEmptyString, m_address, m_port);
+			CPollData poll(callsign, m_address, m_port);
 			m_handler->writePoll(poll);
 		}
 

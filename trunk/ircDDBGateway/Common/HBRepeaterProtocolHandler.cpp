@@ -172,7 +172,7 @@ CPollData* CHBRepeaterProtocolHandler::readPoll()
 
 	wxString text = wxString((char*)(m_buffer + 5U), wxConvLocal);
 
-	return new CPollData(text, wxEmptyString, m_address, m_port);
+	return new CPollData(text, m_address, m_port);
 }
 
 CHeaderData* CHBRepeaterProtocolHandler::readHeader()

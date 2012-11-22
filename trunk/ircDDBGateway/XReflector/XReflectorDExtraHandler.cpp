@@ -185,7 +185,7 @@ void CXReflectorDExtraHandler::process(const CPollData& poll)
 
 	if (found) {
 		// Return the poll
-		CPollData poll(m_callsign, wxEmptyString, address, port);
+		CPollData poll(m_callsign, address, port);
 		m_handler->writePoll(poll);
 	} else {
 		wxLogError(wxT("No space to add new DExtra Dongle, ignoring"));
@@ -260,7 +260,7 @@ void CXReflectorDExtraHandler::process(CConnectData& connect)
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_ACK, address, port);
 		m_handler->writeConnect(reply);
 
-		CPollData poll(m_callsign, wxEmptyString, address, port);
+		CPollData poll(m_callsign, address, port);
 		m_handler->writePoll(poll);
 	} else {
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port);
@@ -463,7 +463,7 @@ bool CXReflectorDExtraHandler::clockInt(unsigned long ms)
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		if (m_linked) {
-			CPollData poll(m_callsign, wxEmptyString, m_address, m_port);
+			CPollData poll(m_callsign, m_address, m_port);
 			m_handler->writePoll(poll);
 		} else {
 			CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_address, m_port);

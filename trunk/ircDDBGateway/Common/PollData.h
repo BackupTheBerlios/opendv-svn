@@ -29,13 +29,13 @@
 
 class CPollData {
 public:
-	CPollData(const wxString& data1, const wxString& data2, const in_addr& address, unsigned int port);
+	CPollData(const wxString& data, const in_addr& address, unsigned int port);
 	CPollData(const in_addr& address, unsigned int port);
 	CPollData();
 	~CPollData();
 
 	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDPlusData(const in_addr& address, unsigned int port);
+	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
 	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
 
 	unsigned int getDExtraData(unsigned char* data, unsigned int length) const;
@@ -53,10 +53,13 @@ public:
 	in_addr      getAddress() const;
 	unsigned int getPort() const;
 
+	unsigned int getLength() const;
+
 private:
 	wxString     m_data1;
 	wxString     m_data2;
 	bool         m_dongle;
+	unsigned int m_length;
 	in_addr      m_address;
 	unsigned int m_port;
 };

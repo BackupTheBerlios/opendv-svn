@@ -1142,3 +1142,4 @@ Updated DCS007s IP address.
 Allow the repeater callsign with a G affixed as the gateway callsign.
 DD-Mode multicasts to "all in subnet"/224.0.0.1 and "DX-Cluster"/224.0.0.35 implemented (DX-broadcasts etc.)
 Fix APRS reporting when more than one repeater has the same module letter.
+Updated the DCS protocol.

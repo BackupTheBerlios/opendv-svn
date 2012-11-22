@@ -200,7 +200,7 @@ CPollData* CDPlusProtocolHandler::readPoll()
 
 	CPollData* poll = new CPollData;
 
-	bool res = poll->setDPlusData(m_address, m_port);
+	bool res = poll->setDPlusData(m_buffer, m_length, m_address, m_port);
 	if (!res) {
 		delete poll;
 		return NULL;

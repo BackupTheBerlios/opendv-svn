@@ -183,9 +183,14 @@ void CDCSHandler::process(CAMBEData& data)
 
 void CDCSHandler::process(CPollData& poll)
 {
-	wxString reflector = poll.getData1();
-	in_addr  address   = poll.getAddress();
-	unsigned int port  = poll.getPort();
+	wxString reflector  = poll.getData1();
+	wxString repeater   = poll.getData2();
+	in_addr  address    = poll.getAddress();
+	unsigned int port   = poll.getPort();
+	unsigned int length = poll.getLength();
+
+	if (length != 22U)
+		return;
 
 	bool found = false;
 
@@ -194,26 +199,23 @@ void CDCSHandler::process(CPollData& poll)
 		CDCSHandler* handler = m_reflectors[i];
 
 		if (handler != NULL) {
-			if (handler->m_reflector.Left(LONG_CALLSIGN_LENGTH - 1U).IsSameAs(reflector.Left(LONG_CALLSIGN_LENGTH - 1U)) &&
-				handler->m_address.s_addr == address.s_addr && handler->m_port == port && handler->m_linkState == DCS_LINKED) {
+			if (handler->m_reflector.IsSameAs(reflector) &&
+				handler->m_repeater.IsSameAs(repeater) &&
+				handler->m_address.s_addr == address.s_addr &&
+				handler->m_port == port &&
+				handler->m_direction == DIR_OUTGOING &&
+				handler->m_linkState == DCS_LINKED &&
+				length == 22U) {
 				handler->m_pollInactivityTimer.reset();
 				found = true;
-
-				if (handler->m_direction == DIR_OUTGOING) {
-					wxString repeater = handler->m_repeater;
-					repeater.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-
-					wxString data = poll.getData1();
-					poll.setData1(repeater);
-					poll.setData2(data);
-					m_handler->writePoll(poll);
-				}
+				CPollData reply(handler->m_repeater, handler->m_address, handler->m_port);
+				m_handler->writePoll(reply);
 			}
 		}
 	}
 
 	if (!found)
-		wxLogMessage(wxT("Incoming DCS poll from %s"), reflector.c_str());
+		wxLogMessage(wxT("Unknown incoming DCS poll from %s"), reflector.c_str());
 }
 
 void CDCSHandler::process(CConnectData& connect)
@@ -662,7 +664,7 @@ bool CDCSHandler::clockInt(unsigned int ms)
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		m_pollTimer.reset();
 
-		CPollData poll(m_repeater, wxEmptyString, m_address, m_port);
+		CPollData poll(m_repeater, m_address, m_port);
 		m_handler->writePoll(poll);
 	}
 

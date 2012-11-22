@@ -21,10 +21,11 @@
 #include "DStarDefines.h"
 #include "Utils.h"
 
-CPollData::CPollData(const wxString& data1, const wxString& data2, const in_addr& address, unsigned int port) :
-m_data1(data1),
-m_data2(data2),
+CPollData::CPollData(const wxString& data, const in_addr& address, unsigned int port) :
+m_data1(data),
+m_data2(),
 m_dongle(false),
+m_length(0U),
 m_address(address),
 m_port(port)
 {
@@ -35,6 +36,7 @@ CPollData::CPollData(const in_addr& address, unsigned int port) :
 m_data1(),
 m_data2(),
 m_dongle(false),
+m_length(0U),
 m_address(address),
 m_port(port)
 {
@@ -45,6 +47,7 @@ CPollData::CPollData() :
 m_data1(),
 m_data2(),
 m_dongle(false),
+m_length(0U),
 m_address(),
 m_port(0U)
 {
@@ -62,6 +65,8 @@ bool CPollData::setDExtraData(const unsigned char* data, unsigned int length, co
 
 	m_data1   = wxString((const char*)data, wxConvLocal, LONG_CALLSIGN_LENGTH);
 	m_dongle  = data[LONG_CALLSIGN_LENGTH] != 0x00;
+
+	m_length  = length;
 	m_address = address;
 	m_port    = port;
 
@@ -71,20 +76,36 @@ bool CPollData::setDExtraData(const unsigned char* data, unsigned int length, co
 bool CPollData::setDCSData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port)
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 9U);
 	wxASSERT(port > 0U);
 
-	m_data1   = wxString((const char*)data, wxConvLocal, LONG_CALLSIGN_LENGTH);
-	m_address = address;
-	m_port    = port;
+	if (length == 9U) {
+		m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+		m_length  = length;
+		m_address = address;
+		m_port    = port;
+	} else if (length == 17U) {
+		m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+		m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+		m_length  = length;
+		m_address = address;
+		m_port    = port;
+	} else if (length == 22U) {
+		m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+		m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH - 1U);
+		m_data2.Append(wxString((const char*)(data + 17U), wxConvLocal, 1U));
+		m_length  = length;
+		m_address = address;
+		m_port    = port;
+	}
 
 	return true;
 }
 
-bool CPollData::setDPlusData(const in_addr& address, unsigned int port)
+bool CPollData::setDPlusData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port)
 {
 	wxASSERT(port > 0U);
 
+	m_length  = length;
 	m_address = address;
 	m_port    = port;
 
@@ -109,30 +130,14 @@ unsigned int CPollData::getDExtraData(unsigned char *data, unsigned int length) 
 unsigned int CPollData::getDCSData(unsigned char *data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 17U);
+	wxASSERT(length >= 8U);
 
-	if (!m_data2.IsEmpty()) {
-		::memset(data, ' ', LONG_CALLSIGN_LENGTH + LONG_CALLSIGN_LENGTH + 1U);
+	::memset(data, ' ', LONG_CALLSIGN_LENGTH);
 
-		for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-			data[i] = m_data1.GetChar(i);
+	for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+		data[i] = m_data1.GetChar(i);
 
-		data[LONG_CALLSIGN_LENGTH] = 0x00;
-
-		for (unsigned int i = 0U; i < m_data2.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-			data[i + LONG_CALLSIGN_LENGTH + 1U] = m_data2.GetChar(i);
-
-		return 17U;
-	} else {
-		::memset(data, ' ', LONG_CALLSIGN_LENGTH + 1U);
-
-		for (unsigned int i = 0U; i < m_data1.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
-			data[i] = m_data1.GetChar(i);
-
-		data[LONG_CALLSIGN_LENGTH] = 0x00;
-
-		return 9U;
-	}
+	return 8U;
 }
 
 unsigned int CPollData::getDPlusData(unsigned char *data, unsigned int length) const
@@ -180,4 +185,9 @@ in_addr CPollData::getAddress() const
 unsigned int CPollData::getPort() const
 {
 	return m_port;
+}
+
+unsigned int CPollData::getLength() const
+{
+	return m_length;
 }
