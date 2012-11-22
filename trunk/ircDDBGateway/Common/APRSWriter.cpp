@@ -146,7 +146,11 @@ CAPRSWriter::~CAPRSWriter()
 
 void CAPRSWriter::setPort(const wxString& callsign, const wxString& band, double frequency, double offset, double range, double latitude, double longitude, double agl)
 {
-	m_array[band] = new CAPRSEntry(callsign, band, frequency, offset, range, latitude, longitude, agl);
+	wxString temp = callsign;
+	temp.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+	temp.Append(band);
+
+	m_array[temp] = new CAPRSEntry(callsign, band, frequency, offset, range, latitude, longitude, agl);
 }
 
 bool CAPRSWriter::open()
@@ -159,11 +163,9 @@ void CAPRSWriter::writeData(const wxString& callsign, const CAMBEData& data)
 	if (data.isEnd())
 		return;
 
-	wxString band = callsign.Mid(LONG_CALLSIGN_LENGTH - 1U);
-
-	CAPRSEntry* entry = m_array[band];
+	CAPRSEntry* entry = m_array[callsign];
 	if (entry == NULL) {
-		wxLogError(wxT("Cannot find the band %s in the APRS array"), band.c_str());
+		wxLogError(wxT("Cannot find the callsign \"%s\" in the APRS array"), callsign.c_str());
 		return;
 	}
 
@@ -230,11 +232,9 @@ void CAPRSWriter::writeData(const wxString& callsign, const CAMBEData& data)
 
 void CAPRSWriter::reset(const wxString& callsign)
 {
-	wxString band = callsign.Mid(LONG_CALLSIGN_LENGTH - 1U);
-
-	CAPRSEntry* entry = m_array[band];
+	CAPRSEntry* entry = m_array[callsign];
 	if (entry == NULL) {
-		wxLogError(wxT("Cannot find the band %s in the APRS array"), band.c_str());
+		wxLogError(wxT("Cannot find the callsign \"%s\" in the APRS array"), callsign.c_str());
 		return;
 	}
 
