@@ -53,8 +53,8 @@ bool CDPlusProtocolHandler::writeHeader(const CHeaderData& header)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Header"), buffer, length);
-	return true;
-#else
+#endif
+
 	for (unsigned int i = 0U; i < 5U; i++) {
 		bool res = m_socket.write(buffer, length, header.getAddress(), header.getPort());
 		if (!res)
@@ -62,7 +62,6 @@ bool CDPlusProtocolHandler::writeHeader(const CHeaderData& header)
 	}
 
 	return true;
-#endif
 }
 
 bool CDPlusProtocolHandler::writeAMBE(const CAMBEData& data)
@@ -72,10 +71,9 @@ bool CDPlusProtocolHandler::writeAMBE(const CAMBEData& data)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
 #endif
+
+	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
 }
 
 bool CDPlusProtocolHandler::writePoll(const CPollData& poll)
@@ -85,10 +83,9 @@ bool CDPlusProtocolHandler::writePoll(const CPollData& poll)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Poll"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, poll.getAddress(), poll.getPort());
 #endif
+
+	return m_socket.write(buffer, length, poll.getAddress(), poll.getPort());
 }
 
 bool CDPlusProtocolHandler::writeConnect(const CConnectData& connect)
@@ -98,10 +95,9 @@ bool CDPlusProtocolHandler::writeConnect(const CConnectData& connect)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Connect"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, connect.getAddress(), connect.getPort());
 #endif
+
+	return m_socket.write(buffer, length, connect.getAddress(), connect.getPort());
 }
 
 DPLUS_TYPE CDPlusProtocolHandler::read()

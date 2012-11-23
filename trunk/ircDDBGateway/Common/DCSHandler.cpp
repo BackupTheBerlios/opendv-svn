@@ -189,9 +189,6 @@ void CDCSHandler::process(CPollData& poll)
 	unsigned int port   = poll.getPort();
 	unsigned int length = poll.getLength();
 
-	if (length != 22U)
-		return;
-
 	bool found = false;
 
 	// Check to see if we already have a link
@@ -207,9 +204,17 @@ void CDCSHandler::process(CPollData& poll)
 				handler->m_linkState == DCS_LINKED &&
 				length == 22U) {
 				handler->m_pollInactivityTimer.reset();
-				found = true;
 				CPollData reply(handler->m_repeater, handler->m_reflector, handler->m_address, handler->m_port);
 				m_handler->writePoll(reply);
+				found = true;
+			} else if (handler->m_reflector.Left(LONG_CALLSIGN_LENGTH - 1U).IsSameAs(reflector.Left(LONG_CALLSIGN_LENGTH - 1U)) &&
+					   handler->m_address.s_addr == address.s_addr &&
+					   handler->m_port == port &&
+					   handler->m_direction == DIR_INCOMING &&
+					   handler->m_linkState == DCS_LINKED &&
+					   length == 17U) {
+				handler->m_pollInactivityTimer.reset();
+				found = true;
 			}
 		}
 	}

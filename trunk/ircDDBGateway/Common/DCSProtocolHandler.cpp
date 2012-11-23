@@ -53,10 +53,9 @@ bool CDCSProtocolHandler::writeData(const CAMBEData& data)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
 #endif
+
+	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
 }
 
 bool CDCSProtocolHandler::writePoll(const CPollData& poll)
@@ -66,10 +65,9 @@ bool CDCSProtocolHandler::writePoll(const CPollData& poll)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Poll"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, poll.getAddress(), poll.getPort());
 #endif
+
+	return m_socket.write(buffer, length, poll.getAddress(), poll.getPort());
 }
 
 bool CDCSProtocolHandler::writeConnect(const CConnectData& connect)
@@ -79,10 +77,9 @@ bool CDCSProtocolHandler::writeConnect(const CConnectData& connect)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Connect"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, connect.getAddress(), connect.getPort());
 #endif
+
+	return m_socket.write(buffer, length, connect.getAddress(), connect.getPort());
 }
 
 DCS_TYPE CDCSProtocolHandler::read()

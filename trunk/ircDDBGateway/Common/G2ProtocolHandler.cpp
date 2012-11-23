@@ -53,8 +53,8 @@ bool CG2ProtocolHandler::writeHeader(const CHeaderData& header)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Header"), buffer, length);
-	return true;
-#else
+#endif
+
 	for (unsigned int i = 0U; i < 5U; i++) {
 		bool res = m_socket.write(buffer, length, header.getAddress(), header.getPort());
 		if (!res)
@@ -62,7 +62,6 @@ bool CG2ProtocolHandler::writeHeader(const CHeaderData& header)
 	}
 
 	return true;
-#endif
 }
 
 bool CG2ProtocolHandler::writeAMBE(const CAMBEData& data)
@@ -72,10 +71,9 @@ bool CG2ProtocolHandler::writeAMBE(const CAMBEData& data)
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
-	return true;
-#else
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
 #endif
+
+	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
 }
 
 G2_TYPE CG2ProtocolHandler::read()

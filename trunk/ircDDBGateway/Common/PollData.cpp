@@ -89,24 +89,23 @@ bool CPollData::setDCSData(const unsigned char* data, unsigned int length, const
 	wxASSERT(data != NULL);
 	wxASSERT(port > 0U);
 
-	if (length == 9U) {
-		m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-		m_length  = length;
-		m_address = address;
-		m_port    = port;
-	} else if (length == 17U) {
-		m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-		m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-		m_length  = length;
-		m_address = address;
-		m_port    = port;
-	} else if (length == 22U) {
-		m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-		m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH - 1U);
-		m_data2.Append(wxString((const char*)(data + 17U), wxConvLocal, 1U));
-		m_length  = length;
-		m_address = address;
-		m_port    = port;
+	switch (length) {
+		case 17U:
+			m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_length  = length;
+			m_address = address;
+			m_port    = port;
+			break;
+
+		case 22U:
+			m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH - 1U);
+			m_data2.Append(wxString((const char*)(data + 17U), wxConvLocal, 1U));
+			m_length  = length;
+			m_address = address;
+			m_port    = port;
+			break;
 	}
 
 	return true;
@@ -143,17 +142,28 @@ unsigned int CPollData::getDCSData(unsigned char *data, unsigned int length) con
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 17U);
 
-	::memset(data, ' ', 17U);
+	if (!m_data2.IsEmpty()) {
+		::memset(data, ' ', 17U);
 
-	for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		data[i + 0U] = m_data1.GetChar(i);
+		for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+			data[i + 0U] = m_data1.GetChar(i);
 
-	data[8U] = 0x00U;
+		data[8U] = 0x00U;
 
-	for (unsigned int i = 0U; i < m_data2.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		data[i + 9U] = m_data2.GetChar(i);
+		for (unsigned int i = 0U; i < m_data2.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+			data[i + 9U] = m_data2.GetChar(i);
 
-	return 17U;
+		return 17U;
+	} else {
+		::memset(data, ' ', LONG_CALLSIGN_LENGTH + 1U);
+
+		for (unsigned int i = 0U; i < m_data1.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
+			data[i] = m_data1.GetChar(i);
+
+		data[LONG_CALLSIGN_LENGTH] = 0x00;
+
+		return 9U;
+	}
 }
 
 unsigned int CPollData::getDPlusData(unsigned char *data, unsigned int length) const
