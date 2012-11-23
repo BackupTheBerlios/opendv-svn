@@ -21,6 +21,17 @@
 #include "DStarDefines.h"
 #include "Utils.h"
 
+CPollData::CPollData(const wxString& data1, const wxString& data2, const in_addr& address, unsigned int port) :
+m_data1(data1),
+m_data2(data2),
+m_dongle(false),
+m_length(0U),
+m_address(address),
+m_port(port)
+{
+	wxASSERT(port > 0U);
+}
+
 CPollData::CPollData(const wxString& data, const in_addr& address, unsigned int port) :
 m_data1(data),
 m_data2(),
@@ -130,14 +141,19 @@ unsigned int CPollData::getDExtraData(unsigned char *data, unsigned int length) 
 unsigned int CPollData::getDCSData(unsigned char *data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 8U);
+	wxASSERT(length >= 17U);
 
-	::memset(data, ' ', LONG_CALLSIGN_LENGTH);
+	::memset(data, ' ', 17U);
 
 	for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		data[i] = m_data1.GetChar(i);
+		data[i + 0U] = m_data1.GetChar(i);
 
-	return 8U;
+	data[8U] = 0x00U;
+
+	for (unsigned int i = 0U; i < m_data2.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+		data[i + 9U] = m_data2.GetChar(i);
+
+	return 17U;
 }
 
 unsigned int CPollData::getDPlusData(unsigned char *data, unsigned int length) const

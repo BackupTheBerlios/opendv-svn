@@ -208,7 +208,7 @@ void CDCSHandler::process(CPollData& poll)
 				length == 22U) {
 				handler->m_pollInactivityTimer.reset();
 				found = true;
-				CPollData reply(handler->m_repeater, handler->m_address, handler->m_port);
+				CPollData reply(handler->m_repeater, handler->m_reflector, handler->m_address, handler->m_port);
 				m_handler->writePoll(reply);
 			}
 		}

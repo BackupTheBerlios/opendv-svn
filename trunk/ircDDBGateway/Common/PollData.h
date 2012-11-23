@@ -29,6 +29,7 @@
 
 class CPollData {
 public:
+	CPollData(const wxString& data1, const wxString& data2, const in_addr& address, unsigned int port);
 	CPollData(const wxString& data, const in_addr& address, unsigned int port);
 	CPollData(const in_addr& address, unsigned int port);
 	CPollData();
