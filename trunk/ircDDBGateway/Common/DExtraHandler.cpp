@@ -752,10 +752,15 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		if (m_linkState == DEXTRA_LINKED) {
-			wxString callsign = m_repeater;
-			callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-			CPollData poll(callsign, m_address, m_port);
-			m_handler->writePoll(poll);
+			if (!m_repeater.IsEmpty()) {
+				wxString callsign = m_repeater;
+				callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+				CPollData poll(callsign, m_address, m_port);
+				m_handler->writePoll(poll);
+			} else {
+				CPollData poll(m_callsign, m_address, m_port);
+				m_handler->writePoll(poll);
+			}
 		}
 
 		m_pollTimer.reset();

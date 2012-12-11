@@ -292,4 +292,4 @@ Added support for the XDVRPTR modem firmware.
 --------
 
 Use the DVAP to validate its own frequency.
-Added DCS016, DCS017, and DCS018.
+Added DCS016, DCS017, DCS018, and DCS020.

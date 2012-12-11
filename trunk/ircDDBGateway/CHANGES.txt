@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121029
+ircDDB Gateway - 20121211
 =========================
 
 20101010
@@ -1136,10 +1136,12 @@ Fix to the Time Server to make it talk again.
 Removed XRF018 and XRF250.
 Updated DCS007s IP address.
 
-2012xxxx
+20121211
 --------
 
 Allow the repeater callsign with a G affixed as the gateway callsign.
 DD-Mode multicasts to "all in subnet"/224.0.0.1 and "DX-Cluster"/224.0.0.35 implemented (DX-broadcasts etc.)
 Fix APRS reporting when more than one repeater has the same module letter.
+Added DCS020.
 Updated the DCS protocol.
+Fixed DExtra dongle bug.
