@@ -1,0 +1,5 @@
+ircDDB Gateway - 20121211
+=========================
+
+DD mode on Windows.
+Multiple UDP links to reflectors.
