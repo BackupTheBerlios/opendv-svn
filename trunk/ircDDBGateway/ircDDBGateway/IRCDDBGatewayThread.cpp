@@ -148,28 +148,43 @@ void CIRCDDBGatewayThread::run()
 	if (ret)
 		file.Close();
 
-	m_dextraHandler = new CDExtraProtocolHandler(m_dextraPort, m_gatewayAddress);
+	m_dextraHandler = new CDExtraProtocolHandlerPool(MAX_REPEATERS + 1U, m_dextraPort, m_gatewayAddress);
 	ret = m_dextraHandler->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the DExtra protocol handler"));
+		wxLogError(wxT("Could not open the DExtra protocol pool"));
 		delete m_dextraHandler;
 		m_dextraHandler = NULL;
+	} else {
+		// Allocate the incoming port
+		CDExtraProtocolHandler* handler = m_dextraHandler->getHandler(m_dextraPort);
+		CDExtraHandler::setDExtraProtocolIncoming(handler);
+		CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraHandler);
 	}
 
-	m_dplusHandler = new CDPlusProtocolHandler(m_dplusPort, m_gatewayAddress);
+	m_dplusHandler = new CDPlusProtocolHandlerPool(MAX_REPEATERS + 1U, m_dplusPort, m_gatewayAddress);
 	ret = m_dplusHandler->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the D-Plus protocol handler"));
+		wxLogError(wxT("Could not open the D-Plus protocol pool"));
 		delete m_dplusHandler;
 		m_dplusHandler = NULL;
+	} else {
+		// Allocate the incoming port
+		CDPlusProtocolHandler* handler = m_dplusHandler->getHandler(m_dplusPort);
+		CDPlusHandler::setDPlusProtocolIncoming(handler);
+		CDPlusHandler::setDPlusProtocolHandlerPool(m_dplusHandler);
 	}
 
-	m_dcsHandler = new CDCSProtocolHandler(m_dcsPort, m_gatewayAddress);
+	m_dcsHandler = new CDCSProtocolHandlerPool(MAX_REPEATERS + 1U, m_dcsPort, m_gatewayAddress);
 	ret = m_dcsHandler->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the DCS protocol handler"));
+		wxLogError(wxT("Could not open the DCS protocol pool"));
 		delete m_dcsHandler;
 		m_dcsHandler = NULL;
+	} else {
+		// Allocate the incoming port
+		CDCSProtocolHandler* handler = m_dcsHandler->getHandler(m_dcsPort);
+		CDCSHandler::setDCSProtocolIncoming(handler);
+		CDCSHandler::setDCSProtocolHandlerPool(m_dcsHandler);
 	}
 
 	m_g2Handler = new CG2ProtocolHandler(G2_DV_PORT, m_gatewayAddress);
@@ -209,19 +224,16 @@ void CIRCDDBGatewayThread::run()
 	CG2Handler::setHeaderLogger(headerLogger);
 
 	CDExtraHandler::setCallsign(m_gatewayCallsign);
-	CDExtraHandler::setDExtraProtocolHandler(m_dextraHandler);
 	CDExtraHandler::setHeaderLogger(headerLogger);
 	CDExtraHandler::setMaxDongles(m_dextraMaxDongles);
 
 	CDPlusHandler::setCallsign(m_gatewayCallsign);
-	CDPlusHandler::setDPlusProtocolHandler(m_dplusHandler);
 	CDPlusHandler::setDPlusLogin(m_dplusLogin);
 	CDPlusHandler::setHeaderLogger(headerLogger);
 	CDPlusHandler::setMaxDongles(m_dplusMaxDongles);
 	if (m_dplusEnabled)
 		CDPlusHandler::startAuthenticator(m_gatewayAddress, &m_cache);
 
-	CDCSHandler::setDCSProtocolHandler(m_dcsHandler);
 	CDCSHandler::setHeaderLogger(headerLogger);
 
 	CRepeaterHandler::setLocalAddress(m_gatewayAddress);

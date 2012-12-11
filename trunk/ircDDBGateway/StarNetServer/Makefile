@@ -47,7 +47,7 @@ StarNetServerThreadHelper.o:		StarNetServerThreadHelper.cpp StarNetServerThreadH
 StarNetServerThread.o:		StarNetServerThread.cpp StarNetServerThread.h StarNetServerApp.h ../Common/Defs.h ../Common/CacheManager.h \
 							../Common/HeaderData.h ../Common/AMBEData.h ../Common/G2ProtocolHandler.h ../Common/DStarDefines.h ../Common/Utils.h \
 							../Common/Timer.h ../Common/G2Handler.h ../Common/HeaderLogger.h ../Common/StarNetHandler.h ../Common/RemoteHandler.h \
-							 ../ircDDB/IRCDDB.h
+							../Common/DExtraProtocolHandlerPool.h ../Common/DCSProtocolHandlerPool.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c StarNetServerThread.cpp
 
 install:	starnetserver starnetserverd

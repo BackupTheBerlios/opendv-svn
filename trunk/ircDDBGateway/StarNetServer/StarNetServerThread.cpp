@@ -95,20 +95,20 @@ void CStarNetServerThread::run()
 		file.Close();
 
 #if defined(DEXTRA_LINK)
-	m_dextraHandler = new CDExtraProtocolHandler(DEXTRA_PORT, m_address);
+	m_dextraHandler = new CDExtraProtocolHandlerPool(MAX_DEXTRA_LINKS, DEXTRA_PORT, m_address);
 	ret = m_dextraHandler->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the DExtra protocol handler"));
+		wxLogError(wxT("Could not open the DExtra protocol pool"));
 		delete m_dextraHandler;
 		m_dextraHandler = NULL;
 	}
 #endif
 
 #if defined(DCS_LINK)
-	m_dcsHandler = new CDCSProtocolHandler(DCS_PORT, m_address);
+	m_dcsHandler = new CDCSProtocolHandlerPool(MAX_DCS_LINKS, DCS_PORT, m_address);
 	ret = m_dcsHandler->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the DCS protocol handler"));
+		wxLogError(wxT("Could not open the DCS protocol pool"));
 		delete m_dcsHandler;
 		m_dcsHandler = NULL;
 	}
@@ -160,11 +160,11 @@ void CStarNetServerThread::run()
 
 #if defined(DEXTRA_LINK)
 	CDExtraHandler::setCallsign(m_callsign);
-	CDExtraHandler::setDExtraProtocolHandler(m_dextraHandler);
+	CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraHandler);
 	CDExtraHandler::setHeaderLogger(headerLogger);
 #endif
 #if defined(DCS_LINK)
-	CDCSHandler::setDCSProtocolHandler(m_dcsHandler);
+	CDCSHandler::setDCSProtocolHandlerPool(m_dcsHandler);
 	CDCSHandler::setHeaderLogger(headerLogger);
 #endif
 

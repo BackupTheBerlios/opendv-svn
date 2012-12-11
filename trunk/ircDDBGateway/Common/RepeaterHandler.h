@@ -246,8 +246,6 @@ private:
 
 	void g2CommandHandler(const wxString& callsign, const wxString& user, CHeaderData& header);
 	void reflectorCommandHandler(const wxString& callsign, const wxString& user, const wxString& type);
-	void sendToLoopback(CHeaderData& header);
-	void sendToLoopback(CAMBEData& data);
 	void sendToOutgoing(const CHeaderData& header);
 	void sendToOutgoing(const CAMBEData& data);
 	void sendToIncoming(const CHeaderData& header);

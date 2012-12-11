@@ -205,6 +205,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DCSProtocolHandlerPool.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DCSSet.cpp"
 				>
 			</File>
@@ -225,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DExtraProtocolHandlerPool.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DExtraSet.cpp"
 				>
 			</File>
@@ -238,6 +246,10 @@
 			</File>
 			<File
 				RelativePath=".\DPlusProtocolHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DPlusProtocolHandlerPool.cpp"
 				>
 			</File>
 			<File
@@ -483,6 +495,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DCSProtocolHandlerPool.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DCSSet.h"
 				>
 			</File>
@@ -507,6 +523,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DExtraProtocolHandlerPool.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DExtraSet.h"
 				>
 			</File>
@@ -520,6 +540,10 @@
 			</File>
 			<File
 				RelativePath=".\DPlusProtocolHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DPlusProtocolHandlerPool.h"
 				>
 			</File>
 			<File

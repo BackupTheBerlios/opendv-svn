@@ -21,11 +21,11 @@
 
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
+#include "DExtraProtocolHandlerPool.h"
+#include "DPlusProtocolHandlerPool.h"
 #include "RepeaterProtocolHandler.h"
 #include "IRCDDBGatewayStatusData.h"
-#include "DExtraProtocolHandler.h"
-#include "DPlusProtocolHandler.h"
-#include "DCSProtocolHandler.h"
+#include "DCSProtocolHandlerPool.h"
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -77,9 +77,9 @@ private:
 	wxString                  m_gatewayAddress;
 	CIcomRepeaterProtocolHandler* m_icomRepeaterHandler;
 	CHBRepeaterProtocolHandler*   m_hbRepeaterHandler;
-	CDExtraProtocolHandler*   m_dextraHandler;
-	CDPlusProtocolHandler*    m_dplusHandler;
-	CDCSProtocolHandler*      m_dcsHandler;
+	CDExtraProtocolHandlerPool*   m_dextraHandler;
+	CDPlusProtocolHandlerPool*    m_dplusHandler;
+	CDCSProtocolHandlerPool*      m_dcsHandler;
 	CG2ProtocolHandler*       m_g2Handler;
 	CAPRSWriter*              m_aprsWriter;
 	CIRCDDB*                  m_irc;

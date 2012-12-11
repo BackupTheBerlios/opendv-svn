@@ -19,7 +19,7 @@
 #ifndef	DPlusHandler_H
 #define	DPlusHandler_H
 
-#include "DPlusProtocolHandler.h"
+#include "DPlusProtocolHandlerPool.h"
 #include "DPlusAuthenticator.h"
 #include "ReflectorCallback.h"
 #include "CacheManager.h"
@@ -52,7 +52,8 @@ public:
 	static void initialise(unsigned int maxReflectors);
 
 	static void setCallsign(const wxString& callsign);
-	static void setDPlusProtocolHandler(CDPlusProtocolHandler* handler);
+	static void setDPlusProtocolHandlerPool(CDPlusProtocolHandlerPool* pool);
+	static void setDPlusProtocolIncoming(CDPlusProtocolHandler* handler);
 	static void setDPlusLogin(const wxString& dplusLogin);
 	static void setHeaderLogger(CHeaderLogger* logger);
 	static void setMaxDongles(unsigned int maxDongles);
@@ -85,8 +86,8 @@ public:
 	static wxString getDongles();
 
 protected:
-	CDPlusHandler(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, const in_addr& address);
-	CDPlusHandler(const in_addr& address, unsigned int port);
+	CDPlusHandler(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, CDPlusProtocolHandler* protoHandler, const in_addr& address, unsigned int port);
+	CDPlusHandler(CDPlusProtocolHandler* protoHandler, const in_addr& address, unsigned int port);
 	~CDPlusHandler();
 
 	void processInt(CHeaderData& header);
@@ -99,35 +100,37 @@ protected:
 	bool clockInt(unsigned int ms);
 
 private:
-	static unsigned int           m_maxReflectors;
-	static unsigned int           m_maxDongles;
-	static CDPlusHandler**        m_reflectors;
+	static unsigned int               m_maxReflectors;
+	static unsigned int               m_maxDongles;
+	static CDPlusHandler**            m_reflectors;
 
-	static wxString               m_gatewayCallsign;
-	static wxString               m_dplusLogin;
-	static CDPlusProtocolHandler* m_handler;
+	static wxString                   m_gatewayCallsign;
+	static wxString                   m_dplusLogin;
+	static CDPlusProtocolHandlerPool* m_pool;
+	static CDPlusProtocolHandler*     m_incoming;
 
-	static bool                   m_stateChange;
+	static bool                       m_stateChange;
 
-	static CHeaderLogger*         m_headerLogger;
-	static CDPlusAuthenticator*   m_authenticator;
+	static CHeaderLogger*             m_headerLogger;
+	static CDPlusAuthenticator*       m_authenticator;
 
-	wxString            m_repeater;
-	wxString            m_callsign;
-	wxString            m_reflector;
-	in_addr             m_address;
-	unsigned int        m_port;
-	DIRECTION           m_direction;
-	DPLUS_STATE         m_linkState;
-	IReflectorCallback* m_destination;
-	time_t              m_time;
-	CTimer              m_pollTimer;
-	CTimer              m_pollInactivityTimer;
-	unsigned int        m_dPlusId;
-	unsigned int        m_dPlusSeq;
-	unsigned int        m_rptrId;
-	CTimer              m_inactivityTimer;
-	CHeaderData*        m_header;
+	wxString               m_repeater;
+	wxString               m_callsign;
+	wxString               m_reflector;
+	CDPlusProtocolHandler* m_handler;
+	in_addr                m_address;
+	unsigned int           m_port;
+	DIRECTION              m_direction;
+	DPLUS_STATE            m_linkState;
+	IReflectorCallback*    m_destination;
+	time_t                 m_time;
+	CTimer                 m_pollTimer;
+	CTimer                 m_pollInactivityTimer;
+	unsigned int           m_dPlusId;
+	unsigned int           m_dPlusSeq;
+	unsigned int           m_rptrId;
+	CTimer                 m_inactivityTimer;
+	CHeaderData*           m_header;
 };
 
 #endif

@@ -19,8 +19,8 @@
 #ifndef	StarNetServerThread_H
 #define	StarNetServerThread_H
 
-#include "DExtraProtocolHandler.h"		// DEXTRA_LINK
-#include "DCSProtocolHandler.h"			// DCS_LINK
+#include "DExtraProtocolHandlerPool.h"		// DEXTRA_LINK
+#include "DCSProtocolHandlerPool.h"			// DCS_LINK
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -57,10 +57,10 @@ private:
 	wxString                m_callsign;
 	wxString                m_address;
 #if defined(DEXTRA_LINK)
-	CDExtraProtocolHandler* m_dextraHandler;
+	CDExtraProtocolHandlerPool* m_dextraHandler;
 #endif
 #if defined(DCS_LINK)
-	CDCSProtocolHandler*    m_dcsHandler;
+	CDCSProtocolHandlerPool*    m_dcsHandler;
 #endif
 	CG2ProtocolHandler*     m_g2Handler;
 	CIRCDDB*                m_irc;

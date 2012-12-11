@@ -1145,3 +1145,8 @@ Fix APRS reporting when more than one repeater has the same module letter.
 Added DCS020.
 Updated the DCS protocol.
 Fixed DExtra dongle bug.
+
+2012xxxx
+--------
+
+Use link pools for D-Plus, DExtra, and DCS.

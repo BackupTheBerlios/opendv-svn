@@ -19,7 +19,7 @@
 #ifndef	DCSHander_H
 #define	DCSHander_H
 
-#include "DCSProtocolHandler.h"
+#include "DCSProtocolHandlerPool.h"
 #include "ReflectorCallback.h"
 #include "DStarDefines.h"
 #include "HeaderLogger.h"
@@ -48,7 +48,8 @@ class CDCSHandler {
 public:
 	static void initialise(unsigned int maxReflectors);
 
-	static void setDCSProtocolHandler(CDCSProtocolHandler* handler);
+	static void setDCSProtocolHandlerPool(CDCSProtocolHandlerPool* pool);
+	static void setDCSProtocolIncoming(CDCSProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
 
 	static void link(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, const in_addr& address);
@@ -75,8 +76,7 @@ public:
 	static wxString getIncoming(const wxString& callsign);
 
 protected:
-	CDCSHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, const in_addr& address, unsigned int port, DIRECTION direction);
-	CDCSHandler(const wxString& reflector, const in_addr& address, unsigned int port, DIRECTION direction);
+	CDCSHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, CDCSProtocolHandler* protoHandler, const in_addr& address, unsigned int port, DIRECTION direction);
 	~CDCSHandler();
 
 	void processInt(CAMBEData& data);
@@ -88,38 +88,40 @@ protected:
 	bool clockInt(unsigned int ms);
 
 private:
-	static unsigned int         m_maxReflectors;
-	static CDCSHandler**        m_reflectors;
+	static unsigned int             m_maxReflectors;
+	static CDCSHandler**            m_reflectors;
 
-	static CDCSProtocolHandler* m_handler;
+	static CDCSProtocolHandlerPool* m_pool;
+	static CDCSProtocolHandler*     m_incoming;
 
-	static bool                 m_stateChange;
+	static bool                     m_stateChange;
 
-	static CHeaderLogger*       m_headerLogger;
+	static CHeaderLogger*           m_headerLogger;
 
-	wxString            m_reflector;
-	wxString            m_repeater;
-	in_addr             m_address;
-	unsigned int        m_port;
-	DIRECTION           m_direction;
-	DCS_STATE           m_linkState;
-	IReflectorCallback* m_destination;
-	time_t              m_time;
-	CTimer              m_pollTimer;
-	CTimer              m_pollInactivityTimer;
-	CTimer              m_tryTimer;
-	unsigned int        m_dcsId;
-	unsigned int        m_dcsSeq;
-	unsigned int        m_rptrId;
-	unsigned int        m_seqNo;
-	CTimer              m_inactivityTimer;
+	wxString             m_reflector;
+	wxString             m_repeater;
+	CDCSProtocolHandler* m_handler;
+	in_addr              m_address;
+	unsigned int         m_port;
+	DIRECTION            m_direction;
+	DCS_STATE            m_linkState;
+	IReflectorCallback*  m_destination;
+	time_t               m_time;
+	CTimer               m_pollTimer;
+	CTimer               m_pollInactivityTimer;
+	CTimer               m_tryTimer;
+	unsigned int         m_dcsId;
+	unsigned int         m_dcsSeq;
+	unsigned int         m_rptrId;
+	unsigned int         m_seqNo;
+	CTimer               m_inactivityTimer;
 
 	// Header data
-	wxString            m_yourCall;
-	wxString            m_myCall1;
-	wxString            m_myCall2;
-	wxString            m_rptCall1;
-	wxString            m_rptCall2;
+	wxString             m_yourCall;
+	wxString             m_myCall1;
+	wxString             m_myCall2;
+	wxString             m_rptCall1;
+	wxString             m_rptCall2;
 };
 
 #endif

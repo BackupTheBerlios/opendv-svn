@@ -21,19 +21,21 @@
 #include "DCSHandler.h"
 #include "Utils.h"
 
-unsigned int         CDCSHandler::m_maxReflectors = 0U;
-CDCSHandler**        CDCSHandler::m_reflectors = NULL;
+unsigned int             CDCSHandler::m_maxReflectors = 0U;
+CDCSHandler**            CDCSHandler::m_reflectors = NULL;
 
-CDCSProtocolHandler* CDCSHandler::m_handler = NULL;
+CDCSProtocolHandlerPool* CDCSHandler::m_pool = NULL;
+CDCSProtocolHandler*     CDCSHandler::m_incoming = NULL;
 
-bool                 CDCSHandler::m_stateChange = false;
+bool                     CDCSHandler::m_stateChange = false;
 
-CHeaderLogger*       CDCSHandler::m_headerLogger = NULL;
+CHeaderLogger*           CDCSHandler::m_headerLogger = NULL;
 
 
-CDCSHandler::CDCSHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, const in_addr& address, unsigned int port, DIRECTION direction) :
+CDCSHandler::CDCSHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, CDCSProtocolHandler* protoHandler, const in_addr& address, unsigned int port, DIRECTION direction) :
 m_reflector(reflector),
 m_repeater(repeater),
+m_handler(protoHandler),
 m_address(address),
 m_port(port),
 m_direction(direction),
@@ -54,46 +56,8 @@ m_myCall2(),
 m_rptCall1(),
 m_rptCall2()
 {
+	wxASSERT(protoHandler != NULL);
 	wxASSERT(handler != NULL);
-	wxASSERT(port > 0U);
-
-	m_pollInactivityTimer.start();
-
-	m_time = ::time(NULL);
-
-	if (direction == DIR_INCOMING) {
-		m_pollTimer.start();
-		m_stateChange = true;
-		m_linkState = DCS_LINKED;
-	} else {
-		m_linkState = DCS_LINKING;
-		m_tryTimer.start();
-	}
-}
-
-CDCSHandler::CDCSHandler(const wxString& reflector, const in_addr& address, unsigned int port, DIRECTION direction) :
-m_reflector(reflector),
-m_repeater(),
-m_address(address),
-m_port(port),
-m_direction(direction),
-m_linkState(DCS_LINKING),
-m_destination(NULL),
-m_time(),
-m_pollTimer(1000U, 5U),
-m_pollInactivityTimer(1000U, 60U),
-m_tryTimer(1000U, 1U),
-m_dcsId(0x00U),
-m_dcsSeq(0x00U),
-m_rptrId(0x00U),
-m_seqNo(0x00U),
-m_inactivityTimer(1000U, 2U),
-m_yourCall(),
-m_myCall1(),
-m_myCall2(),
-m_rptCall1(),
-m_rptCall2()
-{
 	wxASSERT(port > 0U);
 
 	m_pollInactivityTimer.start();
@@ -112,6 +76,8 @@ m_rptCall2()
 
 CDCSHandler::~CDCSHandler()
 {
+	if (m_direction == DIR_OUTGOING)
+		m_pool->release(m_handler);
 }
 
 void CDCSHandler::initialise(unsigned int maxReflectors)
@@ -125,11 +91,18 @@ void CDCSHandler::initialise(unsigned int maxReflectors)
 		m_reflectors[i] = NULL;
 }
 
-void CDCSHandler::setDCSProtocolHandler(CDCSProtocolHandler* handler)
+void CDCSHandler::setDCSProtocolHandlerPool(CDCSProtocolHandlerPool* pool)
+{
+	wxASSERT(pool != NULL);
+
+	m_pool = pool;
+}
+
+void CDCSHandler::setDCSProtocolIncoming(CDCSProtocolHandler* handler)
 {
 	wxASSERT(handler != NULL);
 
-	m_handler = handler;
+	m_incoming = handler;
 }
 
 void CDCSHandler::setHeaderLogger(CHeaderLogger* logger)
@@ -205,7 +178,7 @@ void CDCSHandler::process(CPollData& poll)
 				length == 22U) {
 				handler->m_pollInactivityTimer.reset();
 				CPollData reply(handler->m_repeater, handler->m_reflector, handler->m_address, handler->m_port);
-				m_handler->writePoll(reply);
+				handler->m_handler->writePoll(reply);
 				found = true;
 			} else if (handler->m_reflector.Left(LONG_CALLSIGN_LENGTH - 1U).IsSameAs(reflector.Left(LONG_CALLSIGN_LENGTH - 1U)) &&
 					   handler->m_address.s_addr == address.s_addr &&
@@ -265,19 +238,19 @@ void CDCSHandler::process(CConnectData& connect)
 	if (handler == NULL) {
 		wxLogMessage(wxT("DCS connect to unknown reflector %s from %s"), reflectorCallsign.c_str(), repeaterCallsign.c_str());
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, connect.getAddress(), connect.getPort());
-		m_handler->writeConnect(reply);
+		m_incoming->writeConnect(reply);
 		return;
 	}
 
 	// A new connect packet indicates the need for a new entry
 	wxLogMessage(wxT("New incoming DCS link to %s from %s"), reflectorCallsign.c_str(), repeaterCallsign.c_str());
 
-	CDCSHandler* dextra = new CDCSHandler(handler, repeaterCallsign, reflectorCallsign, address, port, DIR_INCOMING);
+	CDCSHandler* dcs = new CDCSHandler(handler, repeaterCallsign, reflectorCallsign, m_incoming, address, port, DIR_INCOMING);
 
 	bool found = false;
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] == NULL) {
-			m_reflectors[i] = dextra;
+			m_reflectors[i] = dcs;
 			found = true;
 			break;
 		}
@@ -285,13 +258,13 @@ void CDCSHandler::process(CConnectData& connect)
 
 	if (found) {
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_ACK, address, port);
-		m_handler->writeConnect(reply);
+		m_incoming->writeConnect(reply);
 	} else {
 		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port);
-		m_handler->writeConnect(reply);
+		m_incoming->writeConnect(reply);
 
 		wxLogError(wxT("No space to add new DCS link, ignoring"));
-		delete dextra;
+		delete dcs;
 	}
 }
 
@@ -304,7 +277,11 @@ void CDCSHandler::link(IReflectorCallback* handler, const wxString& repeater, co
 		}
 	}	
 
-	CDCSHandler* dcs = new CDCSHandler(handler, gateway, repeater, address, DCS_PORT, DIR_OUTGOING);
+	CDCSProtocolHandler* protoHandler = m_pool->getHandler();
+	if (protoHandler == NULL)
+		return;
+
+	CDCSHandler* dcs = new CDCSHandler(handler, gateway, repeater, protoHandler, address, DCS_PORT, DIR_OUTGOING);
 
 	bool found = false;
 
@@ -318,7 +295,7 @@ void CDCSHandler::link(IReflectorCallback* handler, const wxString& repeater, co
 
 	if (found) {
 		CConnectData reply(repeater, gateway, CT_LINK1, address, DCS_PORT);
-		m_handler->writeConnect(reply);
+		protoHandler->writeConnect(reply);
 	} else {
 		wxLogError(wxT("No space to add new DCS link, ignoring"));
 		delete dcs;
@@ -336,7 +313,7 @@ void CDCSHandler::unlink(IReflectorCallback* handler, const wxString& exclude)
 
 				if (reflector->m_linkState == DCS_LINKING || reflector->m_linkState == DCS_LINKED) {
 					CConnectData connect(reflector->m_repeater, reflector->m_reflector, CT_UNLINK, reflector->m_address, reflector->m_port);
-					m_handler->writeConnect(connect);
+					reflector->m_handler->writeConnect(connect);
 
 					reflector->m_linkState = DCS_UNLINKING;
 					reflector->m_tryTimer.start();
@@ -373,7 +350,7 @@ void CDCSHandler::unlink()
 				wxLogMessage(wxT("Unlinking from DCS reflector %s"), reflector->m_reflector.c_str());
 
 				CConnectData connect(reflector->m_repeater, reflector->m_reflector, CT_UNLINK, reflector->m_address, reflector->m_port);
-				m_handler->writeConnect(connect);
+				reflector->m_handler->writeConnect(connect);
 
 				reflector->m_linkState = DCS_UNLINKING;
 				reflector->m_tryTimer.start();
