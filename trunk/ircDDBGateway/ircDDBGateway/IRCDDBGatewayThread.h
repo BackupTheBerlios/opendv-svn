@@ -77,9 +77,9 @@ private:
 	wxString                  m_gatewayAddress;
 	CIcomRepeaterProtocolHandler* m_icomRepeaterHandler;
 	CHBRepeaterProtocolHandler*   m_hbRepeaterHandler;
-	CDExtraProtocolHandlerPool*   m_dextraHandler;
-	CDPlusProtocolHandlerPool*    m_dplusHandler;
-	CDCSProtocolHandlerPool*      m_dcsHandler;
+	CDExtraProtocolHandlerPool*   m_dextraPool;
+	CDPlusProtocolHandlerPool*    m_dplusPool;
+	CDCSProtocolHandlerPool*      m_dcsPool;
 	CG2ProtocolHandler*       m_g2Handler;
 	CAPRSWriter*              m_aprsWriter;
 	CIRCDDB*                  m_irc;

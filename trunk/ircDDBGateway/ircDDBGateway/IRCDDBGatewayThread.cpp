@@ -55,9 +55,9 @@ m_gatewayCallsign(),
 m_gatewayAddress(),
 m_icomRepeaterHandler(NULL),
 m_hbRepeaterHandler(NULL),
-m_dextraHandler(NULL),
-m_dplusHandler(NULL),
-m_dcsHandler(NULL),
+m_dextraPool(NULL),
+m_dplusPool(NULL),
+m_dcsPool(NULL),
 m_g2Handler(NULL),
 m_aprsWriter(NULL),
 m_irc(NULL),
@@ -148,43 +148,43 @@ void CIRCDDBGatewayThread::run()
 	if (ret)
 		file.Close();
 
-	m_dextraHandler = new CDExtraProtocolHandlerPool(MAX_REPEATERS + 1U, m_dextraPort, m_gatewayAddress);
-	ret = m_dextraHandler->open();
+	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_REPEATERS * 2U + 1U, m_dextraPort, m_gatewayAddress);
+	ret = m_dextraPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DExtra protocol pool"));
-		delete m_dextraHandler;
-		m_dextraHandler = NULL;
+		delete m_dextraPool;
+		m_dextraPool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDExtraProtocolHandler* handler = m_dextraHandler->getHandler(m_dextraPort);
+		CDExtraProtocolHandler* handler = m_dextraPool->getHandler(m_dextraPort);
 		CDExtraHandler::setDExtraProtocolIncoming(handler);
-		CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraHandler);
+		CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraPool);
 	}
 
-	m_dplusHandler = new CDPlusProtocolHandlerPool(MAX_REPEATERS + 1U, m_dplusPort, m_gatewayAddress);
-	ret = m_dplusHandler->open();
+	m_dplusPool = new CDPlusProtocolHandlerPool(MAX_REPEATERS * 2U + 1U, m_dplusPort, m_gatewayAddress);
+	ret = m_dplusPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the D-Plus protocol pool"));
-		delete m_dplusHandler;
-		m_dplusHandler = NULL;
+		delete m_dplusPool;
+		m_dplusPool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDPlusProtocolHandler* handler = m_dplusHandler->getHandler(m_dplusPort);
+		CDPlusProtocolHandler* handler = m_dplusPool->getHandler(m_dplusPort);
 		CDPlusHandler::setDPlusProtocolIncoming(handler);
-		CDPlusHandler::setDPlusProtocolHandlerPool(m_dplusHandler);
+		CDPlusHandler::setDPlusProtocolHandlerPool(m_dplusPool);
 	}
 
-	m_dcsHandler = new CDCSProtocolHandlerPool(MAX_REPEATERS + 1U, m_dcsPort, m_gatewayAddress);
-	ret = m_dcsHandler->open();
+	m_dcsPool = new CDCSProtocolHandlerPool(MAX_REPEATERS * 2U + 1U, m_dcsPort, m_gatewayAddress);
+	ret = m_dcsPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DCS protocol pool"));
-		delete m_dcsHandler;
-		m_dcsHandler = NULL;
+		delete m_dcsPool;
+		m_dcsPool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDCSProtocolHandler* handler = m_dcsHandler->getHandler(m_dcsPort);
+		CDCSProtocolHandler* handler = m_dcsPool->getHandler(m_dcsPort);
 		CDCSHandler::setDCSProtocolIncoming(handler);
-		CDCSHandler::setDCSProtocolHandlerPool(m_dcsHandler);
+		CDCSHandler::setDCSProtocolHandlerPool(m_dcsPool);
 	}
 
 	m_g2Handler = new CG2ProtocolHandler(G2_DV_PORT, m_gatewayAddress);
@@ -196,7 +196,7 @@ void CIRCDDBGatewayThread::run()
 	}
 
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_dplusHandler == NULL || m_dcsHandler == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL)|| m_irc == NULL || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraPool == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL)|| m_irc == NULL || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -358,14 +358,14 @@ void CIRCDDBGatewayThread::run()
 	if (server != NULL)
 		server->stop();
 
-	m_dextraHandler->close();
-	delete m_dextraHandler;
+	m_dextraPool->close();
+	delete m_dextraPool;
 
-	m_dplusHandler->close();
-	delete m_dplusHandler;
+	m_dplusPool->close();
+	delete m_dplusPool;
 
-	m_dcsHandler->close();
-	delete m_dcsHandler;
+	m_dcsPool->close();
+	delete m_dcsPool;
 
 	m_g2Handler->close();
 	delete m_g2Handler;
@@ -754,15 +754,17 @@ void CIRCDDBGatewayThread::processRepeater(IRepeaterProtocolHandler* handler)
 
 void CIRCDDBGatewayThread::processDExtra()
 {
+	m_dextraPool->start();
+
 	for (;;) {
-		DEXTRA_TYPE type = m_dextraHandler->read();
+		DEXTRA_TYPE type = m_dextraPool->read();
 
 		switch (type) {
 			case DE_NONE:
 				return;
 
 			case DE_POLL: {
-					CPollData* poll = m_dextraHandler->readPoll();
+					CPollData* poll = m_dextraPool->readPoll();
 					if (poll != NULL) {
 						CDExtraHandler::process(*poll);
 						delete poll;
@@ -771,7 +773,7 @@ void CIRCDDBGatewayThread::processDExtra()
 				break;
 
 			case DE_CONNECT: {
-					CConnectData* connect = m_dextraHandler->readConnect();
+					CConnectData* connect = m_dextraPool->readConnect();
 					if (connect != NULL) {
 						CDExtraHandler::process(*connect);
 						delete connect;
@@ -780,7 +782,7 @@ void CIRCDDBGatewayThread::processDExtra()
 				break;
 
 			case DE_HEADER: {
-					CHeaderData* header = m_dextraHandler->readHeader();
+					CHeaderData* header = m_dextraPool->readHeader();
 					if (header != NULL) {
 						// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDExtraHandler::process(*header);
@@ -790,7 +792,7 @@ void CIRCDDBGatewayThread::processDExtra()
 				break;
 
 			case DE_AMBE: {
-					CAMBEData* data = m_dextraHandler->readAMBE();
+					CAMBEData* data = m_dextraPool->readAMBE();
 					if (data != NULL) {
 						CDExtraHandler::process(*data);
 						delete data;
@@ -803,15 +805,17 @@ void CIRCDDBGatewayThread::processDExtra()
 
 void CIRCDDBGatewayThread::processDPlus()
 {
+	m_dplusPool->start();
+
 	for (;;) {
-		DPLUS_TYPE type = m_dplusHandler->read();
+		DPLUS_TYPE type = m_dplusPool->read();
 
 		switch (type) {
 			case DP_NONE:
 				return;
 
 			case DP_POLL: {
-					CPollData* poll = m_dplusHandler->readPoll();
+					CPollData* poll = m_dplusPool->readPoll();
 					if (poll != NULL) {
 						CDPlusHandler::process(*poll);
 						delete poll;
@@ -820,7 +824,7 @@ void CIRCDDBGatewayThread::processDPlus()
 				break;
 
 			case DP_CONNECT: {
-					CConnectData* connect = m_dplusHandler->readConnect();
+					CConnectData* connect = m_dplusPool->readConnect();
 
 					if (connect != NULL) {
 						CDPlusHandler::process(*connect);
@@ -830,7 +834,7 @@ void CIRCDDBGatewayThread::processDPlus()
 				break;
 
 			case DP_HEADER: {
-					CHeaderData* header = m_dplusHandler->readHeader();
+					CHeaderData* header = m_dplusPool->readHeader();
 					if (header != NULL) {
 						// wxLogMessage(wxT("D-Plus header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDPlusHandler::process(*header);
@@ -840,7 +844,7 @@ void CIRCDDBGatewayThread::processDPlus()
 				break;
 
 			case DP_AMBE: {
-					CAMBEData* data = m_dplusHandler->readAMBE();
+					CAMBEData* data = m_dplusPool->readAMBE();
 					if (data != NULL) {
 						CDPlusHandler::process(*data);
 						delete data;
@@ -853,15 +857,17 @@ void CIRCDDBGatewayThread::processDPlus()
 
 void CIRCDDBGatewayThread::processDCS()
 {
+	m_dcsPool->start();
+
 	for (;;) {
-		DCS_TYPE type = m_dcsHandler->read();
+		DCS_TYPE type = m_dcsPool->read();
 
 		switch (type) {
 			case DC_NONE:
 				return;
 
 			case DC_POLL: {
-					CPollData* poll = m_dcsHandler->readPoll();
+					CPollData* poll = m_dcsPool->readPoll();
 					if (poll != NULL) {
 						CDCSHandler::process(*poll);
 						delete poll;
@@ -870,7 +876,7 @@ void CIRCDDBGatewayThread::processDCS()
 				break;
 
 			case DC_CONNECT: {
-					CConnectData* connect = m_dcsHandler->readConnect();
+					CConnectData* connect = m_dcsPool->readConnect();
 					if (connect != NULL) {
 						CDCSHandler::process(*connect);
 						delete connect;
@@ -879,7 +885,7 @@ void CIRCDDBGatewayThread::processDCS()
 				break;
 
 			case DC_DATA: {
-					CAMBEData* data = m_dcsHandler->readData();
+					CAMBEData* data = m_dcsPool->readData();
 					if (data != NULL) {
 						// wxLogMessage(wxT("DCS header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDCSHandler::process(*data);

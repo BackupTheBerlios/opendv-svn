@@ -1746,17 +1746,6 @@ void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const w
 			return;
 		}
 
-		// Check that we aren't connecting to the same port on the same reflector
-		// for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
-		//	if (m_repeaters[i] != NULL && m_repeaters[i] != this) {
-		//		if (m_repeaters[i]->m_linkStatus != LS_NONE && m_repeaters[i]->m_linkRepeater.IsSameAs(reflector)) {
-		//			wxLogMessage(wxT("Duplicate link command from %s to %s issued via %s by %s, ignoring"), m_callsign.c_str(), reflector.c_str(), type.c_str(), user.c_str());
-		//			triggerInfo();
-		//			return;
-		//		}
-		//	}
-		// }
-
 		wxLogMessage(wxT("Link command from %s to %s issued via %s by %s"), m_rptCallsign.c_str(), reflector.c_str(), type.c_str(), user.c_str());
 
 		// Check for just a change of letter

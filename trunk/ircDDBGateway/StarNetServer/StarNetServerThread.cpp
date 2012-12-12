@@ -41,10 +41,10 @@ m_stopped(true),
 m_callsign(),
 m_address(),
 #if defined(DEXTRA_LINK)
-m_dextraHandler(NULL),
+m_dextraPool(NULL),
 #endif
 #if defined(DCS_LINK)
-m_dcsHandler(NULL),
+m_dcsPool(NULL),
 #endif
 m_g2Handler(NULL),
 m_irc(NULL),
@@ -95,22 +95,22 @@ void CStarNetServerThread::run()
 		file.Close();
 
 #if defined(DEXTRA_LINK)
-	m_dextraHandler = new CDExtraProtocolHandlerPool(MAX_DEXTRA_LINKS, DEXTRA_PORT, m_address);
-	ret = m_dextraHandler->open();
+	m_dextrPool = new CDExtraProtocolHandlerPool(MAX_DEXTRA_LINKS, DEXTRA_PORT, m_address);
+	ret = m_dextraPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DExtra protocol pool"));
-		delete m_dextraHandler;
-		m_dextraHandler = NULL;
+		delete m_dextraPool;
+		m_dextraPool = NULL;
 	}
 #endif
 
 #if defined(DCS_LINK)
-	m_dcsHandler = new CDCSProtocolHandlerPool(MAX_DCS_LINKS, DCS_PORT, m_address);
-	ret = m_dcsHandler->open();
+	m_dcsPool = new CDCSProtocolHandlerPool(MAX_DCS_LINKS, DCS_PORT, m_address);
+	ret = m_dcsPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DCS protocol pool"));
-		delete m_dcsHandler;
-		m_dcsHandler = NULL;
+		delete m_dcsPool;
+		m_dcsPool = NULL;
 	}
 #endif
 
@@ -124,10 +124,10 @@ void CStarNetServerThread::run()
 
 	// Wait here until we have the essentials to run
 #if defined(DEXTRA_LINK)
-	while (!m_killed && (m_g2Handler == NULL || m_dextraHandler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
+	while (!m_killed && (m_g2Handler == NULL || m_dextraPool == NULL || m_irc == NULL || m_callsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 #elif defined(DCS_LINK)
-	while (!m_killed && (m_g2Handler == NULL || m_dcsHandler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
+	while (!m_killed && (m_g2Handler == NULL || m_dcsPool == NULL || m_irc == NULL || m_callsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 #else
 	while (!m_killed && (m_g2Handler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
@@ -160,11 +160,11 @@ void CStarNetServerThread::run()
 
 #if defined(DEXTRA_LINK)
 	CDExtraHandler::setCallsign(m_callsign);
-	CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraHandler);
+	CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraPool);
 	CDExtraHandler::setHeaderLogger(headerLogger);
 #endif
 #if defined(DCS_LINK)
-	CDCSHandler::setDCSProtocolHandlerPool(m_dcsHandler);
+	CDCSHandler::setDCSProtocolHandlerPool(m_dcsPool);
 	CDCSHandler::setHeaderLogger(headerLogger);
 #endif
 
@@ -226,16 +226,16 @@ void CStarNetServerThread::run()
 	// Unlink from all reflectors
 	CDExtraHandler::unlink();
 
-	m_dextraHandler->close();
-	delete m_dextraHandler;
+	m_dextraPool->close();
+	delete m_dextraPool;
 #endif
 
 #if defined(DCS_LINK)
 	// Unlink from all reflectors
 	CDCSHandler::unlink();
 
-	m_dcsHandler->close();
-	delete m_dcsHandler;
+	m_dcsPool->close();
+	delete m_dcsPool;
 #endif
 
 	m_g2Handler->close();
@@ -406,15 +406,17 @@ void CStarNetServerThread::processIrcDDB()
 #if defined(DEXTRA_LINK)
 void CStarNetServerThread::processDExtra()
 {
+	m_dextraPool->start();
+
 	for (;;) {
-		DEXTRA_TYPE type = m_dextraHandler->read();
+		DEXTRA_TYPE type = m_dextraPool->read();
 
 		switch (type) {
 			case DE_NONE:
 				return;
 
 			case DE_POLL: {
-					CPollData* poll = m_dextraHandler->readPoll();
+					CPollData* poll = m_dextraPool->readPoll();
 					if (poll != NULL) {
 						CDExtraHandler::process(*poll);
 						delete poll;
@@ -423,7 +425,7 @@ void CStarNetServerThread::processDExtra()
 				break;
 
 			case DE_CONNECT: {
-					CConnectData* connect = m_dextraHandler->readConnect();
+					CConnectData* connect = m_dextraPool->readConnect();
 					if (connect != NULL) {
 						CDExtraHandler::process(*connect);
 						delete connect;
@@ -432,7 +434,7 @@ void CStarNetServerThread::processDExtra()
 				break;
 
 			case DE_HEADER: {
-					CHeaderData* header = m_dextraHandler->readHeader();
+					CHeaderData* header = m_dextraPool->readHeader();
 					if (header != NULL) {
 						// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDExtraHandler::process(*header);
@@ -442,7 +444,7 @@ void CStarNetServerThread::processDExtra()
 				break;
 
 			case DE_AMBE: {
-					CAMBEData* data = m_dextraHandler->readAMBE();
+					CAMBEData* data = m_dextraPool->readAMBE();
 					if (data != NULL) {
 						CDExtraHandler::process(*data);
 						delete data;
@@ -457,15 +459,17 @@ void CStarNetServerThread::processDExtra()
 #if defined(DCS_LINK)
 void CStarNetServerThread::processDCS()
 {
+	m_dcsPool->start();
+
 	for (;;) {
-		DCS_TYPE type = m_dcsHandler->read();
+		DCS_TYPE type = m_dcsPool->read();
 
 		switch (type) {
 			case DC_NONE:
 				return;
 
 			case DC_POLL: {
-					CPollData* poll = m_dcsHandler->readPoll();
+					CPollData* poll = m_dcsPool->readPoll();
 					if (poll != NULL) {
 						CDCSHandler::process(*poll);
 						delete poll;
@@ -474,7 +478,7 @@ void CStarNetServerThread::processDCS()
 				break;
 
 			case DC_CONNECT: {
-					CConnectData* connect = m_dcsHandler->readConnect();
+					CConnectData* connect = m_dcsPool->readConnect();
 					if (connect != NULL) {
 						CDCSHandler::process(*connect);
 						delete connect;
@@ -483,7 +487,7 @@ void CStarNetServerThread::processDCS()
 				break;
 
 			case DC_DATA: {
-					CAMBEData* data = m_dcsHandler->readData();
+					CAMBEData* data = m_dcsPool->readData();
 					if (data != NULL) {
 						// wxLogMessage(wxT("DCS header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDCSHandler::process(*data);

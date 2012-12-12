@@ -57,10 +57,10 @@ private:
 	wxString                m_callsign;
 	wxString                m_address;
 #if defined(DEXTRA_LINK)
-	CDExtraProtocolHandlerPool* m_dextraHandler;
+	CDExtraProtocolHandlerPool* m_dextraPool;
 #endif
 #if defined(DCS_LINK)
-	CDCSProtocolHandlerPool*    m_dcsHandler;
+	CDCSProtocolHandlerPool*    m_dcsPool;
 #endif
 	CG2ProtocolHandler*     m_g2Handler;
 	CIRCDDB*                m_irc;

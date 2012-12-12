@@ -33,6 +33,8 @@ m_index(0U)
 		m_pool[i].m_port    = port + i;
 		m_pool[i].m_inUse   = false;
 	}
+
+	wxLogMessage(wxT("Allocated UDP ports %u-%u to D-Plus"), port, port + 1 - 1U);
 }
 
 CDPlusProtocolHandlerPool::~CDPlusProtocolHandlerPool()
@@ -60,6 +62,7 @@ CDPlusProtocolHandler* CDPlusProtocolHandlerPool::getHandler(unsigned int port)
 		for (unsigned int i = 0U; i < m_n; i++) {
 			if (!m_pool[i].m_inUse) {
 				m_pool[i].m_inUse = true;
+				wxLogMessage(wxT("Allocating UDP port %u for D-Plus"), m_pool[i].m_port);
 				return m_pool[i].m_handler;
 			}
 		}
@@ -67,6 +70,7 @@ CDPlusProtocolHandler* CDPlusProtocolHandlerPool::getHandler(unsigned int port)
 		for (unsigned int i = 0U; i < m_n; i++) {
 			if (m_pool[i].m_port == port) {
 				m_pool[i].m_inUse = true;
+				wxLogMessage(wxT("Allocating fixed UDP port %u for D-Plus"), m_pool[i].m_port);
 				return m_pool[i].m_handler;
 			}
 		}
@@ -84,6 +88,7 @@ void CDPlusProtocolHandlerPool::release(CDPlusProtocolHandler* handler)
 	for (unsigned int i = 0U; i < m_n; i++) {
 		if (m_pool[i].m_handler == handler && !m_pool[i].m_inUse) {
 			m_pool[i].m_inUse = false;
+			wxLogMessage(wxT("Releasing UDP port %u for D-Plus"), m_pool[i].m_port);
 			return;
 		}
 	}
