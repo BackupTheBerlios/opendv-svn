@@ -682,10 +682,10 @@ bool CDVRPTRControllerV2::findPort()
 			path = fullPath.BeforeLast(wxT('/'));
 		}
 
-		if (path.IsSameAs(m_path)) {
-			m_port.Printf(wxT("/dev/%s"), fileName.c_str());
+		if (path.IsSameAs(m_usbPath)) {
+			m_usbPort.Printf(wxT("/dev/%s"), fileName.c_str());
 
-			wxLogMessage(wxT("Found modem port of %s based on the path"), m_port.c_str());
+			wxLogMessage(wxT("Found modem port of %s based on the path"), m_usbPort.c_str());
 
 			return true;
 		}
@@ -751,7 +751,7 @@ bool CDVRPTRControllerV2::findPath()
 #endif
 #else
 	wxString path;
-	path.Printf(wxT("/sys/class/tty/%s"), m_port.Mid(5U).c_str());	
+	path.Printf(wxT("/sys/class/tty/%s"), m_usbPort.Mid(5U).c_str());	
 
 	char cpath[255U];
 	::memset(cpath, 0x00U, 255U);
@@ -775,10 +775,10 @@ bool CDVRPTRControllerV2::findPath()
 		path = fullPath.BeforeLast(wxT('/'));
 	}
 
-	if (m_path.IsEmpty())
+	if (m_usbPath.IsEmpty())
 		wxLogMessage(wxT("Found modem path of %s"), path.c_str());
 
-	m_path = path;
+	m_usbPath = path;
 #endif
 
 	return true;

@@ -99,7 +99,7 @@ DVRPTRControllerV1.o:	DVRPTRControllerV1.cpp DVRPTRControllerV1.h DVRPTRControll
 		$(CC) $(CFLAGS) -c DVRPTRControllerV1.cpp
 
 DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h \
-						DStarDefines,h TCPReaderWriter.h
+						DStarDefines.h TCPReaderWriter.h
 		$(CC) $(CFLAGS) -c DVRPTRControllerV2.cpp
 
 DVTOOLFileReader.o:	DVTOOLFileReader.cpp DVTOOLFileReader.h HeaderData.h DStarDefines.h Utils.h
