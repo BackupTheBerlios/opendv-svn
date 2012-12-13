@@ -215,4 +215,9 @@ enum TEXT_LANG {
 	TL_NORSK
 };
 
+enum CONNECTION_TYPE {
+	CT_USB,
+	CT_NETWORK
+};
+
 #endif

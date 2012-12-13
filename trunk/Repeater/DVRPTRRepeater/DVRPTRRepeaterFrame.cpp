@@ -434,10 +434,11 @@ void CDVRPTRRepeaterFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getBeacon(beaconTime, beaconText, beaconVoice, language);
 
 	DVRPTR_VERSION version;
-	wxString port;
+	CONNECTION_TYPE connectionType;
+	wxString usbPort, address;
 	bool rxInvert, txInvert, channel;
-	unsigned int modLevel, txDelay;
-	::wxGetApp().getModem(version, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	unsigned int port, modLevel, txDelay;
+	::wxGetApp().getModem(version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
 
 	bool enabled;
 	wxString rpt1Callsign, rpt2Callsign;
@@ -454,10 +455,10 @@ void CDVRPTRRepeaterFrame::onPreferences(wxCommandEvent& event)
 
 	CDVRPTRRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation,
 		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText,
-		beaconVoice, language, version, port, rxInvert, txInvert, channel, modLevel, txDelay, enabled, rpt1Callsign,
-		rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, 
-		command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3,
-		output4, controllerType, activeHangTime);
+		beaconVoice, language, version, connectionType, usbPort, address, port, rxInvert, txInvert, channel,
+		modLevel, txDelay, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3,
+		status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4,
+		command4Line, output1, output2, output3, output4, controllerType, activeHangTime);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -485,14 +486,17 @@ void CDVRPTRRepeaterFrame::onPreferences(wxCommandEvent& event)
 	language    = dialog1.getLanguage();
 	::wxGetApp().setBeacon(beaconTime, beaconText, beaconVoice, language);
 
-	version   = dialog1.getVersion();
-	port      = dialog1.getPort();
-	rxInvert  = dialog1.getRXInvert();
-	txInvert  = dialog1.getTXInvert();
-	channel   = dialog1.getChannel();
-	modLevel  = dialog1.getModLevel();
-	txDelay   = dialog1.getTXDelay();
-	::wxGetApp().setModem(version, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	version        = dialog1.getVersion();
+	connectionType = dialog1.getConnectionType();
+	usbPort        = dialog1.getUSBPort();
+	address        = dialog1.getAddress();
+	port           = dialog1.getPort();
+	rxInvert       = dialog1.getRXInvert();
+	txInvert       = dialog1.getTXInvert();
+	channel        = dialog1.getChannel();
+	modLevel       = dialog1.getModLevel();
+	txDelay        = dialog1.getTXDelay();
+	::wxGetApp().setModem(version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
 
 	enabled      = dialog1.getEnabled();
 	rpt1Callsign = dialog1.getRPT1Callsign();

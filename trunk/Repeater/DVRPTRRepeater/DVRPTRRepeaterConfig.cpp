@@ -29,8 +29,11 @@ const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
 const wxString  KEY_LOCAL_PORT         = wxT("localPort");
 const wxString  KEY_MODEM_VERSION      = wxT("modemVersion");
+const wxString  KEY_MODEM_CONNECTION   = wxT("modemConnection");
+const wxString  KEY_MODEM_USBPORT      = wxT("modemUSBPort");
+const wxString  KEY_MODEM_USBPATH      = wxT("modemUSBPath");
+const wxString  KEY_MODEM_ADDRESS      = wxT("modemAddress");
 const wxString  KEY_MODEM_PORT         = wxT("modemPort");
-const wxString  KEY_MODEM_PATH         = wxT("modemPath");
 const wxString  KEY_MODEM_RXINVERT     = wxT("modemRXInvert");
 const wxString  KEY_MODEM_TXINVERT     = wxT("modemTXInvert");
 const wxString  KEY_MODEM_CHANNEL      = wxT("modemChannel");
@@ -85,8 +88,11 @@ const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
 const unsigned int    DEFAULT_LOCAL_PORT         = 20011U;
 const DVRPTR_VERSION  DEFAULT_MODEM_VERSION      = DVRPTR_V1;
-const wxString        DEFAULT_MODEM_PORT         = wxEmptyString;
-const wxString        DEFAULT_MODEM_PATH         = wxEmptyString;
+const CONNECTION_TYPE DEFAULT_MODEM_CONNECTION   = CT_USB;
+const wxString        DEFAULT_MODEM_USBPORT      = wxEmptyString;
+const wxString        DEFAULT_MODEM_USBPATH      = wxEmptyString;
+const wxString        DEFAULT_MODEM_ADDRESS      = wxT("127.0.0.1");
+const unsigned int    DEFAULT_MODEM_PORT         = 0U;
 const bool            DEFAULT_MODEM_RXINVERT     = false;
 const bool            DEFAULT_MODEM_TXINVERT     = false;
 const bool            DEFAULT_MODEM_CHANNEL      = false;
@@ -147,8 +153,11 @@ m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
 m_modemVersion(DEFAULT_MODEM_VERSION),
+m_modemConnection(DEFAULT_MODEM_CONNECTION),
+m_modemUSBPort(DEFAULT_MODEM_USBPORT),
+m_modemUSBPath(DEFAULT_MODEM_USBPATH),
+m_modemAddress(DEFAULT_MODEM_ADDRESS),
 m_modemPort(DEFAULT_MODEM_PORT),
-m_modemPath(DEFAULT_MODEM_PATH),
 m_rxInvert(DEFAULT_MODEM_RXINVERT),
 m_txInvert(DEFAULT_MODEM_TXINVERT),
 m_channel(DEFAULT_MODEM_CHANNEL),
@@ -226,9 +235,17 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_MODEM_VERSION, &temp, long(DEFAULT_MODEM_VERSION));
 	m_modemVersion = DVRPTR_VERSION(temp);
 
-	m_config->Read(m_name + KEY_MODEM_PORT, &m_modemPort, DEFAULT_MODEM_PORT);
+	m_config->Read(m_name + KEY_MODEM_CONNECTION, &temp, long(DEFAULT_MODEM_CONNECTION));
+	m_modemConnection = CONNECTION_TYPE(temp);
 
-	m_config->Read(m_name + KEY_MODEM_PATH, &m_modemPath, DEFAULT_MODEM_PATH);
+	m_config->Read(m_name + KEY_MODEM_USBPORT, &m_modemUSBPort, DEFAULT_MODEM_USBPORT);
+
+	m_config->Read(m_name + KEY_MODEM_USBPATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
+
+	m_config->Read(m_name + KEY_MODEM_ADDRESS, &m_modemAddress, DEFAULT_MODEM_ADDRESS);
+
+	m_config->Read(m_name + KEY_MODEM_PORT, &temp, long(DEFAULT_MODEM_PORT));
+	m_modemPort = (unsigned int)temp;
 
 	m_config->Read(m_name + KEY_MODEM_RXINVERT, &m_rxInvert, DEFAULT_MODEM_RXINVERT);
 
@@ -344,8 +361,11 @@ m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
 m_modemVersion(DEFAULT_MODEM_VERSION),
+m_modemConnection(DEFAULT_MODEM_CONNECTION),
+m_modemUSBPort(DEFAULT_MODEM_USBPORT),
+m_modemUSBPath(DEFAULT_MODEM_USBPATH),
+m_modemAddress(DEFAULT_MODEM_ADDRESS),
 m_modemPort(DEFAULT_MODEM_PORT),
-m_modemPath(DEFAULT_MODEM_PATH),
 m_rxInvert(DEFAULT_MODEM_RXINVERT),
 m_txInvert(DEFAULT_MODEM_TXINVERT),
 m_channel(DEFAULT_MODEM_CHANNEL),
@@ -458,10 +478,18 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_MODEM_VERSION)) {
 			val.ToLong(&temp1);
 			m_modemVersion = DVRPTR_VERSION(temp1);
+		} else if (key.IsSameAs(KEY_MODEM_CONNECTION)) {
+			val.ToLong(&temp1);
+			m_modemConnection = CONNECTION_TYPE(temp1);
+		} else if (key.IsSameAs(KEY_MODEM_USBPORT)) {
+			m_modemUSBPort = val;
+		} else if (key.IsSameAs(KEY_MODEM_USBPATH)) {
+			m_modemUSBPath = val;
+		} else if (key.IsSameAs(KEY_MODEM_ADDRESS)) {
+			m_modemAddress = val;
 		} else if (key.IsSameAs(KEY_MODEM_PORT)) {
-			m_modemPort = val;
-		} else if (key.IsSameAs(KEY_MODEM_PATH)) {
-			m_modemPath = val;
+			val.ToULong(&temp2);
+			m_modemPort = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_MODEM_RXINVERT)) {
 			val.ToLong(&temp1);
 			m_rxInvert = temp1 == 1L;
@@ -615,36 +643,42 @@ void CDVRPTRRepeaterConfig::setNetwork(const wxString& gatewayAddress, unsigned 
 	m_localPort      = localPort;
 }
 
-void CDVRPTRRepeaterConfig::getModem(DVRPTR_VERSION& version, wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDVRPTRRepeaterConfig::getModem(DVRPTR_VERSION& version, CONNECTION_TYPE& connection, wxString& usbPort, wxString& address, unsigned int& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
 {
-	version  = m_modemVersion;
-	port     = m_modemPort;
-	rxInvert = m_rxInvert;
-	txInvert = m_txInvert;
-	channel  = m_channel;
-	modLevel = m_modLevel;
-	txDelay  = m_txDelay;
+	version    = m_modemVersion;
+	connection = m_modemConnection;
+	usbPort    = m_modemUSBPort;
+	address    = m_modemAddress;
+	port       = m_modemPort;
+	rxInvert   = m_rxInvert;
+	txInvert   = m_txInvert;
+	channel    = m_channel;
+	modLevel   = m_modLevel;
+	txDelay    = m_txDelay;
 }
 
-void CDVRPTRRepeaterConfig::setModem(DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+void CDVRPTRRepeaterConfig::setModem(DVRPTR_VERSION version, CONNECTION_TYPE connection, const wxString& usbPort, const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
 {
-	m_modemVersion = version;
-	m_modemPort    = port;
-	m_rxInvert     = rxInvert;
-	m_txInvert     = txInvert;
-	m_channel      = channel;
-	m_modLevel     = modLevel;
-	m_txDelay      = txDelay;
+	m_modemVersion    = version;
+	m_modemConnection = connection;
+	m_modemUSBPort    = usbPort;
+	m_modemAddress    = address;
+	m_modemPort       = port;
+	m_rxInvert        = rxInvert;
+	m_txInvert        = txInvert;
+	m_channel         = channel;
+	m_modLevel        = modLevel;
+	m_txDelay         = txDelay;
 }
 
 void CDVRPTRRepeaterConfig::getModem(wxString& path) const
 {
-	path = m_modemPath;
+	path = m_modemUSBPath;
 }
 
 void CDVRPTRRepeaterConfig::setModem(const wxString& path)
 {
-	m_modemPath = path;
+	m_modemUSBPath = path;
 }
 
 void CDVRPTRRepeaterConfig::getTimes(unsigned int& timeout, unsigned int& ackTime) const
@@ -792,8 +826,11 @@ bool CDVRPTRRepeaterConfig::write()
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
 	m_config->Write(m_name + KEY_LOCAL_PORT, long(m_localPort));
 	m_config->Write(m_name + KEY_MODEM_VERSION, long(m_modemVersion));
-	m_config->Write(m_name + KEY_MODEM_PORT, m_modemPort);
-	m_config->Write(m_name + KEY_MODEM_PATH, m_modemPath);
+	m_config->Write(m_name + KEY_MODEM_CONNECTION, long(m_modemConnection));
+	m_config->Write(m_name + KEY_MODEM_USBPORT, m_modemUSBPort);
+	m_config->Write(m_name + KEY_MODEM_USBPATH, m_modemUSBPath);
+	m_config->Write(m_name + KEY_MODEM_ADDRESS, m_modemAddress);
+	m_config->Write(m_name + KEY_MODEM_PORT, long(m_modemPort));
 	m_config->Write(m_name + KEY_MODEM_RXINVERT, m_rxInvert);
 	m_config->Write(m_name + KEY_MODEM_TXINVERT, m_txInvert);
 	m_config->Write(m_name + KEY_MODEM_CHANNEL, m_channel);
@@ -877,8 +914,11 @@ bool CDVRPTRRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_LOCAL_PORT.c_str(), m_localPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_MODEM_VERSION.c_str(), int(m_modemVersion)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_MODEM_PORT.c_str(), m_modemPort.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_MODEM_PATH.c_str(), m_modemPath.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_MODEM_CONNECTION.c_str(), int(m_modemConnection)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_MODEM_USBPORT.c_str(), m_modemUSBPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_MODEM_USBPATH.c_str(), m_modemUSBPath.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_MODEM_ADDRESS.c_str(), m_modemAddress.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_MODEM_PORT.c_str(), m_modemPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_MODEM_RXINVERT.c_str(), m_rxInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_MODEM_TXINVERT.c_str(), m_txInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_MODEM_CHANNEL.c_str(), m_channel ? 1 : 0); file.AddLine(buffer);

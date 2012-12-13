@@ -57,13 +57,17 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 CDVRPTRControllerV2::CDVRPTRControllerV2(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
 wxThread(wxTHREAD_JOINABLE),
-m_port(port),
-m_path(path),
+m_connection(CT_USB),
+m_usbPort(port),
+m_usbPath(path),
+m_address(),
+m_port(0U),
 m_txInvert(txInvert),
 m_modLevel(modLevel),
 m_duplex(duplex),
 m_callsign(callsign),
-m_serial(port, SERIAL_115200),
+m_usb(NULL),
+m_network(NULL),
 m_buffer(NULL),
 m_rxData(1000U),
 m_txData(1000U),
@@ -75,11 +79,46 @@ m_mutex()
 {
 	wxASSERT(!port.IsEmpty());
 
+	m_usb = new CSerialDataController(port, SERIAL_115200);
+
+	m_buffer = new unsigned char[BUFFER_LENGTH];
+}
+
+CDVRPTRControllerV2::CDVRPTRControllerV2(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
+wxThread(wxTHREAD_JOINABLE),
+m_connection(CT_NETWORK),
+m_usbPort(),
+m_usbPath(),
+m_address(address),
+m_port(port),
+m_txInvert(txInvert),
+m_modLevel(modLevel),
+m_duplex(duplex),
+m_callsign(callsign),
+m_usb(NULL),
+m_network(NULL),
+m_buffer(NULL),
+m_rxData(1000U),
+m_txData(1000U),
+m_ptt(false),
+m_rx(false),
+m_space(0U),
+m_stopped(false),
+m_mutex()
+{
+	wxASSERT(!address.IsEmpty());
+	wxASSERT(port > 0U);
+
+	m_network = new CTCPReaderWriter(address, port);
+
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVRPTRControllerV2::~CDVRPTRControllerV2()
 {
+	delete m_usb;
+	delete m_network;
+
 	delete[] m_buffer;
 }
 
@@ -231,7 +270,7 @@ void* CDVRPTRControllerV2::Entry()
 
 				// CUtils::dump(wxT("Write"), data, len);
 
-				int ret = m_serial.write(data, len);
+				int ret = writeModem(data, len);
 				if (ret == -1) {
 					bool ret = findModem();
 					if (!ret) {
@@ -251,7 +290,7 @@ void* CDVRPTRControllerV2::Entry()
 
 	wxLogMessage(wxT("Stopping DV-RPTR2 Modem Controller thread"));
 
-	m_serial.close();
+	closeModem();
 
 	return NULL;
 }
@@ -421,7 +460,7 @@ bool CDVRPTRControllerV2::getSerial()
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 
-	int ret = m_serial.write(buffer, 105U);
+	int ret = writeModem(buffer, 105U);
 	if (ret != 105)
 		return false;
 
@@ -464,7 +503,7 @@ bool CDVRPTRControllerV2::getSpace()
 
 	// CUtils::dump(wxT("Written"), buffer, 10U);
 
-	return m_serial.write(buffer, 10U) == 10;
+	return writeModem(buffer, 10U) == 10;
 }
 
 bool CDVRPTRControllerV2::setConfig()
@@ -497,7 +536,7 @@ bool CDVRPTRControllerV2::setConfig()
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 
-	int ret = m_serial.write(buffer, 105U);
+	int ret = writeModem(buffer, 105U);
 	if (ret != 105)
 		return false;
 
@@ -531,7 +570,7 @@ bool CDVRPTRControllerV2::setConfig()
 RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
-	int ret = m_serial.read(buffer, 5U);
+	int ret = readModem(buffer, 5U);
 	if (ret < 0) {
 		wxLogError(wxT("Error when reading from the DV-RPTR"));
 		return RT2_ERROR;
@@ -559,7 +598,7 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 	unsigned int offset = 5U;
 
 	while (offset < length) {
-		int ret = m_serial.read(buffer + offset, length - offset);
+		int ret = readModem(buffer + offset, length - offset);
 		if (ret < 0) {
 			wxLogError(wxT("Error when reading from the DV-RPTR"));
 			return RT2_ERROR;
@@ -585,20 +624,24 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 		return RT2_CONFIG;
 	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
-	} else {
-		wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
-		return RT2_UNKNOWN;
 	}
+
+	wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
+
+	return RT2_UNKNOWN;
 }
 
 wxString CDVRPTRControllerV2::getPath() const
 {
-	return m_path;
+	return m_usbPath;
 }
 
 bool CDVRPTRControllerV2::findPort()
 {
-	if (m_path.IsEmpty())
+	if (m_connection != CT_USB)
+		return false;
+
+	if (m_usbPath.IsEmpty())
 		return false;
 
 #if defined(__WINDOWS__)
@@ -656,6 +699,9 @@ bool CDVRPTRControllerV2::findPort()
 
 bool CDVRPTRControllerV2::findPath()
 {
+	if (m_connection != CT_USB)
+		return false;
+
 #if defined(__WINDOWS__)
 #ifdef notdef
 	GUID guids[5U];
@@ -740,7 +786,7 @@ bool CDVRPTRControllerV2::findPath()
 
 bool CDVRPTRControllerV2::findModem()
 {
-	m_serial.close();
+	closeModem();
 
 	// Tell the repeater that the signal has gone away
 	if (m_rx) {
@@ -784,22 +830,70 @@ bool CDVRPTRControllerV2::findModem()
 
 bool CDVRPTRControllerV2::openModem()
 {
-	bool ret = m_serial.open();
+	bool ret = false;
+
+	switch (m_connection) {
+		case CT_USB:
+			ret = m_usb->open();
+			break;
+		case CT_NETWORK:
+			ret = m_network->open();
+			break;
+		default:
+			wxLogError(wxT("Invalid connection type: %d"), int(m_connection));
+			break;
+	}
+
 	if (!ret)
 		return false;
 
 	ret = getSerial();
 	if (!ret) {
-		m_serial.close();
+		closeModem();
 		return false;
 	}
 
 	ret = setConfig();
 	if (!ret) {
-		m_serial.close();
+		closeModem();
 		return false;
 	}
 
 	return true;
 }
 
+int CDVRPTRControllerV2::readModem(unsigned char* buffer, unsigned int length)
+{
+	switch (m_connection) {
+		case CT_USB:
+			return m_usb->read(buffer, length);
+		case CT_NETWORK:
+			return m_network->read(buffer, length, 0U);
+		default:
+			return -1;
+	}
+}
+
+int CDVRPTRControllerV2::writeModem(const unsigned char* buffer, unsigned int length)
+{
+	switch (m_connection) {
+		case CT_USB:
+			return m_usb->write(buffer, length);
+		case CT_NETWORK:
+			return m_network->write(buffer, length);
+		default:
+			return -1;
+	}
+}
+
+void CDVRPTRControllerV2::closeModem()
+{
+	switch (m_connection) {
+		case CT_USB:
+			return m_usb->close();
+		case CT_NETWORK:
+			return m_network->close();
+		default:
+			return;
+	}
+}

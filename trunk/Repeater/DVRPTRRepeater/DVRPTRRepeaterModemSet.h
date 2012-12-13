@@ -20,36 +20,45 @@
 #define	DVRPTRRepeaterModemSet_H
 
 #include "DVRPTRRepeaterDefs.h"
+#include "AddressTextCtrl.h"
 #include "DStarDefines.h"
+#include "PortTextCtrl.h"
 
 #include <wx/wx.h>
 
 class CDVRPTRRepeaterModemSet : public wxPanel {
 public:
-	CDVRPTRRepeaterModemSet(wxWindow* parent, int id, const wxString& title, DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	CDVRPTRRepeaterModemSet(wxWindow* parent, int id, const wxString& title, DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDVRPTRRepeaterModemSet();
 
 	virtual bool Validate();
 
-	virtual DVRPTR_VERSION getVersion() const;
-	virtual wxString       getPort() const;
-	virtual bool           getRXInvert() const;
-	virtual bool           getTXInvert() const;
-	virtual bool           getChannel() const;
-	virtual unsigned int   getModLevel() const;
-	virtual unsigned int   getTXDelay() const;
+	virtual DVRPTR_VERSION  getVersion() const;
+	virtual CONNECTION_TYPE getConnectionType() const;
+	virtual wxString        getUSBPort() const;
+	virtual wxString        getAddress() const;
+	virtual unsigned int    getPort() const;
+	virtual bool            getRXInvert() const;
+	virtual bool            getTXInvert() const;
+	virtual bool            getChannel() const;
+	virtual unsigned int    getModLevel() const;
+	virtual unsigned int    getTXDelay() const;
 
 	virtual void onVersion(wxCommandEvent& event);
+	virtual void onConnectionType(wxCommandEvent& event);
 
 private:
-	wxString  m_title;
-	wxChoice* m_version;
-	wxChoice* m_port;
-	wxChoice* m_txInvert;
-	wxChoice* m_rxInvert;
-	wxChoice* m_channel;
-	wxSlider* m_modLevel;
-	wxSlider* m_txDelay;
+	wxString          m_title;
+	wxChoice*         m_version;
+	wxChoice*         m_connectionType;
+	wxChoice*         m_usbPort;
+	CAddressTextCtrl* m_address;
+	CPortTextCtrl*    m_port;
+	wxChoice*         m_txInvert;
+	wxChoice*         m_rxInvert;
+	wxChoice*         m_channel;
+	wxSlider*         m_modLevel;
+	wxSlider*         m_txDelay;
 
 	DECLARE_EVENT_TABLE()
 };

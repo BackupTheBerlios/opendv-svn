@@ -46,7 +46,7 @@ DVRPTRRepeaterLogger.o:	DVRPTRRepeaterLogger.cpp DVRPTRRepeaterLogger.h DVRPTRRe
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterLogger.cpp
 
 DVRPTRRepeaterModemSet.o:	DVRPTRRepeaterModemSet.cpp DVRPTRRepeaterModemSet.h DVRPTRRepeaterDefs.h ../Common/DVRPTRControllerV1.h \
-							../Common/DVRPTRControllerV2.h ../Common/DStarDefines.h
+							../Common/DVRPTRControllerV2.h ../Common/DStarDefines.h ../Common/AddressTextCtrl.h ../Common/PortTextCtrl.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterModemSet.cpp
 
 DVRPTRRepeaterPreferences.o:	DVRPTRRepeaterPreferences.cpp DVRPTRRepeaterPreferences.h DVRPTRRepeaterDefs.h DVRPTRRepeaterControllerSet.h \

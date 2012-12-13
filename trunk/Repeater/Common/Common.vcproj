@@ -398,6 +398,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TCPReaderWriter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TimeoutTones.cpp"
 				>
 			</File>
@@ -749,6 +753,10 @@
 			</File>
 			<File
 				RelativePath=".\SoundCardReaderWriter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TCPReaderWriter.h"
 				>
 			</File>
 			<File

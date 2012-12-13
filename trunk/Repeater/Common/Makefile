@@ -7,7 +7,8 @@ OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AudioDelay.o BeaconSet.o Bea
 		GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o NCO.o MessageTextCtrl.o \
 		NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
 		RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o \
-		SoundCardReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
+		SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o \
+		WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -97,7 +98,8 @@ DVRPTRControllerV1.o:	DVRPTRControllerV1.cpp DVRPTRControllerV1.h DVRPTRControll
 						CCITTChecksumReverse.h Timer.h
 		$(CC) $(CFLAGS) -c DVRPTRControllerV1.cpp
 
-DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h
+DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h \
+						DStarDefines,h TCPReaderWriter.h
 		$(CC) $(CFLAGS) -c DVRPTRControllerV2.cpp
 
 DVTOOLFileReader.o:	DVTOOLFileReader.cpp DVTOOLFileReader.h HeaderData.h DStarDefines.h Utils.h
@@ -194,6 +196,9 @@ SlowDataEncoder.o:	SlowDataEncoder.cpp SlowDataEncoder.h DStarDefines.h HeaderDa
 
 SoundCardReaderWriter.o:	SoundCardReaderWriter.cpp SoundCardReaderWriter.h AudioCallback.h
 		$(CC) $(CFLAGS) -c SoundCardReaderWriter.cpp
+
+TCPReaderWriter.o:	TCPReaderWriter.cpp TCPReaderWriter.h UDPReaderWriter.h
+				$(CC) $(CFLAGS) -c TCPReaderWriter.cpp
 
 TimeoutTones.o:	TimeoutTones.cpp TimeoutTones.h NCO.h
 		$(CC) $(CFLAGS) -c TimeoutTones.cpp

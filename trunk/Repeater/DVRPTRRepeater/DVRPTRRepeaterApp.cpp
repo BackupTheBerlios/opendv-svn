@@ -227,14 +227,14 @@ void CDVRPTRRepeaterApp::setNetwork(const wxString& gatewayAddress, unsigned int
 	m_config->setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 }
 
-void CDVRPTRRepeaterApp::getModem(DVRPTR_VERSION& version, wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDVRPTRRepeaterApp::getModem(DVRPTR_VERSION& version, CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
 {
-	m_config->getModem(version, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	m_config->getModem(version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
 }
 
-void CDVRPTRRepeaterApp::setModem(DVRPTR_VERSION version, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+void CDVRPTRRepeaterApp::setModem(DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
 {
-	m_config->setModem(version, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	m_config->setModem(version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
 }
 
 void CDVRPTRRepeaterApp::getModem(wxString& path) const
@@ -416,31 +416,45 @@ void CDVRPTRRepeaterApp::createThread()
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
 	DVRPTR_VERSION modemVersion;
-	wxString modemPort, modemPath;
+	CONNECTION_TYPE modemType;
+	wxString modemUSBPort, modemAddress, modemUSBPath;
 	bool rxInvert, txInvert, channel;
-	unsigned int modLevel, txDelay;
-	getModem(modemVersion, modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
-	getModem(modemPath);
-	wxLogInfo(wxT("DV-RPTR modem: version: %d, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), int(modemVersion), modemPort.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+	unsigned int modemPort, modLevel, txDelay;
+	getModem(modemVersion, modemType, modemUSBPort, modemAddress, modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
+	wxLogInfo(wxT("DV-RPTR modem: version: %d, type: %d, USB port: %s, address: %s:%u, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), int(modemVersion), int(modemType), modemUSBPort.c_str(), modemAddress.c_str(), modemPort, int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
 
-	if (!modemPort.IsEmpty()) {
-		if (!modemPath.IsEmpty())
-			wxLogInfo(wxT("DV-RPTR modem: path: %s"), modemPath.c_str());
+	if (modemType == CT_USB) {
+		if (!modemUSBPort.IsEmpty()) {
+			getModem(modemUSBPath);
+			if (!modemUSBPath.IsEmpty())
+				wxLogInfo(wxT("DV-RPTR modem: path: %s"), modemUSBPath.c_str());
 
-		IDVRPTRController* controller = NULL;
-		switch (modemVersion) {
-			case DVRPTR_V1:
-				controller = new CDVRPTRControllerV1(modemPort, modemPath, rxInvert, txInvert, channel, modLevel, txDelay);
-				break;
-			case DVRPTR_V2:
-				controller = new CDVRPTRControllerV2(modemPort, modemPath, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
-				break;
-			default:
-				wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(modemVersion));
-				break;
+			IDVRPTRController* controller = NULL;
+			switch (modemVersion) {
+				case DVRPTR_V1:
+					controller = new CDVRPTRControllerV1(modemUSBPort, modemUSBPath, rxInvert, txInvert, channel, modLevel, txDelay);
+					break;
+				case DVRPTR_V2:
+					controller = new CDVRPTRControllerV2(modemUSBPort, modemUSBPath, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
+					break;
+				default:
+					wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(modemVersion));
+					break;
+			}
+
+			if (controller != NULL) {
+				bool res = controller->open();
+				if (!res) {
+					wxLogError(wxT("Cannot open the DV-RPTR modem"));
+				} else {
+					thread->setModem(controller);
+					setModem(controller->getPath());
+				}
+			}
 		}
-
-		if (controller != NULL) {
+	} else if (modemType == CT_NETWORK) {
+		if (!modemAddress.IsEmpty()) {
+			CDVRPTRControllerV2* controller = new CDVRPTRControllerV2(modemAddress, modemPort, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 			bool res = controller->open();
 			if (!res) {
 				wxLogError(wxT("Cannot open the DV-RPTR modem"));
