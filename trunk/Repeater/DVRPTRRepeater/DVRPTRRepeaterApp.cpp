@@ -456,12 +456,10 @@ void CDVRPTRRepeaterApp::createThread()
 		if (!modemAddress.IsEmpty()) {
 			CDVRPTRControllerV2* controller = new CDVRPTRControllerV2(modemAddress, modemPort, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 			bool res = controller->open();
-			if (!res) {
+			if (!res)
 				wxLogError(wxT("Cannot open the DV-RPTR modem"));
-			} else {
+			else
 				thread->setModem(controller);
-				setModem(controller->getPath());
-			}
 		}
 	}
 

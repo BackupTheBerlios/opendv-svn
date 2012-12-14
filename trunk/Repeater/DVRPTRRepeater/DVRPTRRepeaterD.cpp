@@ -268,8 +268,8 @@ bool CDVRPTRRepeaterD::createThread()
 				if (!res) {
 					wxLogError(wxT("Cannot open the DV-RPTR modem"));
 				} else {
-					thread->setModem(controller);
-					setModem(controller->getPath());
+					m_thread->setModem(controller);
+					config.setModem(controller->getPath());
 				}
 			}
 		}
@@ -277,12 +277,10 @@ bool CDVRPTRRepeaterD::createThread()
 		if (!modemAddress.IsEmpty()) {
 			CDVRPTRControllerV2* controller = new CDVRPTRControllerV2(modemAddress, modemPort, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 			bool res = controller->open();
-			if (!res) {
+			if (!res)
 				wxLogError(wxT("Cannot open the DV-RPTR modem"));
-			} else {
-				thread->setModem(controller);
-				setModem(controller->getPath());
-			}
+			else
+				m_thread->setModem(controller);
 		}
 	}
 
