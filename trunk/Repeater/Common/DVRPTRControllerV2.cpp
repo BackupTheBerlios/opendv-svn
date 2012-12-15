@@ -442,7 +442,7 @@ void CDVRPTRControllerV2::close()
 	Wait();
 }
 
-bool CDVRPTRControllerV2::getSerial()
+bool CDVRPTRControllerV2::getSerialUSB()
 {
 	unsigned char buffer[105U];
 
@@ -484,6 +484,44 @@ bool CDVRPTRControllerV2::getSerial()
 	wxLogInfo(wxT("DV-RPTR Modem Hardware serial: 0x%02X%02X%02x%02X"), m_buffer[9U], m_buffer[10U], m_buffer[11U], m_buffer[12U]);
 
 	return true;
+}
+
+bool CDVRPTRControllerV2::getSerialNetwork()
+{
+	unsigned char buffer[105U];
+
+	::memset(buffer, 0x00U, 105U);
+
+	buffer[0U] = 'H';
+	buffer[1U] = 'E';
+	buffer[2U] = 'A';
+	buffer[3U] = 'D';
+	buffer[4U] = 'X';
+	buffer[5U] = '9';
+	buffer[6U] = '0';
+	buffer[7U] = '0';
+	buffer[8U] = '0';
+
+	for (unsigned i = 0U; i < 128U; i++) {
+		// CUtils::dump(wxT("Written"), buffer, 105U);
+
+		int ret = writeModem(buffer, 105U);
+		if (ret != 105)
+			return false;
+
+		::wxMilliSleep(10UL);
+
+		unsigned int length;
+		RESP_TYPE_V2 resp = getResponse(m_buffer, length);
+		if (resp == RT2_QUERY) {
+			wxLogInfo(wxT("DV-RPTR Modem Hardware serial: 0x%02X%02X%02x%02X"), m_buffer[9U], m_buffer[10U], m_buffer[11U], m_buffer[12U]);
+			return true;
+		}
+	}
+
+	wxLogError(wxT("The DV-RPTR modem is not responding to the query command"));
+
+	return false;
 }
 
 bool CDVRPTRControllerV2::getSpace()
@@ -847,7 +885,17 @@ bool CDVRPTRControllerV2::openModem()
 	if (!ret)
 		return false;
 
-	ret = getSerial();
+	switch (m_connection) {
+		case CT_USB:
+			ret = getSerialUSB();
+			break;
+		case CT_NETWORK:
+			ret = getSerialNetwork();
+			break;
+		default:
+			break;
+	}
+
 	if (!ret) {
 		closeModem();
 		return false;

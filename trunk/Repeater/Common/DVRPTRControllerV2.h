@@ -88,7 +88,8 @@ private:
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
 
-	bool getSerial();
+	bool getSerialUSB();
+	bool getSerialNetwork();
 	bool setConfig();
 	bool getSpace();
 
