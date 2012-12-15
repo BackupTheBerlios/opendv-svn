@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121211
+ircDDB Gateway - 20121215
 =========================
 
 20101010
@@ -1146,7 +1146,8 @@ Added DCS020.
 Updated the DCS protocol.
 Fixed DExtra dongle bug.
 
-2012xxxx
+20121215
 --------
 
 Use link pools for D-Plus, DExtra, and DCS.
+Exponential backoff for reflector links.

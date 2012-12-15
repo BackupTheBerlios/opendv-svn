@@ -126,11 +126,15 @@ private:
 	time_t                 m_time;
 	CTimer                 m_pollTimer;
 	CTimer                 m_pollInactivityTimer;
+	CTimer                 m_tryTimer;
+	unsigned int           m_tryCount;
 	unsigned int           m_dPlusId;
 	unsigned int           m_dPlusSeq;
 	unsigned int           m_rptrId;
 	CTimer                 m_inactivityTimer;
 	CHeaderData*           m_header;
+
+	unsigned int calcBackoff();
 };
 
 #endif

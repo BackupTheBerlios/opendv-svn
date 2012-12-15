@@ -110,6 +110,7 @@ private:
 	CTimer               m_pollTimer;
 	CTimer               m_pollInactivityTimer;
 	CTimer               m_tryTimer;
+	unsigned int         m_tryCount;
 	unsigned int         m_dcsId;
 	unsigned int         m_dcsSeq;
 	unsigned int         m_rptrId;
@@ -122,6 +123,8 @@ private:
 	wxString             m_myCall2;
 	wxString             m_rptCall1;
 	wxString             m_rptCall2;
+
+	unsigned int calcBackoff();
 };
 
 #endif

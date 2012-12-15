@@ -46,7 +46,8 @@ m_destination(handler),
 m_time(),
 m_pollTimer(1000U, 10U),
 m_pollInactivityTimer(1000U, 60U),
-m_tryTimer(1000U, 5U),
+m_tryTimer(1000U, 1U),
+m_tryCount(0U),
 m_dExtraId(0x00U),
 m_dExtraSeq(0x00U),
 m_rptrId(0x00U),
@@ -84,6 +85,7 @@ m_time(),
 m_pollTimer(1000U, 10U),
 m_pollInactivityTimer(1000U, 60U),
 m_tryTimer(1000U, 1U),
+m_tryCount(0U),
 m_dExtraId(0x00U),
 m_dExtraSeq(0x00U),
 m_rptrId(0x00U),
@@ -726,6 +728,7 @@ bool CDExtraHandler::processInt(CConnectData& connect, CD_TYPE type)
 
 bool CDExtraHandler::clockInt(unsigned int ms)
 {
+	m_tryTimer.clock(ms);
 	m_pollTimer.clock(ms);
 	m_inactivityTimer.clock(ms);
 	m_pollInactivityTimer.clock(ms);
@@ -761,7 +764,9 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 				CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_address, m_port);
 				m_handler->writeConnect(reply);
 				m_linkState = DEXTRA_LINKING;
+				m_tryTimer.setTimeout(1U);
 				m_tryTimer.start();
+				m_tryCount = 0U;
 				return false;
 			}
 		}
@@ -796,12 +801,12 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 	}
 
 	if (m_linkState == DEXTRA_LINKING) {
-		m_tryTimer.clock(ms);
-
-		if (m_tryTimer.hasExpired()) {
+		if (m_tryTimer.hasExpired() && m_tryTimer.hasExpired()) {
 			CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_address, m_port);
 			m_handler->writeConnect(reply);
 
+			unsigned int timeout = calcBackoff();
+			m_tryTimer.setTimeout(timeout);
 			m_tryTimer.reset();
 		}
 	}
@@ -905,4 +910,19 @@ void CDExtraHandler::writeStatus(wxFFile& file)
 
 		}
 	}
+}
+
+unsigned int CDExtraHandler::calcBackoff()
+{
+	unsigned int timeout = 1U;
+
+	for (unsigned int i = 0U; i < m_tryCount; i++)
+		timeout *= 2U;
+
+	m_tryCount++;
+
+	if (timeout > 60U)
+		return 60U;
+	else
+		return timeout;
 }

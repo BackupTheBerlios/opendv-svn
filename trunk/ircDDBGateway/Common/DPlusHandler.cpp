@@ -51,6 +51,8 @@ m_destination(handler),
 m_time(),
 m_pollTimer(1000U, 1U),			// 1s
 m_pollInactivityTimer(1000U, 30U),
+m_tryTimer(1000U, 1U),
+m_tryCount(0U),
 m_dPlusId(0x00U),
 m_dPlusSeq(0x00U),
 m_rptrId(0x00U),
@@ -61,8 +63,8 @@ m_header(NULL)
 	wxASSERT(handler != NULL);
 	wxASSERT(port > 0U);
 
-	m_pollTimer.start();
 	m_pollInactivityTimer.start();
+	m_tryTimer.start();
 
 	m_time = ::time(NULL);
 
@@ -83,6 +85,8 @@ m_destination(NULL),
 m_time(),
 m_pollTimer(1000U, 1U),					// 1s
 m_pollInactivityTimer(1000U, 10U),		// 10s
+m_tryTimer(1000U),
+m_tryCount(0U),
 m_dPlusId(0x00U),
 m_dPlusSeq(0x00U),
 m_rptrId(0x00U),
@@ -357,6 +361,11 @@ void CDPlusHandler::unlink(IReflectorCallback* handler, const wxString& exclude)
 					reflector->m_handler->writeConnect(connect);
 
 					reflector->m_linkState = DPLUS_UNLINKING;
+					reflector->m_tryTimer.setTimeout(1U);
+					reflector->m_tryTimer.start();
+					reflector->m_pollTimer.stop();
+					reflector->m_pollInactivityTimer.stop();
+					reflector->m_tryCount = 0U;
 				}
 
 				// If an active link with incoming traffic, send an EOT to the repeater
@@ -391,6 +400,11 @@ void CDPlusHandler::unlink()
 			CConnectData connect(CT_UNLINK, reflector->m_address, reflector->m_port);
 			reflector->m_handler->writeConnect(connect);
 			reflector->m_handler->writeConnect(connect);
+			reflector->m_tryTimer.setTimeout(1U);
+			reflector->m_tryTimer.start();
+			reflector->m_pollTimer.stop();
+			reflector->m_pollInactivityTimer.stop();
+			reflector->m_tryCount = 0U;
 		}
 	}	
 }
@@ -572,6 +586,9 @@ bool CDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 						m_destination->linkUp(DP_DPLUS, m_reflector);
 						m_stateChange = true;
 						m_linkState   = DPLUS_LINKED;
+						m_tryTimer.stop();
+						m_pollTimer.start();
+						m_pollInactivityTimer.start();
 					}
 					return false;
 
@@ -581,6 +598,7 @@ bool CDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 						m_destination->linkDown(DP_DPLUS, m_reflector, false);
 						CConnectData reply(CT_UNLINK, connect.getAddress(), connect.getPort());
 						m_handler->writeConnect(reply);
+						m_tryTimer.stop();
 					}
 					return true;
 
@@ -589,12 +607,14 @@ bool CDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 						wxLogMessage(wxT("D-Plus disconnect acknowledgement received from %s"), m_reflector.c_str());
 						m_destination->linkDown(DP_DPLUS, m_reflector, false);
 						m_stateChange = true;
+						m_tryTimer.stop();
 					}
 					return true;
 
 				case CT_LINK1: {
 						CConnectData reply(m_dplusLogin, CT_LINK2, connect.getAddress(), connect.getPort());
 						m_handler->writeConnect(reply);
+						m_tryTimer.stop();
 					}
 					return false;
 
@@ -634,6 +654,7 @@ bool CDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 
 bool CDPlusHandler::clockInt(unsigned int ms)
 {
+	m_tryTimer.clock(ms);
 	m_pollTimer.clock(ms);
 	m_inactivityTimer.clock(ms);
 	m_pollInactivityTimer.clock(ms);
@@ -671,7 +692,9 @@ bool CDPlusHandler::clockInt(unsigned int ms)
 				CConnectData connect(CT_LINK1, m_address, DPLUS_PORT);
 				m_handler->writeConnect(connect);
 				m_linkState = DPLUS_LINKING;
-				m_pollTimer.reset();
+				m_tryTimer.setTimeout(1U);
+				m_tryTimer.reset();
+				m_tryCount = 0U;
 				return false;
 			}
 		}
@@ -680,13 +703,14 @@ bool CDPlusHandler::clockInt(unsigned int ms)
 	}
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
-		switch (m_linkState) {
-			case DPLUS_LINKED: {
-					CPollData poll(m_address, m_port);
-					m_handler->writePoll(poll);
-				}
-				break;
+		CPollData poll(m_address, m_port);
+		m_handler->writePoll(poll);
 
+		m_pollTimer.reset();
+	}
+
+	if (m_tryTimer.isRunning() && m_tryTimer.hasExpired()) {
+		switch (m_linkState) {
 			case DPLUS_LINKING: {
 					CConnectData connect(CT_LINK1, m_address, DPLUS_PORT);
 					m_handler->writeConnect(connect);
@@ -704,7 +728,9 @@ bool CDPlusHandler::clockInt(unsigned int ms)
 				break;
 		}
 
-		m_pollTimer.reset();
+		unsigned int timeout = calcBackoff();
+		m_tryTimer.setTimeout(timeout);
+		m_tryTimer.reset();
 	}
 
 	if (m_inactivityTimer.isRunning() && m_inactivityTimer.hasExpired()) {
@@ -818,4 +844,19 @@ void CDPlusHandler::writeStatus(wxFFile& file)
 			}
 		}
 	}
+}
+
+unsigned int CDPlusHandler::calcBackoff()
+{
+	unsigned int timeout = 1U;
+
+	for (unsigned int i = 0U; i < m_tryCount; i++)
+		timeout *= 2U;
+
+	m_tryCount++;
+
+	if (timeout > 60U)
+		return 60U;
+	else
+		return timeout;
 }
