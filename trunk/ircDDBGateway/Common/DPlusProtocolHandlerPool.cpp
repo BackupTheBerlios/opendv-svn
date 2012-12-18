@@ -34,7 +34,7 @@ m_index(0U)
 		m_pool[i].m_inUse   = false;
 	}
 
-	wxLogMessage(wxT("Allocated UDP ports %u-%u to D-Plus"), port, port + 1 - 1U);
+	wxLogMessage(wxT("Allocated UDP ports %u-%u to D-Plus"), port, port + n - 1U);
 }
 
 CDPlusProtocolHandlerPool::~CDPlusProtocolHandlerPool()

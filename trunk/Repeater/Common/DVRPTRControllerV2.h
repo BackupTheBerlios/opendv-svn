@@ -88,8 +88,7 @@ private:
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
 
-	bool getSerialUSB();
-	bool getSerialNetwork();
+	bool getSerial();
 	bool setConfig();
 	bool getSpace();
 
@@ -102,7 +101,7 @@ private:
 	bool openModem();
 
 	int readModem(unsigned char* buffer, unsigned int length);
-	int writeModem(const unsigned char* buffer, unsigned int length);
+	bool writeModem(const unsigned char* buffer, unsigned int length);
 	void closeModem();
 };
 

@@ -34,7 +34,7 @@ m_index(0U)
 		m_pool[i].m_inUse   = false;
 	}
 
-	wxLogMessage(wxT("Allocated UDP ports %u-%u to DCS"), port, port + 1 - 1U);
+	wxLogMessage(wxT("Allocated UDP ports %u-%u to DCS"), port, port + n - 1U);
 }
 
 CDCSProtocolHandlerPool::~CDCSProtocolHandlerPool()

@@ -2304,7 +2304,6 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_APRS_ENABLED.c_str(), m_aprsEnabled ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_APRS_HOSTNAME.c_str(), m_aprsHostname.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_APRS_PORT.c_str(), m_aprsPort); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_APRS_HOSTNAME.c_str(), m_aprsHostname.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DEXTRA_ENABLED.c_str(), m_dextraEnabled ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DEXTRA_MAXDONGLES.c_str(), m_dextraMaxDongles); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DPLUS_ENABLED.c_str(), m_dplusEnabled ? 1 : 0); file.AddLine(buffer);

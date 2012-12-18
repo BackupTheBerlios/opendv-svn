@@ -270,8 +270,8 @@ void* CDVRPTRControllerV2::Entry()
 
 				// CUtils::dump(wxT("Write"), data, len);
 
-				int ret = writeModem(data, len);
-				if (ret == -1) {
+				bool ret = writeModem(data, len);
+				if (!ret) {
 					bool ret = findModem();
 					if (!ret) {
 						wxLogMessage(wxT("Stopping DV-RPTR2 Modem Controller thread"));
@@ -442,7 +442,7 @@ void CDVRPTRControllerV2::close()
 	Wait();
 }
 
-bool CDVRPTRControllerV2::getSerialUSB()
+bool CDVRPTRControllerV2::getSerial()
 {
 	unsigned char buffer[105U];
 
@@ -460,8 +460,8 @@ bool CDVRPTRControllerV2::getSerialUSB()
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 
-	int ret = writeModem(buffer, 105U);
-	if (ret != 105)
+	bool ret = writeModem(buffer, 105U);
+	if (!ret)
 		return false;
 
 	unsigned int count = 0U;
@@ -486,44 +486,6 @@ bool CDVRPTRControllerV2::getSerialUSB()
 	return true;
 }
 
-bool CDVRPTRControllerV2::getSerialNetwork()
-{
-	unsigned char buffer[105U];
-
-	::memset(buffer, 0x00U, 105U);
-
-	buffer[0U] = 'H';
-	buffer[1U] = 'E';
-	buffer[2U] = 'A';
-	buffer[3U] = 'D';
-	buffer[4U] = 'X';
-	buffer[5U] = '9';
-	buffer[6U] = '0';
-	buffer[7U] = '0';
-	buffer[8U] = '0';
-
-	for (unsigned i = 0U; i < 128U; i++) {
-		// CUtils::dump(wxT("Written"), buffer, 105U);
-
-		int ret = writeModem(buffer, 105U);
-		if (ret != 105)
-			return false;
-
-		::wxMilliSleep(10UL);
-
-		unsigned int length;
-		RESP_TYPE_V2 resp = getResponse(m_buffer, length);
-		if (resp == RT2_QUERY) {
-			wxLogInfo(wxT("DV-RPTR Modem Hardware serial: 0x%02X%02X%02x%02X"), m_buffer[9U], m_buffer[10U], m_buffer[11U], m_buffer[12U]);
-			return true;
-		}
-	}
-
-	wxLogError(wxT("The DV-RPTR modem is not responding to the query command"));
-
-	return false;
-}
-
 bool CDVRPTRControllerV2::getSpace()
 {
 	unsigned char buffer[10U];
@@ -541,7 +503,7 @@ bool CDVRPTRControllerV2::getSpace()
 
 	// CUtils::dump(wxT("Written"), buffer, 10U);
 
-	return writeModem(buffer, 10U) == 10;
+	return writeModem(buffer, 10U);
 }
 
 bool CDVRPTRControllerV2::setConfig()
@@ -574,8 +536,8 @@ bool CDVRPTRControllerV2::setConfig()
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 
-	int ret = writeModem(buffer, 105U);
-	if (ret != 105)
+	bool ret = writeModem(buffer, 105U);
+	if (!ret)
 		return false;
 
 	unsigned int count = 0U;
@@ -885,17 +847,7 @@ bool CDVRPTRControllerV2::openModem()
 	if (!ret)
 		return false;
 
-	switch (m_connection) {
-		case CT_USB:
-			ret = getSerialUSB();
-			break;
-		case CT_NETWORK:
-			ret = getSerialNetwork();
-			break;
-		default:
-			break;
-	}
-
+	ret = getSerial();
 	if (!ret) {
 		closeModem();
 		return false;
@@ -922,15 +874,15 @@ int CDVRPTRControllerV2::readModem(unsigned char* buffer, unsigned int length)
 	}
 }
 
-int CDVRPTRControllerV2::writeModem(const unsigned char* buffer, unsigned int length)
+bool CDVRPTRControllerV2::writeModem(const unsigned char* buffer, unsigned int length)
 {
 	switch (m_connection) {
 		case CT_USB:
-			return m_usb->write(buffer, length);
+			return m_usb->write(buffer, length) == int(length);
 		case CT_NETWORK:
 			return m_network->write(buffer, length);
 		default:
-			return -1;
+			return false;
 	}
 }
 
