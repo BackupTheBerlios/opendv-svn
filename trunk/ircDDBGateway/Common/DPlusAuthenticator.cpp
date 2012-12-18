@@ -47,6 +47,9 @@ m_killed(false)
 
 	m_loginCallsign.Trim();
 	m_gatewayCallsign.Trim();
+
+	if (m_loginCallsign.IsEmpty())
+		m_loginCallsign = m_gatewayCallsign;
 }
 
 CDPlusAuthenticator::~CDPlusAuthenticator()

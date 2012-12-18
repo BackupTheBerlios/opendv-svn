@@ -188,6 +188,11 @@ void CAPRSWriter::writeData(const wxString& callsign, const CAMBEData& data)
 		return;
 	}
 
+	if (!m_thread->isConnected()) {
+		collector->reset();
+		return;
+	}
+
 	// Check the transmission timer
 	bool ok = entry->isOK();
 	if (!ok) {
@@ -276,6 +281,9 @@ void CAPRSWriter::close()
 
 void CAPRSWriter::sendIdFrames()
 {
+	if (!m_thread->isConnected())
+		return;
+
 	time_t now;
 	::time(&now);
 	struct tm* tm = ::gmtime(&now);

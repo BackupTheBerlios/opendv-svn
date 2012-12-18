@@ -1151,3 +1151,9 @@ Fixed DExtra dongle bug.
 
 Use link pools for D-Plus, DExtra, and DCS.
 Exponential backoff for reflector links.
+
+201212xx
+--------
+
+Added REF055, REF056, REF057, and REF058.
+Updated REF017s and XRF008s IP address.

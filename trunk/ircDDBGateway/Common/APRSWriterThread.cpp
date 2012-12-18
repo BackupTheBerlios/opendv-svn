@@ -23,6 +23,8 @@
 
 // #define	DUMP_TX
 
+const unsigned int APRS_TIMEOUT = 10U;
+
 CAPRSWriterThread::CAPRSWriterThread(const wxString& callsign, const wxString& address, const wxString& hostname, unsigned int port) :
 wxThread(wxTHREAD_JOINABLE),
 m_username(NULL),
@@ -89,9 +91,9 @@ void* CAPRSWriterThread::Entry()
 				wxLogError(wxT("Connection to the APRS thread has failed"));
 			} else {
 				unsigned char buffer[200U];
-				int length = m_socket.read(buffer, 200U, 5U);
+				int length = m_socket.read(buffer, 200U, APRS_TIMEOUT);
 				if (length == 0)
-					wxLogError(wxT("No response from the APRS server after 5 seconds"));
+					wxLogError(wxT("No response from the APRS server after %u seconds"), APRS_TIMEOUT);
 				if (length == -1)
 					wxLogError(wxT("Error when reading from the APRS server"));
 			}
@@ -150,7 +152,7 @@ bool CAPRSWriterThread::connect()
 	if (!ret)
 		return false;
 
-	unsigned char buffer[100U];
+	unsigned char buffer[200U];
 	::sprintf((char*)buffer, "user %s-G pass %u vers ircDDBGateway\n", m_username, password);
 
 	ret = m_socket.write(buffer, ::strlen((char*)buffer));
@@ -159,9 +161,9 @@ bool CAPRSWriterThread::connect()
 		return false;
 	}
 
-	int length = m_socket.read(buffer, 100U, 10U);
+	int length = m_socket.read(buffer, 200U, APRS_TIMEOUT);
 	if (length == 0) {
-		wxLogError(wxT("No reply from the APRS server after 10 seconds"));
+		wxLogError(wxT("No reply from the APRS server after %u seconds"), APRS_TIMEOUT);
 		m_socket.close();
 		return false;
 	}

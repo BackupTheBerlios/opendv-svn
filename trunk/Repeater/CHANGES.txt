@@ -1758,4 +1758,5 @@ Added new XDVRPTR data transfer mode for v0.72 firmware or later.
 --------
 
 Added DCS020.
+Updated XRF008s IP address.
 Add Ethernet support for the DVRPTR-V2 hardware.
