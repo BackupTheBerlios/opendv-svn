@@ -639,7 +639,7 @@ wxString CDVRPTRControllerV2::getPath() const
 bool CDVRPTRControllerV2::findPort()
 {
 	if (m_connection != CT_USB)
-		return false;
+		return true;
 
 	if (m_usbPath.IsEmpty())
 		return false;
@@ -700,7 +700,7 @@ bool CDVRPTRControllerV2::findPort()
 bool CDVRPTRControllerV2::findPath()
 {
 	if (m_connection != CT_USB)
-		return false;
+		return true;
 
 #if defined(__WINDOWS__)
 #ifdef notdef
