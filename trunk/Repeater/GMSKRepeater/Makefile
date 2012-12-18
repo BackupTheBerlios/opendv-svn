@@ -19,7 +19,7 @@ GMSKRepeaterApp.o:	GMSKRepeaterApp.cpp GMSKRepeaterApp.h GMSKRepeaterThread.h GM
 					GMSKRepeaterRXThread.h GMSKRepeaterFrame.h GMSKRepeaterDefs.h GMSKRepeaterStatusData.h GMSKRepeaterLogger.h GMSKRepeaterConfig.h \
 					GMSKRepeaterThreadHelper.h ../Common/GMSKModem.h ../Common/GMSKModemLibUsb.h ../Common/DStarDefines.h ../Common/Logger.h \
 					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h \
-					../Common/K8055Controller.h
+					../Common/K8055Controller.h ../Common/RaspberryController.h
 				$(CC) $(CFLAGS) -c GMSKRepeaterApp.cpp
 
 GMSKRepeaterCallsignSet.o:	GMSKRepeaterCallsignSet.cpp GMSKRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -34,7 +34,7 @@ GMSKRepeaterControllerSet.o:	GMSKRepeaterControllerSet.cpp GMSKRepeaterControlle
 GMSKRepeaterD.o:	GMSKRepeaterD.cpp GMSKRepeaterD.h GMSKRepeaterThread.h GMSKRepeaterTRXThread.h GMSKRepeaterTXRXThread.h GMSKRepeaterTXThread.h \
 					GMSKRepeaterRXThread.h GMSKRepeaterConfig.h GMSKRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/GMSKModem.h \
 					../Common/GMSKModemLibUsb.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h \
-					../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h
+					../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h
 				$(CC) $(CFLAGS) -c GMSKRepeaterD.cpp
 
 GMSKRepeaterFrame.o:	GMSKRepeaterFrame.cpp GMSKRepeaterFrame.h GMSKRepeaterDefs.h GMSKRepeaterApp.h GMSKRepeaterStatusData.h \

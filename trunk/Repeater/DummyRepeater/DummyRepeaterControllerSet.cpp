@@ -43,6 +43,11 @@ m_squelchInvert(NULL)
 
 	m_type->Append(_("None"));
 
+// XXX ???
+#if defined(RASPBERRY_PI)
+	m_type->Append(wxT("Raspberry Pi"));
+#endif
+
 	// Add the Velleman K8055
 	m_type->Append(wxT("Velleman K8055 - 0"));
 	m_type->Append(wxT("Velleman K8055 - 1"));

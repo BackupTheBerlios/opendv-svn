@@ -17,6 +17,7 @@
  */
 
 #include "AnalogueRepeaterConfig.h"
+#include "RaspberryController.h"
 #include "ExternalController.h"
 #include "AnalogueRepeaterD.h"
 #include "SerialController.h"
@@ -364,6 +365,8 @@ bool CAnalogueRepeaterD::createThread()
 		controller = new CExternalController(new CURIUSBController(num, true), pttInvert, squelchInvert);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialController(port, cfg), pttInvert, squelchInvert);
+	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
+		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, squelchInvert);
 	}

@@ -19,6 +19,7 @@
 #include "RepeaterProtocolHandler.h"
 #include "SoundCardReaderWriter.h"
 #include "SerialDataController.h"
+#include "RaspberryController.h"
 #include "DVDongleController.h"
 #include "ExternalController.h"
 #include "DummyRepeaterApp.h"
@@ -739,6 +740,8 @@ void CDummyRepeaterApp::createThread()
 		controller = new CExternalController(new CURIUSBController(num, true), pttInvert, squelchInvert);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialController(port, config), pttInvert, squelchInvert);
+	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
+		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, squelchInvert);
 	}

@@ -17,7 +17,7 @@ DummyRepeaterApp.o:	DummyRepeaterApp.cpp DummyRepeaterApp.h DummyRepeaterThread.
 					DummyRepeaterDVDongleSet.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/HeaderData.h ../Common/RepeaterProtocolHandler.h \
 					../Common/SoundCardReaderWriter.h ../Common/SerialDataController.h ../Common/SerialController.h ../Common/K8055Controller.h \
 					../Common/URIUSBController.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/DVDongleController.h \
-					../Common/Version.h
+					../Common/RaspberryController.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DummyRepeaterApp.cpp
 
 DummyRepeaterBleeper.o:	DummyRepeaterBleeper.cpp DummyRepeaterBleeper.h

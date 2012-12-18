@@ -17,12 +17,12 @@ analoguerepeaterd:	AnalogueRepeaterD.o AnalogueRepeaterConfig.o AnalogueRepeater
 
 AnalogueRepeaterApp.o:	AnalogueRepeaterApp.cpp AnalogueRepeaterApp.h AnalogueRepeaterThread.h AnalogueRepeaterFrame.h AnalogueRepeaterDefs.h \
 						AnalogueRepeaterStatusData.h AnalogueRepeaterLogger.h AnalogueRepeaterConfig.h AnalogueRepeaterThreadHelper.h ../Common/ExternalController.h \
-						../Common/DummyController.h ../Common/K8055Controller.h ../Common/SerialController.h ../Common/URIUSBController.h \
+						../Common/DummyController.h ../Common/K8055Controller.h ../Common/SerialController.h ../Common/URIUSBController.h ../Common/RaspberryController.h \
 						../Common/Logger.h ../Common/AnalogueDefines.h ../Common/Version.h ../Common/CWKeyer.h ../Common/WAVFileStore.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterApp.cpp
 
 AnalogueRepeaterD.o:	AnalogueRepeaterD.cpp AnalogueRepeaterD.h AnalogueRepeaterThread.h AnalogueRepeaterConfig.h AnalogueRepeaterDefs.h \
-						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h \
+						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/RaspberryController.h \
 						../Common/SerialController.h ../Common/Logger.h ../Common/AnalogueDefines.h ../Common/Version.h ../Common/CWKeyer.h \
 						../Common/WAVFileStore.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterD.cpp
@@ -98,4 +98,3 @@ install:	all
 
 clean:
 				rm -f core analoguerepeater analoguerepeaterd *.o *~ *.bak
-

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,6 +42,11 @@ m_pttInvert(NULL)
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 
 	m_type->Append(_("None"));
+
+// XXX ???
+#if defined(RASPBERRY_PI)
+	m_type->Append(wxT("Raspberry Pi"));
+#endif
 
 	// Add the Velleman K8055
 	m_type->Append(wxT("Velleman K8055 - 0"));

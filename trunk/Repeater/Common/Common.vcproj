@@ -370,6 +370,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RaspberryController.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\RepeaterProtocolHandler.cpp"
 				>
 			</File>
@@ -717,6 +721,10 @@
 			</File>
 			<File
 				RelativePath=".\RadioHeaderEncoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RaspberryController.h"
 				>
 			</File>
 			<File

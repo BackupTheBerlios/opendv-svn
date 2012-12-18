@@ -34,11 +34,19 @@ m_time(NULL)
 	sizer->Add(typeLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+
 	m_type->Append(_("None"));
+
+// XXX ???
+#if defined(RASPBERRY_PI)
+	m_type->Append(wxT("Raspberry Pi"));
+#endif
+
 	m_type->Append(wxT("Velleman K8055 - 0"));
 	m_type->Append(wxT("Velleman K8055 - 1"));
 	m_type->Append(wxT("Velleman K8055 - 2"));
 	m_type->Append(wxT("Velleman K8055 - 3"));
+
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	if (type.IsEmpty())

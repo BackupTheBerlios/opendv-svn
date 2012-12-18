@@ -21,6 +21,7 @@
 #include "GMSKRepeaterTRXThread.h"
 #include "GMSKRepeaterRXThread.h"
 #include "GMSKRepeaterTXThread.h"
+#include "RaspberryController.h"
 #include "GMSKRepeaterLogger.h"
 #include "GMSKRepeaterThread.h"
 #if defined(WIN32)
@@ -451,6 +452,8 @@ void CGMSKRepeaterApp::createThread()
 		unsigned long num;
 		port.ToULong(&num);
 		controller = new CExternalController(new CK8055Controller(num), false, false);
+	} else if (controllerType.IsSameAs(wxT("Raspberry Pi"))) {
+		controller = new CExternalController(new CRaspberryController, false, false);
 	} else {
 		controller = new CExternalController(new CDummyController, false, false);
 	}

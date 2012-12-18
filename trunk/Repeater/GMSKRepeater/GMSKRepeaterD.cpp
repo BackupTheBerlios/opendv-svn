@@ -21,6 +21,7 @@
 #include "GMSKRepeaterTRXThread.h"
 #include "GMSKRepeaterTXThread.h"
 #include "GMSKRepeaterRXThread.h"
+#include "RaspberryController.h"
 #include "GMSKRepeaterConfig.h"
 #include "GMSKModemLibUsb.h"
 #include "K8055Controller.h"
@@ -261,6 +262,8 @@ bool CGMSKRepeaterD::createThread()
 		unsigned long num;
 		port.ToULong(&num);
 		controller = new CExternalController(new CK8055Controller(num), false, false);
+	} else if (controllerType.IsSameAs(wxT("Raspberry Pi"))) {
+		controller = new CExternalController(new CRaspberryController, false, false);
 	} else {
 		controller = new CExternalController(new CDummyController, false, false);
 	}

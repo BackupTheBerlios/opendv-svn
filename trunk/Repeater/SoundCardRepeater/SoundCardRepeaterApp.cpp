@@ -24,6 +24,7 @@
 #include "RepeaterProtocolHandler.h"
 #include "SoundCardRepeaterThread.h"
 #include "SoundCardRepeaterApp.h"
+#include "RaspberryController.h"
 #include "SerialController.h"
 #include "URIUSBController.h"
 #include "K8055Controller.h"
@@ -476,6 +477,8 @@ void CSoundCardRepeaterApp::createThread()
 		controller = new CExternalController(new CURIUSBController(num, false), pttInvert, false);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialController(port, cfg), pttInvert, false);
+	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
+		controller = new CExternalController(new CRaspberryController, pttInvert, false);
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, false);
 	}

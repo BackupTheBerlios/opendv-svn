@@ -22,6 +22,7 @@
 #include "DVRPTRRepeaterRXThread.h"
 #include "DVRPTRRepeaterTXThread.h"
 #include "DVRPTRRepeaterConfig.h"
+#include "RaspberryController.h"
 #include "DVRPTRControllerV2.h"
 #include "DVRPTRControllerV1.h"
 #include "DVRPTRController.h"
@@ -296,6 +297,8 @@ bool CDVRPTRRepeaterD::createThread()
 		unsigned long num;
 		port.ToULong(&num);
 		controller = new CExternalController(new CK8055Controller(num), false, false);
+	} else if (controllerType.IsSameAs(wxT("Raspberry Pi"))) {
+		controller = new CExternalController(new CRaspberryController, false, false);
 	} else {
 		controller = new CExternalController(new CDummyController, false, false);
 	}
