@@ -63,6 +63,10 @@ libusb-1.0 from <http://www.libusb.org/wiki/libusb-1.0>. If you do a
 "make install" on  all of them then they'll be installed in the right places
 and nothing more needs to be done.
 
+On the Raspberry Pi you will need to build and install the bcm2835 GPIO library
+which is available from <http://www.open.com.au/mikem/bcm2835>. This will allow
+use the GPIO pins as controller pins for the different repeaters if needed.
+
 The top level Makefile includes platform specific settings from the file 
 "settings.mk". The default file is for x86 Linux systems. Samples for other
 platforms are provided by other developers, copy a required version to
