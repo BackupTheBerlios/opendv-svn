@@ -281,7 +281,7 @@ bool CSoundCardRepeaterD::createThread()
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialController(port, cfg), pttInvert, false);
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
-		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);
+		controller = new CExternalController(new CRaspberryController, pttInvert, false);
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, false);
 	}

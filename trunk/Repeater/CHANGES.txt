@@ -1,4 +1,4 @@
-Repeater - 20121112
+Repeater - 20121220
 ===================
 
 20090530
@@ -1754,7 +1754,7 @@ Removed XRF018 and XRF250.
 Updated DCS007s IP address.
 Added new XDVRPTR data transfer mode for v0.72 firmware or later.
 
-201212xx
+20121220
 --------
 
 Added DCS020.
