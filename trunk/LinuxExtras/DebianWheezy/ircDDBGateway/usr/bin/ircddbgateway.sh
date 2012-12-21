@@ -16,22 +16,8 @@ if [ $UID -ne 0 ]; then
 	exit 1
 fi
 
-NAME=ircddbgateway
+# start parallel task to configure dd-mode network settings (if enabled)
+su -c "/usr/bin/ircddbgateway-ddmode.sh" opendv &
 
-su -c "/usr/bin/$NAME -gui -logdir="/var/log/dstar" opendv &
-
-# Take care to start necessary services for DD-mode if enabled
-
-# Read configuration file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME || echo "Configfile /etc/default/$NAME is missing"
-
-if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ];then
-    echo " - configure dd-mode network device $IRCDDBGATEWAY_DDDEV "
-    sleep 15
-    /sbin/ifconfig $IRCDDBGATEWAY_DDDEV $IRCDDBGATEWAY_DDIP netmask $IRCDDBGATEWAY_DDMASK
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-    if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
-        echo " - start dhcpd "
-    	/etc/init.d/dhcpd start
-    fi
-fi
+# start ircddbgateway
+su -c "/usr/bin/ircddbgateway -gui -logdir=/var/log/dstar" opendv

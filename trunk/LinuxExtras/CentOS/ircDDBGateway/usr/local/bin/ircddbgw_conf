@@ -53,12 +53,13 @@
 # 2012-10-09 dl5di    module specific description and url added
 # 2012-10-23 dl5di    change in dashboard configuration
 # 2012-11-15 dl5di    bugfixes and rework of initial repeater input loop
+# 2012-12-21 dl5di    bugfixes in comparisons of strings
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20121115"
+rev="20121221"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1297,14 +1298,14 @@ function repeater_init(){
     print_text "rptr_init" 
     DEFAULT=0
     read -r -e -n 1 -p "(0-4) [$DEFAULT] > " inp
+    rptr=0
     
     if [ -z "$inp" ]; then
 	inp=0
     elif [ "$inp" -le 4 ]; then
 	rptrmax=$inp
     else
-	rptr=0
-	rptrmax=5
+	rptrmax=4
     fi
     echo ""
     if [ "$inp" -eq 0 ]; then
@@ -1628,83 +1629,8 @@ function repeater_setup(){
 	INPUT=$(echo $INPUT | tr '[,]' '[.]')
 	write_value $IRCDDBGWCONFIG $var "$INPUT"
     fi
-
-#
-# reflector#=XRF023 D
-#
-    var="reflector$rptr"
-    Dat=`date +%Y%m%d%H%M`
-    echo "$Dat: $var" >> $LOG
-    read_default $var
-    read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ]; then
-    	VALUE=$DEFAULT
-    fi
-    print_text "reflector" 
-    request_input $var 8 8 0 "$VALUE"
-    if [ "$?" = 3 ]; then
-	reset_value $var
-    elif [ "$?" -ne 2 ]; then
-	INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
-#'
-	write_value $IRCDDBGWCONFIG $var "$INPUT"
-    fi
-#
-# atStartup#=1
-#
-    var="atStartup$rptr"
-    Dat=`date +%Y%m%d%H%M`
-    echo "$Dat: $var" >> $LOG
-    read_default $var
-    read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ]; then
-    	VALUE=$DEFAULT
-    fi
-    print_text "atStartup" 
-    request_selection $var "$DEFAULT" "$VALUE"
-    INPUT=$?
-    case $INPUT in
-	[0-1])
-    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	    ;;
-	2)   
-	    write_value $IRCDDBGWCONFIG $var "$VALUE"
-	    ;;
-	*)
-    	    reset_value $var
-	    ;;
-    esac
-
-#
-# reconnect#=7
-#
-    var="reconnect$rptr"
-    Dat=`date +%Y%m%d%H%M`
-    echo "$Dat: $var" >> $LOG
-    read_default $var
-    read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ]; then
-    	VALUE=$DEFAULT
-    fi
-    RET=0
-    while [ $RET -eq 0 ]; do
-        print_text "reconnect" 
-	select_item $var 11 $VALUE
-	RET=$?
-	case $RET in
-	    1)
-		write_value $IRCDDBGWCONFIG $var "$SELECT"
-		;;
-	    2)
-		write_value $IRCDDBGWCONFIG $var "$VALUE"
-		;;
-	    3)
-		write_value $IRCDDBGWCONFIG $var "$DEFAULT"
-		;;
-	    *)
-		;;
-	esac
-    done
+    reflector_setup $rptr
+    
 #
 # Extra repeater options
 # only used if repeater location/callsign is different from gateway location/callsign
@@ -1938,6 +1864,91 @@ function ircddb_setup(){
     else
         write_value $IRCDDBGWCONFIG $var "$INPUT"
     fi
+}
+
+##################### Reflector setup  ####################
+
+function reflector_setup(){
+#
+# parameter 1: repeater module (1-4)
+#
+# reflector#=XRF023 D
+#
+
+    rptr = $1
+    var="reflector$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    print_text "reflector" 
+    request_input $var 8 8 0 "$VALUE"
+    if [ "$?" = 3 ]; then
+	reset_value $var
+    elif [ "$?" -ne 2 ]; then
+	INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
+#'
+	write_value $IRCDDBGWCONFIG $var "$INPUT"
+    fi
+#
+# atStartup#=1
+#
+    var="atStartup$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    print_text "atStartup" 
+    request_selection $var "$DEFAULT" "$VALUE"
+    INPUT=$?
+    case $INPUT in
+	[0-1])
+    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $IRCDDBGWCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
+
+#
+# reconnect#=7
+#
+    var="reconnect$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+    	VALUE=$DEFAULT
+    fi
+    RET=0
+    while [ $RET -eq 0 ]; do
+        print_text "reconnect" 
+	select_item $var 11 $VALUE
+	RET=$?
+	case $RET in
+	    1)
+		write_value $IRCDDBGWCONFIG $var "$SELECT"
+		;;
+	    2)
+		write_value $IRCDDBGWCONFIG $var "$VALUE"
+		;;
+	    3)
+		write_value $IRCDDBGWCONFIG $var "$DEFAULT"
+		;;
+	    *)
+		;;
+	esac
+    done
 }
 
 ##################### APRS setup  ####################
