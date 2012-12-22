@@ -41,8 +41,11 @@ timeout=180
 ackTime=500
 
 #DVRPTR
-modemPort=/dev/ttyACM0
 modemVersion=1
+modemConnection=0
+modemUSBPort=/dev/ttyACM0
+modemIPAddress=192.168.0.1
+modemPort=23
 modemRXInvert=0
 modemTXInvert=0
 modemChannel=0

@@ -343,12 +343,6 @@ squelchLevel:Squelch-Level
 squelchLevel: (0 .. 100) [%]
 squelchLevel:
 
-modemVersion:
-modemVersion:Modem-/Protocol-Version
-modemVersion:
-modemVersion: 1-2
-modemVersion:
-
 rxInvert:
 rxInvert:RX-Invert
 rxInvert:
@@ -436,15 +430,36 @@ pttInvert: 0=OFF
 pttInvert: 1=ON
 pttInvert:
 
-modemPort:
-modemPort:Enter the index of the modemPort address (0-9)
-modemPort:
-modemPort: 0:  /dev/ttyACM0
-modemPort: 1:  /dev/ttyACM1
-modemPort:     ..
-modemPort: 9:  /dev/ttyACM9
-modemPort:
-modemPort:The following modem ports are currently available on your system:
+modemVersion:
+modemVersion:Modem-/Protocol-Version (DVRPTR V1 and V2)
+modemVersion:
+modemVersion: 1-2
+modemVersion:
+
+modemConnection:
+modemConnection: DVRPTR_V2 modem connection
+modemConnection:
+modemConnection: 0 = USB
+modemConnection: 1 = Ethernet
+modemConnection:
+
+modemUSBPort:
+modemUSBPort:Enter the index of the modemPort address (0-9)
+modemUSBPort:
+modemUSBPort: 0:  /dev/ttyACM0
+modemUSBPort: 1:  /dev/ttyACM1
+modemUSBPort:     ..
+modemUSBPort: 9:  /dev/ttyACM9
+modemUSBPort:
+modemUSBPort:The following modem ports are currently available on your system:
+modemUSBPort:
+
+modemIPAddress:
+modemIPAddress: Enter the IP-Address of the DVRPTR-Modem:
+modemIPAddress:
+
+modemPort: Enter the TCP-Port used by the DVRPTR-Modem
+modemPort: (1-65535, default 23 / telnet)
 modemPort:
 
 modemRXInvert:

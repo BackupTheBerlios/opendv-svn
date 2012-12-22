@@ -330,12 +330,6 @@ squelchLevel:Squelch-Level
 squelchLevel: (0 .. 100) [%]
 squelchLevel:
 
-modemVersion:
-modemVersion:Modem-/Protocol-Version
-modemVersion:
-modemVersion: 1-2
-modemVersion:
-
 rxInvert:
 rxInvert:RX-Invertierung
 rxInvert: 0=AUS
@@ -425,17 +419,39 @@ pttInvert: 0=AUS
 pttInvert: 1=EIN
 pttInvert:
 
+modemVersion:
+modemVersion:Modem-/Protocol-Version
+modemVersion:
+modemVersion: 1-2
+modemVersion:
+
+modemConnection:
+modemConnection: DVRPTR_V2 Modemanbindung
+modemConnection:
+modemConnection: 0 = USB
+modemConnection: 1 = Ethernet
+modemConnection:
+
+modemUSBPort:
+modemUSBPort:Index des USB-Ports (0-9)
+modemUSBPort:
+modemUSBPort: 0:  /dev/ttyACM0
+modemUSBPort: 1:  /dev/ttyACM1
+modemUSBPort: 2:  /dev/ttyACM2
+modemUSBPort:     ...
+modemUSBPort: 9:  /dev/ttyACM9
+modemUSBPort:
+modemUSBPort: Die folgenden Interfaces werden aktuell im System gefunden:
+modemUSBPort:
+
+modemIPAddress:
+modemIPAddress: IP-Address des DVRPTR-Modems
+modemIPAddress:
+
 modemPort:
-modemPort:Index der Modemport-Adresse (0-9)
-modemPort:
-modemPort: 0:  /dev/ttyACM0
-modemPort: 1:  /dev/ttyACM1
-modemPort: 2:  /dev/ttyACM2
-modemPort:     ...
-modemPort: 9:  /dev/ttyACM9
-modemPort:
-modemPort: Die folgenden Interfaces werden aktuell im System gefunden:
-modemPort:
+modemPort: TCP-Port des DVRPTR-Modems
+modemPort: (1-65535, voreingestellt: 23 / Telnet)
+modemPort: 
 
 modemRXInvert:
 modemRXInvert:Modem RX-Invertierung

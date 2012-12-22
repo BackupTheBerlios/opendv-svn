@@ -36,6 +36,7 @@
 # 2012-09-24 dl5di    added frequency configuration for UHF-version of DVAP
 # 2012-09-28 dl5di    "udev reload" added whenever udev settings are changed, URI, serPTT added
 # 2012-09-29 dl5di    bugfix, reset of logging
+# 2012-12-22 dl5di    ethernet configuration for dvrptrepeater V2
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -45,7 +46,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20120928"
+rev="20121222"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1696,45 +1697,8 @@ function hwtype2(){
 ## HWTYPE=2
 ## DVRPTR
 
-#
-# modemPort=/dev/ttyACM0
-# 0:/dev/ttyACM0 ... 9:/dev/ttyACM9
-#
-    var="modemPort"
-    Dat=`date +%Y%m%d%H%M`
-    echo "$Dat: $var" >> $LOG
-    read_default $var
-    DEFAULT=$(echo "$DEFAULT" | sed "s!/dev/ttyACM!!g")
-    read_value $REPEATERCONFIG $var
-    if [ "$?" = 0 ]; then
-    	VALUE="$DEFAULT"
-    fi
-    VALUE=$(echo "$VALUE" | sed "s!/dev/ttyACM!!g")
-    print_text $var 
-    ls /dev/ttyACM*
-    request_value $var 0 9 1 "$VALUE"
-    RET="$?"
-    case $RET in
-	1)
-	    VALUE=$INPUT
-	    ;;
-	2)
-#	    VALUE=$VALUE	
-	    ;;
-	3)
-	    VALUE=$DEFAULT
-	    ;;
-	*)
-	    echo "ERROR"
-	    echo "ERROR $var" >> $LOG
-	    break
-	    ;;
-    esac
-    write_value $REPEATERCONFIG $var "/dev/ttyACM${VALUE}"
-    echo "KERNEL==\"ttyACM${VALUE}\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-ttyACM${VALUE}.rules
-    /etc/init.d/udev reload
-    [ -c /dev/ttyACM${VALUE} ] && chown opendv:opendv /dev/ttyACM${VALUE}
-
+# cleanup for old parameter
+    sed -i 's!modemPort=/dev/ttyACM!modemUSBPort=/dev/ttyACM!g' $REPEATERCONFIG
 #
 # modemVersion=1
 # (1-2)
@@ -1753,14 +1717,144 @@ function hwtype2(){
     case $INPUT in
 	[1-2])
     	    write_value $REPEATERCONFIG $var "$INPUT"
+	    modemVersion=$INPUT
 	    ;;
 	3)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
+	    modemVersion=$VALUE
 	    ;;
 	*)
+	    modemVersion=$DEFAULT
     	    reset_value $var
 	    ;;
     esac
+
+    if [ $modemVersion = 1 ]; then
+	modemConnection=0
+	write_value $REPEATERCONFIG "modemConnection" $modemConnection 
+    else
+#
+# if modemVersion=2 ask if to configure network or USB
+# modemConnection=0
+# 0 = USB
+# 1 = Network
+#
+	var="modemConnection"
+	Dat=`date +%Y%m%d%H%M`
+	echo "$Dat: $var" >> $LOG
+	read_default $var
+        read_value $REPEATERCONFIG $var
+	if [ "$?" = 0 ]; then
+	    VALUE=$DEFAULT
+        fi
+	print_text $var 
+        request_selection $var "$DEFAULT" "$VALUE"
+	INPUT=$?
+        case $INPUT in
+	    [0-1])
+    		write_value $REPEATERCONFIG $var "$INPUT"
+		modemConnection=$INPUT
+		;;
+	    2)   
+		write_value $REPEATERCONFIG $var "$VALUE"
+		modemConnection=$VALUE
+		;;
+	    *)
+    		reset_value $var
+		modemConnection=$DEFAULT
+		;;
+	esac
+
+    fi
+
+    if [ $modemConnection = 0 ]; then
+#
+# modemUSBPort=/dev/ttyACM0
+# 0:/dev/ttyACM0 ... 9:/dev/ttyACM9
+#
+	var="modemUSBPort"
+	Dat=`date +%Y%m%d%H%M`
+	echo "$Dat: $var" >> $LOG
+    	read_default $var
+	DEFAULT=$(echo "$DEFAULT" | sed "s!/dev/ttyACM!!g")
+    	read_value $REPEATERCONFIG $var
+	if [ "$?" = 0 ]; then
+    	    VALUE="$DEFAULT"
+	fi
+    	VALUE=$(echo "$VALUE" | sed "s!/dev/ttyACM!!g")
+	print_text $var 
+    	ls /dev/ttyACM*
+	request_value $var 0 9 1 "$VALUE"
+    	RET="$?"
+	case $RET in
+	    1)
+		VALUE=$INPUT
+		;;
+	    2)
+#	    	   VALUE=$VALUE	
+		;;
+	    3)
+		VALUE=$DEFAULT
+		;;
+	    *)
+		echo "ERROR"
+		echo "ERROR $var" >> $LOG
+		break
+		;;
+	esac
+	write_value $REPEATERCONFIG $var "/dev/ttyACM${VALUE}"
+    else
+#
+# modemAddress=192.168.42.241
+#
+	var="modemAddress"
+	Dat=`date +%Y%m%d%H%M`
+	echo "$Dat: $var" >> $LOG
+	read_default "modemIPAddress"
+	read_value $REPEATERCONFIG $var
+	if [ "$?" = 0 ]; then
+    	    VALUE=$DEFAULT
+	fi
+	VALID=1
+	while [ "$VALID" != 0 ]; do
+	    print_text "modemIPAddress" 
+	    request_input $var 7 15 2 "$VALUE"
+	    if [ "$?" = 3 ]; then
+		VALID=0
+		INPUT=$DEFAULT
+	    else
+		valid_ip $INPUT
+		VALID=$?
+	    fi
+	done
+	write_value $REPEATERCONFIG $var "$INPUT"
+
+#
+# modemPort=23
+#
+	var="modemPort"
+	Dat=`date +%Y%m%d%H%M`
+	echo "$Dat: $var" >> $LOG
+	read_default $var
+	read_value $REPEATERCONFIG $var
+	if [ "$?" = 0 ]; then
+    	    VALUE=$DEFAULT
+	fi
+	VALID=1
+	while [ "$VALID" != 0 ]; do
+	    print_text $var 
+	    request_input $var 2 5 2 "$VALUE"
+	    if [ "$?" = 3 ]; then
+		VALID=0
+		INPUT=$DEFAULT
+	    else
+		if [ $INPUT -lt 65535 ];then
+		    VALID=0
+		fi
+	    fi
+	done
+	write_value $REPEATERCONFIG $var "$INPUT"
+    fi
 
 #
 # modemRXInvert=0
