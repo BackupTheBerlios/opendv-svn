@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121215
+ircDDB Gateway - 20121222
 =========================
 
 20101010
@@ -1152,8 +1152,10 @@ Fixed DExtra dongle bug.
 Use link pools for D-Plus, DExtra, and DCS.
 Exponential backoff for reflector links.
 
-201212xx
+20121222
 --------
 
 Added REF055, REF056, REF057, and REF058.
 Updated REF017s and XRF008s IP address.
+Limited UDP port range for D-Plus.
+ID rewriting for Icom repeaters.

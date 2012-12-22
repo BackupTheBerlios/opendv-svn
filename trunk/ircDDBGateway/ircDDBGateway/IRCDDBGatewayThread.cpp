@@ -148,7 +148,7 @@ void CIRCDDBGatewayThread::run()
 	if (ret)
 		file.Close();
 
-	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_REPEATERS * 2U + 1U, m_dextraPort, m_gatewayAddress);
+	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_OUTGOING + 1U, m_dextraPort, m_gatewayAddress);
 	ret = m_dextraPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DExtra protocol pool"));
@@ -161,7 +161,7 @@ void CIRCDDBGatewayThread::run()
 		CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraPool);
 	}
 
-	m_dplusPool = new CDPlusProtocolHandlerPool(MAX_REPEATERS * 2U + 1U, m_dplusPort, m_gatewayAddress);
+	m_dplusPool = new CDPlusProtocolHandlerPool(MAX_OUTGOING + 1U, m_dplusPort, m_gatewayAddress);
 	ret = m_dplusPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the D-Plus protocol pool"));
@@ -174,7 +174,7 @@ void CIRCDDBGatewayThread::run()
 		CDPlusHandler::setDPlusProtocolHandlerPool(m_dplusPool);
 	}
 
-	m_dcsPool = new CDCSProtocolHandlerPool(MAX_REPEATERS * 2U + 1U, m_dcsPort, m_gatewayAddress);
+	m_dcsPool = new CDCSProtocolHandlerPool(MAX_OUTGOING + 1U, m_dcsPort, m_gatewayAddress);
 	ret = m_dcsPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DCS protocol pool"));

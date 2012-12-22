@@ -128,6 +128,8 @@ protected:
 
 	void startupInt();
 
+	void setIndex(unsigned int index);
+
 	void clockInt(unsigned int ms);
 
 private:
@@ -152,6 +154,7 @@ private:
 	static CAPRSWriter*     m_aprsWriter;
 
 	// Repeater info
+	unsigned int              m_index;
 	wxString                  m_rptCallsign;
 	wxString                  m_gwyCallsign;
 	unsigned char             m_band;

@@ -55,6 +55,7 @@ CHeaderLogger*            CRepeaterHandler::m_headerLogger = NULL;
 CAPRSWriter*              CRepeaterHandler::m_aprsWriter  = NULL;
 
 CRepeaterHandler::CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3) :
+m_index(0x00U),
 m_rptCallsign(),
 m_gwyCallsign(),
 m_band(' '),
@@ -222,6 +223,11 @@ void CRepeaterHandler::initialise(unsigned int maxRepeaters)
 		m_repeaters[i] = NULL;
 }
 
+void CRepeaterHandler::setIndex(unsigned int index)
+{
+	m_index = index;
+}
+
 void CRepeaterHandler::add(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3)
 {
 	wxASSERT(!callsign.IsEmpty());
@@ -232,6 +238,7 @@ void CRepeaterHandler::add(const wxString& callsign, const wxString& band, const
 
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		if (m_repeaters[i] == NULL) {
+			repeater->setIndex(i);
 			m_repeaters[i] = repeater;
 			return;
 		}
@@ -979,6 +986,15 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 	if (m_repeaterId != 0x00U)
 		return false;
 
+	// Rewrite the ID if we're using Icom hardware
+	if (m_hwType == HW_ICOM) {
+		unsigned int id1 = header.getId();
+		unsigned int id2 = id1 + m_index;
+		header.setId(id2);
+
+		wxLogMessage(wxT("Rewriting the id from 0x%04X to 0x%04X for %s"), id1, id2, m_rptCallsign.c_str());
+	}
+
 	// Send all original headers to all repeater types, and only send duplicate headers to homebrew repeaters
 	if (source != AS_DUP || (source == AS_DUP && m_hwType == HW_HOMEBREW)) {
 		header.setBands(m_band1, m_band2, m_band3);
@@ -1013,6 +1029,13 @@ bool CRepeaterHandler::process(CAMBEData& data, AUDIO_SOURCE source)
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
 		return false;
+
+	// Rewrite the ID if we're using Icom hardware
+	if (m_hwType == HW_ICOM) {
+		unsigned int id = data.getId();
+		id += m_index;
+		data.setId(id);
+	}
 
 	data.setBands(m_band1, m_band2, m_band3);
 	data.setDestination(m_address, m_port);
