@@ -86,7 +86,7 @@ void CDPlusProtocolHandlerPool::release(CDPlusProtocolHandler* handler)
 	wxASSERT(handler != NULL);
 
 	for (unsigned int i = 0U; i < m_n; i++) {
-		if (m_pool[i].m_handler == handler && !m_pool[i].m_inUse) {
+		if (m_pool[i].m_handler == handler && m_pool[i].m_inUse) {
 			m_pool[i].m_inUse = false;
 			wxLogMessage(wxT("Releasing UDP port %u for D-Plus"), m_pool[i].m_port);
 			return;

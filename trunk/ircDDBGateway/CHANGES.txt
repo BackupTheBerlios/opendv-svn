@@ -1159,3 +1159,8 @@ Added REF055, REF056, REF057, and REF058.
 Updated REF017s and XRF008s IP address.
 Limited UDP port range for D-Plus.
 ID rewriting for Icom repeaters.
+
+201212xx
+--------
+
+Fixed silly link pool bug(s).
