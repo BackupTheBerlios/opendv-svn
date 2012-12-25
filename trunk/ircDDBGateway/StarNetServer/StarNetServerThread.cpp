@@ -95,7 +95,7 @@ void CStarNetServerThread::run()
 		file.Close();
 
 #if defined(DEXTRA_LINK)
-	m_dextrPool = new CDExtraProtocolHandlerPool(MAX_DEXTRA_LINKS, DEXTRA_PORT, m_address);
+	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_DEXTRA_LINKS, DEXTRA_PORT, m_address);
 	ret = m_dextraPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DExtra protocol pool"));
