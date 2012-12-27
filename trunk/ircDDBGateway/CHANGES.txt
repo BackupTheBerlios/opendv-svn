@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121222
+ircDDB Gateway - 20121227
 =========================
 
 20101010
@@ -1160,7 +1160,8 @@ Updated REF017s and XRF008s IP address.
 Limited UDP port range for D-Plus.
 ID rewriting for Icom repeaters.
 
-201212xx
+20121227
 --------
 
 Fixed silly link pool bug(s).
+Fixed StarNET Digital compile problem.
