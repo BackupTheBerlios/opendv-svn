@@ -378,8 +378,8 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	unsigned int gatewayPort, localPort;
 	::wxGetApp().getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 
-	unsigned int timeout, ackTime;
-	::wxGetApp().getTimes(timeout, ackTime);
+	unsigned int timeout, ackTime, frameWaitTime;
+	::wxGetApp().getTimes(timeout, ackTime, frameWaitTime);
 
 	unsigned int beaconTime;
 	wxString beaconText;
@@ -412,7 +412,7 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line);
 
 	CSplitRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation,
-		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText,
+		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, frameWaitTime, beaconTime, beaconText,
 		beaconVoice, language, receiver1Address, receiver1Port, receiver2Address, receiver2Port,
 		transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, enabled, rpt1Callsign,
 		rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line,
@@ -434,9 +434,10 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	localPort      = dialog1.getLocalPort();
 	::wxGetApp().setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 
-	timeout    = dialog1.getTimeout();
-	ackTime    = dialog1.getAckTime();
-	::wxGetApp().setTimes(timeout, ackTime);
+	timeout       = dialog1.getTimeout();
+	ackTime       = dialog1.getAckTime();
+	frameWaitTime = dialog1.getFrameWaitTime();
+	::wxGetApp().setTimes(timeout, ackTime, frameWaitTime);
 
 	beaconTime  = dialog1.getBeaconTime();
 	beaconText  = dialog1.getBeaconText();

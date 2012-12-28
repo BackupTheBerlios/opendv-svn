@@ -55,7 +55,7 @@ void CRaspberryController::close()
 
 bool CRaspberryController::open()
 {
-	bool ret = ::bcm2835_init();
+	bool ret = ::bcm2835_init() == 1;
 	if (!ret) {
 		wxLogError(wxT("Unable to initialise the BCM2835"));
 		return false;

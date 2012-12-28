@@ -191,10 +191,10 @@ bool CSplitRepeaterD::createThread()
 		m_thread->setGateway(gatewayAddress, gatewayPort);
 	}
 
-	unsigned int timeout, ackTime;
-	config.getTimes(timeout, ackTime);
-	m_thread->setTimes(timeout, ackTime);
-	wxLogInfo(wxT("Timeout set to %u secs, ack time set to %u ms"), timeout, ackTime);
+	unsigned int timeout, ackTime, frameWaitTime;
+	config.getTimes(timeout, ackTime, frameWaitTime);
+	m_thread->setTimes(timeout, ackTime, frameWaitTime);
+	wxLogInfo(wxT("Timeout set to %u secs, ack time set to %u ms, frame wait time set to %u ms"), timeout, ackTime, frameWaitTime);
 
 	unsigned int beaconTime;
 	wxString beaconText;

@@ -27,8 +27,6 @@ const unsigned char DTMF_SIG[]  = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x0
 const unsigned int CYCLE_TIME    = 5U;
 const unsigned int TICKS_PER_SEC = 200U;
 
-const unsigned int FRAME_WAIT_TIME = 100U;
-
 CSplitRepeaterThread::CSplitRepeaterThread() :
 m_protocolHandler(NULL),
 m_gatewayAddress(),
@@ -41,6 +39,7 @@ m_transmitter1Address(),
 m_transmitter1Port(0U),
 m_transmitter2Address(),
 m_transmitter2Port(0U),
+m_frameWaitTime(0U),
 m_radioId(0U),
 m_networkId(0U),
 m_receiver1Id(0U),
@@ -382,10 +381,11 @@ bool CSplitRepeaterThread::setTransmitter2(const wxString& address, unsigned int
 	return true;
 }
 
-void CSplitRepeaterThread::setTimes(unsigned int timeout, unsigned int ackTime)
+void CSplitRepeaterThread::setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime)
 {
 	m_timeoutTimer.setTimeout(timeout);
 	m_ackTimer.setTimeout(0U, ackTime + 1000U);
+	m_frameWaitTime = frameWaitTime;
 }
 
 void CSplitRepeaterThread::setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language)
@@ -1426,7 +1426,7 @@ void CSplitRepeaterThread::chooseReceiver()
 		} else if (rx1 != NULL && m_receiver2Id != 0x00U) {
 			// Data from receiver 1, and receiver 2 is active
 			unsigned long t1 = t - rx1->getTime();
-			if (t1 < FRAME_WAIT_TIME) {
+			if (t1 < m_frameWaitTime) {
 				m_radioSeqNo = seqNo;
 				return;
 			}
@@ -1460,7 +1460,7 @@ void CSplitRepeaterThread::chooseReceiver()
 		} else if (rx2 != NULL && m_receiver1Id != 0x00U) {
 			// Data from receiver 1, and receiver 2 is active
 			unsigned long t2 = t - rx2->getTime();
-			if (t2 < FRAME_WAIT_TIME) {
+			if (t2 < m_frameWaitTime) {
 				m_radioSeqNo = seqNo;
 				return;
 			}

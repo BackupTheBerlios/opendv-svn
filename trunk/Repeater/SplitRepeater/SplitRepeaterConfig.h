@@ -53,8 +53,8 @@ public:
 	void getTransmitter2(wxString& address, unsigned int& port) const;
 	void setTransmitter2(const wxString& address, unsigned int port);
 
-	void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
-	void setTimes(unsigned int timeout, unsigned int ackTime);
+	void getTimes(unsigned int& timeout, unsigned int& ackTime, unsigned int& frameWaitTime) const;
+	void setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime);
 
 	void getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const;
 	void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
@@ -94,6 +94,7 @@ private:
 	unsigned int    m_transmitter2Port;
 	unsigned int    m_timeout;
 	unsigned int    m_ackTime;
+	unsigned int    m_frameWaitTime;
 	unsigned int    m_beaconTime;
 	wxString        m_beaconText;
 	bool            m_beaconVoice;

@@ -38,6 +38,7 @@ const wxString  KEY_TRANSMITTER2_ADDRESS = wxT("transmitter2Address");
 const wxString  KEY_TRANSMITTER2_PORT    = wxT("transmitter2Port");
 const wxString  KEY_TIMEOUT            = wxT("timeout");
 const wxString  KEY_ACK_TIME           = wxT("ackTime");
+const wxString  KEY_FRAME_WAIT_TIME    = wxT("frameWaitTime");
 const wxString  KEY_BEACON_TIME        = wxT("beaconTime");
 const wxString  KEY_BEACON_TEXT        = wxT("beaconText");
 const wxString  KEY_BEACON_VOICE       = wxT("beaconVoice");
@@ -83,6 +84,7 @@ const wxString        DEFAULT_TRANSMITTER2_ADDRESS = wxEmptyString;
 const unsigned int    DEFAULT_TRANSMITTER2_PORT    = 0U;
 const unsigned int    DEFAULT_TIMEOUT            = 180U;
 const unsigned int    DEFAULT_ACK_TIME           = 500U;
+const unsigned int    DEFAULT_FRAME_WAIT_TIME    = 100U;
 const unsigned int    DEFAULT_BEACON_TIME        = 600U;
 const wxString        DEFAULT_BEACON_TEXT        = wxT("Split Repeater");
 const bool            DEFAULT_BEACON_VOICE       = false;
@@ -134,6 +136,7 @@ m_transmitter2Address(DEFAULT_TRANSMITTER2_ADDRESS),
 m_transmitter2Port(DEFAULT_TRANSMITTER2_PORT),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
+m_frameWaitTime(DEFAULT_FRAME_WAIT_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
 m_beaconText(DEFAULT_BEACON_TEXT),
 m_beaconVoice(DEFAULT_BEACON_VOICE),
@@ -215,6 +218,9 @@ m_y(DEFAULT_WINDOW_Y)
 
 	m_config->Read(m_name + KEY_ACK_TIME, &temp, long(DEFAULT_ACK_TIME));
 	m_ackTime = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_FRAME_WAIT_TIME, &temp, long(DEFAULT_FRAME_WAIT_TIME));
+	m_frameWaitTime = (unsigned int)temp;
 
 	m_config->Read(m_name + KEY_BEACON_TIME, &temp, long(DEFAULT_BEACON_TIME));
 	m_beaconTime = (unsigned int)temp;
@@ -298,6 +304,7 @@ m_transmitter2Address(DEFAULT_TRANSMITTER2_ADDRESS),
 m_transmitter2Port(DEFAULT_TRANSMITTER2_PORT),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
+m_frameWaitTime(DEFAULT_FRAME_WAIT_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
 m_beaconText(DEFAULT_BEACON_TEXT),
 m_beaconVoice(DEFAULT_BEACON_VOICE),
@@ -415,6 +422,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_ACK_TIME)) {
 			val.ToULong(&temp2);
 			m_ackTime = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_FRAME_WAIT_TIME)) {
+			val.ToULong(&temp2);
+			m_frameWaitTime = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_BEACON_TIME)) {
 			val.ToULong(&temp2);
 			m_beaconTime = (unsigned int)temp2;
@@ -567,16 +577,18 @@ void CSplitRepeaterConfig::setTransmitter2(const wxString& address, unsigned int
 	m_transmitter2Port    = port;
 }
 
-void CSplitRepeaterConfig::getTimes(unsigned int& timeout, unsigned int& ackTime) const
+void CSplitRepeaterConfig::getTimes(unsigned int& timeout, unsigned int& ackTime, unsigned int& frameWaitTime) const
 {
-	timeout = m_timeout;
-	ackTime = m_ackTime;
+	timeout       = m_timeout;
+	ackTime       = m_ackTime;
+	frameWaitTime = m_frameWaitTime;
 }
 
-void CSplitRepeaterConfig::setTimes(unsigned int timeout, unsigned int ackTime)
+void CSplitRepeaterConfig::setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime)
 {
-	m_timeout = timeout;
-	m_ackTime = ackTime;
+	m_timeout       = timeout;
+	m_ackTime       = ackTime;
+	m_frameWaitTime = frameWaitTime;
 }
 
 void CSplitRepeaterConfig::getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const
@@ -675,6 +687,7 @@ bool CSplitRepeaterConfig::write()
 	m_config->Write(m_name + KEY_TRANSMITTER2_PORT, long(m_transmitter2Port));
 	m_config->Write(m_name + KEY_TIMEOUT, long(m_timeout));
 	m_config->Write(m_name + KEY_ACK_TIME, long(m_ackTime));
+	m_config->Write(m_name + KEY_FRAME_WAIT_TIME, long(m_frameWaitTime));
 	m_config->Write(m_name + KEY_BEACON_TIME, long(m_beaconTime));
 	m_config->Write(m_name + KEY_BEACON_TEXT, m_beaconText);
 	m_config->Write(m_name + KEY_BEACON_VOICE, m_beaconVoice);
@@ -749,6 +762,7 @@ bool CSplitRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_TRANSMITTER2_PORT.c_str(), m_transmitter2Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_TIMEOUT.c_str(), m_timeout); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_ACK_TIME.c_str(), m_ackTime); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_FRAME_WAIT_TIME.c_str(), m_frameWaitTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BEACON_TIME.c_str(), m_beaconTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_BEACON_TEXT.c_str(), m_beaconText.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_BEACON_VOICE.c_str(), m_beaconVoice ? 1 : 0); file.AddLine(buffer);

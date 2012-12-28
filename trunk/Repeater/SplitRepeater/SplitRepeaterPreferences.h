@@ -36,8 +36,8 @@ public:
 	CSplitRepeaterPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& gateway,
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress,
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
-		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, const wxString& receiver1Address, unsigned int receiver1Port,
+		unsigned int ackTime, unsigned int frameWaitTime, unsigned int beaconTime, const wxString& beaconText,
+		bool beaconVoice, TEXT_LANG language, const wxString& receiver1Address, unsigned int receiver1Port,
 		const wxString& receiver2Address, unsigned int receiver2Port, const wxString& transmitter1Address,
 		unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port,
 		bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown,
@@ -63,6 +63,7 @@ public:
 
 	virtual unsigned int getTimeout() const;
 	virtual unsigned int getAckTime() const;
+	virtual unsigned int getFrameWaitTime() const;
 
 	virtual wxString     getBeaconText() const;
 	virtual unsigned int getBeaconTime() const;

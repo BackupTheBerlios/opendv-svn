@@ -66,8 +66,8 @@ public:
 	virtual void getTransmitter2(wxString& address, unsigned int& port) const;
 	virtual void setTransmitter2(const wxString& address, unsigned int port);
 
-	virtual void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
-	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
+	virtual void getTimes(unsigned int& timeout, unsigned int& ackTime, unsigned int& frameWaitTime) const;
+	virtual void setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime);
 
 	virtual void getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const;
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);

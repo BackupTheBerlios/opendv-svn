@@ -1761,3 +1761,8 @@ Added DCS020.
 Updated XRF008s IP address.
 Add Ethernet support for the DVRPTR-V2 hardware.
 Add support for the Raspberry Pi GPIO port.
+
+201212xx
+--------
+
+Make the frame wait time configurable in the Split Repeater.

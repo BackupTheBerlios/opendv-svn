@@ -46,7 +46,7 @@ public:
 	virtual bool setReceiver2(const wxString& address, unsigned int port);
 	virtual bool setTransmitter1(const wxString& address, unsigned int port);
 	virtual bool setTransmitter2(const wxString& address, unsigned int port);
-	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
+	virtual void setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
 	virtual void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line);
 	virtual void setWhiteList(CCallsignList* list);
@@ -80,6 +80,7 @@ private:
 	unsigned int               m_transmitter1Port;
 	in_addr                    m_transmitter2Address;
 	unsigned int               m_transmitter2Port;
+	unsigned int               m_frameWaitTime;
 	unsigned int               m_radioId;
 	unsigned int               m_networkId;
 	unsigned int               m_receiver1Id;

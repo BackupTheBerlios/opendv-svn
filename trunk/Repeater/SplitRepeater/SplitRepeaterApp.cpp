@@ -249,14 +249,14 @@ void CSplitRepeaterApp::setTransmitter2(const wxString& address, unsigned int po
 	m_config->setTransmitter2(address, port);
 }
 
-void CSplitRepeaterApp::getTimes(unsigned int& timeout, unsigned int& ackTime) const
+void CSplitRepeaterApp::getTimes(unsigned int& timeout, unsigned int& ackTime, unsigned int& frameWaitTime) const
 {
-	m_config->getTimes(timeout, ackTime);
+	m_config->getTimes(timeout, ackTime, frameWaitTime);
 }
 
-void CSplitRepeaterApp::setTimes(unsigned int timeout, unsigned int ackTime)
+void CSplitRepeaterApp::setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime)
 {
-	m_config->setTimes(timeout, ackTime);
+	m_config->setTimes(timeout, ackTime, frameWaitTime);
 }
 
 void CSplitRepeaterApp::getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const
@@ -353,10 +353,10 @@ void CSplitRepeaterApp::createThread()
 		thread->setGateway(gatewayAddress, gatewayPort);
 	}
 
-	unsigned int timeout, ackTime;
-	getTimes(timeout, ackTime);
-	thread->setTimes(timeout, ackTime);
-	wxLogInfo(wxT("Timeout set to %u secs, ack time set to %u ms"), timeout, ackTime);
+	unsigned int timeout, ackTime, frameWaitTime;
+	getTimes(timeout, ackTime, frameWaitTime);
+	thread->setTimes(timeout, ackTime, frameWaitTime);
+	wxLogInfo(wxT("Timeout set to %u secs, ack time set to %u ms, frame wait time set to %u ms"), timeout, ackTime, frameWaitTime);
 
 	unsigned int beaconTime;
 	wxString beaconText;

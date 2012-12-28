@@ -22,11 +22,12 @@ const unsigned int TIMES_WIDTH  = 300U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CSplitRepeaterTimesSet::CSplitRepeaterTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime) :
+CSplitRepeaterTimesSet::CSplitRepeaterTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime) :
 wxPanel(parent, id),
 m_title(title),
 m_timeout(NULL),
-m_ackTime(NULL)
+m_ackTime(NULL),
+m_frameWaitTime(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
@@ -44,6 +45,12 @@ m_ackTime(NULL)
 
 	m_ackTime = new wxSlider(this, -1, ackTime, 100, 2000, wxDefaultPosition, wxSize(TIMES_WIDTH, -1), wxSL_HORIZONTAL | wxSL_LABELS);
 	sizer->Add(m_ackTime, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* frameWaitTimeLabel = new wxStaticText(this, -1, _("Frame Wait Time (ms)"));
+	sizer->Add(frameWaitTimeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_frameWaitTime = new wxSlider(this, -1, frameWaitTime, 10, 500, wxDefaultPosition, wxSize(TIMES_WIDTH, -1), wxSL_HORIZONTAL | wxSL_LABELS);
+	sizer->Add(m_frameWaitTime, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	SetAutoLayout(true);
 
@@ -68,4 +75,9 @@ unsigned int CSplitRepeaterTimesSet::getTimeout() const
 unsigned int CSplitRepeaterTimesSet::getAckTime() const
 {
 	return m_ackTime->GetValue();
+}
+
+unsigned int CSplitRepeaterTimesSet::getFrameWaitTime() const
+{
+	return m_frameWaitTime->GetValue();
 }

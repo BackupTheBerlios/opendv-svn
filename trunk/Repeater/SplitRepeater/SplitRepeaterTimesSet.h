@@ -23,18 +23,20 @@
 
 class CSplitRepeaterTimesSet : public wxPanel {
 public:
-	CSplitRepeaterTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime);
+	CSplitRepeaterTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime);
 	virtual ~CSplitRepeaterTimesSet();
 
 	virtual bool Validate();
 
 	virtual unsigned int getTimeout() const;
 	virtual unsigned int getAckTime() const;
+	virtual unsigned int getFrameWaitTime() const;
 
 private:
 	wxString  m_title;
 	wxSlider* m_timeout;
 	wxSlider* m_ackTime;
+	wxSlider* m_frameWaitTime;
 };
 
 #endif
