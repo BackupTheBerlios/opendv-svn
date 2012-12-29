@@ -1173,6 +1173,13 @@ void CRepeaterHandler::resolveRepeaterInt(const wxString& repeater, const wxStri
 					}
 					break;
 
+				case DP_LOOPBACK:
+					m_linkGateway = gateway;
+					addr.s_addr = ::inet_addr(address.mb_str());
+					CDCSHandler::link(this, m_rptCallsign, m_linkRepeater, addr);
+					m_linkStatus = LS_LINKING_LOOPBACK;
+					break;
+
 				default:
 					if (m_dextraEnabled) {
 						m_linkGateway = gateway;
@@ -1261,6 +1268,17 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 							CDCSHandler::unlink(this, m_linkRepeater);
 
 							m_linkStatus = LS_LINKING_DCS;
+							writeLinkingTo(m_linkRepeater);
+							triggerInfo();
+							break;
+
+						case LS_LINKING_LOOPBACK:
+						case LS_LINKED_LOOPBACK:
+							m_linkRelink = true;
+							m_linkRepeater = m_linkStartup;
+							CDCSHandler::unlink(this, m_linkRepeater);
+
+							m_linkStatus = LS_LINKING_LOOPBACK;
 							writeLinkingTo(m_linkRepeater);
 							triggerInfo();
 							break;
@@ -1415,6 +1433,13 @@ void CRepeaterHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
 		writeLinkedTo(callsign);
 		triggerInfo();
 	}
+
+	if (protocol == DP_LOOPBACK && m_linkStatus == LS_LINKING_LOOPBACK) {
+		wxLogMessage(wxT("Loopback link to %s established"), callsign.c_str());
+		m_linkStatus = LS_LINKED_LOOPBACK;
+		writeLinkedTo(callsign);
+		triggerInfo();
+	}
 }
 
 bool CRepeaterHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
@@ -1446,6 +1471,14 @@ bool CRepeaterHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsig
 
 		if (protocol == DP_DCS && callsign.IsSameAs(m_linkRepeater)) {
 			wxLogMessage(wxT("DCS link to %s has ended"), m_linkRepeater.c_str());
+			m_linkRepeater.Clear();
+			m_linkStatus = LS_NONE;
+			writeNotLinked();
+			triggerInfo();
+		}
+
+		if (protocol == DP_LOOPBACK && callsign.IsSameAs(m_linkRepeater)) {
+			wxLogMessage(wxT("Loopback link to %s has ended"), m_linkRepeater.c_str());
 			m_linkRepeater.Clear();
 			m_linkStatus = LS_NONE;
 			writeNotLinked();
@@ -1499,6 +1532,23 @@ bool CRepeaterHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsig
 				return true;
 
 			case LS_LINKING_DCS:
+				return true;
+
+			default:
+				return false;
+		}
+	}
+
+	if (protocol == DP_LOOPBACK) {
+		switch (m_linkStatus) {
+			case LS_LINKED_LOOPBACK:
+				wxLogMessage(wxT("Loopback link to %s has failed, relinking"), m_linkRepeater.c_str());
+				m_linkStatus = LS_LINKING_LOOPBACK;
+				writeLinkingTo(m_linkRepeater);
+				triggerInfo();
+				return true;
+
+			case LS_LINKING_LOOPBACK:
 				return true;
 
 			default:
@@ -1611,6 +1661,17 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 					CDCSHandler::unlink(this, m_linkRepeater);
 
 					m_linkStatus = LS_LINKING_DCS;
+					writeLinkingTo(m_linkRepeater);
+					triggerInfo();
+					break;
+
+				case LS_LINKING_LOOPBACK:
+				case LS_LINKED_LOOPBACK:
+					m_linkRelink = true;
+					m_linkRepeater = reflector;
+					CDCSHandler::unlink(this, m_linkRepeater);
+
+					m_linkStatus = LS_LINKING_LOOPBACK;
 					writeLinkingTo(m_linkRepeater);
 					triggerInfo();
 					break;
@@ -1801,6 +1862,17 @@ void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const w
 						triggerInfo();
 						break;
 
+					case LS_LINKING_LOOPBACK:
+					case LS_LINKED_LOOPBACK:
+						m_linkRelink = true;
+						m_linkRepeater = reflector;
+						CDCSHandler::unlink(this, m_linkRepeater);
+
+						m_linkStatus = LS_LINKING_LOOPBACK;
+						writeLinkingTo(m_linkRepeater);
+						triggerInfo();
+						break;
+
 					case LS_LINKING_DPLUS:
 						m_linkRepeater = reflector;
 						CDPlusHandler::relink(this, m_linkRepeater);
@@ -1875,6 +1947,13 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 					writeNotLinked();
 					triggerInfo();
 				}
+				break;
+
+			case DP_LOOPBACK:
+				m_linkStatus = LS_LINKING_LOOPBACK;
+				CDCSHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
+				writeLinkingTo(m_linkRepeater);
+				triggerInfo();
 				break;
 
 			default:
@@ -2019,6 +2098,13 @@ void CRepeaterHandler::startupInt()
 						writeNotLinked();
 						triggerInfo();
 					}
+					break;
+
+				case DP_LOOPBACK:
+					m_linkStatus = LS_LINKING_LOOPBACK;
+					CDCSHandler::link(this, m_rptCallsign, m_linkRepeater, data->getAddress());
+					writeLinkingTo(m_linkRepeater);
+					triggerInfo();
 					break;
 
 				default:

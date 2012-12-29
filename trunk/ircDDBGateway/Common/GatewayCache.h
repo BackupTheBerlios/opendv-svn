@@ -42,7 +42,7 @@ public:
 	m_addrLock(addrLock),
 	m_protoLock(false)
 	{
-		if (protocol == DP_DPLUS || protocol == DP_DEXTRA || protocol == DP_DCS) {
+		if (protocol != DP_UNKNOWN) {
 			m_protocol  = protocol;
 			m_protoLock = protoLock;
 		}
@@ -71,7 +71,7 @@ public:
 		}
 
 		if (!m_protoLock) {
-			if (protocol == DP_DPLUS || protocol == DP_DEXTRA || protocol == DP_DCS) {
+			if (protocol != DP_UNKNOWN) {
 				m_protocol  = protocol;
 				m_protoLock = protoLock;
 			}

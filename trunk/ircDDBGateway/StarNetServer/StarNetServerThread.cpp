@@ -30,7 +30,6 @@
 #include <wx/filename.h>
 #include <wx/ffile.h>
 
-const unsigned int DPLUS_DUMMY_PORT  = 65013U;
 const unsigned int REMOTE_DUMMY_PORT = 65015U;
 
 CStarNetServerThread::CStarNetServerThread(bool nolog, const wxString& logDir) :

@@ -41,9 +41,8 @@
 #include <wx/textfile.h>
 #include <wx/ffile.h>
 
-const unsigned int DPLUS_DUMMY_PORT  = 65013U;
-const unsigned int DEXTRA_DUMMY_PORT = 65014U;
-const unsigned int DCS_DUMMY_PORT    = 65015U;
+const wxString LOOPBACK_ADDRESS = wxT("127.0.0.1");
+
 const unsigned int REMOTE_DUMMY_PORT = 65016U;
 
 CIRCDDBGatewayThread::CIRCDDBGatewayThread(const wxString& logDir, const wxString& name) :
@@ -64,14 +63,11 @@ m_irc(NULL),
 m_cache(),
 m_language(TL_ENGLISH_UK),
 m_dextraEnabled(true),
-m_dextraPort(DEXTRA_PORT),
 m_dextraMaxDongles(0U),
 m_dplusEnabled(false),
-m_dplusPort(DPLUS_PORT),
 m_dplusMaxDongles(0U),
 m_dplusLogin(),
 m_dcsEnabled(true),
-m_dcsPort(DCS_PORT),
 m_infoEnabled(true),
 m_echoEnabled(true),
 m_dtmfEnabled(true),
@@ -148,7 +144,8 @@ void CIRCDDBGatewayThread::run()
 	if (ret)
 		file.Close();
 
-	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_OUTGOING + 1U, m_dextraPort, m_gatewayAddress);
+	wxString dextraAddress = m_dextraEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
+	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_OUTGOING + 1U, DEXTRA_PORT, dextraAddress);
 	ret = m_dextraPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DExtra protocol pool"));
@@ -156,12 +153,13 @@ void CIRCDDBGatewayThread::run()
 		m_dextraPool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDExtraProtocolHandler* handler = m_dextraPool->getHandler(m_dextraPort);
+		CDExtraProtocolHandler* handler = m_dextraPool->getHandler(DEXTRA_PORT);
 		CDExtraHandler::setDExtraProtocolIncoming(handler);
 		CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraPool);
 	}
 
-	m_dplusPool = new CDPlusProtocolHandlerPool(MAX_OUTGOING + 1U, m_dplusPort, m_gatewayAddress);
+	wxString dplusAddress = m_dplusEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
+	m_dplusPool = new CDPlusProtocolHandlerPool(MAX_OUTGOING + 1U, DPLUS_PORT, dplusAddress);
 	ret = m_dplusPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the D-Plus protocol pool"));
@@ -169,12 +167,13 @@ void CIRCDDBGatewayThread::run()
 		m_dplusPool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDPlusProtocolHandler* handler = m_dplusPool->getHandler(m_dplusPort);
+		CDPlusProtocolHandler* handler = m_dplusPool->getHandler(DPLUS_PORT);
 		CDPlusHandler::setDPlusProtocolIncoming(handler);
 		CDPlusHandler::setDPlusProtocolHandlerPool(m_dplusPool);
 	}
 
-	m_dcsPool = new CDCSProtocolHandlerPool(MAX_OUTGOING + 1U, m_dcsPort, m_gatewayAddress);
+	wxString dcsAddress = m_dcsEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
+	m_dcsPool = new CDCSProtocolHandlerPool(MAX_OUTGOING + 1U, DCS_PORT, dcsAddress);
 	ret = m_dcsPool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the DCS protocol pool"));
@@ -182,7 +181,7 @@ void CIRCDDBGatewayThread::run()
 		m_dcsPool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDCSProtocolHandler* handler = m_dcsPool->getHandler(m_dcsPort);
+		CDCSProtocolHandler* handler = m_dcsPool->getHandler(DCS_PORT);
 		CDCSHandler::setDCSProtocolIncoming(handler);
 		CDCSHandler::setDCSProtocolHandlerPool(m_dcsPool);
 	}
@@ -417,7 +416,7 @@ void CIRCDDBGatewayThread::addRepeater(const wxString& callsign, const wxString&
 	repeater.Append(band);
 
 	// Add a fixed address and protocol for the local repeaters
-	m_cache.updateRepeater(repeater, m_gatewayCallsign, wxT("127.0.0.1"), DP_DCS, true, true);
+	m_cache.updateRepeater(repeater, m_gatewayCallsign, wxT("127.0.0.1"), DP_LOOPBACK, true, true);
 
 	wxLogMessage(wxT("Adding %s to the cache as a local repeater"), repeater.c_str());
 }
@@ -459,11 +458,9 @@ void CIRCDDBGatewayThread::setLanguage(TEXT_LANG language)
 void CIRCDDBGatewayThread::setDExtra(bool enabled, unsigned int maxDongles)
 {
 	if (enabled) {
-		m_dextraPort       = DEXTRA_PORT;
 		m_dextraEnabled    = true;
 		m_dextraMaxDongles = maxDongles;
 	} else {
-		m_dextraPort       = DEXTRA_DUMMY_PORT;
 		m_dextraEnabled    = false;
 		m_dextraMaxDongles = 0U;
 	}
@@ -472,11 +469,9 @@ void CIRCDDBGatewayThread::setDExtra(bool enabled, unsigned int maxDongles)
 void CIRCDDBGatewayThread::setDPlus(bool enabled, unsigned int maxDongles, const wxString& login)
 {
 	if (enabled) {
-		m_dplusPort       = DPLUS_PORT;
 		m_dplusEnabled    = true;
 		m_dplusMaxDongles = maxDongles;
 	} else {
-		m_dplusPort       = DPLUS_DUMMY_PORT;
 		m_dplusEnabled    = false;
 		m_dplusMaxDongles = 0U;
 	}
@@ -486,13 +481,7 @@ void CIRCDDBGatewayThread::setDPlus(bool enabled, unsigned int maxDongles, const
 
 void CIRCDDBGatewayThread::setDCS(bool enabled)
 {
-	if (enabled) {
-		m_dcsPort    = DCS_PORT;
-		m_dcsEnabled = true;
-	} else {
-		m_dcsPort    = DCS_DUMMY_PORT;
-		m_dcsEnabled = false;
-	}
+	m_dcsEnabled = enabled;
 }
 
 void CIRCDDBGatewayThread::setLog(bool enabled)

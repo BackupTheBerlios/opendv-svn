@@ -115,6 +115,7 @@ const unsigned int  G2_DD_PORT  = 40001U;
 
 enum DSTAR_PROTOCOL {
 	DP_UNKNOWN,
+	DP_LOOPBACK,
 	DP_DEXTRA,
 	DP_DPLUS,
 	DP_DCS

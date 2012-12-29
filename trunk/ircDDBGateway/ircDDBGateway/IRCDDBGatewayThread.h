@@ -86,14 +86,11 @@ private:
 	CCacheManager             m_cache;
 	TEXT_LANG                 m_language;
 	bool                      m_dextraEnabled;
-	unsigned int              m_dextraPort;
 	unsigned int              m_dextraMaxDongles;
 	bool                      m_dplusEnabled;
-	unsigned int              m_dplusPort;
 	unsigned int              m_dplusMaxDongles;
 	wxString                  m_dplusLogin;
 	bool                      m_dcsEnabled;
-	unsigned int              m_dcsPort;
 	bool                      m_infoEnabled;
 	bool                      m_echoEnabled;
 	bool                      m_dtmfEnabled;

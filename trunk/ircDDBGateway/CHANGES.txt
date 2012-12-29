@@ -1165,3 +1165,8 @@ ID rewriting for Icom repeaters.
 
 Fixed silly link pool bug(s).
 Fixed StarNET Digital compile problem.
+
+201301xx
+--------
+
+Changed gateway loopback behaviour.
