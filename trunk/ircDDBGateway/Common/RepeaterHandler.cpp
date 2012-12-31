@@ -992,7 +992,8 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 		unsigned int id2 = id1 + m_index;
 		header.setId(id2);
 
-		wxLogMessage(wxT("Rewriting the id from 0x%04X to 0x%04X for %s"), id1, id2, m_rptCallsign.c_str());
+		if (source != AS_DUP)
+			wxLogMessage(wxT("Rewriting the id from 0x%04X to 0x%04X for %s"), id1, id2, m_rptCallsign.c_str());
 	}
 
 	// Send all original headers to all repeater types, and only send duplicate headers to homebrew repeaters
