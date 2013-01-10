@@ -119,7 +119,7 @@ CHeaderData* CG2ProtocolHandler::readHeader()
 	CHeaderData* header = new CHeaderData;
 
 	// G2 checksums are unreliable
-	bool res = header->setG2Data(m_buffer, m_length, false, m_address, m_port, m_socket.getPort());
+	bool res = header->setG2Data(m_buffer, m_length, false, m_address, m_port);
 	if (!res) {
 		delete header;
 		return NULL;
@@ -135,7 +135,7 @@ CAMBEData* CG2ProtocolHandler::readAMBE()
 
 	CAMBEData* data = new CAMBEData;
 
-	bool res = data->setG2Data(m_buffer, m_length, m_address, m_port, m_socket.getPort());
+	bool res = data->setG2Data(m_buffer, m_length, m_address, m_port);
 	if (!res) {
 		delete data;
 		return NULL;

@@ -248,7 +248,7 @@ void CHeaderData::setDCSData(const unsigned char *data, unsigned int length, con
 	m_myPort      = myPort;
 }
 
-bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
+bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 56U);
@@ -270,7 +270,6 @@ bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool
 
 	m_yourAddress = yourAddress;
 	m_yourPort    = yourPort;
-	m_myPort      = myPort;
 
 	if (check) {
 		CCCITTChecksum cksum;

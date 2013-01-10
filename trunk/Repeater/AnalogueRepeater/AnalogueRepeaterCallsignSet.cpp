@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -285,23 +285,9 @@ bool CAnalogueRepeaterCallsignSet::Validate()
 		return false;
 	}
 
-	bool res = !getOpenId().IsEmpty();
-	if (!res) {
-		wxMessageDialog dialog(this, _("The Open ID may not be empty"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
 	n = m_closeId->GetSelection();
 	if (n == wxNOT_FOUND) {
 		wxMessageDialog dialog(this, _("The Close ID Choice must be made"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
-	res = !getCloseId().IsEmpty();
-	if (!res) {
-		wxMessageDialog dialog(this, _("The Close ID may not be empty"), m_title + _(" Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		return false;
 	}
@@ -313,23 +299,9 @@ bool CAnalogueRepeaterCallsignSet::Validate()
 		return false;
 	}
 
-	res = !getBeacon1().IsEmpty();
-	if (!res) {
-		wxMessageDialog dialog(this, _("The Beacon 1 may not be empty"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
 	n = m_beacon2->GetSelection();
 	if (n == wxNOT_FOUND) {
 		wxMessageDialog dialog(this, _("The Beacon 2 Choice must be made"), m_title + _(" Error"), wxICON_ERROR);
-		dialog.ShowModal();
-		return false;
-	}
-
-	res = !getBeacon2().IsEmpty();
-	if (!res) {
-		wxMessageDialog dialog(this, _("The Beacon 2 may not be empty"), m_title + _(" Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		return false;
 	}

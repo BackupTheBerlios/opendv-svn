@@ -140,7 +140,7 @@ bool CAMBEData::setHBRepeaterData(const unsigned char *data, unsigned int length
 	return true;
 }
 
-bool CAMBEData::setG2Data(const unsigned char *data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
+bool CAMBEData::setG2Data(const unsigned char *data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 27U);
@@ -155,7 +155,6 @@ bool CAMBEData::setG2Data(const unsigned char *data, unsigned int length, const 
 
 	m_yourAddress = yourAddress;
 	m_yourPort    = yourPort;
-	m_myPort      = myPort;
 
 	return true;
 }

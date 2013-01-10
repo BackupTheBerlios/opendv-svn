@@ -858,7 +858,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 	}
 
 	// Do callsign here so that it pre-empts the ack, unless ack is already sending
-	if (m_sendBeacon1 && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
+	if (!m_beacon1->isEmpty() && m_sendBeacon1 && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING || m_state == ARS_TIMEOUT_RADIO || m_state == ARS_LOCKOUT_RADIO || m_state == ARS_TIMEOUT_EXTERNAL || m_state == ARS_LOCKOUT_EXTERNAL)
 			len = m_beacon1->getAudio(audio, length, m_idLevel1);
@@ -874,7 +874,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (m_sendOpen && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
+	if (!m_openId->isEmpty() && m_sendOpen && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING || m_state == ARS_TIMEOUT_RADIO || m_state == ARS_LOCKOUT_RADIO || m_state == ARS_TIMEOUT_EXTERNAL || m_state == ARS_LOCKOUT_EXTERNAL)
 			len = m_openId->getAudio(audio, length, m_idLevel1);
@@ -890,7 +890,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (m_sendClose && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
+	if (!m_closeId->isEmpty() && m_sendClose && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING || m_state == ARS_TIMEOUT_RADIO || m_state == ARS_LOCKOUT_RADIO || m_state == ARS_TIMEOUT_EXTERNAL || m_state == ARS_LOCKOUT_EXTERNAL)
 			len = m_closeId->getAudio(audio, length, m_idLevel1);
@@ -906,7 +906,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (m_sendBeacon2) {
+	if (!m_beacon2->isEmpty() && m_sendBeacon2) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING)
 			len = m_beacon2->getAudio(audio, length, m_idLevel1);

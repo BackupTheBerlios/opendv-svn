@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2012 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2012,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -76,6 +76,9 @@ m_current(0U)
 	wxASSERT(speed > 0U);
 	wxASSERT(freq > 0U);
 	wxASSERT(sampleRate > 0U);
+
+	if (text.IsEmpty())
+		return;
 
 	wxString cw = wxT(" ");
 	for (unsigned int i = 0U; i < text.Len(); i++) {
@@ -170,9 +173,17 @@ CCWKeyer::~CCWKeyer()
 	delete[] m_data;
 }
 
+bool CCWKeyer::isEmpty() const
+{
+	return m_length == 0U;
+}
+
 unsigned int CCWKeyer::getAudio(wxFloat32* audio, unsigned int length, wxFloat32 amplitude)
 {
 	wxASSERT(audio != NULL);
+
+	if (m_length == 0U)
+		return 0U;
 
 	unsigned int n = 0U;
 	while (n < length && m_current < m_length)

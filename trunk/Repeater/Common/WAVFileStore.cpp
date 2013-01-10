@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2011 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2011,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -28,10 +28,17 @@ CWAVFileStore::~CWAVFileStore()
 	delete[] m_data;
 }
 
+bool CWAVFileStore::isEmpty() const
+{
+	return m_length == 0U;
+}
+
 bool CWAVFileStore::load(const wxString& fileName, unsigned int sampleRate)
 {
-	wxASSERT(!fileName.IsEmpty());
 	wxASSERT(sampleRate > 0U);
+
+	if (fileName.IsEmpty())
+		return false;
 
 	CWAVFileReader file(fileName, ANALOGUE_RADIO_BLOCK_SIZE);
 
@@ -85,6 +92,9 @@ bool CWAVFileStore::load(const wxString& fileName, unsigned int sampleRate)
 unsigned int CWAVFileStore::getAudio(wxFloat32* audio, unsigned int length, wxFloat32 amplitude)
 {
 	wxASSERT(audio != NULL);
+
+	if (m_length == 0U)
+		return 0U;
 
 	unsigned int n = 0U;
 	while (n < length && m_current < m_length)

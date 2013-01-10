@@ -38,9 +38,9 @@ public:
 
 	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort);
 	bool setHBRepeaterData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort);
+	bool setG2Data(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort);
 	bool setDExtraData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 	bool setDPlusData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
-	bool setG2Data(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 	void setDCSData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 
 	unsigned int getIcomRepeaterData(unsigned char* data, unsigned int length, bool check) const;

@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2011 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2011,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 class IFixedAudioSource {
 public:
 	virtual unsigned int getAudio(wxFloat32* audio, unsigned int length, wxFloat32 amplitude) = 0;
+
+	virtual bool isEmpty() const = 0;
 
 	virtual void reset() = 0;
 

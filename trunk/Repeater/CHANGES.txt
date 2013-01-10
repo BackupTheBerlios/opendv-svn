@@ -1766,4 +1766,5 @@ Add support for the Raspberry Pi GPIO port.
 --------
 
 Make the frame wait time configurable in the Split Repeater.
+Allow for empty beacons in the Analogue Repeater to suppress them.
 Added DCS019.
