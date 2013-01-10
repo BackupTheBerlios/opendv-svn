@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -858,7 +858,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 	}
 
 	// Do callsign here so that it pre-empts the ack, unless ack is already sending
-	if (!m_beacon1->isEmpty() && m_sendBeacon1 && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
+	if (m_sendBeacon1 && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING || m_state == ARS_TIMEOUT_RADIO || m_state == ARS_LOCKOUT_RADIO || m_state == ARS_TIMEOUT_EXTERNAL || m_state == ARS_LOCKOUT_EXTERNAL)
 			len = m_beacon1->getAudio(audio, length, m_idLevel1);
@@ -874,7 +874,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (!m_openId->isEmpty() && m_sendOpen && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
+	if (m_sendOpen && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING || m_state == ARS_TIMEOUT_RADIO || m_state == ARS_LOCKOUT_RADIO || m_state == ARS_TIMEOUT_EXTERNAL || m_state == ARS_LOCKOUT_EXTERNAL)
 			len = m_openId->getAudio(audio, length, m_idLevel1);
@@ -890,7 +890,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (!m_closeId->isEmpty() && m_sendClose && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
+	if (m_sendClose && m_sendAck != ACK_RADIO_SENDING && m_sendAck != ACK_EXTERNAL_SENDING && m_sendAck != ACK_BATTERY_SENDING) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING || m_state == ARS_TIMEOUT_RADIO || m_state == ARS_LOCKOUT_RADIO || m_state == ARS_TIMEOUT_EXTERNAL || m_state == ARS_LOCKOUT_EXTERNAL)
 			len = m_closeId->getAudio(audio, length, m_idLevel1);
@@ -906,7 +906,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (!m_beacon2->isEmpty() && m_sendBeacon2) {
+	if (m_sendBeacon2) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING)
 			len = m_beacon2->getAudio(audio, length, m_idLevel1);
@@ -1012,10 +1012,13 @@ void CAnalogueRepeaterThread::clock(unsigned int ms)
 {
 	m_callsignTimer.clock(ms);
 	if (m_callsignTimer.hasExpired()) {
-		if (m_state == ARS_LISTENING)
-			m_sendBeacon2 = true;
-		else
-			m_sendBeacon1 = true;
+		if (m_state == ARS_LISTENING) {
+			if (!m_beacon2->isEmpty())
+				m_sendBeacon2 = true;
+		} else {
+			if (!m_beacon1->isEmpty())
+				m_sendBeacon1 = true;
+		}
 	}
 
 	m_hangTimer.clock(ms);
@@ -1596,27 +1599,28 @@ void CAnalogueRepeaterThread::sendCallsign()
 
 	switch (m_callsignHoldoff) {
 		case ACH_NONE:
-			m_sendBeacon1 = true;
+			if (!m_beacon1->isEmpty())
+				m_sendBeacon1 = true;
 			break;
 
 		case ACH_14:
 			t1 = m_callsignTimer.getTimeout() / 4U;
 			t2 = m_callsignTimer.getTimer();
-			if (t2 >= t1)
+			if (t2 >= t1 && !m_beacon1->isEmpty())
 				m_sendBeacon1 = true;
 			break;
 
 		case ACH_12:
 			t1 = m_callsignTimer.getTimeout() / 2U;
 			t2 = m_callsignTimer.getTimer();
-			if (t2 >= t1)
+			if (t2 >= t1 && !m_beacon1->isEmpty())
 				m_sendBeacon1 = true;
 			break;
 
 		case ACH_34:
 			t1 = 3U * m_callsignTimer.getTimeout() / 4U;
 			t2 = m_callsignTimer.getTimer();
-			if (t2 >= t1)
+			if (t2 >= t1 && !m_beacon1->isEmpty())
 				m_sendBeacon1 = true;
 			break;
 	}
