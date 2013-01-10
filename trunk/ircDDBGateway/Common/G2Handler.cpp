@@ -91,7 +91,7 @@ void CG2Handler::process(CHeaderData& header)
 	if (m_maxRoutes == 0U)
 		return;
 
-	in_addr address = header.getAddress();
+	in_addr address = header.getYourAddress();
 	unsigned int id = header.getId();
 
 	for (unsigned int i = 0U; i < m_maxRoutes; i++) {

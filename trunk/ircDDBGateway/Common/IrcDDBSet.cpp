@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ m_password(NULL)
 	m_hostname = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_hostname->Append(wxT("group1-irc.ircddb.net"));
 	m_hostname->Append(wxT("group2-irc.ircddb.net"));
-	m_hostname->Append(wxT("server1-ik2xyp.ods.org"));
+	m_hostname->Append(wxT("server1-ik2xyp.free-dstar.org"));
 	m_hostname->Append(wxT("stn570.dyndns.org"));
 	m_hostname->Append(wxT("75.76.90.90"));
 	m_hostname->Append(wxT("ircddb.dstar.su"));

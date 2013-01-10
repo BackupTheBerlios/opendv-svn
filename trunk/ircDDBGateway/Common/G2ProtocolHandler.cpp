@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ bool CG2ProtocolHandler::writeHeader(const CHeaderData& header)
 #endif
 
 	for (unsigned int i = 0U; i < 5U; i++) {
-		bool res = m_socket.write(buffer, length, header.getAddress(), header.getPort());
+		bool res = m_socket.write(buffer, length, header.getYourAddress(), header.getYourPort());
 		if (!res)
 			return false;
 	}
@@ -73,7 +73,7 @@ bool CG2ProtocolHandler::writeAMBE(const CAMBEData& data)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
 #endif
 
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
+	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 }
 
 G2_TYPE CG2ProtocolHandler::read()
@@ -119,7 +119,7 @@ CHeaderData* CG2ProtocolHandler::readHeader()
 	CHeaderData* header = new CHeaderData;
 
 	// G2 checksums are unreliable
-	bool res = header->setG2Data(m_buffer, m_length, false, m_address, m_port);
+	bool res = header->setG2Data(m_buffer, m_length, false, m_address, m_port, m_socket.getPort());
 	if (!res) {
 		delete header;
 		return NULL;
@@ -135,7 +135,7 @@ CAMBEData* CG2ProtocolHandler::readAMBE()
 
 	CAMBEData* data = new CAMBEData;
 
-	bool res = data->setG2Data(m_buffer, m_length, m_address, m_port);
+	bool res = data->setG2Data(m_buffer, m_length, m_address, m_port, m_socket.getPort());
 	if (!res) {
 		delete data;
 		return NULL;

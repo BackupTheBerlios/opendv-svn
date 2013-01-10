@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -51,8 +51,9 @@ m_myCall2(NULL),
 m_yourCall(NULL),
 m_rptCall1(NULL),
 m_rptCall2(NULL),
-m_address(),
-m_port(0U),
+m_yourAddress(),
+m_yourPort(0U),
+m_myPort(0U),
 m_errors(0U)
 {
 	m_myCall1  = new unsigned char[LONG_CALLSIGN_LENGTH];
@@ -76,8 +77,9 @@ m_myCall2(NULL),
 m_yourCall(NULL),
 m_rptCall1(NULL),
 m_rptCall2(NULL),
-m_address(header.m_address),
-m_port(header.m_port),
+m_yourAddress(header.m_yourAddress),
+m_yourPort(header.m_yourPort),
+m_myPort(header.m_myPort),
 m_errors(header.m_errors)
 {
 	m_myCall1  = new unsigned char[LONG_CALLSIGN_LENGTH];
@@ -109,8 +111,9 @@ m_myCall2(NULL),
 m_yourCall(NULL),
 m_rptCall1(NULL),
 m_rptCall2(NULL),
-m_address(),
-m_port(0U),
+m_yourAddress(),
+m_yourPort(0U),
+m_myPort(0U),
 m_errors(0U)
 {
 	m_myCall1  = new unsigned char[LONG_CALLSIGN_LENGTH];
@@ -150,7 +153,7 @@ CHeaderData::~CHeaderData()
 	delete[] m_rptCall2;
 }
 
-bool CHeaderData::setIcomRepeaterData(const unsigned char *data, unsigned int length, bool check, const in_addr& address, unsigned int port)
+bool CHeaderData::setIcomRepeaterData(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 58U);
@@ -171,8 +174,8 @@ bool CHeaderData::setIcomRepeaterData(const unsigned char *data, unsigned int le
 	::memcpy(m_myCall1,  data + 44U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 52U, SHORT_CALLSIGN_LENGTH);
 
-	m_address = address;
-	m_port    = port;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
 
 	if (check) {
 		CCCITTChecksum cksum;
@@ -188,7 +191,7 @@ bool CHeaderData::setIcomRepeaterData(const unsigned char *data, unsigned int le
 	}
 }
 
-bool CHeaderData::setHBRepeaterData(const unsigned char *data, unsigned int length, bool check, const in_addr& address, unsigned int port)
+bool CHeaderData::setHBRepeaterData(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 49U);
@@ -206,8 +209,8 @@ bool CHeaderData::setHBRepeaterData(const unsigned char *data, unsigned int leng
 	::memcpy(m_myCall1,  data + 35U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 43U, SHORT_CALLSIGN_LENGTH);
 
-	m_address = address;
-	m_port    = port;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
 
 	if (check) {
 		CCCITTChecksum cksum;
@@ -223,7 +226,7 @@ bool CHeaderData::setHBRepeaterData(const unsigned char *data, unsigned int leng
 	}
 }
 
-void CHeaderData::setDCSData(const unsigned char *data, unsigned int length)
+void CHeaderData::setDCSData(const unsigned char *data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 100U);
@@ -239,9 +242,13 @@ void CHeaderData::setDCSData(const unsigned char *data, unsigned int length)
 	::memcpy(m_yourCall, data + 23U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall1,  data + 31U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 39U, SHORT_CALLSIGN_LENGTH);
+
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
+	m_myPort      = myPort;
 }
 
-bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool check, const in_addr& address, unsigned int port)
+bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 56U);
@@ -261,8 +268,9 @@ bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool
 	::memcpy(m_myCall1,  data + 42U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 50U, SHORT_CALLSIGN_LENGTH);
 
-	m_address = address;
-	m_port    = port;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
+	m_myPort      = myPort;
 
 	if (check) {
 		CCCITTChecksum cksum;
@@ -278,7 +286,7 @@ bool CHeaderData::setG2Data(const unsigned char *data, unsigned int length, bool
 	}
 }
 
-bool CHeaderData::setDExtraData(const unsigned char *data, unsigned int length, bool check, const in_addr& address, unsigned int port)
+bool CHeaderData::setDExtraData(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 56U);
@@ -298,8 +306,9 @@ bool CHeaderData::setDExtraData(const unsigned char *data, unsigned int length, 
 	::memcpy(m_myCall1,  data + 42U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 50U, SHORT_CALLSIGN_LENGTH);
 
-	m_address = address;
-	m_port    = port;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
+	m_myPort      = myPort;
 
 	if (check) {
 		CCCITTChecksum cksum;
@@ -315,7 +324,7 @@ bool CHeaderData::setDExtraData(const unsigned char *data, unsigned int length, 
 	}
 }
 
-bool CHeaderData::setDPlusData(const unsigned char *data, unsigned int length, bool check, const in_addr& address, unsigned int port)
+bool CHeaderData::setDPlusData(const unsigned char *data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 58U);
@@ -340,8 +349,9 @@ bool CHeaderData::setDPlusData(const unsigned char *data, unsigned int length, b
 	::memcpy(m_myCall1,  data + 44U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 52U, SHORT_CALLSIGN_LENGTH);
 
-	m_address = address;
-	m_port    = port;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
+	m_myPort      = myPort;
 
 	if (check) {
 		CCCITTChecksum cksum;
@@ -814,16 +824,21 @@ unsigned int CHeaderData::getData(unsigned char *data, unsigned int length) cons
 
 void CHeaderData::setDestination(const in_addr& address, unsigned int port)
 {
-	m_address = address;
-	m_port    = port;
+	m_yourAddress = address;
+	m_yourPort    = port;
 }
 
-in_addr CHeaderData::getAddress() const
+in_addr CHeaderData::getYourAddress() const
 {
-	return m_address;
+	return m_yourAddress;
 }
 
-unsigned int CHeaderData::getPort() const
+unsigned int CHeaderData::getYourPort() const
 {
-	return m_port;
+	return m_yourPort;
+}
+
+unsigned int CHeaderData::getMyPort() const
+{
+	return m_myPort;
 }

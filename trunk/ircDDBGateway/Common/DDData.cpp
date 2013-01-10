@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -46,12 +46,12 @@ CDDData::~CDDData()
 	delete[] m_frame;
 }
 
-bool CDDData::setIcomRepeaterData(const unsigned char *data, unsigned int length, const in_addr& address, unsigned int port)
+bool CDDData::setIcomRepeaterData(const unsigned char *data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 29U);
 
-	bool ret = m_header.setIcomRepeaterData(data, length, true, address, port);
+	bool ret = m_header.setIcomRepeaterData(data, length, true, yourAddress, yourPort);
 	if (!ret)
 		return false;
 
@@ -220,14 +220,14 @@ void CDDData::setDestination(const in_addr& address, unsigned int port)
 	m_header.setDestination(address, port);
 }
 
-in_addr CDDData::getAddress() const
+in_addr CDDData::getYourAddress() const
 {
-	return m_header.getAddress();
+	return m_header.getYourAddress();
 }
 
-unsigned int CDDData::getPort() const
+unsigned int CDDData::getYourPort() const
 {
-	return m_header.getPort();
+	return m_header.getYourPort();
 }
 
 void CDDData::setEthernetFrame(const unsigned char *frame, unsigned int length)

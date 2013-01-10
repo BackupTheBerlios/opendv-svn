@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,15 +29,15 @@
 
 class CPollData {
 public:
-	CPollData(const wxString& data1, const wxString& data2, const in_addr& address, unsigned int port);
-	CPollData(const wxString& data, const in_addr& address, unsigned int port);
-	CPollData(const in_addr& address, unsigned int port);
+	CPollData(const wxString& data1, const wxString& data2, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
+	CPollData(const wxString& data, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
+	CPollData(const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CPollData();
 	~CPollData();
 
-	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
+	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 
 	unsigned int getDExtraData(unsigned char* data, unsigned int length) const;
 	unsigned int getDPlusData(unsigned char* data, unsigned int length) const;
@@ -51,8 +51,9 @@ public:
 
 	bool         isDongle() const;
 
-	in_addr      getAddress() const;
-	unsigned int getPort() const;
+	in_addr      getYourAddress() const;
+	unsigned int getYourPort() const;
+	unsigned int getMyPort() const;
 
 	unsigned int getLength() const;
 
@@ -61,8 +62,9 @@ private:
 	wxString     m_data2;
 	bool         m_dongle;
 	unsigned int m_length;
-	in_addr      m_address;
-	unsigned int m_port;
+	in_addr      m_yourAddress;
+	unsigned int m_yourPort;
+	unsigned int m_myPort;
 };
 
 #endif

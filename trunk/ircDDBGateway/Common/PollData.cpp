@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,37 +21,40 @@
 #include "DStarDefines.h"
 #include "Utils.h"
 
-CPollData::CPollData(const wxString& data1, const wxString& data2, const in_addr& address, unsigned int port) :
+CPollData::CPollData(const wxString& data1, const wxString& data2, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_data1(data1),
 m_data2(data2),
 m_dongle(false),
 m_length(0U),
-m_address(address),
-m_port(port)
+m_yourAddress(yourAddress),
+m_yourPort(yourPort),
+m_myPort(myPort)
 {
-	wxASSERT(port > 0U);
+	wxASSERT(yourPort > 0U);
 }
 
-CPollData::CPollData(const wxString& data, const in_addr& address, unsigned int port) :
+CPollData::CPollData(const wxString& data, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_data1(data),
 m_data2(),
 m_dongle(false),
 m_length(0U),
-m_address(address),
-m_port(port)
+m_yourAddress(yourAddress),
+m_yourPort(yourPort),
+m_myPort(myPort)
 {
-	wxASSERT(port > 0U);
+	wxASSERT(yourPort > 0U);
 }
 
-CPollData::CPollData(const in_addr& address, unsigned int port) :
+CPollData::CPollData(const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_data1(),
 m_data2(),
 m_dongle(false),
 m_length(0U),
-m_address(address),
-m_port(port)
+m_yourAddress(yourAddress),
+m_yourPort(yourPort),
+m_myPort(myPort)
 {
-	wxASSERT(port > 0U);
+	wxASSERT(yourPort > 0U);
 }
 
 CPollData::CPollData() :
@@ -59,8 +62,9 @@ m_data1(),
 m_data2(),
 m_dongle(false),
 m_length(0U),
-m_address(),
-m_port(0U)
+m_yourAddress(),
+m_yourPort(0U),
+m_myPort(0U)
 {
 }
 
@@ -68,56 +72,61 @@ CPollData::~CPollData()
 {
 }
 
-bool CPollData::setDExtraData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port)
+bool CPollData::setDExtraData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 9U);
-	wxASSERT(port > 0U);
+	wxASSERT(yourPort > 0U);
 
 	m_data1   = wxString((const char*)data, wxConvLocal, LONG_CALLSIGN_LENGTH);
 	m_dongle  = data[LONG_CALLSIGN_LENGTH] != 0x00;
 
-	m_length  = length;
-	m_address = address;
-	m_port    = port;
+	m_length      = length;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
+	m_myPort      = myPort;
+
 
 	return true;
 }
 
-bool CPollData::setDCSData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port)
+bool CPollData::setDCSData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
-	wxASSERT(port > 0U);
+	wxASSERT(yourPort > 0U);
 
 	switch (length) {
 		case 17U:
-			m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-			m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-			m_length  = length;
-			m_address = address;
-			m_port    = port;
+			m_data1       = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_data2       = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_length      = length;
+			m_yourAddress = yourAddress;
+			m_yourPort    = yourPort;
+			m_myPort      = myPort;
 			break;
 
 		case 22U:
-			m_data1   = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
-			m_data2   = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH - 1U);
+			m_data1       = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_data2       = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH - 1U);
 			m_data2.Append(wxString((const char*)(data + 17U), wxConvLocal, 1U));
-			m_length  = length;
-			m_address = address;
-			m_port    = port;
+			m_length      = length;
+			m_yourAddress = yourAddress;
+			m_yourPort    = yourPort;
+			m_myPort      = myPort;
 			break;
 	}
 
 	return true;
 }
 
-bool CPollData::setDPlusData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port)
+bool CPollData::setDPlusData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
-	wxASSERT(port > 0U);
+	wxASSERT(yourPort > 0U);
 
-	m_length  = length;
-	m_address = address;
-	m_port    = port;
+	m_length      = length;
+	m_yourAddress = yourAddress;
+	m_yourPort    = yourPort;
+	m_myPort      = myPort;
 
 	return true;
 }
@@ -203,14 +212,19 @@ bool CPollData::isDongle() const
 	return m_dongle;
 }
 
-in_addr CPollData::getAddress() const
+in_addr CPollData::getYourAddress() const
 {
-	return m_address;
+	return m_yourAddress;
 }
 
-unsigned int CPollData::getPort() const
+unsigned int CPollData::getYourPort() const
 {
-	return m_port;
+	return m_yourPort;
+}
+
+unsigned int CPollData::getMyPort() const
+{
+	return m_myPort;
 }
 
 unsigned int CPollData::getLength() const

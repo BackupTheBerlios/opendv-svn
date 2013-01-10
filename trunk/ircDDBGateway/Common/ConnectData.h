@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,16 +37,16 @@ enum CD_TYPE {
 
 class CConnectData {
 public:
-	CConnectData(const wxString& repeater, const wxString& reflector, CD_TYPE type, const in_addr& address, unsigned int port);
-	CConnectData(const wxString& repeater, const in_addr& address, unsigned int port);
-	CConnectData(const wxString& repeater, CD_TYPE type, const in_addr& address, unsigned int port);
-	CConnectData(CD_TYPE type, const in_addr& address, unsigned int port);
+	CConnectData(const wxString& repeater, const wxString& reflector, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
+	CConnectData(const wxString& repeater, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
+	CConnectData(const wxString& repeater, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
+	CConnectData(CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CConnectData();
 	~CConnectData();
 
-	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
+	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 
 	unsigned int getDExtraData(unsigned char* data, unsigned int length) const;
 	unsigned int getDPlusData(unsigned char* data, unsigned int length) const;
@@ -56,15 +56,17 @@ public:
 	wxString      getReflector() const;
 	CD_TYPE       getType() const;
 
-	in_addr       getAddress() const;
-	unsigned int  getPort() const;
+	in_addr       getYourAddress() const;
+	unsigned int  getYourPort() const;
+	unsigned int  getMyPort() const;
 
 private:
 	wxString      m_repeater;
 	wxString      m_reflector;
 	CD_TYPE       m_type;
-	in_addr       m_address;
-	unsigned int  m_port;
+	in_addr       m_yourAddress;
+	unsigned int  m_yourPort;
+	unsigned int  m_myPort;
 };
 
 #endif

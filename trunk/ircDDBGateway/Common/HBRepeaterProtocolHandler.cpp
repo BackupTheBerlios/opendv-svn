@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ bool CHBRepeaterProtocolHandler::writeHeader(CHeaderData& header)
 	CUtils::dump(wxT("Sending Header"), buffer, length);
 	return true;
 #else
-	return m_socket.write(buffer, length, header.getAddress(), header.getPort());
+	return m_socket.write(buffer, length, header.getYourAddress(), header.getYourPort());
 #endif
 }
 
@@ -70,7 +70,7 @@ bool CHBRepeaterProtocolHandler::writeAMBE(CAMBEData& data)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
 	return true;
 #else
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
+	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 #endif
 }
 
@@ -172,7 +172,7 @@ CPollData* CHBRepeaterProtocolHandler::readPoll()
 
 	wxString text = wxString((char*)(m_buffer + 5U), wxConvLocal);
 
-	return new CPollData(text, m_address, m_port);
+	return new CPollData(text, m_address, m_port, m_socket.getPort());
 }
 
 CHeaderData* CHBRepeaterProtocolHandler::readHeader()

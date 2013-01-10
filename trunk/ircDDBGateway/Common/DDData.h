@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public:
 	CDDData(const CDDData& data);
 	~CDDData();
 
-	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
+	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort);
 	unsigned int getIcomRepeaterData(unsigned char* data, unsigned int length);
 
 	unsigned char getBand1() const;
@@ -72,8 +72,8 @@ public:
 	void setRepeaters(const wxString& rpt1, const wxString& rpt2);
 	void setDestination(const in_addr& address, unsigned int port);
 
-	in_addr      getAddress() const;
-	unsigned int getPort() const;
+	in_addr      getYourAddress() const;
+	unsigned int getYourPort() const;
 
 private:
 	CHeaderData    m_header;

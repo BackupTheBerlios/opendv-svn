@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ public:
 	bool write(const unsigned char* buffer, unsigned int length, const in_addr& address, unsigned int port);
 
 	void close();
+
+	unsigned int getPort() const;
 
 private:
 	wxString       m_address;

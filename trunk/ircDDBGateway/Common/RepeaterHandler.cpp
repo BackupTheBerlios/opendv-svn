@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -390,7 +390,7 @@ void CRepeaterHandler::finalise()
 CRepeaterHandler* CRepeaterHandler::findDVRepeater(const CHeaderData& header)
 {
 	wxString rpt1 = header.getRptCall1();
-	in_addr address = header.getAddress();
+	in_addr address = header.getYourAddress();
 
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];
@@ -435,8 +435,8 @@ CRepeaterHandler* CRepeaterHandler::findDVRepeater(const wxString& callsign)
 
 CRepeaterHandler* CRepeaterHandler::findRepeater(const CPollData& data)
 {
-	in_addr   address = data.getAddress();
-	unsigned int port = data.getPort();
+	in_addr   address = data.getYourAddress();
+	unsigned int port = data.getYourPort();
 
 	for (unsigned int i = 0U; i < m_maxRepeaters; i++) {
 		CRepeaterHandler* repeater = m_repeaters[i];

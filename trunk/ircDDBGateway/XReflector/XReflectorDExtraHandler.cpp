@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ void CXReflectorDExtraHandler::process(CHeaderData& header)
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CXReflectorDExtraHandler* reflector = m_reflectors[i];
 		if (reflector != NULL) {
-			if (reflector->m_address.s_addr == header.getAddress().s_addr && reflector->m_port == header.getPort())
+			if (reflector->m_address.s_addr == header.getYourAddress().s_addr && reflector->m_port == header.getYourPort())
 				reflector->processInt(header);
 		}
 	}	
@@ -134,7 +134,7 @@ void CXReflectorDExtraHandler::process(CAMBEData& data)
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CXReflectorDExtraHandler* reflector = m_reflectors[i];
 		if (reflector != NULL) {
-			if (reflector->m_address.s_addr == data.getAddress().s_addr && reflector->m_port == data.getPort())
+			if (reflector->m_address.s_addr == data.getYourAddress().s_addr && reflector->m_port == data.getYourPort())
 				reflector->processInt(data);
 		}
 	}	
@@ -145,8 +145,8 @@ void CXReflectorDExtraHandler::process(const CPollData& poll)
 	bool found = false;
 
 	wxString reflector = poll.getData1();
-	in_addr  address   = poll.getAddress();
-	unsigned int port  = poll.getPort();
+	in_addr  address   = poll.getYourAddress();
+	unsigned int port  = poll.getYourPort();
 
 	// Check to see if we already have a link
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
@@ -185,7 +185,7 @@ void CXReflectorDExtraHandler::process(const CPollData& poll)
 
 	if (found) {
 		// Return the poll
-		CPollData poll(m_callsign, address, port);
+		CPollData poll(m_callsign, address, port, 0U);
 		m_handler->writePoll(poll);
 	} else {
 		wxLogError(wxT("No space to add new DExtra Dongle, ignoring"));
@@ -212,8 +212,8 @@ void CXReflectorDExtraHandler::process(CConnectData& connect)
 	}
 
 	// else if type == CT_LINK1 or type == CT_LINK2
-	in_addr   address = connect.getAddress();
-	unsigned int port = connect.getPort();
+	in_addr   address = connect.getYourAddress();
+	unsigned int port = connect.getYourPort();
 
 	wxString repeaterCallsign = connect.getRepeater();
 
@@ -237,7 +237,7 @@ void CXReflectorDExtraHandler::process(CConnectData& connect)
 	IXReflectorReflectorCallback* handler = CXReflectorReflectorHandler::findReflector(reflectorCallsign);
 	if (handler == NULL) {
 		wxLogMessage(wxT("DExtra connect to unknown reflector %s from %s"), reflectorCallsign.c_str(), repeaterCallsign.c_str());
-		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port);
+		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port, 0U);
 		m_handler->writeConnect(reply);
 		return;
 	}
@@ -257,13 +257,13 @@ void CXReflectorDExtraHandler::process(CConnectData& connect)
 	}
 
 	if (found) {
-		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_ACK, address, port);
+		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_ACK, address, port, 0U);
 		m_handler->writeConnect(reply);
 
-		CPollData poll(m_callsign, address, port);
+		CPollData poll(m_callsign, address, port, 0U);
 		m_handler->writePoll(poll);
 	} else {
-		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port);
+		CConnectData reply(repeaterCallsign, reflectorCallsign, CT_NAK, address, port, 0U);
 		m_handler->writeConnect(reply);
 
 		wxLogError(wxT("No space to add new reflector, ignoring"));
@@ -278,7 +278,7 @@ void CXReflectorDExtraHandler::unlink()
 		if (handler != NULL) {
 			if (!handler->m_repeater.IsEmpty()) {
 				wxLogMessage(wxT("Unlinking from DExtra reflector %s"), handler->m_reflector.c_str());
-				CConnectData connect(handler->m_repeater, handler->m_address, handler->m_port);
+				CConnectData connect(handler->m_repeater, handler->m_address, handler->m_port, 0U);
 				m_handler->writeConnect(connect);
 			}
 		}
@@ -403,8 +403,8 @@ void CXReflectorDExtraHandler::processInt(CAMBEData& data)
 
 bool CXReflectorDExtraHandler::processInt(CConnectData& connect, CD_TYPE type)
 {
-	in_addr address   = connect.getAddress();
-	unsigned int port = connect.getPort();
+	in_addr address   = connect.getYourAddress();
+	unsigned int port = connect.getYourPort();
 	wxString repeater = connect.getRepeater();
 
 	if (m_address.s_addr != address.s_addr || m_port != port)
@@ -463,10 +463,10 @@ bool CXReflectorDExtraHandler::clockInt(unsigned long ms)
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		if (m_linked) {
-			CPollData poll(m_callsign, m_address, m_port);
+			CPollData poll(m_callsign, m_address, m_port, 0U);
 			m_handler->writePoll(poll);
 		} else {
-			CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_address, m_port);
+			CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_address, m_port, 0U);
 			m_handler->writeConnect(reply);
 		}
 

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ void CXReflectorDPlusHandler::setUserLogger(CXReflectorUserLog* logger)
 
 void CXReflectorDPlusHandler::process(CHeaderData& header)
 {
-	in_addr address = header.getAddress();
+	in_addr address = header.getYourAddress();
 
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CXReflectorDPlusHandler* reflector = m_reflectors[i];
@@ -103,7 +103,7 @@ void CXReflectorDPlusHandler::process(CHeaderData& header)
 
 void CXReflectorDPlusHandler::process(CAMBEData& data)
 {
-	in_addr address = data.getAddress();
+	in_addr address = data.getYourAddress();
 
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CXReflectorDPlusHandler* reflector = m_reflectors[i];
@@ -116,7 +116,7 @@ void CXReflectorDPlusHandler::process(CAMBEData& data)
 
 void CXReflectorDPlusHandler::process(const CPollData& poll)
 {
-	in_addr address = poll.getAddress();
+	in_addr address = poll.getYourAddress();
 
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL) {
@@ -134,7 +134,7 @@ void CXReflectorDPlusHandler::process(const CPollData& poll)
 void CXReflectorDPlusHandler::process(CConnectData& connect)
 {
 	CD_TYPE    type = connect.getType();
-	in_addr address = connect.getAddress();
+	in_addr address = connect.getYourAddress();
 
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CXReflectorDPlusHandler* reflector = m_reflectors[i];
@@ -149,7 +149,7 @@ void CXReflectorDPlusHandler::process(CConnectData& connect)
 		}
 	}
 
-	unsigned int port = connect.getPort();
+	unsigned int port = connect.getYourPort();
 
 	// Check that it isn't a duplicate
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
@@ -180,7 +180,7 @@ void CXReflectorDPlusHandler::process(CConnectData& connect)
 	}
 
 	if (found) {
-		CConnectData connect(CT_LINK1, address, port);
+		CConnectData connect(CT_LINK1, address, port, 0U);
 		m_handler->writeConnect(connect);
 	} else {
 		wxLogError(wxT("No space to add new D-Plus dongle, ignoring"));
@@ -196,7 +196,7 @@ void CXReflectorDPlusHandler::unlink()
 			if (!handler->m_reflector.IsEmpty())
 				wxLogMessage(wxT("Unlinking from D-Plus reflector/dongle %s"), handler->m_reflector.c_str());
 
-			CConnectData connect(CT_UNLINK, handler->m_address, handler->m_port);
+			CConnectData connect(CT_UNLINK, handler->m_address, handler->m_port, 0U);
 			m_handler->writeConnect(connect);
 			m_handler->writeConnect(connect);
 		}
@@ -306,7 +306,7 @@ bool CXReflectorDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 		case CT_LINK2: {
 				m_reflector = connect.getRepeater();
 				wxLogMessage(wxT("D-Plus dongle link to %s has started"), m_reflector.c_str());
-				CConnectData reply(CT_ACK, m_address, m_port);
+				CConnectData reply(CT_ACK, m_address, m_port, 0U);
 				m_handler->writeConnect(reply);
 				m_linked = true;
 				m_stateChange = true;
@@ -338,7 +338,7 @@ bool CXReflectorDPlusHandler::clockInt(unsigned long ms)
 	m_pollInactivityTimer.clock(ms);
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
-		CPollData poll(m_address, m_port);
+		CPollData poll(m_address, m_port, 0U);
 		m_handler->writePoll(poll);
 		m_pollTimer.reset();
 	}

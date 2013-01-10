@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -1233,7 +1233,7 @@ bool CTimeServerThread::sendHeader(const CHeaderData &header)
 	return true;
 #else
 	for (unsigned int i = 0U; i < 5U; i++) {
-		bool res = m_socket.write(buffer, length, header.getAddress(), header.getPort());
+		bool res = m_socket.write(buffer, length, header.getYourAddress(), header.getYourPort());
 		if (!res)
 			return false;
 	}
@@ -1251,6 +1251,6 @@ bool CTimeServerThread::sendData(const CAMBEData& data)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
 	return true;
 #else
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
+	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 #endif
 }

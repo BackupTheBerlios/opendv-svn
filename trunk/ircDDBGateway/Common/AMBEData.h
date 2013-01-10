@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,12 +35,12 @@ public:
 	CAMBEData(const CAMBEData& data);
 	~CAMBEData();
 
-	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setHBRepeaterData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
-	bool setG2Data(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
+	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort);
+	bool setHBRepeaterData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort);
+	bool setDExtraData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDPlusData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDCSData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setG2Data(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 
 	unsigned int getIcomRepeaterData(unsigned char* data, unsigned int length) const;
 	unsigned int getHBRepeaterData(unsigned char* data, unsigned int length) const;
@@ -75,8 +75,9 @@ public:
 
 	void setText(const wxString& text);
 
-	in_addr      getAddress() const;
-	unsigned int getPort() const;
+	in_addr      getYourAddress() const;
+	unsigned int getYourPort() const;
+	unsigned int getMyPort() const;
 
 	unsigned int getErrors() const;
 
@@ -95,8 +96,9 @@ private:
 	unsigned char  m_band2;
 	unsigned char  m_band3;
 	unsigned char* m_data;
-	in_addr        m_address;
-	unsigned int   m_port;
+	in_addr        m_yourAddress;
+	unsigned int   m_yourPort;
+	unsigned int   m_myPort;
 	unsigned int   m_errors;
 	wxString       m_text;
 	CHeaderData    m_header;

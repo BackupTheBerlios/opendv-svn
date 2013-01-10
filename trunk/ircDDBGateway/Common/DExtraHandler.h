@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -110,8 +110,9 @@ private:
 	wxString                m_reflector;
 	wxString                m_repeater;
 	CDExtraProtocolHandler* m_handler;
-	in_addr                 m_address;
-	unsigned int            m_port;
+	in_addr                 m_yourAddress;
+	unsigned int            m_yourPort;
+	unsigned int            m_myPort;
 	DIRECTION               m_direction;
 	DEXTRA_STATE            m_linkState;
 	IReflectorCallback*     m_destination;

@@ -1169,4 +1169,6 @@ Fixed StarNET Digital compile problem.
 201301xx
 --------
 
+Updated the host name of the Italian test ircDDB server.
 Changed gateway loopback behaviour.
+Added DCS019.

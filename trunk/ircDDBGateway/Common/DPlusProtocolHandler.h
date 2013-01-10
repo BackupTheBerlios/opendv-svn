@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ public:
 
 	bool open();
 
+	unsigned int getPort() const;
+
 	bool writeHeader(const CHeaderData& header);
 	bool writeAMBE(const CAMBEData& data);
 	bool writeConnect(const CConnectData& connect);
@@ -67,8 +69,9 @@ private:
 	DPLUS_TYPE       m_type;
 	unsigned char*   m_buffer;
 	unsigned int     m_length;
-	in_addr          m_address;
-	unsigned int     m_port;
+	in_addr          m_yourAddress;
+	unsigned int     m_yourPort;
+	unsigned int     m_myPort;
 
 	bool readPackets();
 };

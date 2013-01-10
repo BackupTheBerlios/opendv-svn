@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,12 +36,12 @@ public:
 				unsigned char flag2 = 0x00, unsigned char flag3 = 0x00);
 	~CHeaderData();
 
-	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, bool check, const in_addr& address, unsigned int port);
-	bool setHBRepeaterData(const unsigned char* data, unsigned int length, bool check, const in_addr& address, unsigned int port);
-	bool setDExtraData(const unsigned char* data, unsigned int length, bool check, const in_addr& address, unsigned int port);
-	bool setDPlusData(const unsigned char* data, unsigned int length, bool check, const in_addr& address, unsigned int port);
-	bool setG2Data(const unsigned char* data, unsigned int length, bool check, const in_addr& address, unsigned int port);
-	void setDCSData(const unsigned char* data, unsigned int length);
+	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort);
+	bool setHBRepeaterData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort);
+	bool setDExtraData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setDPlusData(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	bool setG2Data(const unsigned char* data, unsigned int length, bool check, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
+	void setDCSData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort);
 
 	unsigned int getIcomRepeaterData(unsigned char* data, unsigned int length, bool check) const;
 	unsigned int getHBRepeaterData(unsigned char* data, unsigned int length, bool check) const;
@@ -89,8 +89,9 @@ public:
 	bool setData(const unsigned char* data, unsigned int length);
 	unsigned int getData(unsigned char* data, unsigned int length) const;
 
-	in_addr      getAddress() const;
-	unsigned int getPort() const;
+	in_addr      getYourAddress() const;
+	unsigned int getYourPort() const;
+	unsigned int getMyPort() const;
 
 	unsigned int getErrors() const;
 
@@ -112,8 +113,9 @@ private:
 	unsigned char* m_yourCall;
 	unsigned char* m_rptCall1;
 	unsigned char* m_rptCall2;
-	in_addr        m_address;
-	unsigned int   m_port;
+	in_addr        m_yourAddress;
+	unsigned int   m_yourPort;
+	unsigned int   m_myPort;
 	unsigned int   m_errors;
 };
 

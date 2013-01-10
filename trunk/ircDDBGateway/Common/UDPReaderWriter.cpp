@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2006-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2006-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -224,3 +224,7 @@ void CUDPReaderWriter::close()
 #endif
 }
 
+unsigned int CUDPReaderWriter::getPort() const
+{
+	return m_port;
+}

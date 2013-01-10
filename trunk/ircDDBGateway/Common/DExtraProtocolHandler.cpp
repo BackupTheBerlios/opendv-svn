@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,8 +30,9 @@ m_socket(addr, port),
 m_type(DE_NONE),
 m_buffer(NULL),
 m_length(0U),
-m_address(),
-m_port(0U)
+m_yourAddress(),
+m_yourPort(0U),
+m_myPort(port)
 {
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
@@ -46,6 +47,11 @@ bool CDExtraProtocolHandler::open()
 	return m_socket.open();
 }
 
+unsigned int CDExtraProtocolHandler::getPort() const
+{
+	return m_myPort;
+}
+
 bool CDExtraProtocolHandler::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer[60U];
@@ -56,7 +62,7 @@ bool CDExtraProtocolHandler::writeHeader(const CHeaderData& header)
 #endif
 
 	for (unsigned int i = 0U; i < 5U; i++) {
-		bool res = m_socket.write(buffer, length, header.getAddress(), header.getPort());
+		bool res = m_socket.write(buffer, length, header.getYourAddress(), header.getYourPort());
 		if (!res)
 			return false;
 	}
@@ -73,7 +79,7 @@ bool CDExtraProtocolHandler::writeAMBE(const CAMBEData& data)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
 #endif
 
-	return m_socket.write(buffer, length, data.getAddress(), data.getPort());
+	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 }
 
 bool CDExtraProtocolHandler::writePoll(const CPollData& poll)
@@ -85,7 +91,7 @@ bool CDExtraProtocolHandler::writePoll(const CPollData& poll)
 	CUtils::dump(wxT("Sending Poll"), buffer, length);
 #endif
 
-	return m_socket.write(buffer, length, poll.getAddress(), poll.getPort());
+	return m_socket.write(buffer, length, poll.getYourAddress(), poll.getYourPort());
 }
 
 bool CDExtraProtocolHandler::writeConnect(const CConnectData& connect)
@@ -98,7 +104,7 @@ bool CDExtraProtocolHandler::writeConnect(const CConnectData& connect)
 #endif
 
 	for (unsigned int i = 0U; i < 2U; i++) {
-		bool res = m_socket.write(buffer, length, connect.getAddress(), connect.getPort());
+		bool res = m_socket.write(buffer, length, connect.getYourAddress(), connect.getYourPort());
 		if (!res)
 			return false;
 	}
@@ -122,7 +128,7 @@ bool CDExtraProtocolHandler::readPackets()
 	m_type = DE_NONE;
 
 	// No more data?
-	int length = m_socket.read(m_buffer, BUFFER_LENGTH, m_address, m_port);
+	int length = m_socket.read(m_buffer, BUFFER_LENGTH, m_yourAddress, m_yourPort);
 	if (length <= 0)
 		return false;
 
@@ -159,7 +165,7 @@ CHeaderData* CDExtraProtocolHandler::readHeader()
 	CHeaderData* header = new CHeaderData;
 
 	// DExtra checksums are unreliable
-	bool res = header->setDExtraData(m_buffer, m_length, false, m_address, m_port);
+	bool res = header->setDExtraData(m_buffer, m_length, false, m_yourAddress, m_yourPort, m_myPort);
 	if (!res) {
 		delete header;
 		return NULL;
@@ -175,7 +181,7 @@ CAMBEData* CDExtraProtocolHandler::readAMBE()
 
 	CAMBEData* data = new CAMBEData;
 
-	bool res = data->setDExtraData(m_buffer, m_length, m_address, m_port);
+	bool res = data->setDExtraData(m_buffer, m_length, m_yourAddress, m_yourPort, m_myPort);
 	if (!res) {
 		delete data;
 		return NULL;
@@ -191,7 +197,7 @@ CPollData* CDExtraProtocolHandler::readPoll()
 
 	CPollData* poll = new CPollData;
 
-	bool res = poll->setDExtraData(m_buffer, m_length, m_address, m_port);
+	bool res = poll->setDExtraData(m_buffer, m_length, m_yourAddress, m_yourPort, m_myPort);
 	if (!res) {
 		delete poll;
 		return NULL;
@@ -207,7 +213,7 @@ CConnectData* CDExtraProtocolHandler::readConnect()
 
 	CConnectData* connect = new CConnectData;
 
-	bool res = connect->setDExtraData(m_buffer, m_length, m_address, m_port);
+	bool res = connect->setDExtraData(m_buffer, m_length, m_yourAddress, m_yourPort, m_myPort);
 	if (!res) {
 		delete connect;
 		return NULL;
