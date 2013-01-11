@@ -1,4 +1,4 @@
-Repeater - 20121220
+Repeater - 20130111
 ===================
 
 20090530
@@ -1762,9 +1762,10 @@ Updated XRF008s IP address.
 Add Ethernet support for the DVRPTR-V2 hardware.
 Add support for the Raspberry Pi GPIO port.
 
-201301xx
+20130111
 --------
 
 Make the frame wait time configurable in the Split Repeater.
 Allow for empty beacons in the Analogue Repeater to suppress them.
+Convert old DV-RPTR configuration values (Windows only).
 Added DCS019.

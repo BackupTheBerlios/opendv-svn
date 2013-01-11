@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ const wxString  KEY_MODEM_CONNECTION   = wxT("modemConnection");
 const wxString  KEY_MODEM_USBPORT      = wxT("modemUSBPort");
 const wxString  KEY_MODEM_USBPATH      = wxT("modemUSBPath");
 const wxString  KEY_MODEM_ADDRESS      = wxT("modemAddress");
+const wxString  KEY_MODEM_PATH         = wxT("modemPath");					// XXX
 const wxString  KEY_MODEM_PORT         = wxT("modemPort");
 const wxString  KEY_MODEM_RXINVERT     = wxT("modemRXInvert");
 const wxString  KEY_MODEM_TXINVERT     = wxT("modemTXInvert");
@@ -235,17 +236,40 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_MODEM_VERSION, &temp, long(DEFAULT_MODEM_VERSION));
 	m_modemVersion = DVRPTR_VERSION(temp);
 
-	m_config->Read(m_name + KEY_MODEM_CONNECTION, &temp, long(DEFAULT_MODEM_CONNECTION));
-	m_modemConnection = CONNECTION_TYPE(temp);
+	if (m_config->Exists(m_name + KEY_MODEM_PATH)) {
+		wxLogWarning(wxT("Found old configuration values, upgrading"));
+														
+		m_config->Read(m_name + KEY_MODEM_PORT, &m_modemUSBPort, DEFAULT_MODEM_USBPORT);
 
-	m_config->Read(m_name + KEY_MODEM_USBPORT, &m_modemUSBPort, DEFAULT_MODEM_USBPORT);
+		m_config->Read(m_name + KEY_MODEM_PATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
 
-	m_config->Read(m_name + KEY_MODEM_USBPATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
+		m_config->Write(m_name + KEY_MODEM_CONNECTION, long(DEFAULT_MODEM_CONNECTION));
+		m_modemConnection = DEFAULT_MODEM_CONNECTION;
 
-	m_config->Read(m_name + KEY_MODEM_ADDRESS, &m_modemAddress, DEFAULT_MODEM_ADDRESS);
+		m_config->Write(m_name + KEY_MODEM_USBPORT, m_modemUSBPort);
 
-	m_config->Read(m_name + KEY_MODEM_PORT, &temp, long(DEFAULT_MODEM_PORT));
-	m_modemPort = (unsigned int)temp;
+		m_config->Write(m_name + KEY_MODEM_USBPATH, m_modemUSBPath);
+
+		m_config->Write(m_name + KEY_MODEM_ADDRESS, DEFAULT_MODEM_ADDRESS);
+		m_modemAddress = DEFAULT_MODEM_ADDRESS;
+
+		m_config->Write(m_name + KEY_MODEM_PORT, long(DEFAULT_MODEM_PORT));
+		m_modemPort = DEFAULT_MODEM_PORT;
+
+		m_config->DeleteEntry(m_name + KEY_MODEM_PATH);
+	} else {
+		m_config->Read(m_name + KEY_MODEM_CONNECTION, &temp, long(DEFAULT_MODEM_CONNECTION));
+		m_modemConnection = CONNECTION_TYPE(temp);
+
+		m_config->Read(m_name + KEY_MODEM_USBPORT, &m_modemUSBPort, DEFAULT_MODEM_USBPORT);
+
+		m_config->Read(m_name + KEY_MODEM_USBPATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
+
+		m_config->Read(m_name + KEY_MODEM_ADDRESS, &m_modemAddress, DEFAULT_MODEM_ADDRESS);
+
+		m_config->Read(m_name + KEY_MODEM_PORT, &temp, long(DEFAULT_MODEM_PORT));
+		m_modemPort = (unsigned int)temp;
+	}
 
 	m_config->Read(m_name + KEY_MODEM_RXINVERT, &m_rxInvert, DEFAULT_MODEM_RXINVERT);
 
@@ -815,6 +839,8 @@ void CDVRPTRRepeaterConfig::setPosition(int x, int y)
 
 bool CDVRPTRRepeaterConfig::write()
 {
+	m_config->DeleteEntry(m_name + KEY_MODEM_PATH);			// XXX
+
 	m_config->Write(m_name + KEY_CALLSIGN, m_callsign);
 	m_config->Write(m_name + KEY_GATEWAY, m_gateway);
 	m_config->Write(m_name + KEY_MODE, long(m_mode));
