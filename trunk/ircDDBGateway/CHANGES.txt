@@ -1,4 +1,4 @@
-ircDDB Gateway - 20121227
+ircDDB Gateway - 20130111
 =========================
 
 20101010
@@ -1166,9 +1166,11 @@ ID rewriting for Icom repeaters.
 Fixed silly link pool bug(s).
 Fixed StarNET Digital compile problem.
 
-201301xx
+20130111
 --------
 
 Updated the host name of the Italian test ircDDB server.
+Handle DCS NAK replies to a link request properly.
+Handle multiple reflector links better.
 Changed gateway loopback behaviour.
 Added DCS019.

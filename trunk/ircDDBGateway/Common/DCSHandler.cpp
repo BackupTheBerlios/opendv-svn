@@ -582,7 +582,7 @@ bool CDCSHandler::processInt(CConnectData& connect, CD_TYPE type)
 			if (!m_repeater.IsSameAs(repeater))
 				return false;
 
-			if (m_linkState == DCS_UNLINKING) {
+			if (m_linkState == DCS_LINKING || m_linkState == DCS_UNLINKING) {
 				wxLogMessage(wxT("DCS NAK message received from %s"), m_reflector.c_str());
 
 				if (m_direction == DIR_OUTGOING && m_destination != NULL)
