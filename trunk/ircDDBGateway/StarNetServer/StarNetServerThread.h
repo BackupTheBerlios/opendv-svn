@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 #ifndef	StarNetServerThread_H
 #define	StarNetServerThread_H
 
-#include "DExtraProtocolHandlerPool.h"		// DEXTRA_LINK
 #include "DCSProtocolHandlerPool.h"			// DCS_LINK
+#include "DExtraProtocolHandler.h"		// DEXTRA_LINK
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -57,10 +57,10 @@ private:
 	wxString                m_callsign;
 	wxString                m_address;
 #if defined(DEXTRA_LINK)
-	CDExtraProtocolHandlerPool* m_dextraPool;
+	CDExtraProtocolHandler*  m_dextraHandler;
 #endif
 #if defined(DCS_LINK)
-	CDCSProtocolHandlerPool*    m_dcsPool;
+	CDCSProtocolHandlerPool* m_dcsPool;
 #endif
 	CG2ProtocolHandler*     m_g2Handler;
 	CIRCDDB*                m_irc;

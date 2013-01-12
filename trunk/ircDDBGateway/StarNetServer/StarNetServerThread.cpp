@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ m_stopped(true),
 m_callsign(),
 m_address(),
 #if defined(DEXTRA_LINK)
-m_dextraPool(NULL),
+m_dextraHandler(NULL),
 #endif
 #if defined(DCS_LINK)
 m_dcsPool(NULL),
@@ -94,12 +94,12 @@ void CStarNetServerThread::run()
 		file.Close();
 
 #if defined(DEXTRA_LINK)
-	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_DEXTRA_LINKS, DEXTRA_PORT, m_address);
-	ret = m_dextraPool->open();
+	m_dextraHandler = new CDExtraProtocolHandler(DEXTRA_PORT, m_address);
+	ret = m_dextraHandler->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the DExtra protocol pool"));
-		delete m_dextraPool;
-		m_dextraPool = NULL;
+		wxLogError(wxT("Could not open the DExtra protocol handler"));
+		delete m_dextraHandler;
+		m_dextraHandler = NULL;
 	}
 #endif
 
@@ -123,7 +123,7 @@ void CStarNetServerThread::run()
 
 	// Wait here until we have the essentials to run
 #if defined(DEXTRA_LINK)
-	while (!m_killed && (m_g2Handler == NULL || m_dextraPool == NULL || m_irc == NULL || m_callsign.IsEmpty()))
+	while (!m_killed && (m_g2Handler == NULL || m_dextraHandler == NULL || m_irc == NULL || m_callsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 #elif defined(DCS_LINK)
 	while (!m_killed && (m_g2Handler == NULL || m_dcsPool == NULL || m_irc == NULL || m_callsign.IsEmpty()))
@@ -159,7 +159,7 @@ void CStarNetServerThread::run()
 
 #if defined(DEXTRA_LINK)
 	CDExtraHandler::setCallsign(m_callsign);
-	CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraPool);
+	CDExtraHandler::setDExtraProtocolHandler(m_dextraHandler);
 	CDExtraHandler::setHeaderLogger(headerLogger);
 #endif
 #if defined(DCS_LINK)
@@ -225,8 +225,8 @@ void CStarNetServerThread::run()
 	// Unlink from all reflectors
 	CDExtraHandler::unlink();
 
-	m_dextraPool->close();
-	delete m_dextraPool;
+	m_dextraHandler->close();
+	delete m_dextraHandler;
 #endif
 
 #if defined(DCS_LINK)
@@ -405,17 +405,15 @@ void CStarNetServerThread::processIrcDDB()
 #if defined(DEXTRA_LINK)
 void CStarNetServerThread::processDExtra()
 {
-	m_dextraPool->start();
-
 	for (;;) {
-		DEXTRA_TYPE type = m_dextraPool->read();
+		DEXTRA_TYPE type = m_dextraHandler->read();
 
 		switch (type) {
 			case DE_NONE:
 				return;
 
 			case DE_POLL: {
-					CPollData* poll = m_dextraPool->readPoll();
+					CPollData* poll = m_dextraHandler->readPoll();
 					if (poll != NULL) {
 						CDExtraHandler::process(*poll);
 						delete poll;
@@ -424,7 +422,7 @@ void CStarNetServerThread::processDExtra()
 				break;
 
 			case DE_CONNECT: {
-					CConnectData* connect = m_dextraPool->readConnect();
+					CConnectData* connect = m_dextraHandler->readConnect();
 					if (connect != NULL) {
 						CDExtraHandler::process(*connect);
 						delete connect;
@@ -433,7 +431,7 @@ void CStarNetServerThread::processDExtra()
 				break;
 
 			case DE_HEADER: {
-					CHeaderData* header = m_dextraPool->readHeader();
+					CHeaderData* header = m_dextraHandler->readHeader();
 					if (header != NULL) {
 						// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDExtraHandler::process(*header);
@@ -443,7 +441,7 @@ void CStarNetServerThread::processDExtra()
 				break;
 
 			case DE_AMBE: {
-					CAMBEData* data = m_dextraPool->readAMBE();
+					CAMBEData* data = m_dextraHandler->readAMBE();
 					if (data != NULL) {
 						CDExtraHandler::process(*data);
 						delete data;

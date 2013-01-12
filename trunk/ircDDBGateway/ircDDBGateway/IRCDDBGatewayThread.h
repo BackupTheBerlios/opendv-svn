@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
-#include "DExtraProtocolHandlerPool.h"
 #include "DPlusProtocolHandlerPool.h"
 #include "RepeaterProtocolHandler.h"
 #include "IRCDDBGatewayStatusData.h"
 #include "DCSProtocolHandlerPool.h"
+#include "DExtraProtocolHandler.h"
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -77,7 +77,7 @@ private:
 	wxString                  m_gatewayAddress;
 	CIcomRepeaterProtocolHandler* m_icomRepeaterHandler;
 	CHBRepeaterProtocolHandler*   m_hbRepeaterHandler;
-	CDExtraProtocolHandlerPool*   m_dextraPool;
+	CDExtraProtocolHandler*       m_dextraHandler;
 	CDPlusProtocolHandlerPool*    m_dplusPool;
 	CDCSProtocolHandlerPool*      m_dcsPool;
 	CG2ProtocolHandler*       m_g2Handler;

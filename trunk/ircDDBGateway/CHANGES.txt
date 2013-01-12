@@ -1179,3 +1179,4 @@ Added DCS019.
 --------
 
 Allow link refusals to be logged and sent to the repeater as temporary ack text.
+Revert DExtra handling to the old behaviour.

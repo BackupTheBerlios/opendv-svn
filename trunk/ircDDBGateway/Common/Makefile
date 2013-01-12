@@ -4,7 +4,7 @@ CFLAGS :=		-I../ircDDB $(CFLAGS)
 
 Common.a:		AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterThread.o AudioUnit.o CacheManager.o CallsignServer.o \
 				CallsignTextCtrl.o CCITTChecksum.o ConnectData.o DCSHandler.o DCSProtocolHandler.o DCSProtocolHandlerPool.o DCSSet.o DDData.o DDHandler.o \
-				DExtraHandler.o DExtraProtocolHandler.o DExtraProtocolHandlerPool.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o \
+				DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o \
 				DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o EchoUnit.o G2Handler.o G2ProtocolHandler.o GatewayCache.o \
 				HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o IrcDDBSet.o LogEvent.o Logger.o \
 				PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o RemoteStarNetGroup.o \
@@ -13,7 +13,7 @@ Common.a:		AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterT
 				UserCache.o Utils.o VersionUnit.o
 				$(AR) rcs Common.a AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterThread.o AudioUnit.o CacheManager.o \
 				CallsignServer.o CallsignTextCtrl.o CCITTChecksum.o ConnectData.o DCSHandler.o DCSProtocolHandler.o DCSProtocolHandlerPool.o DCSSet.o DDData.o \
-				DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraProtocolHandlerPool.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o \
+				DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o \
 				DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o EchoUnit.o G2Handler.o G2ProtocolHandler.o GatewayCache.o \
 				HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o IrcDDBSet.o LogEvent.o Logger.o \
 				PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o RemoteStarNetGroup.o \
@@ -73,16 +73,13 @@ DDData.o:		DDData.cpp DDData.h DStarDefines.h Utils.h HeaderData.h
 DDHandler.o:	DDHandler.cpp DDHandler.h DDData.h RepeaterHandler.h HeaderLogger.h Defs.h Timer.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c DDHandler.cpp
 
-DExtraHandler.o:	DExtraHandler.cpp DExtraHandler.h DStarDefines.h RepeaterHandler.h Utils.h DExtraProtocolHandlerPool.h DExtraProtocolHandler.h \
+DExtraHandler.o:	DExtraHandler.cpp DExtraHandler.h DStarDefines.h RepeaterHandler.h Utils.h DExtraProtocolHandler.h \
 					ConnectData.h HeaderData.h AMBEData.h PollData.h Timer.h Defs.h HeaderLogger.h ReflectorCallback.h
 				$(CC) $(CFLAGS) -c DExtraHandler.cpp
 
 DExtraProtocolHandler.o:	DExtraProtocolHandler.cpp DExtraProtocolHandler.h HeaderData.h AMBEData.h UDPReaderWriter.h DStarDefines.h Timer.h Utils.h \
 							ConnectData.h PollData.h
 				$(CC) $(CFLAGS) -c DExtraProtocolHandler.cpp
-
-DExtraProtocolHandlerPool.o:	DExtraProtocolHandlerPool.cpp DExtraProtocolHandlerPool.h DExtraProtocolHandler.h
-				$(CC) $(CFLAGS) -c DExtraProtocolHandlerPool.cpp
 
 DExtraSet.o:	DExtraSet.cpp DExtraSet.h
 				$(CC) $(CFLAGS) -c DExtraSet.cpp
