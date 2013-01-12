@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ public:
 
 	NETWORK_TYPE read();
 	void         readText(wxString& text, LINK_STATUS& status, wxString& reflector);
+	void         readTempText(wxString& text, LINK_STATUS& status, wxString& reflector);
 	wxString     readStatus1();
 	wxString     readStatus2();
 	wxString     readStatus3();

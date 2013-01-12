@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 
 class CTextData {
 public:
-	CTextData(LINK_STATUS status, const wxString& reflector, const wxString& text, const in_addr& address, unsigned int port);
+	CTextData(LINK_STATUS status, const wxString& reflector, const wxString& text, const in_addr& address, unsigned int port, bool temporary = false);
 	virtual ~CTextData();
 
 	unsigned int getHBRepeaterData(unsigned char* data, unsigned int length) const;
@@ -44,6 +44,7 @@ private:
 	unsigned char* m_text;
 	in_addr        m_address;
 	unsigned int   m_port;
+	bool           m_temporary;
 };
 
 #endif

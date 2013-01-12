@@ -1769,3 +1769,8 @@ Make the frame wait time configurable in the Split Repeater.
 Allow for empty beacons in the Analogue Repeater to suppress them.
 Convert old DV-RPTR configuration values (Windows only).
 Added DCS019.
+
+201301xx
+--------
+
+Allow for temporary ack text.

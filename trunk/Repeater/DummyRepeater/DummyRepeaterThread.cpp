@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -297,6 +297,10 @@ void CDummyRepeaterThread::receive()
 				LINK_STATUS status;
 				m_protocol->readText(text, status, reflector);
 				::wxGetApp().showSlowData(text);
+			} else if (type == NETWORK_TEMPTEXT) {
+				wxString text, reflector;
+				LINK_STATUS status;
+				m_protocol->readTempText(text, status, reflector);
 			} else if (type == NETWORK_STATUS1) {
 				wxString text = m_protocol->readStatus1();
 				::wxGetApp().showStatus1(text);

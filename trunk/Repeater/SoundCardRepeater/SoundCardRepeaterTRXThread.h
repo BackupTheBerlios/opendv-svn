@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -194,6 +194,7 @@ private:
 	unsigned int              m_timeCount;
 	unsigned int              m_lastHour;
 	wxString                  m_ackText;
+	wxString                  m_tempAckText;
 	LINK_STATUS               m_linkStatus;
 	wxString                  m_reflector;
 	wxString                  m_status1Text;

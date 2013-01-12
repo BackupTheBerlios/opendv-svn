@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -117,7 +117,8 @@ public:
 	virtual bool process(CDDData& data);
 
 	virtual void linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign);
-	virtual bool linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable);
+	virtual void linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign);
+	virtual bool linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable);
 
 protected:
 	CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);
@@ -254,6 +255,7 @@ private:
 	void sendToIncoming(const CHeaderData& header);
 	void sendToIncoming(const CAMBEData& data);
 
+	void writeIsBusy(const wxString& callsign);
 	void writeLinkedTo(const wxString& callsign);
 	void writeLinkingTo(const wxString& callsign);
 	void writeNotLinked();

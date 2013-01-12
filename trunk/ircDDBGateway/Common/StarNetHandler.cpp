@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -1210,7 +1210,7 @@ void CStarNetHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
 	m_linkStatus = LS_LINKED_DEXTRA;
 }
 
-bool CStarNetHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
+bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
 {
 	if (!isRecoverable) {
 		if (m_linkStatus != LS_NONE) {
@@ -1230,6 +1230,14 @@ bool CStarNetHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign
 	return false;
 }
 
+void CStarNetHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign)
+{
+	if (m_linkStatus != LS_NONE) {
+		wxLogMessage(wxT("DExtra link to %s was refused"), callsign.c_str());
+		m_linkStatus = LS_NONE;
+	}
+}
+
 bool CStarNetHandler::singleHeader()
 {
 	return true;
@@ -1244,7 +1252,15 @@ void CStarNetHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
 	m_linkStatus = LS_LINKED_DCS;
 }
 
-bool CStarNetHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
+void CStarNetHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign)
+{
+	if (m_linkStatus != LS_NONE) {
+		wxLogMessage(wxT("DCS link to %s was refused"), callsign.c_str());
+		m_linkStatus = LS_NONE;
+	}
+}
+
+bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
 {
 	if (!isRecoverable) {
 		if (m_linkStatus != LS_NONE) {

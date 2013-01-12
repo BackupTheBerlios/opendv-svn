@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -299,6 +299,11 @@ bool CRepeaterProtocolHandler::readPackets()
 			return false;
 		}
 
+		if (m_buffer[4] == 0x01U) {
+			m_type = NETWORK_TEMPTEXT;
+			return false;
+		}
+
 		// Status data 1
 		else if (m_buffer[4] == 0x04U && m_buffer[5] == 0x00U) {
 			m_type = NETWORK_STATUS1;
@@ -415,11 +420,26 @@ void CRepeaterProtocolHandler::readText(wxString& text, LINK_STATUS& status, wxS
 
 	text = wxString((char*)(m_buffer + 5U), wxConvLocal, 20U);
 
-	// Backwards compatibility
-	if (m_length > 30U) {
-		status = LINK_STATUS(m_buffer[25U]);
-		reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
+	status = LINK_STATUS(m_buffer[25U]);
+
+	reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
+}
+
+void CRepeaterProtocolHandler::readTempText(wxString& text, LINK_STATUS& status, wxString& reflector)
+{
+	reflector = wxT("        ");
+	status    = LS_NONE;
+
+	if (m_type != NETWORK_TEMPTEXT) {
+		text = wxT("                    ");
+		return;
 	}
+
+	text = wxString((char*)(m_buffer + 5U), wxConvLocal, 20U);
+
+	status = LINK_STATUS(m_buffer[25U]);
+
+	reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
 }
 
 wxString CRepeaterProtocolHandler::readStatus1()

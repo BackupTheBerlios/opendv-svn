@@ -1174,3 +1174,8 @@ Handle DCS NAK replies to a link request properly.
 Handle multiple reflector links better.
 Changed gateway loopback behaviour.
 Added DCS019.
+
+201301xx
+--------
+
+Allow link refusals to be logged and sent to the repeater as temporary ack text.

@@ -410,7 +410,7 @@ void CDCSHandler::gatewayUpdate(const wxString& reflector, const wxString& addre
 
 					// No address, this probably shouldn't happen....
 					if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination != NULL)
-						reflector->m_destination->linkDown(DP_DCS, reflector->m_reflector, false);
+						reflector->m_destination->linkFailed(DP_DCS, reflector->m_reflector, false);
 
 					m_stateChange = true;
 
@@ -582,11 +582,20 @@ bool CDCSHandler::processInt(CConnectData& connect, CD_TYPE type)
 			if (!m_repeater.IsSameAs(repeater))
 				return false;
 
-			if (m_linkState == DCS_LINKING || m_linkState == DCS_UNLINKING) {
+			if (m_linkState == DCS_LINKING) {
 				wxLogMessage(wxT("DCS NAK message received from %s"), m_reflector.c_str());
 
 				if (m_direction == DIR_OUTGOING && m_destination != NULL)
-					m_destination->linkDown(DP_DCS, m_reflector, false);
+					m_destination->linkRefused(DP_DCS, m_reflector);
+
+				return true;
+			}
+
+			if (m_linkState == DCS_UNLINKING) {
+				wxLogMessage(wxT("DCS NAK message received from %s"), m_reflector.c_str());
+
+				if (m_direction == DIR_OUTGOING && m_destination != NULL)
+					m_destination->linkFailed(DP_DCS, m_reflector, false);
 
 				return true;
 			}
@@ -601,7 +610,7 @@ bool CDCSHandler::processInt(CConnectData& connect, CD_TYPE type)
 				wxLogMessage(wxT("DCS disconnect message received from %s"), m_reflector.c_str());
 
 				if (m_direction == DIR_OUTGOING && m_destination != NULL)
-					m_destination->linkDown(DP_DCS, m_reflector, false);
+					m_destination->linkFailed(DP_DCS, m_reflector, false);
 
 				m_stateChange = true;
 			}
@@ -643,7 +652,7 @@ bool CDCSHandler::clockInt(unsigned int ms)
 		}
 
 		if (m_direction == DIR_OUTGOING) {
-			bool reconnect = m_destination->linkDown(DP_DCS, m_reflector, true);
+			bool reconnect = m_destination->linkFailed(DP_DCS, m_reflector, true);
 			if (reconnect) {
 				CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_yourAddress, m_yourPort);
 				m_handler->writeConnect(reply);

@@ -1443,7 +1443,7 @@ void CRepeaterHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
 	}
 }
 
-bool CRepeaterHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
+bool CRepeaterHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
 {
 	// Is relink to another module required?
 	if (!isRecoverable && m_linkRelink) {
@@ -1558,6 +1558,41 @@ bool CRepeaterHandler::linkDown(DSTAR_PROTOCOL protocol, const wxString& callsig
 	}
 
 	return false;
+}
+
+void CRepeaterHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign)
+{
+	if (protocol == DP_DEXTRA && callsign.IsSameAs(m_linkRepeater)) {
+		wxLogMessage(wxT("DExtra link to %s was refused"), m_linkRepeater.c_str());
+		m_linkRepeater.Clear();
+		m_linkStatus = LS_NONE;
+		writeIsBusy(callsign);
+		triggerInfo();
+	}
+
+	if (protocol == DP_DPLUS && callsign.IsSameAs(m_linkRepeater)) {
+		wxLogMessage(wxT("D-Plus link to %s was refused"), m_linkRepeater.c_str());
+		m_linkRepeater.Clear();
+		m_linkStatus = LS_NONE;
+		writeIsBusy(callsign);
+		triggerInfo();
+	}
+
+	if (protocol == DP_DCS && callsign.IsSameAs(m_linkRepeater)) {
+		wxLogMessage(wxT("DCS link to %s was refused"), m_linkRepeater.c_str());
+		m_linkRepeater.Clear();
+		m_linkStatus = LS_NONE;
+		writeIsBusy(callsign);
+		triggerInfo();
+	}
+
+	if (protocol == DP_LOOPBACK && callsign.IsSameAs(m_linkRepeater)) {
+		wxLogMessage(wxT("Loopback link to %s was refused"), m_linkRepeater.c_str());
+		m_linkRepeater.Clear();
+		m_linkStatus = LS_NONE;
+		writeIsBusy(callsign);
+		triggerInfo();
+	}
 }
 
 void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
@@ -2262,6 +2297,63 @@ void CRepeaterHandler::writeNotLinked()
 			text = wxT("Not linked");
 			break;
 	}
+
+	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
+	m_repeaterHandler->writeText(textData);
+
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+}
+
+void CRepeaterHandler::writeIsBusy(const wxString& callsign)
+{
+	wxString tempText;
+	wxString text;
+
+	switch (m_language) {
+		case TL_DEUTSCH:
+			text = wxT("Nicht verbunden");
+			tempText.Printf(wxT("%s ist besetzt"), callsign.c_str());
+			break;
+		case TL_DANSK:
+			text = wxT("Ikke forbundet");
+			tempText.Printf(wxT("%s er optaget"), callsign.c_str());
+			break;
+		case TL_FRANCAIS:
+			text = wxT("Non connecte");
+			tempText.Printf(wxT("%s est occupee"), callsign.c_str());
+			break;
+		case TL_ITALIANO:
+			text = wxT("Non connesso");
+			tempText.Printf(wxT("%s e occupato"), callsign.c_str());
+			break;
+		case TL_POLSKI:
+			text = wxT("Nie polaczony");
+			tempText.Printf(wxT("%s jest zajety"), callsign.c_str());
+			break;
+		case TL_ESPANOL:
+			text = wxT("No enlazado");
+			tempText.Printf(wxT("%s esta ocupado"), callsign.c_str());
+			break;
+		case TL_SVENSKA:
+			text = wxT("Ej lankad");
+			tempText.Printf(wxT("%s ar upptagen"), callsign.c_str());
+			break;
+		case TL_NEDERLANDS_NL:
+		case TL_NEDERLANDS_BE:
+			text = wxT("Niet gelinkt");
+			tempText.Printf(wxT("%s is bezig"), callsign.c_str());
+			break;
+		case TL_NORSK:
+			text = wxT("Ikke linket");
+			tempText.Printf(wxT("%s er opptatt"), callsign.c_str());
+			break;
+		default:
+			tempText.Printf(wxT("%s is busy"), callsign.c_str());
+			break;
+	}
+
+	CTextData tempTextData(LS_NONE, wxEmptyString, tempText, m_address, m_port, true);
+	m_repeaterHandler->writeText(tempTextData);
 
 	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);

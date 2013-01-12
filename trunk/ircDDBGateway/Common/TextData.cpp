@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@
 #include "DStarDefines.h"
 #include "Utils.h"
 
-CTextData::CTextData(LINK_STATUS status, const wxString& reflector, const wxString& text, const in_addr& address, unsigned int port) :
+CTextData::CTextData(LINK_STATUS status, const wxString& reflector, const wxString& text, const in_addr& address, unsigned int port, bool temporary) :
 m_status(status),
 m_reflector(NULL),
 m_text(NULL),
 m_address(address),
-m_port(port)
+m_port(port),
+m_temporary(temporary)
 {
 	wxASSERT(port > 0U);
 
@@ -61,7 +62,10 @@ unsigned int CTextData::getHBRepeaterData(unsigned char *data, unsigned int leng
 	data[2] = 'R';
 	data[3] = 'P';
 
-	data[4] = 0x00;					// Permanent text data
+	if (m_temporary)
+		data[4] = 0x01U;					// Temporary text data
+	else
+		data[4] = 0x00U;					// Permanent text data
 
 	::memcpy(data + 5U, m_text, 20U);
 

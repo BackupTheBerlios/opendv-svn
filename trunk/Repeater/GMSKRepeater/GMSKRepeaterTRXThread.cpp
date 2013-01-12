@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -116,6 +116,7 @@ m_ambeErrors(0U),
 m_lastAMBEBits(0U),
 m_lastAMBEErrors(0U),
 m_ackText(),
+m_tempAckText(),
 m_linkStatus(LS_NONE),
 m_reflector(),
 m_status1Text(),
@@ -688,6 +689,9 @@ void CGMSKRepeaterTRXThread::receiveNetwork()
 			m_protocolHandler->readText(m_ackText, m_linkStatus, m_reflector);
 			m_linkEncoder.setTextData(m_ackText);
 			wxLogMessage(wxT("Slow data set to \"%s\""), m_ackText.c_str());
+		} else if (type == NETWORK_TEMPTEXT) {			// Temporary slow data text for the Ack
+			m_protocolHandler->readTempText(m_tempAckText, m_linkStatus, m_reflector);
+			wxLogMessage(wxT("Temporary slow data set to \"%s\""), m_tempAckText.c_str());
 		} else if (type == NETWORK_STATUS1) {		// Status 1 data text
 			m_status1Text = m_protocolHandler->readStatus1();
 			m_status1Encoder.setTextData(m_status1Text);
@@ -1696,16 +1700,21 @@ void CGMSKRepeaterTRXThread::endOfRadioData()
 		case DSRS_VALID:
 			wxLogMessage(wxT("AMBE for %s  Frames: %.1fs, Silence: %.1f%%, BER: %.1f%%"), m_rxHeader->getMyCall1().c_str(), float(m_ambeFrames) / 50.0F, float(m_ambeSilence * 100U) / float(m_ambeFrames), float(m_ambeErrors * 100U) / float(m_ambeBits));
 
-			if (m_ack == AT_BER) {
-				// Create the ack text with the linked reflector and BER
-				wxString ackText;
-				if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS)
-					ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				else
-					ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				m_ackEncoder.setTextData(ackText);
+			if (m_tempAckText.IsEmpty()) {
+				if (m_ack == AT_BER) {
+					// Create the ack text with the linked reflector and BER
+					wxString ackText;
+					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS)
+						ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					else
+						ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					m_ackEncoder.setTextData(ackText);
+				} else {
+					m_ackEncoder.setTextData(m_ackText);
+				}
 			} else {
-				m_ackEncoder.setTextData(m_ackText);
+				m_ackEncoder.setTextData(m_tempAckText);
+				m_tempAckText.Clear();
 			}
 
 			if (m_ack != AT_NONE || m_mode == MODE_GATEWAY) {
@@ -1730,16 +1739,21 @@ void CGMSKRepeaterTRXThread::endOfRadioData()
 		case DSRS_TIMEOUT:
 			wxLogMessage(wxT("AMBE for %s  Frames: %.1fs, Silence: %.1f%%, BER: %.1f%%"), m_rxHeader->getMyCall1().c_str(), float(m_ambeFrames) / 50.0F, float(m_ambeSilence * 100U) / float(m_ambeFrames), float(m_ambeErrors * 100U) / float(m_ambeBits));
 
-			if (m_ack == AT_BER) {
-				// Create the ack text with the linked reflector and BER
-				wxString ackText;
-				if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS)
-					ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				else
-					ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				m_ackEncoder.setTextData(ackText);
+			if (m_tempAckText.IsEmpty()) {
+				if (m_ack == AT_BER) {
+					// Create the ack text with the linked reflector and BER
+					wxString ackText;
+					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS)
+						ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					else
+						ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					m_ackEncoder.setTextData(ackText);
+				} else {
+					m_ackEncoder.setTextData(m_ackText);
+				}
 			} else {
-				m_ackEncoder.setTextData(m_ackText);
+				m_ackEncoder.setTextData(m_tempAckText);
+				m_tempAckText.Clear();
 			}
 
 			if (m_ack != AT_NONE || m_mode == MODE_GATEWAY) {

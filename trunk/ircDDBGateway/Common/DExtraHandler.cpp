@@ -445,7 +445,7 @@ void CDExtraHandler::unlink(IReflectorCallback* handler, const wxString& exclude
 
 					reflector->m_linkState = DEXTRA_UNLINKING;
 
-					reflector->m_destination->linkDown(DP_DEXTRA, reflector->m_reflector, false);
+					reflector->m_destination->linkFailed(DP_DEXTRA, reflector->m_reflector, false);
 				}
 
 				// If an active link with incoming traffic, send an EOT to the repeater
@@ -524,7 +524,7 @@ void CDExtraHandler::gatewayUpdate(const wxString& reflector, const wxString& ad
 
 					// No address, this probably shouldn't happen....
 					if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination != NULL)
-						reflector->m_destination->linkDown(DP_DEXTRA, reflector->m_reflector, false);
+						reflector->m_destination->linkFailed(DP_DEXTRA, reflector->m_reflector, false);
 
 					m_stateChange = true;
 
@@ -722,7 +722,7 @@ bool CDExtraHandler::processInt(CConnectData& connect, CD_TYPE type)
 				wxLogMessage(wxT("DExtra NAK message received from %s"), m_reflector.c_str());
 
 				if (m_direction == DIR_OUTGOING && m_destination != NULL)
-					m_destination->linkDown(DP_DEXTRA, m_reflector, false);
+					m_destination->linkRefused(DP_DEXTRA, m_reflector);
 
 				return true;
 			}
@@ -737,7 +737,7 @@ bool CDExtraHandler::processInt(CConnectData& connect, CD_TYPE type)
 				wxLogMessage(wxT("DExtra disconnect message received from %s"), m_reflector.c_str());
 
 				if (m_direction == DIR_OUTGOING && m_destination != NULL)
-					m_destination->linkDown(DP_DEXTRA, m_reflector, false);
+					m_destination->linkFailed(DP_DEXTRA, m_reflector, false);
 
 				m_stateChange = true;
 			}
@@ -782,7 +782,7 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 		}
 
 		if (m_direction == DIR_OUTGOING) {
-			bool reconnect = m_destination->linkDown(DP_DEXTRA, m_reflector, true);
+			bool reconnect = m_destination->linkFailed(DP_DEXTRA, m_reflector, true);
 			if (reconnect) {
 				CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_yourAddress, m_yourPort);
 				m_handler->writeConnect(reply);

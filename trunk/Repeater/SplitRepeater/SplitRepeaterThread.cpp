@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -108,6 +108,7 @@ m_ambeErrors(0U),
 m_lastAMBEBits(0U),
 m_lastAMBEErrors(0U),
 m_ackText(),
+m_tempAckText(),
 m_linkStatus(LS_NONE),
 m_reflector(),
 m_status1Text(),
@@ -626,6 +627,9 @@ void CSplitRepeaterThread::receiveNetwork()
 			m_protocolHandler->readText(m_ackText, m_linkStatus, m_reflector);
 			m_linkEncoder.setTextData(m_ackText);
 			wxLogMessage(wxT("Slow data set to \"%s\""), m_ackText.c_str());
+		} else if (type == NETWORK_TEMPTEXT) {			// Temporary slow data text for the Ack
+			m_protocolHandler->readTempText(m_tempAckText, m_linkStatus, m_reflector);
+			wxLogMessage(wxT("Temporary slow data set to \"%s\""), m_tempAckText.c_str());
 		} else if (type == NETWORK_STATUS1) {		// Status 1 data text
 			m_status1Text = m_protocolHandler->readStatus1();
 			m_status1Encoder.setTextData(m_status1Text);
@@ -1508,16 +1512,21 @@ void CSplitRepeaterThread::endOfRadioData()
 			if (m_totalPackets > 0U)
 				wxLogMessage(wxT("Diversity for %s  Frames: %u/%u/%u, Rejected: %u/%u, Chosen: %u/%u, %.1f%%/%.1f%%"), m_rxHeader->getMyCall1().c_str(), m_totalPackets, m_receiver1Packets, m_receiver2Packets, m_receiver1Rejected, m_receiver2Rejected, m_receiver1Choice, m_receiver2Choice, float(m_receiver1Choice * 100U) / float(m_totalPackets), float(m_receiver2Choice * 100U) / float(m_totalPackets));
 
-			if (m_ack == AT_BER) {
-				// Create the ack text with the linked reflector and BER
-				wxString ackText;
-				if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS)
-					ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				else
-					ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				m_ackEncoder.setTextData(ackText);
+			if (m_tempAckText.IsEmpty()) {
+				if (m_ack == AT_BER) {
+					// Create the ack text with the linked reflector and BER
+					wxString ackText;
+					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS)
+						ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					else
+						ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					m_ackEncoder.setTextData(ackText);
+				} else {
+					m_ackEncoder.setTextData(m_ackText);
+				}
 			} else {
-				m_ackEncoder.setTextData(m_ackText);
+				m_ackEncoder.setTextData(m_tempAckText);
+				m_tempAckText.Clear();
 			}
 
 			if (m_ack != AT_NONE || m_mode == MODE_GATEWAY)
@@ -1544,16 +1553,21 @@ void CSplitRepeaterThread::endOfRadioData()
 			if (m_totalPackets > 0U)
 				wxLogMessage(wxT("Diversity for %s  Frames: %u/%u/%u, Rejected: %u/%u, Chosen: %u/%u, %.1f%%/%.1f%%"), m_rxHeader->getMyCall1().c_str(), m_totalPackets, m_receiver1Packets, m_receiver2Packets, m_receiver1Rejected, m_receiver2Rejected, m_receiver1Choice, m_receiver2Choice, float(m_receiver1Choice * 100U) / float(m_totalPackets), float(m_receiver2Choice * 100U) / float(m_totalPackets));
 
-			if (m_ack == AT_BER) {
-				// Create the ack text with the linked reflector and BER
-				wxString ackText;
-				if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS)
-					ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				else
-					ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
-				m_ackEncoder.setTextData(ackText);
+			if (m_tempAckText.IsEmpty()) {
+				if (m_ack == AT_BER) {
+					// Create the ack text with the linked reflector and BER
+					wxString ackText;
+					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS)
+						ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					else
+						ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
+					m_ackEncoder.setTextData(ackText);
+				} else {
+					m_ackEncoder.setTextData(m_ackText);
+				}
 			} else {
-				m_ackEncoder.setTextData(m_ackText);
+				m_ackEncoder.setTextData(m_tempAckText);
+				m_tempAckText.Clear();
 			}
 
 			if (m_ack != AT_NONE || m_mode == MODE_GATEWAY)

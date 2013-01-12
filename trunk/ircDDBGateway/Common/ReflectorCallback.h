@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,9 @@ public:
 
 	virtual bool process(CAMBEData& data, AUDIO_SOURCE source) = 0;
 
-	virtual bool linkDown(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable) = 0;
+	virtual bool linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable) = 0;
+
+	virtual void linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign) = 0;
 
 	virtual void linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign) = 0;
 

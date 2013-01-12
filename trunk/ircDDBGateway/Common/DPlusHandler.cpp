@@ -477,7 +477,7 @@ void CDPlusHandler::gatewayUpdate(const wxString& gateway, const wxString& addre
 
 					// No address, this probably shouldn't happen....
 					if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination != NULL)
-						reflector->m_destination->linkDown(DP_DPLUS, reflector->m_reflector, false);
+						reflector->m_destination->linkFailed(DP_DPLUS, reflector->m_reflector, false);
 
 					m_stateChange = true;
 
@@ -629,7 +629,7 @@ bool CDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 				case CT_NAK:
 					if (m_linkState == DPLUS_LINKING) {
 						wxLogMessage(wxT("D-Plus NAK message received from %s"), m_reflector.c_str());
-						m_destination->linkDown(DP_DPLUS, m_reflector, false);
+						m_destination->linkRefused(DP_DPLUS, m_reflector);
 						CConnectData reply(CT_UNLINK, connect.getYourAddress(), connect.getYourPort());
 						m_handler->writeConnect(reply);
 						m_tryTimer.stop();
@@ -639,7 +639,7 @@ bool CDPlusHandler::processInt(CConnectData& connect, CD_TYPE type)
 				case CT_UNLINK:
 					if (m_linkState == DPLUS_UNLINKING) {
 						wxLogMessage(wxT("D-Plus disconnect acknowledgement received from %s"), m_reflector.c_str());
-						m_destination->linkDown(DP_DPLUS, m_reflector, false);
+						m_destination->linkFailed(DP_DPLUS, m_reflector, false);
 						m_stateChange = true;
 						m_tryTimer.stop();
 					}
@@ -721,7 +721,7 @@ bool CDPlusHandler::clockInt(unsigned int ms)
 		}
 
 		if (m_direction == DIR_OUTGOING) {
-			bool reconnect = m_destination->linkDown(DP_DPLUS, m_reflector, true);
+			bool reconnect = m_destination->linkFailed(DP_DPLUS, m_reflector, true);
 			if (reconnect) {
 				CConnectData connect(CT_LINK1, m_yourAddress, DPLUS_PORT);
 				m_handler->writeConnect(connect);
