@@ -2312,19 +2312,19 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 	switch (m_language) {
 		case TL_DEUTSCH:
 			text = wxT("Nicht verbunden");
-			tempText.Printf(wxT("%s ist besetzt"), callsign.c_str());
+			tempText.Printf(wxT("%s ist belegt"), callsign.c_str());
 			break;
 		case TL_DANSK:
 			text = wxT("Ikke forbundet");
-			tempText.Printf(wxT("%s er optaget"), callsign.c_str());
+			tempText.Printf(wxT("Optaget fra %s"), callsign.c_str());
 			break;
 		case TL_FRANCAIS:
 			text = wxT("Non connecte");
-			tempText.Printf(wxT("%s est occupee"), callsign.c_str());
+			tempText.Printf(wxT("Occupe par %s"), callsign.c_str());
 			break;
 		case TL_ITALIANO:
 			text = wxT("Non connesso");
-			tempText.Printf(wxT("%s e occupato"), callsign.c_str());
+			tempText.Printf(wxT("Occupado da%s"), callsign.c_str());
 			break;
 		case TL_POLSKI:
 			text = wxT("Nie polaczony");
@@ -2332,7 +2332,7 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 			break;
 		case TL_ESPANOL:
 			text = wxT("No enlazado");
-			tempText.Printf(wxT("%s esta ocupado"), callsign.c_str());
+			tempText.Printf(wxT("%s ocupado"), callsign.c_str());
 			break;
 		case TL_SVENSKA:
 			text = wxT("Ej lankad");
@@ -2341,13 +2341,14 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 		case TL_NEDERLANDS_NL:
 		case TL_NEDERLANDS_BE:
 			text = wxT("Niet gelinkt");
-			tempText.Printf(wxT("%s is bezig"), callsign.c_str());
+			tempText.Printf(wxT("%s is bezet"), callsign.c_str());
 			break;
 		case TL_NORSK:
 			text = wxT("Ikke linket");
 			tempText.Printf(wxT("%s er opptatt"), callsign.c_str());
 			break;
 		default:
+			text = wxT("Not linked");
 			tempText.Printf(wxT("%s is busy"), callsign.c_str());
 			break;
 	}
