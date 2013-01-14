@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -125,6 +125,8 @@ m_callsign(callsign),
 m_encoder(),
 m_status(AS_IDLE),
 m_linkStatus(LS_NONE),
+m_text(),
+m_tempText(),
 m_reflector(),
 m_timer(1000U, 2U),			// 2 seconds
 m_data(NULL),
@@ -154,6 +156,13 @@ void CAudioUnit::sendStatus()
 	if (m_status != AS_IDLE)
 		return;
 
+	if (!m_tempText.IsEmpty()) {
+		m_encoder.setTextData(m_text);
+	} else {
+		m_encoder.setTextData(m_tempText);
+		m_tempText.Clear();
+	}
+
 	m_status = AS_WAIT;
 	m_timer.start();
 }
@@ -162,8 +171,12 @@ void CAudioUnit::setStatus(LINK_STATUS status, const wxString& reflector, const 
 {
 	m_linkStatus = status;
 	m_reflector  = reflector;
+	m_text       = text;
+}
 
-	m_encoder.setTextData(text);
+void CAudioUnit::setTempText(const wxString& text)
+{
+	m_tempText = text;
 }
 
 void CAudioUnit::clock(unsigned int ms)

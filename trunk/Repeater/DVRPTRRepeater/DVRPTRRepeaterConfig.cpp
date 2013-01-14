@@ -243,6 +243,9 @@ m_y(DEFAULT_WINDOW_Y)
 
 		m_config->Read(m_name + KEY_MODEM_PATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
 
+		m_config->DeleteEntry(m_name + KEY_MODEM_PORT);
+		m_config->DeleteEntry(m_name + KEY_MODEM_PATH);
+
 		m_config->Write(m_name + KEY_MODEM_CONNECTION, long(DEFAULT_MODEM_CONNECTION));
 		m_modemConnection = DEFAULT_MODEM_CONNECTION;
 
@@ -255,8 +258,6 @@ m_y(DEFAULT_WINDOW_Y)
 
 		m_config->Write(m_name + KEY_MODEM_PORT, long(DEFAULT_MODEM_PORT));
 		m_modemPort = DEFAULT_MODEM_PORT;
-
-		m_config->DeleteEntry(m_name + KEY_MODEM_PATH);
 	} else {
 		m_config->Read(m_name + KEY_MODEM_CONNECTION, &temp, long(DEFAULT_MODEM_CONNECTION));
 		m_modemConnection = CONNECTION_TYPE(temp);
@@ -839,7 +840,8 @@ void CDVRPTRRepeaterConfig::setPosition(int x, int y)
 
 bool CDVRPTRRepeaterConfig::write()
 {
-	m_config->DeleteEntry(m_name + KEY_MODEM_PATH);			// XXX
+	m_config->DeleteEntry(m_name + KEY_MODEM_PATH);
+	m_config->DeleteEntry(m_name + KEY_MODEM_PORT);
 
 	m_config->Write(m_name + KEY_CALLSIGN, m_callsign);
 	m_config->Write(m_name + KEY_GATEWAY, m_gateway);

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -73,6 +73,7 @@ public:
 	void sendStatus();
 
 	void setStatus(LINK_STATUS status, const wxString& reflector, const wxString& text);
+	void setTempText(const wxString& text);
 
 	void cancel();
 
@@ -95,6 +96,8 @@ private:
 	CSlowDataEncoder   m_encoder;
 	AUDIO_STATUS       m_status;
 	LINK_STATUS        m_linkStatus;
+	wxString           m_text;
+	wxString           m_tempText;
 	wxString           m_reflector;
 	CTimer             m_timer;
 	CAMBEData**        m_data;

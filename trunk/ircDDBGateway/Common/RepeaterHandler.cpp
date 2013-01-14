@@ -2353,13 +2353,11 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 			break;
 	}
 
-	CTextData tempTextData(LS_NONE, wxEmptyString, tempText, m_address, m_port, true);
-	m_repeaterHandler->writeText(tempTextData);
-
 	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+	m_audio->setTempText(tempText);
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)
