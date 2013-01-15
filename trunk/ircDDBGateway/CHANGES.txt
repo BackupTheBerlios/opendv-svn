@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130111
+ircDDB Gateway - 20130115
 =========================
 
 20101010
@@ -1175,8 +1175,8 @@ Handle multiple reflector links better.
 Changed gateway loopback behaviour.
 Added DCS019.
 
-201301xx
+20130115
 --------
 
-Allow link refusals to be logged and sent to the repeater as temporary ack text.
+Allow link refusals to be logged and sent as temporary text on the announcement.
 Revert DExtra handling to the old behaviour.
