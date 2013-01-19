@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DummyRepeaterProtocolHandler.h"
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
 #include "IRCDDBGatewayLogRedirect.h"
@@ -474,6 +475,7 @@ void CIRCDDBGatewayApp::createThread()
 
 	CIcomRepeaterProtocolHandler* icomRepeaterHandler = NULL;
 	CHBRepeaterProtocolHandler* hbRepeaterHandler = NULL;
+	CDummyRepeaterProtocolHandler* dummyRepeaterHandler = NULL;
 
 	unsigned int icomCount = 0U;
 
@@ -514,6 +516,14 @@ void CIRCDDBGatewayApp::createThread()
 				delete hbRepeaterHandler;
 				hbRepeaterHandler = NULL;
 			}
+		} else if (repeaterType1 == HW_DUMMY && !hbAddress.IsEmpty()) {
+			dummyRepeaterHandler = new CDummyRepeaterProtocolHandler;
+			bool res = dummyRepeaterHandler->open();
+			if (!res) {
+				wxLogError(wxT("Cannot open the Dummy repeater protocol handler"));
+				delete dummyRepeaterHandler;
+				dummyRepeaterHandler = NULL;
+			}
 		}
 
 		if (latitude1 == 0.0 && longitude1 == 0.0) {
@@ -542,6 +552,8 @@ void CIRCDDBGatewayApp::createThread()
 
 			if (aprs != NULL)
 				aprs->setPort(callsign1, repeaterBand1, frequency1, offset1, range1, latitude1, longitude1, agl1);
+		} else if (repeaterType1 == HW_DUMMY && dummyRepeaterHandler != NULL) {
+			thread->addRepeater(callsign1, repeaterBand1, repeaterAddress1, repeaterPort1, repeaterType1, reflector1, atStartup1, reconnect1, dratsEnabled, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1, dummyRepeaterHandler);
 		}
 	}
 
@@ -582,6 +594,14 @@ void CIRCDDBGatewayApp::createThread()
 				delete hbRepeaterHandler;
 				hbRepeaterHandler = NULL;
 			}
+		} else if (repeaterType2 == HW_DUMMY && !hbAddress.IsEmpty() && dummyRepeaterHandler == NULL) {
+			dummyRepeaterHandler = new CDummyRepeaterProtocolHandler;
+			bool res = dummyRepeaterHandler->open();
+			if (!res) {
+				wxLogError(wxT("Cannot open the Dummy repeater protocol handler"));
+				delete dummyRepeaterHandler;
+				dummyRepeaterHandler = NULL;
+			}
 		}
 
 		if (latitude2 == 0.0 && longitude2 == 0.0) {
@@ -610,6 +630,8 @@ void CIRCDDBGatewayApp::createThread()
 
 			if (aprs != NULL)
 				aprs->setPort(callsign2, repeaterBand2, frequency2, offset2, range2, latitude2, longitude2, agl2);
+		} else if (repeaterType2 == HW_DUMMY && dummyRepeaterHandler != NULL) {
+			thread->addRepeater(callsign2, repeaterBand2, repeaterAddress2, repeaterPort2, repeaterType2, reflector2, atStartup2, reconnect2, dratsEnabled, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2, dummyRepeaterHandler);
 		}
 	}
 
@@ -650,6 +672,14 @@ void CIRCDDBGatewayApp::createThread()
 				delete hbRepeaterHandler;
 				hbRepeaterHandler = NULL;
 			}
+		} else if (repeaterType3 == HW_DUMMY && !hbAddress.IsEmpty() && dummyRepeaterHandler == NULL) {
+			dummyRepeaterHandler = new CDummyRepeaterProtocolHandler;
+			bool res = dummyRepeaterHandler->open();
+			if (!res) {
+				wxLogError(wxT("Cannot open the Dummy repeater protocol handler"));
+				delete dummyRepeaterHandler;
+				dummyRepeaterHandler = NULL;
+			}
 		}
 
 		if (latitude3 == 0.0 && longitude3 == 0.0) {
@@ -678,6 +708,8 @@ void CIRCDDBGatewayApp::createThread()
 
 			if (aprs != NULL)
 				aprs->setPort(callsign3, repeaterBand3, frequency3, offset3, range3, latitude3, longitude3, agl3);
+		} else if (repeaterType3 == HW_DUMMY && dummyRepeaterHandler != NULL) {
+			thread->addRepeater(callsign3, repeaterBand3, repeaterAddress3, repeaterPort3, repeaterType3, reflector3, atStartup3, reconnect3, dratsEnabled, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3, dummyRepeaterHandler);
 		}
 	}
 
@@ -718,6 +750,14 @@ void CIRCDDBGatewayApp::createThread()
 				delete hbRepeaterHandler;
 				hbRepeaterHandler = NULL;
 			}
+		} else if (repeaterType4 == HW_DUMMY && !hbAddress.IsEmpty() && dummyRepeaterHandler == NULL) {
+			dummyRepeaterHandler = new CDummyRepeaterProtocolHandler;
+			bool res = dummyRepeaterHandler->open();
+			if (!res) {
+				wxLogError(wxT("Cannot open the Dummy repeater protocol handler"));
+				delete dummyRepeaterHandler;
+				dummyRepeaterHandler = NULL;
+			}
 		}
 
 		if (latitude4 == 0.0 && longitude4 == 0.0) {
@@ -746,6 +786,8 @@ void CIRCDDBGatewayApp::createThread()
 
 			if (aprs != NULL)
 				aprs->setPort(callsign4, repeaterBand4, frequency4, offset4, range4, latitude4, longitude4, agl4);
+		} else if (repeaterType4 == HW_DUMMY && dummyRepeaterHandler != NULL) {
+			thread->addRepeater(callsign4, repeaterBand4, repeaterAddress4, repeaterPort4, repeaterType4, reflector4, atStartup4, reconnect4, dratsEnabled, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4, dummyRepeaterHandler);
 		}
 	}
 
@@ -919,6 +961,7 @@ void CIRCDDBGatewayApp::createThread()
 
 	thread->setIcomRepeaterHandler(icomRepeaterHandler);
 	thread->setHBRepeaterHandler(hbRepeaterHandler);
+	thread->setDummyRepeaterHandler(dummyRepeaterHandler);
 	thread->setLanguage(language);
 	thread->setDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	thread->setDExtra(dextraEnabled, dextraMaxDongles);

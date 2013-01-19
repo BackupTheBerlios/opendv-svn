@@ -54,6 +54,7 @@ m_gatewayCallsign(),
 m_gatewayAddress(),
 m_icomRepeaterHandler(NULL),
 m_hbRepeaterHandler(NULL),
+m_dummyRepeaterHandler(NULL),
 m_dextraHandler(NULL),
 m_dplusPool(NULL),
 m_dcsPool(NULL),
@@ -190,7 +191,7 @@ void CIRCDDBGatewayThread::run()
 	}
 
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL)|| m_irc == NULL || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL)|| m_irc == NULL || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -293,6 +294,8 @@ void CIRCDDBGatewayThread::run()
 			processRepeater(m_icomRepeaterHandler);
 		if (m_hbRepeaterHandler != NULL)
 			processRepeater(m_hbRepeaterHandler);
+		if (m_dummyRepeaterHandler != NULL)
+			processRepeater(m_dummyRepeaterHandler);
 		processIrcDDB();
 		processDExtra();
 		processDPlus();
@@ -378,6 +381,11 @@ void CIRCDDBGatewayThread::run()
 		delete m_hbRepeaterHandler;
 	}
 
+	if (m_dummyRepeaterHandler != NULL) {
+		m_dummyRepeaterHandler->close();
+		delete m_dummyRepeaterHandler;
+	}
+
 	if (m_remote != NULL) {
 		m_remote->close();
 		delete m_remote;
@@ -437,6 +445,11 @@ void CIRCDDBGatewayThread::setIcomRepeaterHandler(CIcomRepeaterProtocolHandler* 
 void CIRCDDBGatewayThread::setHBRepeaterHandler(CHBRepeaterProtocolHandler* handler)
 {
 	m_hbRepeaterHandler = handler;
+}
+
+void CIRCDDBGatewayThread::setDummyRepeaterHandler(CDummyRepeaterProtocolHandler* handler)
+{
+	m_dummyRepeaterHandler = handler;
 }
 
 void CIRCDDBGatewayThread::setIRC(CIRCDDB* irc)

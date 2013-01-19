@@ -265,6 +265,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DummyRepeaterProtocolHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EchoUnit.cpp"
 				>
 			</File>
@@ -556,6 +560,10 @@
 			</File>
 			<File
 				RelativePath=".\DTMF.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DummyRepeaterProtocolHandler.h"
 				>
 			</File>
 			<File

@@ -19,6 +19,7 @@
 #ifndef	IRCDDBGatewayThread_H
 #define	IRCDDBGatewayThread_H
 
+#include "DummyRepeaterProtocolHandler.h"
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
 #include "DPlusProtocolHandlerPool.h"
@@ -50,6 +51,7 @@ public:
 #endif
 	virtual void setIcomRepeaterHandler(CIcomRepeaterProtocolHandler* handler);
 	virtual void setHBRepeaterHandler(CHBRepeaterProtocolHandler* handler);
+	virtual void setDummyRepeaterHandler(CDummyRepeaterProtocolHandler* handler);
 	virtual void setIRC(CIRCDDB* irc);
 	virtual void setLanguage(TEXT_LANG language);
 	virtual void setDExtra(bool enabled, unsigned int maxDongles);
@@ -75,11 +77,12 @@ private:
 	bool                      m_stopped;
 	wxString                  m_gatewayCallsign;
 	wxString                  m_gatewayAddress;
-	CIcomRepeaterProtocolHandler* m_icomRepeaterHandler;
-	CHBRepeaterProtocolHandler*   m_hbRepeaterHandler;
-	CDExtraProtocolHandler*       m_dextraHandler;
-	CDPlusProtocolHandlerPool*    m_dplusPool;
-	CDCSProtocolHandlerPool*      m_dcsPool;
+	CIcomRepeaterProtocolHandler*  m_icomRepeaterHandler;
+	CHBRepeaterProtocolHandler*    m_hbRepeaterHandler;
+	CDummyRepeaterProtocolHandler* m_dummyRepeaterHandler;
+	CDExtraProtocolHandler*        m_dextraHandler;
+	CDPlusProtocolHandlerPool*     m_dplusPool;
+	CDCSProtocolHandlerPool*       m_dcsPool;
 	CG2ProtocolHandler*       m_g2Handler;
 	CAPRSWriter*              m_aprsWriter;
 	CIRCDDB*                  m_irc;

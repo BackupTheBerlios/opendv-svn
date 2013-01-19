@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -87,6 +87,7 @@ m_reconnect(NULL)
 	m_type = new wxChoice(this, CHOICE_TYPE, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_type->Append(_("Homebrew"));
 	m_type->Append(wxT("Icom"));
+	m_type->Append(_("Dummy"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_type->SetSelection(int(type));
 
