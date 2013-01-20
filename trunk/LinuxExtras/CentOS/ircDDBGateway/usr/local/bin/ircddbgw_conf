@@ -3,7 +3,7 @@
 #
 # Configure script for G4KLX ircDDBGateway and G4KLX Repeater
 #
-# Copyright (C) 2012   Hans-J. Barthen, DL5DI (dl5di@gmx.de)
+# Copyright (C) 2012,2013   Hans-J. Barthen, DL5DI (dl5di@gmx.de)
 # Basic components from ircddbconfig (C) 2011 Michael Dirska, DL1BFF
 #
 # This program is free software: you can redistribute it and/or modify
@@ -54,12 +54,14 @@
 # 2012-10-23 dl5di    change in dashboard configuration
 # 2012-11-15 dl5di    bugfixes and rework of initial repeater input loop
 # 2012-12-21 dl5di    bugfixes in comparisons of strings
+# 2012-12-31 dl5di    disable Icom migration after it was done once
+# 2013-01-20 dl5di    bugfix
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20121221"
+rev="20120120"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1051,6 +1053,7 @@ function icom_setup(){
     if [ -f "$VALUE/dsgwd.conf" ]; then
 	ICOM=1
 	quit_icomG2
+	mv $VALUE/dsgwd.conf $VALUE/dsgwd.conf.bak
     fi
     print_text "icom_menu" 
     request_selection "Icom_RP2C" 0 $ICOM
@@ -1831,7 +1834,7 @@ function ircddb_setup(){
     if [ "$?" = 0 ]; then
 	read_value $CONFIGFILE "IRCDDBPROPPATH"
 	read_value $VALUE/ircDDB.properties rptr_call
-	if [${#VALUE} = 0 ]; then
+	if [ ${#VALUE} = 0 ]; then
 	    read_value $IRCDDBGWCONFIG "gatewayCallsign"
 	fi
     fi
@@ -3034,6 +3037,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    stn_setup
 	    misc_setup
 	    timeserver_setup
+	    misc_setup
 	    print_text "final"
 	    ;;
 	3)
