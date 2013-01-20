@@ -2,7 +2,7 @@
 #
 # Build the ircDDB Gateway software on Linux with settings for Debian (amd64)
 # 2012-09-07 Hans-J. Barthen, DL5DI 
-# Rename this file to settings.mk before you compile the source for the Debian armel platform
+# Rename this file to settings.mk before you compile the source for the Debian amd64 platform
 #
 	export DATADIR := "/home/opendv/data"
 	export LIBS    := $(shell wx-config --libs adv,core)

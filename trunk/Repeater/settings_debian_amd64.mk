@@ -1,8 +1,8 @@
 # Makefile-include
 #
-# Build the ircDDB Gateway software on Debian Linux with default settings (x86)
-# Hans-J. Barthen, DL5DI, 2012-09-08
-# Rename this file to settings.mk before you compile the source for the Debian i386 platform
+# Build the ircDDB Gateway software on Debian Linux with default settings (amd64)
+# Hans-J. Barthen, DL5DI, 2013-01-20
+# Rename this file to settings.mk before you compile the source for the Debian amd64 platform
 #
 	export DATADIR := "/home/opendv/data"
 	export BINDIR  := $(DESTDIR)/usr/bin
