@@ -156,7 +156,7 @@ void CAudioUnit::sendStatus()
 	if (m_status != AS_IDLE)
 		return;
 
-	if (!m_tempText.IsEmpty()) {
+	if (m_tempText.IsEmpty()) {
 		m_encoder.setTextData(m_text);
 	} else {
 		m_encoder.setTextData(m_tempText);
