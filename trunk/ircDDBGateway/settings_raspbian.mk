@@ -1,8 +1,8 @@
 # Makefile-include
 #
-# Special settings for  Emdebian Compile for ARM processor, John Hays, June 2012
-# modified by Hans-J. Barthen, DL5DI 2012-11-04
-# Rename this file to settings.mk before you compile the source for the Debian armhf platform
+# Settings for Raspbian Wheezy compile in qemu-debootstrap environment
+# Hans-J. Barthen, DL5DI 2013-01-21
+# Rename this file to settings.mk before you compile the source for the Raspbian platform
 #
 	export DATADIR := "/home/opendv/data"
 	export LIBS    := $(shell wx-config --libs adv,core)
