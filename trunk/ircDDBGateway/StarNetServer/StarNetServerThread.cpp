@@ -456,8 +456,6 @@ void CStarNetServerThread::processDExtra()
 #if defined(DCS_LINK)
 void CStarNetServerThread::processDCS()
 {
-	m_dcsPool->start();
-
 	for (;;) {
 		DCS_TYPE type = m_dcsPool->read();
 

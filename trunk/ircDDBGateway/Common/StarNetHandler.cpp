@@ -679,10 +679,10 @@ void CStarNetHandler::process(CAMBEData &data)
 
 	if (id == m_id) {
 #if defined(DEXTRA_LINK)
-		CDExtraHandler::writeAMBE(data, DIR_OUTGOING);
+		CDExtraHandler::writeAMBE(m_repeater, data, DIR_OUTGOING);
 #endif
 #if defined(DCS_LINK)
-		CDCSHandler::writeAMBE(data, DIR_OUTGOING);
+		CDCSHandler::writeAMBE(m_repeater, data, DIR_OUTGOING);
 #endif
 		sendToRepeaters(data);
 	}

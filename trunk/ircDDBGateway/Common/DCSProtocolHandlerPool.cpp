@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -96,11 +96,6 @@ void CDCSProtocolHandlerPool::release(CDCSProtocolHandler* handler)
 	wxLogError(wxT("Trying to release an unused DCS port"));
 }
 
-void CDCSProtocolHandlerPool::start()
-{
-	m_index = 0U;
-}
-
 DCS_TYPE CDCSProtocolHandlerPool::read()
 {
 	while (m_index < m_n) {
@@ -112,6 +107,8 @@ DCS_TYPE CDCSProtocolHandlerPool::read()
 
 		m_index++;
 	}
+
+	m_index = 0U;
 
 	return DC_NONE;
 }

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ public:
 	CDPlusProtocolHandler* getHandler(unsigned int port = 0U);
 	void release(CDPlusProtocolHandler* handler);
 
-	void          start();
 	DPLUS_TYPE    read();
 	CHeaderData*  readHeader();
 	CAMBEData*    readAMBE();

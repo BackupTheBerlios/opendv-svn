@@ -57,7 +57,7 @@ public:
 	static void unlink();
 
 	static void writeHeader(const wxString& callsign, CHeaderData& header, DIRECTION direction);
-	static void writeAMBE(CAMBEData& data, DIRECTION direction);
+	static void writeAMBE(const wxString& callsign, CAMBEData& data, DIRECTION direction);
 
 	static void process(CAMBEData& header);
 	static void process(CPollData& data);
@@ -83,7 +83,7 @@ protected:
 	bool processInt(CConnectData& connect, CD_TYPE type);
 
 	void writeHeaderInt(const wxString& callsign, CHeaderData& header, DIRECTION direction);
-	void writeAMBEInt(CAMBEData& data, DIRECTION direction);
+	void writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECTION direction);
 
 	bool clockInt(unsigned int ms);
 

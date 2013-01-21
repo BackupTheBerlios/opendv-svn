@@ -2042,11 +2042,11 @@ void CRepeaterHandler::sendToOutgoing(const CAMBEData& data)
 {
 	CAMBEData temp(data);
 
-	CDExtraHandler::writeAMBE(temp, DIR_OUTGOING);
+	CDExtraHandler::writeAMBE(m_rptCallsign, temp, DIR_OUTGOING);
 
-	CDPlusHandler::writeAMBE(temp, DIR_OUTGOING);
+	CDPlusHandler::writeAMBE(this, temp, DIR_OUTGOING);
 
-	CDCSHandler::writeAMBE(temp, DIR_OUTGOING);
+	CDCSHandler::writeAMBE(m_rptCallsign, temp, DIR_OUTGOING);
 }
 
 void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
@@ -2073,11 +2073,11 @@ void CRepeaterHandler::sendToIncoming(const CAMBEData& data)
 {
 	CAMBEData temp(data);
 
-	CDExtraHandler::writeAMBE(temp, DIR_INCOMING);
+	CDExtraHandler::writeAMBE(m_rptCallsign, temp, DIR_INCOMING);
 
-	CDPlusHandler::writeAMBE(temp, DIR_INCOMING);
+	CDPlusHandler::writeAMBE(this, temp, DIR_INCOMING);
 
-	CDCSHandler::writeAMBE(temp, DIR_INCOMING);
+	CDCSHandler::writeAMBE(m_rptCallsign, temp, DIR_INCOMING);
 }
 
 void CRepeaterHandler::startupInt()

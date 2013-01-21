@@ -113,13 +113,13 @@ private:
 	wxString                  m_status4;
 	wxString                  m_status5;
 
-	void processIrcDDB();
-	void processRepeater(IRepeaterProtocolHandler* handler);
-	void processDExtra();
-	void processDPlus();
-	void processDCS();
-	void processG2();
-	void processDD();
+	bool processIrcDDB();
+	bool processRepeater(IRepeaterProtocolHandler* handler);
+	bool processDExtra();
+	bool processDPlus();
+	bool processDCS();
+	bool processG2();
+	bool processDD();
 
 	void loadReflectors();
 	void loadDExtraReflectors();

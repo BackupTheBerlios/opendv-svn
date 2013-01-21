@@ -451,11 +451,11 @@ void CDPlusHandler::writeHeader(IReflectorCallback* handler, CHeaderData& header
 	}	
 }
 
-void CDPlusHandler::writeAMBE(CAMBEData& data, DIRECTION direction)
+void CDPlusHandler::writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeAMBEInt(data, direction);
+			m_reflectors[i]->writeAMBEInt(handler, data, direction);
 	}	
 }
 
@@ -811,7 +811,7 @@ void CDPlusHandler::writeHeaderInt(IReflectorCallback* handler, CHeaderData& hea
 	}
 }
 
-void CDPlusHandler::writeAMBEInt(CAMBEData& data, DIRECTION direction)
+void CDPlusHandler::writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
 {
 	if (m_linkState != DPLUS_LINKED)
 		return;
@@ -825,7 +825,7 @@ void CDPlusHandler::writeAMBEInt(CAMBEData& data, DIRECTION direction)
 
 	switch (m_direction) {
 		case DIR_OUTGOING:
-			if (data.getId() == m_rptrId) {
+			if (data.getId() == m_rptrId && m_destination == handler) {
 				data.setDestination(m_yourAddress, m_yourPort);
 				m_handler->writeAMBE(data);
 

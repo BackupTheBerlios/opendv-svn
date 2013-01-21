@@ -39,7 +39,7 @@ bool CDummyRepeaterProtocolHandler::writeHeader(CHeaderData& header)
 	unsigned char buffer[50U];
 	unsigned int length = header.getHBRepeaterData(buffer, 50U, true);
 
-	wxLogMessage(wxT("Sending Header to %u with id=%04X"), header.getYourPort(), header.getId());
+	wxLogMessage(wxT("Sending Header to port: %u, id: %04X"), header.getYourPort(), header.getId());
 
 	CUtils::dump(wxT("Data"), buffer + 8U, length - 8U);
 
@@ -51,7 +51,7 @@ bool CDummyRepeaterProtocolHandler::writeAMBE(CAMBEData& data)
 	unsigned char buffer[30U];
 	unsigned int length = data.getHBRepeaterData(buffer, 30U);
 
-	wxLogMessage(wxT("Sending AMBE to %u with id=%04X"), data.getYourPort(), data.getId());
+	wxLogMessage(wxT("Sending AMBE to port: %u, seq: %02X, id: %04X"), data.getYourPort(), data.getSeq(), data.getId());
 
 	CUtils::dump(wxT("Data"), buffer + 9U, length - 9U);
 

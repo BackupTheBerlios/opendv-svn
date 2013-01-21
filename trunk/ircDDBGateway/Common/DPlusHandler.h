@@ -66,7 +66,7 @@ public:
 	static void unlink();
 
 	static void writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
-	static void writeAMBE(CAMBEData& data, DIRECTION direction);
+	static void writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
 
 	static void process(CHeaderData& header);
 	static void process(CAMBEData& header);
@@ -95,7 +95,7 @@ protected:
 	bool processInt(CConnectData& connect, CD_TYPE type);
 
 	void writeHeaderInt(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
-	void writeAMBEInt(CAMBEData& data, DIRECTION direction);
+	void writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
 
 	bool clockInt(unsigned int ms);
 

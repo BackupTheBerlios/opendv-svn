@@ -290,20 +290,51 @@ void CIRCDDBGatewayThread::run()
 	m_statusTimer2.start();
 
 	while (!m_killed) {
-		if (m_icomRepeaterHandler != NULL)
-			processRepeater(m_icomRepeaterHandler);
-		if (m_hbRepeaterHandler != NULL)
-			processRepeater(m_hbRepeaterHandler);
-		if (m_dummyRepeaterHandler != NULL)
-			processRepeater(m_dummyRepeaterHandler);
-		processIrcDDB();
-		processDExtra();
-		processDPlus();
-		processDCS();
-		processG2();
+		bool f, process = false;
 
-		if (m_ddModeEnabled)
-			processDD();
+		if (m_icomRepeaterHandler != NULL) {
+			f = processRepeater(m_icomRepeaterHandler);
+			if (f)
+				process = true;
+		}
+
+		if (m_hbRepeaterHandler != NULL) {
+			f = processRepeater(m_hbRepeaterHandler);
+			if (f)
+				process = true;
+		}
+
+		if (m_dummyRepeaterHandler != NULL) {
+			f = processRepeater(m_dummyRepeaterHandler);
+			if (f)
+				process = true;
+		}
+
+		f = processIrcDDB();
+		if (f)
+			process = true;
+
+		f = processDExtra();
+		if (f)
+			process = true;
+
+		f = processDPlus();
+		if (f)
+			process = true;
+
+		f = processDCS();
+		if (f)
+			process = true;
+
+		f = processG2();
+		if (f)
+			process = true;
+
+		if (m_ddModeEnabled) {
+			f = processDD();
+			if (f)
+				process = true;
+		}
 
 		if (m_remote != NULL)
 			m_remote->process();
@@ -340,7 +371,9 @@ void CIRCDDBGatewayThread::run()
 			}
 		}
 
-		::wxMilliSleep(TIME_PER_TIC_MS);
+		// Only sleep if we've done no processing
+		if (!process)
+			::wxMilliSleep(TIME_PER_TIC_MS);
 	}
 
 	wxLogMessage(wxT("Stopping the ircDDB Gateway thread"));
@@ -536,7 +569,7 @@ void CIRCDDBGatewayThread::setRemote(bool enabled, const wxString& password, uns
 	}
 }
 
-void CIRCDDBGatewayThread::processIrcDDB()
+bool CIRCDDBGatewayThread::processIrcDDB()
 {
 	// Once per second
 	if (m_statusTimer2.hasExpired()) {
@@ -572,369 +605,365 @@ void CIRCDDBGatewayThread::processIrcDDB()
 		m_statusTimer2.reset();
 	}
 
-	// Process all incoming ircDDB messages, updating the caches
-	for (;;) {
-		IRCDDB_RESPONSE_TYPE type = m_irc->getMessageType();
+	// Process incoming ircDDB messages, updating the caches
+	IRCDDB_RESPONSE_TYPE type = m_irc->getMessageType();
 
-		switch (type) {
-			case IDRT_NONE:
-				return;
+	switch (type) {
+		case IDRT_USER: {
+				wxString user, repeater, gateway, address;
+				bool res = m_irc->receiveUser(user, repeater, gateway, address);
+				if (!res)
+					break;
 
-			case IDRT_USER: {
-					wxString user, repeater, gateway, address;
-					bool res = m_irc->receiveUser(user, repeater, gateway, address);
-					if (!res)
-						break;
-
-					CRepeaterHandler::resolveUser(user, repeater, gateway, address);
-					if (!address.IsEmpty()) {
-						wxLogMessage(wxT("USER: %s %s %s %s"), user.c_str(), repeater.c_str(), gateway.c_str(), address.c_str());
-						m_cache.updateUser(user, repeater, gateway, address, DP_DEXTRA, false, false);
-					} else {
-						wxLogMessage(wxT("USER: %s NOT FOUND"), user.c_str());
-					}
+				CRepeaterHandler::resolveUser(user, repeater, gateway, address);
+				if (!address.IsEmpty()) {
+					wxLogMessage(wxT("USER: %s %s %s %s"), user.c_str(), repeater.c_str(), gateway.c_str(), address.c_str());
+					m_cache.updateUser(user, repeater, gateway, address, DP_DEXTRA, false, false);
+				} else {
+					wxLogMessage(wxT("USER: %s NOT FOUND"), user.c_str());
 				}
-				break;
+			}
+			break;
 
-			case IDRT_REPEATER: {
-					wxString repeater, gateway, address;
-					bool res = m_irc->receiveRepeater(repeater, gateway, address);
-					if (!res)
-						break;
+		case IDRT_REPEATER: {
+				wxString repeater, gateway, address;
+				bool res = m_irc->receiveRepeater(repeater, gateway, address);
+				if (!res)
+					break;
 
-					CRepeaterHandler::resolveRepeater(repeater, gateway, address, DP_DEXTRA);
-					if (!address.IsEmpty()) {
-						wxLogMessage(wxT("REPEATER: %s %s %s"), repeater.c_str(), gateway.c_str(), address.c_str());
-						m_cache.updateRepeater(repeater, gateway, address, DP_DEXTRA, false, false);
-					} else {
-						wxLogMessage(wxT("REPEATER: %s NOT FOUND"), repeater.c_str());
-					}
+				CRepeaterHandler::resolveRepeater(repeater, gateway, address, DP_DEXTRA);
+				if (!address.IsEmpty()) {
+					wxLogMessage(wxT("REPEATER: %s %s %s"), repeater.c_str(), gateway.c_str(), address.c_str());
+					m_cache.updateRepeater(repeater, gateway, address, DP_DEXTRA, false, false);
+				} else {
+					wxLogMessage(wxT("REPEATER: %s NOT FOUND"), repeater.c_str());
 				}
-				break;
+			}
+			break;
 
-			case IDRT_GATEWAY: {
-					wxString gateway, address;
-					bool res = m_irc->receiveGateway(gateway, address);
-					if (!res)
-						break;
+		case IDRT_GATEWAY: {
+				wxString gateway, address;
+				bool res = m_irc->receiveGateway(gateway, address);
+				if (!res)
+					break;
 
-					CDExtraHandler::gatewayUpdate(gateway, address);
-					CDPlusHandler::gatewayUpdate(gateway, address);
-					if (!address.IsEmpty()) {
-						wxLogMessage(wxT("GATEWAY: %s %s"), gateway.c_str(), address.c_str());
-						m_cache.updateGateway(gateway, address, DP_DEXTRA, false, false);
-					} else {
-						wxLogMessage(wxT("GATEWAY: %s NOT FOUND"), gateway.c_str());
-					}
+				CDExtraHandler::gatewayUpdate(gateway, address);
+				CDPlusHandler::gatewayUpdate(gateway, address);
+				if (!address.IsEmpty()) {
+					wxLogMessage(wxT("GATEWAY: %s %s"), gateway.c_str(), address.c_str());
+					m_cache.updateGateway(gateway, address, DP_DEXTRA, false, false);
+				} else {
+					wxLogMessage(wxT("GATEWAY: %s NOT FOUND"), gateway.c_str());
 				}
-				break;
-		}
+			}
+			break;
+
+		default:
+			return false;
 	}
+
+	return true;
 }
 
-void CIRCDDBGatewayThread::processRepeater(IRepeaterProtocolHandler* handler)
+bool CIRCDDBGatewayThread::processRepeater(IRepeaterProtocolHandler* handler)
 {
-	for (;;) {
-		REPEATER_TYPE type = handler->read();
+	REPEATER_TYPE type = handler->read();
 
-		switch (type) {
-			case RT_NONE:
-				return;
+	switch (type) {
+		case RT_POLL: {
+				CPollData* poll = handler->readPoll();
+				if (poll != NULL) {
+					CRepeaterHandler* handler = CRepeaterHandler::findRepeater(*poll);
+					if (handler != NULL)
+						handler->processRepeater(*poll);
+					else
+						CRepeaterHandler::pollAllIcom(*poll);
 
-			case RT_POLL: {
-					CPollData* poll = handler->readPoll();
-					if (poll != NULL) {
-						CRepeaterHandler* handler = CRepeaterHandler::findRepeater(*poll);
-						if (handler != NULL)
-							handler->processRepeater(*poll);
+					delete poll;
+				}
+			}
+			break;
+
+		case RT_HEARD: {
+				CHeardData* heard = handler->readHeard();
+				if (heard != NULL) {
+					wxString user = heard->getUser();
+					wxString repeater = heard->getRepeater();
+
+					// Internal controller heard have identical user and repeater values
+					if (!repeater.IsSameAs(user)) {
+						CRepeaterHandler* handler = CRepeaterHandler::findDVRepeater(repeater);
+						if (handler == NULL)
+							wxLogMessage(wxT("Heard received from unknown repeater, %s"), repeater.c_str());
 						else
-							CRepeaterHandler::pollAllIcom(*poll);
+							handler->processRepeater(*heard);
 
-						delete poll;
+						delete heard;
 					}
 				}
-				break;
+			}
+			break;
 
-			case RT_HEARD: {
-					CHeardData* heard = handler->readHeard();
-					if (heard != NULL) {
-						wxString user = heard->getUser();
-						wxString repeater = heard->getRepeater();
+		case RT_HEADER: {
+				CHeaderData* header = handler->readHeader();
+				if (header != NULL) {
+					// wxLogMessage(wxT("Repeater header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
 
-						// Internal controller heard have identical user and repeater values
-						if (!repeater.IsSameAs(user)) {
-							CRepeaterHandler* handler = CRepeaterHandler::findDVRepeater(repeater);
-							if (handler == NULL)
-								wxLogMessage(wxT("Heard received from unknown repeater, %s"), repeater.c_str());
-							else
-								handler->processRepeater(*heard);
+					CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*header);
+					if (repeater == NULL)
+						wxLogMessage(wxT("Header received from unknown repeater, %s"), header->getRptCall1().c_str());
+					else
+						repeater->processRepeater(*header);
 
-							delete heard;
-						}
-					}
+					delete header;
 				}
-				break;
+			}
+			break;
 
-			case RT_HEADER: {
-					CHeaderData* header = handler->readHeader();
-					if (header != NULL) {
-						// wxLogMessage(wxT("Repeater header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
+		case RT_AMBE: {
+				CAMBEData* data = handler->readAMBE();
+				if (data != NULL) {
+					CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*data, false);
+					if (repeater != NULL)
+						repeater->processRepeater(*data);
 
-						CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*header);
-						if (repeater == NULL)
-							wxLogMessage(wxT("Header received from unknown repeater, %s"), header->getRptCall1().c_str());
-						else
-							repeater->processRepeater(*header);
-
-						delete header;
-					}
+					delete data;
 				}
-				break;
+			}
+			break;
 
-			case RT_AMBE: {
-					CAMBEData* data = handler->readAMBE();
-					if (data != NULL) {
-						CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*data, false);
-						if (repeater != NULL)
-							repeater->processRepeater(*data);
+		case RT_BUSY_HEADER: {
+				CHeaderData* header = handler->readBusyHeader();
+				if (header != NULL) {
+					// wxLogMessage(wxT("Repeater busy header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
 
-						delete data;
-					}
+					CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*header);
+					if (repeater == NULL)
+						wxLogMessage(wxT("Busy header received from unknown repeater, %s"), header->getRptCall1().c_str());
+					else
+						repeater->processBusy(*header);
+
+					delete header;
 				}
-				break;
+			}
+			break;
 
-			case RT_BUSY_HEADER: {
-					CHeaderData* header = handler->readBusyHeader();
-					if (header != NULL) {
-						// wxLogMessage(wxT("Repeater busy header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
+		case RT_BUSY_AMBE: {
+				CAMBEData* data = handler->readBusyAMBE();
+				if (data != NULL) {
+					CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*data, true);
+					if (repeater != NULL)
+						repeater->processBusy(*data);
 
-						CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*header);
-						if (repeater == NULL)
-							wxLogMessage(wxT("Busy header received from unknown repeater, %s"), header->getRptCall1().c_str());
-						else
-							repeater->processBusy(*header);
-
-						delete header;
-					}
+					delete data;
 				}
-				break;
+			}
+			break;
 
-			case RT_BUSY_AMBE: {
-					CAMBEData* data = handler->readBusyAMBE();
-					if (data != NULL) {
-						CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(*data, true);
-						if (repeater != NULL)
-							repeater->processBusy(*data);
+		case RT_DD: {
+				CDDData* data = handler->readDD();
+				if (data != NULL) {
+					// wxLogMessage(wxT("DD header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), data->getMyCall1().c_str(), data->getMyCall2().c_str(), data->getYourCall().c_str(), data->getRptCall1().c_str(), data->getRptCall2().c_str(), data->getFlag1(), data->getFlag2(), data->getFlag3());
 
-						delete data;
-					}
+					CRepeaterHandler* repeater = CRepeaterHandler::findDDRepeater();
+					if (repeater == NULL)
+						wxLogMessage(wxT("DD data received from unknown DD repeater, %s"), data->getRptCall1().c_str());
+					else
+						repeater->processRepeater(*data);
+
+					delete data;
 				}
-				break;
+			}
+			break;
 
-			case RT_DD: {
-					CDDData* data = handler->readDD();
-					if (data != NULL) {
-						// wxLogMessage(wxT("DD header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), data->getMyCall1().c_str(), data->getMyCall2().c_str(), data->getYourCall().c_str(), data->getRptCall1().c_str(), data->getRptCall2().c_str(), data->getFlag1(), data->getFlag2(), data->getFlag3());
-
-						CRepeaterHandler* repeater = CRepeaterHandler::findDDRepeater();
-						if (repeater == NULL)
-							wxLogMessage(wxT("DD data received from unknown DD repeater, %s"), data->getRptCall1().c_str());
-						else
-							repeater->processRepeater(*data);
-
-						delete data;
-					}
-				}
-				break;
-		}
+		default:
+			return false;
 	}
+
+	return true;
 }
 
-void CIRCDDBGatewayThread::processDExtra()
+bool CIRCDDBGatewayThread::processDExtra()
 {
-	for (;;) {
-		DEXTRA_TYPE type = m_dextraHandler->read();
+	DEXTRA_TYPE type = m_dextraHandler->read();
 
-		switch (type) {
-			case DE_NONE:
-				return;
-
-			case DE_POLL: {
-					CPollData* poll = m_dextraHandler->readPoll();
-					if (poll != NULL) {
-						CDExtraHandler::process(*poll);
-						delete poll;
-					}
+	switch (type) {
+		case DE_POLL: {
+				CPollData* poll = m_dextraHandler->readPoll();
+				if (poll != NULL) {
+					CDExtraHandler::process(*poll);
+					delete poll;
 				}
-				break;
+			}
+			break;
 
-			case DE_CONNECT: {
-					CConnectData* connect = m_dextraHandler->readConnect();
-					if (connect != NULL) {
-						CDExtraHandler::process(*connect);
-						delete connect;
-					}
+		case DE_CONNECT: {
+				CConnectData* connect = m_dextraHandler->readConnect();
+				if (connect != NULL) {
+					CDExtraHandler::process(*connect);
+					delete connect;
 				}
-				break;
+			}
+			break;
 
-			case DE_HEADER: {
-					CHeaderData* header = m_dextraHandler->readHeader();
-					if (header != NULL) {
-						// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
-						CDExtraHandler::process(*header);
-						delete header;
-					}
+		case DE_HEADER: {
+				CHeaderData* header = m_dextraHandler->readHeader();
+				if (header != NULL) {
+					// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
+					CDExtraHandler::process(*header);
+					delete header;
 				}
-				break;
+			}
+			break;
 
-			case DE_AMBE: {
-					CAMBEData* data = m_dextraHandler->readAMBE();
-					if (data != NULL) {
-						CDExtraHandler::process(*data);
-						delete data;
-					}
+		case DE_AMBE: {
+				CAMBEData* data = m_dextraHandler->readAMBE();
+				if (data != NULL) {
+					CDExtraHandler::process(*data);
+					delete data;
 				}
-				break;
-		}
+			}
+			break;
+
+		default:
+			return false;
 	}
+
+	return true;
 }
 
-void CIRCDDBGatewayThread::processDPlus()
+bool CIRCDDBGatewayThread::processDPlus()
 {
-	m_dplusPool->start();
+	DPLUS_TYPE type = m_dplusPool->read();
 
-	for (;;) {
-		DPLUS_TYPE type = m_dplusPool->read();
-
-		switch (type) {
-			case DP_NONE:
-				return;
-
-			case DP_POLL: {
-					CPollData* poll = m_dplusPool->readPoll();
-					if (poll != NULL) {
-						CDPlusHandler::process(*poll);
-						delete poll;
-					}
+	switch (type) {
+		case DP_POLL: {
+				CPollData* poll = m_dplusPool->readPoll();
+				if (poll != NULL) {
+					CDPlusHandler::process(*poll);
+					delete poll;
 				}
-				break;
+			}
+			break;
 
-			case DP_CONNECT: {
-					CConnectData* connect = m_dplusPool->readConnect();
+		case DP_CONNECT: {
+				CConnectData* connect = m_dplusPool->readConnect();
 
-					if (connect != NULL) {
-						CDPlusHandler::process(*connect);
-						delete connect;
-					}
+				if (connect != NULL) {
+					CDPlusHandler::process(*connect);
+					delete connect;
 				}
-				break;
+			}
+			break;
 
-			case DP_HEADER: {
-					CHeaderData* header = m_dplusPool->readHeader();
-					if (header != NULL) {
-						// wxLogMessage(wxT("D-Plus header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
-						CDPlusHandler::process(*header);
-						delete header;
-					}
+		case DP_HEADER: {
+				CHeaderData* header = m_dplusPool->readHeader();
+				if (header != NULL) {
+					// wxLogMessage(wxT("D-Plus header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
+					CDPlusHandler::process(*header);
+					delete header;
 				}
-				break;
+			}
+			break;
 
-			case DP_AMBE: {
-					CAMBEData* data = m_dplusPool->readAMBE();
-					if (data != NULL) {
-						CDPlusHandler::process(*data);
-						delete data;
-					}
+		case DP_AMBE: {
+				CAMBEData* data = m_dplusPool->readAMBE();
+				if (data != NULL) {
+					CDPlusHandler::process(*data);
+					delete data;
 				}
-				break;
-		}
+			}
+			break;
+
+		default:
+			return false;
 	}
+
+	return true;
 }
 
-void CIRCDDBGatewayThread::processDCS()
+bool CIRCDDBGatewayThread::processDCS()
 {
-	m_dcsPool->start();
+	DCS_TYPE type = m_dcsPool->read();
 
-	for (;;) {
-		DCS_TYPE type = m_dcsPool->read();
-
-		switch (type) {
-			case DC_NONE:
-				return;
-
-			case DC_POLL: {
-					CPollData* poll = m_dcsPool->readPoll();
-					if (poll != NULL) {
-						CDCSHandler::process(*poll);
-						delete poll;
-					}
+	switch (type) {
+		case DC_POLL: {
+				CPollData* poll = m_dcsPool->readPoll();
+				if (poll != NULL) {
+					CDCSHandler::process(*poll);
+					delete poll;
 				}
-				break;
+			}
+			break;
 
-			case DC_CONNECT: {
-					CConnectData* connect = m_dcsPool->readConnect();
-					if (connect != NULL) {
-						CDCSHandler::process(*connect);
-						delete connect;
-					}
+		case DC_CONNECT: {
+				CConnectData* connect = m_dcsPool->readConnect();
+				if (connect != NULL) {
+					CDCSHandler::process(*connect);
+					delete connect;
 				}
-				break;
+			}
+			break;
 
-			case DC_DATA: {
-					CAMBEData* data = m_dcsPool->readData();
-					if (data != NULL) {
-						// wxLogMessage(wxT("DCS header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
-						CDCSHandler::process(*data);
-						delete data;
-					}
+		case DC_DATA: {
+				CAMBEData* data = m_dcsPool->readData();
+				if (data != NULL) {
+					// wxLogMessage(wxT("DCS header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
+					CDCSHandler::process(*data);
+					delete data;
 				}
-				break;
-		}
+			}
+			break;
+
+		default:
+			return false;
 	}
+
+	return true;
 }
 
-void CIRCDDBGatewayThread::processG2()
+bool CIRCDDBGatewayThread::processG2()
 {
-	for (;;) {
-		G2_TYPE type = m_g2Handler->read();
+	G2_TYPE type = m_g2Handler->read();
 
-		switch (type) {
-			case GT_NONE:
-				return;
-
-			case GT_HEADER: {
-					CHeaderData* header = m_g2Handler->readHeader();
-					if (header != NULL) {
-						// wxLogMessage(wxT("G2 header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
-						CG2Handler::process(*header);
-						delete header;
-					}
+	switch (type) {
+		case GT_HEADER: {
+				CHeaderData* header = m_g2Handler->readHeader();
+				if (header != NULL) {
+					// wxLogMessage(wxT("G2 header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
+					CG2Handler::process(*header);
+					delete header;
 				}
-				break;
+			}
+			break;
 
-			case GT_AMBE: {
-					CAMBEData* data = m_g2Handler->readAMBE();
-					if (data != NULL) {
-						CG2Handler::process(*data);
-						delete data;
-					}
+		case GT_AMBE: {
+				CAMBEData* data = m_g2Handler->readAMBE();
+				if (data != NULL) {
+					CG2Handler::process(*data);
+					delete data;
 				}
-				break;
-		}
+			}
+			break;
+
+		default:
+			return false;
 	}
+
+	return true;
 }
 
-void CIRCDDBGatewayThread::processDD()
+bool CIRCDDBGatewayThread::processDD()
 {
-	for (;;) {
-		CDDData* data = CDDHandler::read();
-		if (data == NULL)
-			return;
+	CDDData* data = CDDHandler::read();
+	if (data == NULL)
+		return false;
 
-		// wxLogMessage(wxT("DD header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), data->getMyCall1().c_str(), data->getMyCall2().c_str(), data->getYourCall().c_str(), data->getRptCall1().c_str(), data->getRptCall2().c_str(), data->getFlag1(), data->getFlag2(), data->getFlag3());
+	// wxLogMessage(wxT("DD header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), data->getMyCall1().c_str(), data->getMyCall2().c_str(), data->getYourCall().c_str(), data->getRptCall1().c_str(), data->getRptCall2().c_str(), data->getFlag1(), data->getFlag2(), data->getFlag3());
 
-		delete data;
-	}
+	delete data;
+
+	return true;
 }
 
 void CIRCDDBGatewayThread::loadReflectors()

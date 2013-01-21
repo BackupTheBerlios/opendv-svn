@@ -465,11 +465,11 @@ void CDExtraHandler::writeHeader(const wxString& callsign, CHeaderData& header, 
 	}	
 }
 
-void CDExtraHandler::writeAMBE(CAMBEData& data, DIRECTION direction)
+void CDExtraHandler::writeAMBE(const wxString& callsign, CAMBEData& data, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeAMBEInt(data, direction);
+			m_reflectors[i]->writeAMBEInt(callsign, data, direction);
 	}	
 }
 
@@ -828,7 +828,7 @@ void CDExtraHandler::writeHeaderInt(const wxString& callsign, CHeaderData& heade
 	m_rptrId = header.getId();
 }
 
-void CDExtraHandler::writeAMBEInt(CAMBEData& data, DIRECTION direction)
+void CDExtraHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECTION direction)
 {
 	if (m_linkState != DEXTRA_LINKED)
 		return;
@@ -836,6 +836,13 @@ void CDExtraHandler::writeAMBEInt(CAMBEData& data, DIRECTION direction)
 	// Is it link in the right direction
 	if (m_direction != direction)
 		return;
+
+	// Reject on invalid callsign if not a dongle link
+	if (!m_repeater.IsEmpty()) {
+		// Do the callsigns match?
+		if (!callsign.IsSameAs(m_repeater))
+			return;
+	}
 
 	// If the ids don't match, reject
 	if (data.getId() != m_rptrId)

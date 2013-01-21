@@ -384,11 +384,11 @@ void CDCSHandler::writeHeader(const wxString& callsign, CHeaderData& header, DIR
 	}	
 }
 
-void CDCSHandler::writeAMBE(CAMBEData& data, DIRECTION direction)
+void CDCSHandler::writeAMBE(const wxString& callsign, CAMBEData& data, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeAMBEInt(data, direction);
+			m_reflectors[i]->writeAMBEInt(callsign, data, direction);
 	}	
 }
 
@@ -732,13 +732,17 @@ void CDCSHandler::writeHeaderInt(const wxString& callsign, CHeaderData& header, 
 	m_rptCall2 = header.getRptCall2();
 }
 
-void CDCSHandler::writeAMBEInt(CAMBEData& data, DIRECTION direction)
+void CDCSHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECTION direction)
 {
 	if (m_linkState != DCS_LINKED)
 		return;
 
 	// Is it link in the right direction
 	if (m_direction != direction)
+		return;
+
+	// Do the callsigns match?
+	if (!callsign.IsSameAs(m_repeater))
 		return;
 
 	// If the ids don't match, reject
