@@ -7,7 +7,7 @@
 # Default-Stop:      0 1 6
 # Short-Description: ircDDBGateway timeserver
 # Description:       ircDDBGateway is a free internet gateway for D-Star Digital Voice on amateur radio
-#                    This version is for installation on the ARM9 based DV-RPTR-Net board.
+#                    This version is for installation on Debian based systems.
 ### END INIT INFO
 
 # Author: Hans-J. Barthen DL5DI <dl5di@gmx.de>

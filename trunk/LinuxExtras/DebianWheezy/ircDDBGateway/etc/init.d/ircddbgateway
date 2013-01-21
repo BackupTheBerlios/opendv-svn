@@ -7,7 +7,7 @@
 # Default-Stop:      0 1 6
 # Short-Description: ircDDBGateway
 # Description:       ircDDBGateway is a free internet gateway for D-Star Digital Voice on amateur radio
-#                    This version is for installation on the ARM9 based DV-RPTR-Net board.
+#                    This version is for installation on Debian based systems.
 ### END INIT INFO
 
 # Author: Hans-J. Barthen DL5DI <dl5di@gmx.de>
@@ -69,12 +69,12 @@ do_start()
 	sleep 2
 	# create a watchdog entry to the crontab
 	echo "*/10 * * * * root ps aux | grep $DAEMON | grep -vq grep || /etc/init.d/ircddbgateway start" > /etc/cron.d/ircddbgateway
-	if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ];then
+	if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ]; then
 	    echo " - configure dd-mode network device $IRCDDBGATEWAY_DDDEV "
     	    sleep 15
 	    /sbin/ifconfig $IRCDDBGATEWAY_DDDEV $IRCDDBGATEWAY_DDIP netmask $IRCDDBGATEWAY_DDMASK
     	    echo 1 > /proc/sys/net/ipv4/ip_forward
-	    if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
+	    if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
 		echo " - start dhcpd "
         	[ -x "/etc/init.d/dhcpd" ] && /etc/init.d/dhcpd start
 	    fi
@@ -91,7 +91,7 @@ do_stop()
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
-	if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
+	if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
     	    echo " - dhcp for dd-mode is enabled, stop it "
     	    [ -x "/etc/init.d/dhcpd" ] && /etc/init.d/dhcpd stop
     	    sleep 15
@@ -129,13 +129,13 @@ do_reload() {
 
 case "$1" in
   start)
-    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
-    do_start
-    case "$?" in
+	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
+	do_start
+	case "$?" in
 		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
 		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 	esac
-  ;;
+	;;
   stop)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
 	do_stop
@@ -145,8 +145,8 @@ case "$1" in
 	esac
 	;;
   status)
-       status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
-       ;;
+        status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+        ;;
   #reload|force-reload)
 	#
 	# If do_reload() is not implemented then leave this commented out
@@ -163,10 +163,6 @@ case "$1" in
 	#
 	log_daemon_msg "Restarting $DESC" "$NAME"
 	do_stop
-	if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
-	    echo "DD-mode is enabled, waiting for dchpd to shut down"
-	    sleep 15
-	fi
 	case "$?" in
 	  0|1)
 		do_start
