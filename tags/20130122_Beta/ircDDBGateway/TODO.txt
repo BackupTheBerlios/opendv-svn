@@ -1,0 +1,4 @@
+ircDDB Gateway - 20130122
+=========================
+
+DD mode on Windows.
