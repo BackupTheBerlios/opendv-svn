@@ -131,7 +131,6 @@ private:
 	unsigned int           m_tryCount;
 	unsigned int           m_dPlusId;
 	unsigned int           m_dPlusSeq;
-	unsigned int           m_rptrId;
 	CTimer                 m_inactivityTimer;
 	CHeaderData*           m_header;
 

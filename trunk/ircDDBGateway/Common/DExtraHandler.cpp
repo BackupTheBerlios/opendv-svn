@@ -48,7 +48,6 @@ m_tryTimer(1000U, 1U),
 m_tryCount(0U),
 m_dExtraId(0x00U),
 m_dExtraSeq(0x00U),
-m_rptrId(0x00U),
 m_inactivityTimer(1000U, 2U),
 m_header(NULL)
 {
@@ -84,7 +83,6 @@ m_tryTimer(1000U, 1U),
 m_tryCount(0U),
 m_dExtraId(0x00U),
 m_dExtraSeq(0x00U),
-m_rptrId(0x00U),
 m_inactivityTimer(1000U, 2U),
 m_header(NULL)
 {
@@ -457,19 +455,19 @@ void CDExtraHandler::unlink()
 	}	
 }
 
-void CDExtraHandler::writeHeader(const wxString& callsign, CHeaderData& header, DIRECTION direction)
+void CDExtraHandler::writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeHeaderInt(callsign, header, direction);
+			m_reflectors[i]->writeHeaderInt(handler, header, direction);
 	}	
 }
 
-void CDExtraHandler::writeAMBE(const wxString& callsign, CAMBEData& data, DIRECTION direction)
+void CDExtraHandler::writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeAMBEInt(callsign, data, direction);
+			m_reflectors[i]->writeAMBEInt(handler, data, direction);
 	}	
 }
 
@@ -731,7 +729,6 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 		m_stateChange = true;
 		m_dExtraId    = 0x00U;
 		m_dExtraSeq   = 0x00U;
-		m_rptrId      = 0x00U;
 
 		switch (m_linkState) {
 			case DEXTRA_LINKING:
@@ -803,7 +800,7 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 	return false;
 }
 
-void CDExtraHandler::writeHeaderInt(const wxString& callsign, CHeaderData& header, DIRECTION direction)
+void CDExtraHandler::writeHeaderInt(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction)
 {
 	if (m_linkState != DEXTRA_LINKED)
 		return;
@@ -812,23 +809,28 @@ void CDExtraHandler::writeHeaderInt(const wxString& callsign, CHeaderData& heade
 	if (m_direction != direction)
 		return;
 
-	// Reject on invalid callsign if not a dongle link
-	if (!m_repeater.IsEmpty()) {
-		// Do the callsigns match?
-		if (!callsign.IsSameAs(m_repeater))
-			return;
-	}
-
 	// Already in use?
 	if (m_dExtraId != 0x00)
 		return;
 
-	header.setDestination(m_yourAddress, m_yourPort);
-	m_handler->writeHeader(header);
-	m_rptrId = header.getId();
+	switch (m_direction) {
+		case DIR_OUTGOING:
+			if (m_destination == handler) {
+				header.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeHeader(header);
+			}
+			break;
+
+		case DIR_INCOMING:
+			if (m_repeater.IsEmpty() || m_destination == handler) {
+				header.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeHeader(header);
+			}
+			break;
+	}
 }
 
-void CDExtraHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECTION direction)
+void CDExtraHandler::writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
 {
 	if (m_linkState != DEXTRA_LINKED)
 		return;
@@ -837,26 +839,25 @@ void CDExtraHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIR
 	if (m_direction != direction)
 		return;
 
-	// Reject on invalid callsign if not a dongle link
-	if (!m_repeater.IsEmpty()) {
-		// Do the callsigns match?
-		if (!callsign.IsSameAs(m_repeater))
-			return;
-	}
-
-	// If the ids don't match, reject
-	if (data.getId() != m_rptrId)
-		return;
-
 	// Already in use?
 	if (m_dExtraId != 0x00)
 		return;
 
-	data.setDestination(m_yourAddress, m_yourPort);
-	m_handler->writeAMBE(data);
+	switch (m_direction) {
+		case DIR_OUTGOING:
+			if (m_destination == handler) {
+				data.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeAMBE(data);
+			}
+			break;
 
-	if (data.isEnd())
-		m_rptrId = 0x00;
+		case DIR_INCOMING:
+			if (m_repeater.IsEmpty() || m_destination == handler) {
+				data.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeAMBE(data);
+			}
+			break;
+	}
 }
 
 bool CDExtraHandler::stateChange()

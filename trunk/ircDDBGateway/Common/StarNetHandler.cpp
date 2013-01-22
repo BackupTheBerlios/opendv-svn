@@ -547,11 +547,11 @@ void CStarNetHandler::process(CHeaderData &header)
 
 #if defined(DEXTRA_LINK)
 	header.setRepeaters(m_linkGateway, m_linkReflector);
-	CDExtraHandler::writeHeader(m_repeater, header, DIR_OUTGOING);
+	CDExtraHandler::writeHeader(this, header, DIR_OUTGOING);
 #endif
 #if defined(DCS_LINK)
 	header.setRepeaters(m_linkGateway, m_linkReflector);
-	CDCSHandler::writeHeader(m_repeater, header, DIR_OUTGOING);
+	CDCSHandler::writeHeader(this, header, DIR_OUTGOING);
 #endif
 
 	// Get the home repeater of the user
@@ -679,10 +679,10 @@ void CStarNetHandler::process(CAMBEData &data)
 
 	if (id == m_id) {
 #if defined(DEXTRA_LINK)
-		CDExtraHandler::writeAMBE(m_repeater, data, DIR_OUTGOING);
+		CDExtraHandler::writeAMBE(this, data, DIR_OUTGOING);
 #endif
 #if defined(DCS_LINK)
-		CDCSHandler::writeAMBE(m_repeater, data, DIR_OUTGOING);
+		CDCSHandler::writeAMBE(this, data, DIR_OUTGOING);
 #endif
 		sendToRepeaters(data);
 	}

@@ -58,8 +58,8 @@ public:
 	static void unlink(IReflectorCallback* handler, const wxString& exclude = wxEmptyString);
 	static void unlink();
 
-	static void writeHeader(const wxString& callsign, CHeaderData& header, DIRECTION direction);
-	static void writeAMBE(const wxString& callsign, CAMBEData& data, DIRECTION direction);
+	static void writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
+	static void writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
 
 	static void process(CHeaderData& header);
 	static void process(CAMBEData& data);
@@ -88,8 +88,8 @@ protected:
 	void processInt(CAMBEData& data);
 	bool processInt(CConnectData& connect, CD_TYPE type);
 
-	void writeHeaderInt(const wxString& callsign, CHeaderData& header, DIRECTION direction);
-	void writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECTION direction);
+	void writeHeaderInt(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
+	void writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
 
 	bool clockInt(unsigned int ms);
 
@@ -119,7 +119,6 @@ private:
 	unsigned int        m_tryCount;
 	unsigned int        m_dExtraId;
 	unsigned int        m_dExtraSeq;
-	unsigned int        m_rptrId;
 	CTimer              m_inactivityTimer;
 	CHeaderData*        m_header;
 

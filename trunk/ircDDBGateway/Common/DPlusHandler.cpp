@@ -56,7 +56,6 @@ m_tryTimer(1000U, 1U),
 m_tryCount(0U),
 m_dPlusId(0x00U),
 m_dPlusSeq(0x00U),
-m_rptrId(0x00U),
 m_inactivityTimer(1000U, 2U),
 m_header(NULL)
 {
@@ -93,7 +92,6 @@ m_tryTimer(1000U),
 m_tryCount(0U),
 m_dPlusId(0x00U),
 m_dPlusSeq(0x00U),
-m_rptrId(0x00U),
 m_inactivityTimer(1000U, 2U),
 m_header(NULL)
 {
@@ -702,7 +700,6 @@ bool CDPlusHandler::clockInt(unsigned int ms)
 		m_stateChange = true;
 		m_dPlusId     = 0x00U;
 		m_dPlusSeq    = 0x00U;
-		m_rptrId      = 0x00U;
 
 		if (!m_reflector.IsEmpty()) {
 			switch (m_linkState) {
@@ -800,7 +797,6 @@ void CDPlusHandler::writeHeaderInt(IReflectorCallback* handler, CHeaderData& hea
 				header.setRepeaters(m_callsign, m_reflector);
 				header.setDestination(m_yourAddress, m_yourPort);
 				m_handler->writeHeader(header);
-				m_rptrId = header.getId();
 			}
 			break;
 
@@ -825,12 +821,9 @@ void CDPlusHandler::writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, D
 
 	switch (m_direction) {
 		case DIR_OUTGOING:
-			if (data.getId() == m_rptrId && m_destination == handler) {
+			if (m_destination == handler) {
 				data.setDestination(m_yourAddress, m_yourPort);
 				m_handler->writeAMBE(data);
-
-				if (data.isEnd())
-					m_rptrId = 0x00U;
 			}
 			break;
 

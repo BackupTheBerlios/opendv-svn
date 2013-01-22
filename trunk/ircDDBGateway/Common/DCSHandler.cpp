@@ -49,7 +49,6 @@ m_tryTimer(1000U, 1U),
 m_tryCount(0U),
 m_dcsId(0x00U),
 m_dcsSeq(0x00U),
-m_rptrId(0x00U),
 m_seqNo(0x00U),
 m_inactivityTimer(1000U, 2U),
 m_yourCall(),
@@ -376,19 +375,19 @@ void CDCSHandler::unlink()
 	}	
 }
 
-void CDCSHandler::writeHeader(const wxString& callsign, CHeaderData& header, DIRECTION direction)
+void CDCSHandler::writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeHeaderInt(callsign, header, direction);
+			m_reflectors[i]->writeHeaderInt(handler, header, direction);
 	}	
 }
 
-void CDCSHandler::writeAMBE(const wxString& callsign, CAMBEData& data, DIRECTION direction)
+void CDCSHandler::writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		if (m_reflectors[i] != NULL)
-			m_reflectors[i]->writeAMBEInt(callsign, data, direction);
+			m_reflectors[i]->writeAMBEInt(handler, data, direction);
 	}	
 }
 
@@ -635,7 +634,6 @@ bool CDCSHandler::clockInt(unsigned int ms)
 		m_stateChange = true;
 		m_dcsId       = 0x00U;
 		m_dcsSeq      = 0x00U;
-		m_rptrId      = 0x00U;
 
 		switch (m_linkState) {
 			case DCS_LINKING:
@@ -705,7 +703,7 @@ bool CDCSHandler::clockInt(unsigned int ms)
 	return false;
 }
 
-void CDCSHandler::writeHeaderInt(const wxString& callsign, CHeaderData& header, DIRECTION direction)
+void CDCSHandler::writeHeaderInt(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction)
 {
 	if (m_linkState != DCS_LINKED)
 		return;
@@ -714,15 +712,13 @@ void CDCSHandler::writeHeaderInt(const wxString& callsign, CHeaderData& header, 
 	if (m_direction != direction)
 		return;
 
-	// Do the callsigns match?
-	if (!callsign.IsSameAs(m_repeater))
+	if (m_destination != handler)
 		return;
 
 	// Already in use?
 	if (m_dcsId != 0x00)
 		return;
 
-	m_rptrId   = header.getId();
 	m_seqNo    = 0U;
 
 	m_myCall1  = header.getMyCall1();
@@ -732,7 +728,7 @@ void CDCSHandler::writeHeaderInt(const wxString& callsign, CHeaderData& header, 
 	m_rptCall2 = header.getRptCall2();
 }
 
-void CDCSHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECTION direction)
+void CDCSHandler::writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
 {
 	if (m_linkState != DCS_LINKED)
 		return;
@@ -741,12 +737,7 @@ void CDCSHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECT
 	if (m_direction != direction)
 		return;
 
-	// Do the callsigns match?
-	if (!callsign.IsSameAs(m_repeater))
-		return;
-
-	// If the ids don't match, reject
-	if (data.getId() != m_rptrId)
+	if (m_destination != handler)
 		return;
 
 	// Already in use?
@@ -763,9 +754,6 @@ void CDCSHandler::writeAMBEInt(const wxString& callsign, CAMBEData& data, DIRECT
 	data.setRptSeq(m_seqNo++);
 	data.setDestination(m_yourAddress, m_yourPort);
 	m_handler->writeData(data);
-
-	if (data.isEnd())
-		m_rptrId = 0x00;
 }
 
 bool CDCSHandler::stateChange()

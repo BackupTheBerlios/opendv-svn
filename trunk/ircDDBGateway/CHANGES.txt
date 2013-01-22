@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130115
+ircDDB Gateway - 20130122
 =========================
 
 20101010
@@ -1181,7 +1181,7 @@ Added DCS019.
 Allow link refusals to be logged and sent as temporary text on the announcement.
 Revert DExtra handling to the old behaviour.
 
-201301xx
+20130122
 --------
 
 Add a dummy repeater type for testing.

@@ -2030,23 +2030,23 @@ void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 	// Outgoing DExtra links have the currently linked repeater/gateway
 	// as the RPT1 and RPT2 values
 	temp.setRepeaters(m_linkGateway, m_linkRepeater);
-	CDExtraHandler::writeHeader(m_rptCallsign, temp, DIR_OUTGOING);
+	CDExtraHandler::writeHeader(this, temp, DIR_OUTGOING);
 
 	// Outgoing DCS links have the currently linked repeater and repeater callsign
 	// as the RPT1 and RPT2 values
 	temp.setRepeaters(m_rptCallsign, m_linkRepeater);
-	CDCSHandler::writeHeader(m_rptCallsign, temp, DIR_OUTGOING);
+	CDCSHandler::writeHeader(this, temp, DIR_OUTGOING);
 }
 
 void CRepeaterHandler::sendToOutgoing(const CAMBEData& data)
 {
 	CAMBEData temp(data);
 
-	CDExtraHandler::writeAMBE(m_rptCallsign, temp, DIR_OUTGOING);
+	CDExtraHandler::writeAMBE(this, temp, DIR_OUTGOING);
 
 	CDPlusHandler::writeAMBE(this, temp, DIR_OUTGOING);
 
-	CDCSHandler::writeAMBE(m_rptCallsign, temp, DIR_OUTGOING);
+	CDCSHandler::writeAMBE(this, temp, DIR_OUTGOING);
 }
 
 void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
@@ -2062,22 +2062,22 @@ void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
 
 	// Incoming DExtra links have RPT1 and RPT2 swapped
 	temp.setRepeaters(m_gwyCallsign, m_rptCallsign);
-	CDExtraHandler::writeHeader(m_rptCallsign, temp, DIR_INCOMING);
+	CDExtraHandler::writeHeader(this, temp, DIR_INCOMING);
 
 	// Incoming DCS links have RPT1 and RPT2 swapped
 	temp.setRepeaters(m_gwyCallsign, m_rptCallsign);
-	CDCSHandler::writeHeader(m_rptCallsign, temp, DIR_INCOMING);
+	CDCSHandler::writeHeader(this, temp, DIR_INCOMING);
 }
 
 void CRepeaterHandler::sendToIncoming(const CAMBEData& data)
 {
 	CAMBEData temp(data);
 
-	CDExtraHandler::writeAMBE(m_rptCallsign, temp, DIR_INCOMING);
+	CDExtraHandler::writeAMBE(this, temp, DIR_INCOMING);
 
 	CDPlusHandler::writeAMBE(this, temp, DIR_INCOMING);
 
-	CDCSHandler::writeAMBE(m_rptCallsign, temp, DIR_INCOMING);
+	CDCSHandler::writeAMBE(this, temp, DIR_INCOMING);
 }
 
 void CRepeaterHandler::startupInt()

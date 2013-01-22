@@ -154,9 +154,6 @@ CAMBEData* CDCSProtocolHandler::readData()
 		return NULL;
 	}
 
-	// wxLogMessage(wxT("Receiving AMBE from DCS: seq: %02X, id: %04X"), data->getSeq(), data->getId());
-	// CUtils::dump(wxT("Data"), m_buffer + 46U, 12U);
-
 	return data;
 }
 
