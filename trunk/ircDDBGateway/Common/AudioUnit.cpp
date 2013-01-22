@@ -156,13 +156,6 @@ void CAudioUnit::sendStatus()
 	if (m_status != AS_IDLE)
 		return;
 
-	if (m_tempText.IsEmpty()) {
-		m_encoder.setTextData(m_text);
-	} else {
-		m_encoder.setTextData(m_tempText);
-		m_tempText.Clear();
-	}
-
 	m_status = AS_WAIT;
 	m_timer.start();
 }
@@ -184,6 +177,13 @@ void CAudioUnit::clock(unsigned int ms)
 	m_timer.clock(ms);
 
 	if (m_status == AS_WAIT && m_timer.hasExpired()) {
+		if (m_tempText.IsEmpty()) {
+			m_encoder.setTextData(m_text);
+		} else {
+			m_encoder.setTextData(m_tempText);
+			m_tempText.Clear();
+		}
+
 		m_timer.stop();
 
 		// Create the message
