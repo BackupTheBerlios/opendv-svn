@@ -19,7 +19,31 @@
 #include "ConnectData.h"
 
 #include "DStarDefines.h"
+#include "Version.h"
 #include "Utils.h"
+
+const wxChar* HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=hf.jpg></td><td width=\"96%%\"><font size=\"2\"><b>REPEATER</b> ircDDB Gateway %s</font></td></tr></table>");
+
+char* CConnectData::m_html = NULL;
+
+void CConnectData::initialise()
+{
+	wxString html;
+	html.Printf(HTML, VERSION.c_str());
+
+	unsigned int len = html.Len();
+
+	m_html = new char[len + 1U];
+	::memset(m_html, 0x00, len + 1U);
+
+	for (unsigned int i = 0U; i < len; i++)
+		m_html[i] = html.GetChar(i);
+}
+
+void CConnectData::finalise()
+{
+	delete[] m_html;
+}
 
 CConnectData::CConnectData(const wxString& repeater, const wxString& reflector, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_repeater(repeater),
@@ -32,6 +56,8 @@ m_myPort(myPort)
 	wxASSERT(yourPort > 0U);
 	wxASSERT(!repeater.IsEmpty());
 	wxASSERT(!reflector.IsEmpty());
+
+	wxASSERT(m_html != NULL);
 }
 
 CConnectData::CConnectData(const wxString& repeater, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
@@ -44,6 +70,8 @@ m_myPort(myPort)
 {
 	wxASSERT(yourPort > 0U);
 	wxASSERT(!repeater.IsEmpty());
+
+	wxASSERT(m_html != NULL);
 }
 
 CConnectData::CConnectData(const wxString& repeater, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
@@ -56,6 +84,8 @@ m_myPort(myPort)
 {
 	wxASSERT(yourPort > 0U);
 	wxASSERT(!repeater.IsEmpty());
+
+	wxASSERT(m_html != NULL);
 }
 
 CConnectData::CConnectData(CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
@@ -67,6 +97,8 @@ m_yourPort(yourPort),
 m_myPort(myPort)
 {
 	wxASSERT(yourPort > 0U);
+
+	wxASSERT(m_html != NULL);
 }
 
 CConnectData::CConnectData() :
@@ -77,6 +109,7 @@ m_yourAddress(),
 m_yourPort(0U),
 m_myPort(0U)
 {
+	wxASSERT(m_html != NULL);
 }
 
 CConnectData::~CConnectData()
@@ -265,7 +298,7 @@ unsigned int CConnectData::getDExtraData(unsigned char *data, unsigned int lengt
 unsigned int CConnectData::getDCSData(unsigned char *data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 11U);
+	wxASSERT(length >= 519U);
 
 	::memset(data, ' ', LONG_CALLSIGN_LENGTH);
 
@@ -279,17 +312,19 @@ unsigned int CConnectData::getDCSData(unsigned char *data, unsigned int length) 
 		case CT_LINK2:
 			data[LONG_CALLSIGN_LENGTH + 1U] = m_reflector.GetChar(LONG_CALLSIGN_LENGTH - 1U);
 			data[LONG_CALLSIGN_LENGTH + 2U] = 0x00U;
-			::memset(data + LONG_CALLSIGN_LENGTH + 3U, ' ', LONG_CALLSIGN_LENGTH);
+			::memset(data + 11U, ' ', LONG_CALLSIGN_LENGTH);
 			for (unsigned int i = 0U; i < m_reflector.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
-				data[i + LONG_CALLSIGN_LENGTH + 3U] = m_reflector.GetChar(i);
-			return 19U;
+				data[i + 11U] = m_reflector.GetChar(i);
+			::memset(data + 19U, 0x00U, 500U);
+			::memcpy(data + 19U, m_html, ::strlen(m_html));
+			return 519U;
 
 		case CT_UNLINK:
 			data[LONG_CALLSIGN_LENGTH + 1U] = 0x20U;
 			data[LONG_CALLSIGN_LENGTH + 2U] = 0x00U;
-			::memset(data + LONG_CALLSIGN_LENGTH + 3U, ' ', LONG_CALLSIGN_LENGTH);
+			::memset(data + 11U, ' ', LONG_CALLSIGN_LENGTH);
 			for (unsigned int i = 0U; i < m_reflector.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
-				data[i + LONG_CALLSIGN_LENGTH + 3U] = m_reflector.GetChar(i);
+				data[i + 11U] = m_reflector.GetChar(i);
 			return 19U;
 
 		case CT_ACK:

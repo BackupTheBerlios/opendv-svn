@@ -89,7 +89,7 @@ m_status4(),
 m_status5()
 {
 	CHeaderData::initialise();
-	CAMBEData::initialise();
+	CConnectData::initialise();
 	CG2Handler::initialise(MAX_ROUTES);
 	CDExtraHandler::initialise(MAX_DEXTRA_LINKS);
 	CDPlusHandler::initialise(MAX_DPLUS_LINKS);
@@ -102,7 +102,7 @@ m_status5()
 CIRCDDBGatewayThread::~CIRCDDBGatewayThread()
 {
 	CHeaderData::finalise();
-	CAMBEData::finalise();
+	CConnectData::finalise();
 	CG2Handler::finalise();
 	CDExtraHandler::finalise();
 	CDPlusHandler::finalise();

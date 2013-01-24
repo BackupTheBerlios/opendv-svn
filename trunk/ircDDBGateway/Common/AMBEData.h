@@ -83,12 +83,7 @@ public:
 
 	CHeaderData& getHeader();
 
-	static void initialise();
-	static void finalise();
-
 private:
-	static char* m_html;
-
 	unsigned int   m_rptSeq;
 	unsigned char  m_outSeq;
 	unsigned int   m_id;

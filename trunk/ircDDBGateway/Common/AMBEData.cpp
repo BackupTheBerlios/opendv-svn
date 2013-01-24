@@ -19,31 +19,7 @@
 #include "AMBEData.h"
 
 #include "DStarDefines.h"
-#include "Version.h"
 #include "Utils.h"
-
-const wxChar* HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=hf.jpg></td><td width=\"96%%\"><font size=\"2\"><b>REPEATER</b> ircDDB Gateway %s</font></td></tr></table>");
-
-char* CAMBEData::m_html = NULL;
-
-void CAMBEData::initialise()
-{
-	wxString html;
-	html.Printf(HTML, VERSION.c_str());
-
-	unsigned int len = html.Len();
-
-	m_html = new char[len + 1U];
-	::memset(m_html, 0x00, len + 1U);
-
-	for (unsigned int i = 0U; i < len; i++)
-		m_html[i] = html.GetChar(i);
-}
-
-void CAMBEData::finalise()
-{
-	delete[] m_html;
-}
 
 CAMBEData::CAMBEData() :
 m_rptSeq(0U),
@@ -60,8 +36,6 @@ m_errors(0U),
 m_text(),
 m_header()
 {
-	wxASSERT(m_html != NULL);
-
 	m_data = new unsigned char[DV_FRAME_LENGTH_BYTES];
 }
 
@@ -80,8 +54,6 @@ m_errors(data.m_errors),
 m_text(data.m_text),
 m_header(data.m_header)
 {
-	wxASSERT(m_html != NULL);
-
 	m_data = new unsigned char[DV_FRAME_LENGTH_BYTES];
 	::memcpy(m_data, data.m_data, DV_FRAME_LENGTH_BYTES);
 }
@@ -397,9 +369,9 @@ unsigned int CAMBEData::getDPlusData(unsigned char* data, unsigned int length) c
 unsigned int CAMBEData::getDCSData(unsigned char* data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 600U);
+	wxASSERT(length >= 100U);
 
-	::memset(data, 0x00U, 600U);
+	::memset(data, 0x00U, 100U);
 
 	data[0]  = '0';
 	data[1]  = '0';
@@ -433,13 +405,7 @@ unsigned int CAMBEData::getDCSData(unsigned char* data, unsigned int length) con
 
 	m_header.getDCSData(data, 100U);
 
-	// Send the HTML every 2 seconds
-	if ((m_rptSeq % 100U) != 0U)
-		return 100U;
-
-	::memcpy(data + 100U, m_html, ::strlen(m_html));
-
-	return 600U;
+	return 100U;
 }
 
 unsigned int CAMBEData::getId() const

@@ -24,7 +24,7 @@ Common.a:		AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterT
 AddressTextCtrl.o:	AddressTextCtrl.cpp AddressTextCtrl.h RestrictedTextCtrl.h
 				$(CC) $(CFLAGS) -c AddressTextCtrl.cpp
 
-AMBEData.o:		AMBEData.cpp AMBEData.h DStarDefines.h HeaderData.h Version.h Utils.h
+AMBEData.o:		AMBEData.cpp AMBEData.h DStarDefines.h HeaderData.h Utils.h
 				$(CC) $(CFLAGS) -c AMBEData.cpp
 
 APRSWriter.o:	APRSWriter.cpp APRSWriter.h AMBEData.h APRSCollector.h DStarDefines.h Defs.h Timer.h APRSWriterThread.h
@@ -51,7 +51,7 @@ CallsignTextCtrl.o:	CallsignTextCtrl.cpp CallsignTextCtrl.h RestrictedTextCtrl.h
 CCITTChecksum.o:	CCITTChecksum.cpp CCITTChecksum.h Checksum.h Utils.h
 				$(CC) $(CFLAGS) -c CCITTChecksum.cpp
 
-ConnectData.o:	ConnectData.cpp ConnectData.h DStarDefines.h Utils.h
+ConnectData.o:	ConnectData.cpp ConnectData.h DStarDefines.h Version.h Utils.h
 				$(CC) $(CFLAGS) -c ConnectData.cpp
 
 DCSHandler.o:	DCSHandler.cpp DCSHandler.h DStarDefines.h RepeaterHandler.h Utils.h DCSProtocolHandlerPool.h DCSProtocolHandler.h ConnectData.h AMBEData.h \

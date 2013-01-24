@@ -62,8 +62,6 @@ m_killed(false)
 
 	for (unsigned int i = 0U; i < MAX_FRAMES; i++)
 		m_data[i] = NULL;
-
-	CAMBEData::initialise();
 }
 
 CTimeServerThread::~CTimeServerThread()
@@ -73,8 +71,6 @@ CTimeServerThread::~CTimeServerThread()
 
 	delete[] m_ambe;
 	delete[] m_data;
-
-	CAMBEData::finalise();
 }
 
 void CTimeServerThread::run()

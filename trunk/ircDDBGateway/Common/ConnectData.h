@@ -60,7 +60,12 @@ public:
 	unsigned int  getYourPort() const;
 	unsigned int  getMyPort() const;
 
+	static void initialise();
+	static void finalise();
+
 private:
+	static char* m_html;
+
 	wxString      m_repeater;
 	wxString      m_reflector;
 	CD_TYPE       m_type;

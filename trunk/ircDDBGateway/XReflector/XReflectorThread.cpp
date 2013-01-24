@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ m_logEnabled(false),
 m_statusTimer(1000U, 10U)	// 10 seconds
 {
 	CHeaderData::initialise();
-	CAMBEData::initialise();
 	CXReflectorReflectorHandler::initialise(MAX_REFLECTORS, name);
 	CXReflectorDExtraHandler::initialise(MAX_DEXTRA_LINKS);
 	CXReflectorDPlusHandler::initialise(MAX_DPLUS_LINKS);
@@ -57,7 +56,6 @@ m_statusTimer(1000U, 10U)	// 10 seconds
 CXReflectorThread::~CXReflectorThread()
 {
 	CHeaderData::finalise();
-	CAMBEData::finalise();
 	CXReflectorReflectorHandler::finalise();
 	CXReflectorDExtraHandler::finalise();
 	CXReflectorDPlusHandler::finalise();

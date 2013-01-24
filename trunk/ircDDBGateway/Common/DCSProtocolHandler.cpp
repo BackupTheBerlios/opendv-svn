@@ -54,8 +54,8 @@ unsigned int CDCSProtocolHandler::getPort() const
 
 bool CDCSProtocolHandler::writeData(const CAMBEData& data)
 {
-	unsigned char buffer[600U];
-	unsigned int length = data.getDCSData(buffer, 600U);
+	unsigned char buffer[100U];
+	unsigned int length = data.getDCSData(buffer, 100U);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
@@ -78,8 +78,8 @@ bool CDCSProtocolHandler::writePoll(const CPollData& poll)
 
 bool CDCSProtocolHandler::writeConnect(const CConnectData& connect)
 {
-	unsigned char buffer[20U];
-	unsigned int length = connect.getDCSData(buffer, 20U);
+	unsigned char buffer[520U];
+	unsigned int length = connect.getDCSData(buffer, 520U);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Connect"), buffer, length);

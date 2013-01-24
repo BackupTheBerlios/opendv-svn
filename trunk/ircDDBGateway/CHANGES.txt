@@ -1192,3 +1192,4 @@ Fixed audio problems with multiple reflector links on one gateway.
 --------
 
 Convert the DCS hosts files to use hostnames.
+Update the DCS protocol.
