@@ -31,7 +31,7 @@ me=ircddbgateway
 # Source the configuration
 [ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me
 
-start() {
+dostart() {
 
     echo -n "Starting $me:"
     daemon --pidfile /var/run/$me.pid $DAEMON_PATH $DAEMON_OPTIONS 
@@ -42,19 +42,19 @@ start() {
     sleep 2
     # create a watchdog entry to the crontab
     echo "*/10 * * * * root ps aux | grep $DAEMON_PATH | grep -vq grep || /etc/init.d/$me start" > /etc/cron.d/$me
-    if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ];then
+    if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ]; then
 	echo " - configure dd-mode network device $IRCDDBGATEWAY_DDDEV "
         sleep 15
 	/sbin/ifconfig $IRCDDBGATEWAY_DDDEV $IRCDDBGATEWAY_DDIP netmask $IRCDDBGATEWAY_DDMASK
         echo 1 > /proc/sys/net/ipv4/ip_forward
-	if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ];then
+	if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
 	    echo " - start dhcpd "
             /sbin/service dhcpd start
 	fi
     fi
 }
 
-stop() {
+dostop() {
     
     echo -n "Stopping $me "
     if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
@@ -71,25 +71,25 @@ stop() {
 
 }
 
-restart() {
-    stop
+dorestart() {
+    dostop
     sleep 2
     if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" -a  "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
 	sleep 15
     fi
-    start
+    dostart
 }	
 
 # See how we were called.
 case "$1" in
     start)
-	start
+	dostart
 	;;
     stop)
-	stop
+	dostop
 	;;
     restart)
-	restart
+	dorestart
 	;;
     status)
 	status $DAEMON_PATH

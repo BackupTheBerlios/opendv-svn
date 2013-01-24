@@ -1,0 +1,36 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+OPEN ISSUES
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: verification issue during installation/upgrade
+FOUND: 2012-09-04
+REPORTED: ON4TOP
+VERIFIED: 2012-09-04
+PRIORITY: low
+SOLVED: open
+
+apt-get always shows verification issue which needs to be confirmed.
+clarification if/how this can be solved.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: messages/notices during installation of packages
+FOUND: 2012-09-04
+REPORTED: DL5DI
+VERIFIED: 2012-09-07
+PRIORITY: low
+SOLVED: open
+
+
+ircddbgateway-20120908-2:
+insserv: script repeater_4: service repeater already provided!
+insserv: script repeater_2: service repeater already provided!
+insserv: script repeater_1: service repeater already provided!
+
+dh_make rules still use "Replaces repeater" after data already have been excluded to separate package.
+
+Solution:
+change dh_make control file, remove "Replaces"
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+

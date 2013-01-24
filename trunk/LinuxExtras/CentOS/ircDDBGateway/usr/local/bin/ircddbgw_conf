@@ -56,12 +56,13 @@
 # 2012-12-21 dl5di    bugfixes in comparisons of strings
 # 2012-12-31 dl5di    disable Icom migration after it was done once
 # 2013-01-20 dl5di    bugfix
+# 2013-01-22 dl5di    bugfix
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20120120"
+rev="20120122"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -491,7 +492,7 @@ function valid_port()
 
     echo " - valid_port: $1" >> $LOG
     if [[ $port =~ ^[0-9]{4,5}$ ]]; then
-	if [ $port -ge 1024 -a $port -lt 65535 ];then
+	if [ $port -ge 1024 -a $port -lt 65535 ]; then
 	    stat=0
 	fi 
     fi
@@ -868,7 +869,7 @@ function basic_setup(){
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
     read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ];then
+    if [ "$?" = 0 ]; then
 	DEFAULT=$VALUE
 	read_value $CONFIGFILE "DSGWDPATH"
 	if [ -f "$VALUE/dsgwd.conf" ]; then
@@ -878,7 +879,7 @@ function basic_setup(){
 	    VALUE=$DEFAULT
 	fi
     fi
-    if [ "$FOUND" = 0 ];then
+    if [ "$FOUND" = 0 ]; then
 	$VALUE=$DEFAULT
     fi
     print_text $var 
@@ -1008,7 +1009,7 @@ function basic_setup(){
 # /etc/ircddbd/ircDDB.properties:rptr_info_url
 #
     read_value $IRCDDBGWCONFIG "gatewayCallsign"
-    if [ "$?" = 1 ];then
+    if [ "$?" = 1 ]; then
 	DEFAULT="http://status.ircddb.net/qam.php?call=$VALUE"
     fi
 #

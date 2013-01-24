@@ -31,7 +31,7 @@ me=timeserver
 # Source the timeserver configuration
 [ -f /etc/sysconfig/$me ] && . /etc/sysconfig/$me
 
-start() {
+dostart() {
 
     echo -n "Starting $me:"
     daemon --pidfile /var/run/$me.pid $DAEMON_PATH $DAEMON_OPTIONS 
@@ -43,7 +43,7 @@ start() {
     echo
 }
 
-stop() {
+dostop() {
     
     echo -n "Stopping $me "
     killproc $DAEMON_PATH
@@ -55,21 +55,21 @@ stop() {
                 
 }
 
-restart() {
-    stop
-    start
+dorestart() {
+    dostop
+    dostart
 }	
 
 # See how we were called.
 case "$1" in
     start)
-	start
+	dostart
 	;;
     stop)
-	stop
+	dostop
 	;;
     restart)
-	restart
+	dorestart
 	;;
     status)
 	status $DAEMON_PATH

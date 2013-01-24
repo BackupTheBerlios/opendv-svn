@@ -32,6 +32,7 @@
 # 2012-09-24 dl5di    added frequency configuration for UHF-version of DVAP
 # 2012-09-29 dl5di    bugfix, reset if logdir
 # 2012-12-22 dl5di    ethernet configuration for dvrptrepeater V2
+# 2013-01-22 dl5di    cleanups
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -41,7 +42,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20121222"
+rev="20130122"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -561,7 +562,7 @@ function valid_port(){
 
     echo " - valid_port $1" >> $LOG
     if [[ $port =~ ^[0-9]{4,5}$ ]]; then
-	if [ $port -ge 1024 -a $port -lt 65535 ];then
+	if [ $port -ge 1024 -a $port -lt 65535 ]; then
 	    stat=0
 	fi 
     fi
@@ -708,12 +709,12 @@ function basic_setup(){
     read_value $REPEATERCONFIG $var
     if [ "$?" = 0 ]; then
 	read_value $IRCDDBGWCONFIG "gatewayCallsign"
-	if [ "$?" = 0 ];then
+	if [ "$?" = 0 ]; then
 	    VALUE=$DEFAULT
 	else
 	    repeaterCall="$VALUE"
 	    read_value $IRCDDBGWCONFIG "repeaterBand${MODULE}"
-	    if [ "$?" -eq 0 ];then
+	    if [ "$?" -eq 0 ]; then
 		VALUE=""
 	    else
 		VALUE="$(printf "%-7.7s" "$repeaterCall")${VALUE}"		
@@ -736,7 +737,7 @@ function basic_setup(){
     read_value $REPEATERCONFIG $var
     if [ "$?" = 0 ]; then
 	read_value $IRCDDBGWCONFIG "gatewayCallsign"
-	if [ "$?" = 0 ];then
+	if [ "$?" = 0 ]; then
 	    VALUE=$DEFAULT
 	fi
     fi
@@ -1834,7 +1835,7 @@ function hwtype2(){
 		VALID=0
 		INPUT=$DEFAULT
 	    else
-		if [ $INPUT -lt 65535 ];then
+		if [ $INPUT -lt 65535 ]; then
 		    VALID=0
 		fi
 	    fi
@@ -2281,7 +2282,7 @@ function hwsetup(){
 
     readconfig2
 
-    if [ "$HWTYPE" != "$OLDVALUE" ];then
+    if [ "$HWTYPE" != "$OLDVALUE" ]; then
 	hwtype${HWTYPE}
 	write_value $CFG hwtype_${MODULE} "$HWTYPE"
 	cat /etc/sysconfig/${hwname[$HWTYPE]} | grep "^DAEMON_PATH" | sed "s/DAEMON/REPEATER/" > /etc/sysconfig/repeater_$MODULE

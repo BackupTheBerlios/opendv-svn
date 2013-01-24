@@ -38,7 +38,7 @@ fi
 
 RETVAL=0
 
-start() {
+dostart() {
 
     echo -n "Starting $me:"
     daemon --pidfile /var/run/$me.pid $REPEATER_PATH $REPEATER_OPTIONS &
@@ -55,7 +55,7 @@ start() {
     return $RETVAL
 }
 
-stop() {
+dostop() {
     
     echo -n "Stopping $me "
     killproc -p /var/run/$me.pid $REPEATER_PATH
@@ -67,22 +67,22 @@ stop() {
     return $RETVAL
 }
 
-restart() {
-    stop
+dorestart() {
+    dostop
     sleep 2
-    start
+    dostart
 }	
 
 # See how we were called.
 case "$1" in
     start)
-	start
+	dostart
 	;;
     stop)
-	stop
+	dostop
 	;;
     restart)
-	restart
+	dorestart
 	;;
     status)
 	status -p /var/run/$me.pid $REPEATER_PATH
