@@ -1187,3 +1187,8 @@ Revert DExtra handling to the old behaviour.
 Add a dummy repeater type for testing.
 Fixed slow data text that went missing in 20130115.
 Fixed audio problems with multiple reflector links on one gateway.
+
+201301xx
+--------
+
+Convert the DCS hosts files to use hostnames.

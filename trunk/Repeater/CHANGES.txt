@@ -1774,3 +1774,4 @@ Added DCS019.
 --------
 
 Allow for temporary ack text.
+Convert the DCS hosts files to use hostnames.
