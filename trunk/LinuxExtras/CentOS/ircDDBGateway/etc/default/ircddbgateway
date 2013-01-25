@@ -1,4 +1,3 @@
-gatewayCallsign=
 gatewayAddress=
 icomAddress=172.16.0.20
 icomPort=20000
@@ -77,6 +76,7 @@ agl4=0.000
 band4_1=
 band4_2=
 band4_3=
+ircddbEnabled=1
 ircddbHostname=group1-irc.ircddb.net
 ircddbUsername=
 ircddbPassword=

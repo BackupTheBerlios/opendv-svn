@@ -77,6 +77,7 @@ agl4=0.000
 band4_1=
 band4_2=
 band4_3=
+ircddbEnabled=1
 ircddbHostname=group1-irc.ircddb.net
 ircddbUsername=
 ircddbPassword=

@@ -599,6 +599,14 @@ ircddb_setup:Der naechste Konfigurationsteil erfasst die Zugangsdaten zum ircDDB
 ircddb_setup: 
 ircddb_setup:******************************************************************************** 
 
+ircddbEnabled: 
+ircddbEnabled:      0  ircDDB-Service AUSschalten 
+ircddbEnabled:      1  ircDDB-Service EINschalten
+ircddbEnabled: 
+ircddbEnabled: -       Zuruecksetzen der Einstellung
+ircddbEnabled: <ENTER> Den alten Wert beibehalten (Wert in [])
+ircddbEnabled: 
+
 ircddbHostname: 
 ircddbHostname:Waehle die ircDDB-Server-Gruppe um eine beste Anbindung zu ermoeglichen:  
 ircddbHostname: 

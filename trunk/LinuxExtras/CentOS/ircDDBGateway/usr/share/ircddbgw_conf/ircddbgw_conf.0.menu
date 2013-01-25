@@ -563,6 +563,14 @@ ircddb_setup:routing network which is necessary for callsign routing and reporti
 ircddb_setup: 
 ircddb_setup:********************************************************************************
 
+ircddbEnabled: 
+ircddbEnabled: 0    DISABLE ircDDB service  
+ircddbEnabled: 1    ENABLE  ircDDB service  
+ircddbEnabled: 
+ircddbEnabled: -    RESET to default
+ircddbEnabled: <CR> Keep old value
+ircddbEnabled: 
+
 ircddbHostname: 
 ircddbHostname:Select the ircDDB server group to get best network connectivity:  
 ircddbHostname: 

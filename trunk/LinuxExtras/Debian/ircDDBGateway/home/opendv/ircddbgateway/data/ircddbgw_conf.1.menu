@@ -599,6 +599,14 @@ ircddb_setup:Der naechste Konfigurationsteil erfasst die Zugangsdaten zum ircDDB
 ircddb_setup: 
 ircddb_setup:******************************************************************************** 
 
+ircddbEnabled: 
+ircddbEnabled:      0  ircDDB-Service AUSschalten 
+ircddbEnabled:      1  ircDDB-Service EINschalten
+ircddbEnabled: 
+ircddbEnabled: -       Zuruecksetzen der Einstellung
+ircddbEnabled: <ENTER> Den alten Wert beibehalten (Wert in [])
+ircddbEnabled: 
+
 ircddbHostname: 
 ircddbHostname:Waehle die ircDDB-Server-Gruppe um eine beste Anbindung zu ermoeglichen:  
 ircddbHostname: 
@@ -1032,7 +1040,7 @@ mainmenu: Hauptmenue
 mainmenu:--------------------------------------------------------------------------------
 mainmenu: Konfiguration des Systems: 
 mainmenu: 1    Sprache                    (Gateway-Ansagen und Skript-Menues)
-mainmenu: 2    Grundinstallation          (3-14, Teile koennen uebersprungen werden) 
+mainmenu: 2    Grundinstallation          (3-13, Teile koennen uebersprungen werden) 
 mainmenu: 3    Basiseinstellungen         (Rufzeichen, Standort, Infotext etc. ..) 
 mainmenu: 4    ICOM-Repeater              (Konfiguration Icom RP2C Repeater) 
 mainmenu: 5    Eigenbau-Repeater          (Konfiguration G4KLX Software Repeater) 
