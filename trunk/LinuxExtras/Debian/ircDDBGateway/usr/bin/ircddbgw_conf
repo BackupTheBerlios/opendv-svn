@@ -2903,6 +2903,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    stn_setup
 	    misc_setup
 	    timeserver_setup
+	    misc_setup
 	    print_text "final"
 	    ;;
 	3)

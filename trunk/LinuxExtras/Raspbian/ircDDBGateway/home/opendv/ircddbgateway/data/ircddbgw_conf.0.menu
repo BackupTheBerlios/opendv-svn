@@ -1049,7 +1049,7 @@ mainmenu:
 mainmenu:--------------------------------------------------------------------------------
 mainmenu:Configure your system:
 mainmenu: 1    Language         (set language of announcements and script menues)
-mainmenu: 2    Initial setup    (will run through 3-13, parts can be skipped) 
+mainmenu: 2    Initial setup    (will run through 3-14, parts can be skipped) 
 mainmenu: 3    Basic settings   (callsign location infotext ..) 
 mainmenu: 4    ICOM setup       (configuration RP2C based repeater system) 
 mainmenu: 5    Homebrew setup   (configuration for G4KLX software based repeater system) 
