@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -188,8 +188,11 @@ void CDDHandler::process(CDDData& data)
 		if (m_headerLogger != NULL)
 			m_headerLogger->write(wxT("Repeater"), data);
 
-		m_irc->sendHeardWithTXMsg(myCall1, myCall2, yourCall, rptCall1, rptCall2, flag1, flag2, flag3, wxEmptyString, wxT("Digital Data        "));
-		m_irc->sendHeardWithTXStats(myCall1, myCall2, yourCall, rptCall1, rptCall2, flag1, flag2, flag3, 1, 0, -1);
+		if (m_irc != NULL) {
+			m_irc->sendHeardWithTXMsg(myCall1, myCall2, yourCall, rptCall1, rptCall2, flag1, flag2, flag3, wxEmptyString, wxT("Digital Data        "));
+			m_irc->sendHeardWithTXStats(myCall1, myCall2, yourCall, rptCall1, rptCall2, flag1, flag2, flag3, 1, 0, -1);
+		}
+
 		m_timer.start();
 	}
 

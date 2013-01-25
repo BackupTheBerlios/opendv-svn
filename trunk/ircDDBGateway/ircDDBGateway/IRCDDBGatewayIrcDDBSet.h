@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,30 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-        
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	IRCDDBGatewayIrcDDBSet_H
+#define	IRCDDBGatewayIrcDDBSet_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CIRCDDBGatewayIrcDDBSet : public wxPanel {
+public:
+	CIRCDDBGatewayIrcDDBSet(wxWindow* parent, int id, const wxString& title, bool enabled, const wxString& hostname, const wxString& username, const wxString& password);
+	virtual ~CIRCDDBGatewayIrcDDBSet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130122 - DEBUG");
-#else
-const wxString VERSION = wxT("20130122");
-#endif
+	virtual bool     getEnabled() const;
+	virtual wxString getHostname() const;
+	virtual wxString getUsername() const;
+	virtual wxString getPassword() const;
+
+private:
+	wxString       m_title;
+	wxChoice*      m_enabled;
+	wxChoice*      m_hostname;
+	wxTextCtrl*    m_username;
+	wxTextCtrl*    m_password;
+};
 
 #endif

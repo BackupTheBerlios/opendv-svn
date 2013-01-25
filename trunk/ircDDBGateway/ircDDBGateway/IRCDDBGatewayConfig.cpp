@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -110,6 +110,7 @@ const wxString  KEY_URL4                 = wxT("url4");
 const wxString  KEY_BAND41               = wxT("band4_1");
 const wxString  KEY_BAND42               = wxT("band4_2");
 const wxString  KEY_BAND43               = wxT("band4_3");
+const wxString  KEY_IRCDDB_ENABLED       = wxT("ircddbEnabled");
 const wxString  KEY_IRCDDB_HOSTNAME      = wxT("ircddbHostname");
 const wxString  KEY_IRCDDB_USERNAME      = wxT("ircddbUsername");
 const wxString  KEY_IRCDDB_PASSWORD      = wxT("ircddbPassword");
@@ -213,6 +214,7 @@ const unsigned int DEFAULT_REPEATER_PORT1        = 20011U;
 const unsigned int DEFAULT_REPEATER_PORT2        = 20012U;
 const unsigned int DEFAULT_REPEATER_PORT3        = 20013U;
 const unsigned int DEFAULT_REPEATER_PORT4        = 20014U;
+const bool         DEFAULT_IRCDDB_ENABLED        = true;
 const wxString     DEFAULT_IRCDDB_HOSTNAME       = wxT("group1-irc.ircddb.net");
 const wxString     DEFAULT_IRCDDB_USERNAME       = wxEmptyString;
 const wxString     DEFAULT_IRCDDB_PASSWORD       = wxEmptyString;
@@ -344,6 +346,7 @@ m_repeater4URL(DEFAULT_URL),
 m_repeater4Band1(DEFAULT_BAND1),
 m_repeater4Band2(DEFAULT_BAND2),
 m_repeater4Band3(DEFAULT_BAND3),
+m_ircddbEnabled(DEFAULT_IRCDDB_ENABLED),
 m_ircddbHostname(DEFAULT_IRCDDB_HOSTNAME),
 m_ircddbUsername(DEFAULT_IRCDDB_USERNAME),
 m_ircddbPassword(DEFAULT_IRCDDB_PASSWORD),
@@ -633,6 +636,8 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_BAND43, &temp, long(DEFAULT_BAND3));
 	m_repeater4Band3 = (unsigned char)temp;
 
+	m_config->Read(m_name + KEY_IRCDDB_ENABLED, &m_ircddbEnabled, DEFAULT_IRCDDB_ENABLED);
+
 	m_config->Read(m_name + KEY_IRCDDB_HOSTNAME, &m_ircddbHostname, DEFAULT_IRCDDB_HOSTNAME);
 
 	m_config->Read(m_name + KEY_IRCDDB_USERNAME, &m_ircddbUsername, DEFAULT_IRCDDB_USERNAME);
@@ -902,6 +907,7 @@ m_repeater4URL(DEFAULT_URL),
 m_repeater4Band1(DEFAULT_BAND1),
 m_repeater4Band2(DEFAULT_BAND2),
 m_repeater4Band3(DEFAULT_BAND3),
+m_ircddbEnabled(DEFAULT_IRCDDB_ENABLED),
 m_ircddbHostname(DEFAULT_IRCDDB_HOSTNAME),
 m_ircddbUsername(DEFAULT_IRCDDB_USERNAME),
 m_ircddbPassword(DEFAULT_IRCDDB_PASSWORD),
@@ -1228,6 +1234,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_BAND43)) {
 			val.ToULong(&temp2);
 			m_repeater4Band3 = (unsigned char)temp2;
+		} else if (key.IsSameAs(KEY_IRCDDB_ENABLED)) {
+			val.ToLong(&temp1);
+			m_ircddbEnabled = temp1 == 1L;
 		} else if (key.IsSameAs(KEY_IRCDDB_HOSTNAME)) {
 			m_ircddbHostname = val;
 		} else if (key.IsSameAs(KEY_IRCDDB_USERNAME)) {
@@ -1646,15 +1655,17 @@ void CIRCDDBGatewayConfig::setRepeater4(const wxString& band, HW_TYPE type, cons
 	m_repeater4URL          = url;
 }
 
-void CIRCDDBGatewayConfig::getIrcDDB(wxString& hostname, wxString& username, wxString& password) const
+void CIRCDDBGatewayConfig::getIrcDDB(bool& enabled, wxString& hostname, wxString& username, wxString& password) const
 {
+	enabled  = m_ircddbEnabled;
 	hostname = m_ircddbHostname;
 	username = m_ircddbUsername;
 	password = m_ircddbPassword;
 }
 
-void CIRCDDBGatewayConfig::setIrcDDB(const wxString& hostname, const wxString& username, const wxString& password)
+void CIRCDDBGatewayConfig::setIrcDDB(bool enabled, const wxString& hostname, const wxString& username, const wxString& password)
 {
+	m_ircddbEnabled  = enabled;
 	m_ircddbHostname = hostname;
 	m_ircddbUsername = username;
 	m_ircddbPassword = password;
@@ -2104,6 +2115,7 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_BAND41, long(m_repeater4Band1));
 	m_config->Write(m_name + KEY_BAND42, long(m_repeater4Band2));
 	m_config->Write(m_name + KEY_BAND43, long(m_repeater4Band3));
+	m_config->Write(m_name + KEY_IRCDDB_ENABLED, m_ircddbEnabled);
 	m_config->Write(m_name + KEY_IRCDDB_HOSTNAME, m_ircddbHostname);
 	m_config->Write(m_name + KEY_IRCDDB_USERNAME, m_ircddbUsername);
 	m_config->Write(m_name + KEY_IRCDDB_PASSWORD, m_ircddbPassword);
@@ -2298,6 +2310,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_BAND41.c_str(), m_repeater4Band1); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND42.c_str(), m_repeater4Band2); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BAND43.c_str(), m_repeater4Band3); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_IRCDDB_ENABLED.c_str(), m_ircddbEnabled ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_IRCDDB_HOSTNAME.c_str(), m_ircddbHostname.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_IRCDDB_USERNAME.c_str(), m_ircddbUsername.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_IRCDDB_PASSWORD.c_str(), m_ircddbPassword.c_str()); file.AddLine(buffer);

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	IrcDDBSet_H
-#define	IrcDDBSet_H
+#ifndef	StarNetServerIrcDDBSet_H
+#define	StarNetServerIrcDDBSet_H
 
 #include <wx/wx.h>
 
-class CIrcDDBSet : public wxPanel {
+class CStarNetServerIrcDDBSet : public wxPanel {
 public:
-	CIrcDDBSet(wxWindow* parent, int id, const wxString& title, const wxString& hostname, const wxString& username, const wxString& password);
-	virtual ~CIrcDDBSet();
+	CStarNetServerIrcDDBSet(wxWindow* parent, int id, const wxString& title, const wxString& hostname, const wxString& username, const wxString& password);
+	virtual ~CStarNetServerIrcDDBSet();
 
 	virtual bool Validate();
 

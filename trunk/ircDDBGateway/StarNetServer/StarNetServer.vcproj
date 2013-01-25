@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StarNetServerIrcDDBSet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StarNetServerLogRedirect.cpp"
 				>
 			</File>
@@ -236,6 +240,10 @@
 			</File>
 			<File
 				RelativePath=".\StarNetServerFrame.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StarNetServerIrcDDBSet.h"
 				>
 			</File>
 			<File

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ public:
 	void getRepeater4(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const;
 	void setRepeater4(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url);
 
-	void getIrcDDB(wxString& hostname, wxString& username, wxString& password) const;
-	void setIrcDDB(const wxString& hostname, const wxString& username, const wxString& password);
+	void getIrcDDB(bool& enabled, wxString& hostname, wxString& username, wxString& password) const;
+	void setIrcDDB(bool enabled, const wxString& hostname, const wxString& username, const wxString& password);
 
 	void getDPRS(bool& enabled, wxString& hostname, unsigned int& port) const;
 	void setDPRS(bool enabled, const wxString& hostname, unsigned int port);
@@ -205,6 +205,7 @@ private:
 	unsigned char m_repeater4Band1;
 	unsigned char m_repeater4Band2;
 	unsigned char m_repeater4Band3;
+	bool          m_ircddbEnabled;
 	wxString      m_ircddbHostname;
 	wxString      m_ircddbUsername;
 	wxString      m_ircddbPassword;

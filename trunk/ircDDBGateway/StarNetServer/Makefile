@@ -2,9 +2,9 @@ all:			starnetserver starnetserverd
 
 CFLAGS :=		-I../ircDDB -I../Common $(CFLAGS)
 
-starnetserver:	StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o StarNetServerLogRedirect.o \
+starnetserver:	StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o StarNetServerIrcDDBSet.o StarNetServerLogRedirect.o \
 				StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o StarNetServerThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a
-				$(CC) $(LDFLAGS) -o starnetserver StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o \
+				$(CC) $(LDFLAGS) -o starnetserver StarNetServerApp.o StarNetServerCallsignSet.o StarNetServerConfig.o StarNetServerFrame.o StarNetServerIrcDDBSet.o \
 				StarNetServerLogRedirect.o StarNetServerMiscellaneousSet.o StarNetServerPreferences.o StarNetServerThread.o StarNetServerThreadHelper.o \
 				../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
 
@@ -31,6 +31,9 @@ StarNetServerCallsignSet.o:	StarNetServerCallsignSet.cpp StarNetServerCallsignSe
 							../Common/AddressTextCtrl.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c StarNetServerCallsignSet.cpp
 
+StarNetServerIrcDDBSet.o:	StarNetServerIrcDDBSet.cpp StarNetServerIrcDDBSet.h
+				$(CC) $(CFLAGS) -c StarNetServerIrcDDBSet.cpp
+
 StarNetServerLogRedirect.o:	StarNetServerLogRedirect.cpp StarNetServerLogRedirect.h StarNetServerApp.h
 				$(CC) $(CFLAGS) -c StarNetServerLogRedirect.cpp
 
@@ -38,7 +41,7 @@ StarNetServerMiscellaneousSet.o:	StarNetServerMiscellaneousSet.cpp StarNetServer
 				$(CC) $(CFLAGS) -c StarNetServerMiscellaneousSet.cpp
 
 StarNetServerPreferences.o:	StarNetServerPreferences.cpp StarNetServerPreferences.h StarNetServerMiscellaneousSet.h StarNetServerCallsignSet.h \
-							../Common/Defs.h ../Common/IrcDDBSet.h ../Common/RemoteSet.h ../Common/StarNetSet.h
+							StarNetServerIrcDDBSet.h ../Common/Defs.h ../Common/RemoteSet.h ../Common/StarNetSet.h
 				$(CC) $(CFLAGS) -c StarNetServerPreferences.cpp
 
 StarNetServerThreadHelper.o:		StarNetServerThreadHelper.cpp StarNetServerThreadHelper.h StarNetServerThread.h

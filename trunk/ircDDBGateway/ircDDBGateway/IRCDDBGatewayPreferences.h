@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@
 
 #include "IRCDDBGatewayMiscellaneousSet.h"
 #include "IRCDDBGatewayGatewaySet.h"
+#include "IRCDDBGatewayIrcDDBSet.h"
 #include "RepeaterInfoSet.h"
 #include "RepeaterDataSet.h"
 #include "StarNetSet.h"
 #include "RemoteSet.h"
-#include "IrcDDBSet.h"
 #include "DExtraSet.h"
 #include "DPlusSet.h"
 #include "DPRSSet.h"
@@ -43,7 +43,7 @@ public:
 				 const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2, const wxString& description21, const wxString& description22, const wxString& url2,
 				 const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3, const wxString& description31, const wxString& description32, const wxString& url3,
 				 const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4, const wxString& description41, const wxString& description42, const wxString& url4,
-				 const wxString& hostname, const wxString& username, const wxString& password, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled,
+				 bool ircDDBEnabled, const wxString& ircDDBHostname, const wxString& ircDDBUsername, const wxString& ircDDBPassword, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled,
 				 bool dratsEnabled, bool dtmfEnabled, bool aprsEnabled, const wxString& aprsHostname,
 				 unsigned int aprsPort, bool dextraEnabled, unsigned int maxDExtraDongles,
 				 bool dplusEnabled, unsigned int maxDPlusDongles, const wxString& dplusLogin,
@@ -162,9 +162,10 @@ public:
 	virtual wxString     getDescription42() const;
 	virtual wxString     getURL4() const;
 
-	virtual wxString     getHostname() const;
-	virtual wxString     getUsername() const;
-	virtual wxString     getPassword() const;
+	virtual bool         getIrcDDBEnabled() const;
+	virtual wxString     getIrcDDBHostname() const;
+	virtual wxString     getIrcDDBUsername() const;
+	virtual wxString     getIrcDDBPassword() const;
 
 	virtual TEXT_LANG    getLanguage() const;
 	virtual bool         getInfoEnabled() const;
@@ -265,7 +266,7 @@ private:
 	CRepeaterInfoSet*               m_repeaterInfo3;
 	CRepeaterDataSet*               m_repeaterData4;
 	CRepeaterInfoSet*               m_repeaterInfo4;
-	CIrcDDBSet*                     m_ircDDB;
+	CIRCDDBGatewayIrcDDBSet*        m_ircDDB;
 	CDPRSSet*                       m_dprs;
 	CDExtraSet*                     m_dextra;
 	CDPlusSet*                      m_dplus;

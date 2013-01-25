@@ -540,7 +540,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		return;
 	}
 
-	if (!m_myCall1.IsSameAs(m_heardUser))
+	if (!m_myCall1.IsSameAs(m_heardUser) && m_irc != NULL)
 		m_irc->sendHeard(m_heardUser, wxT("    "), wxT("        "), m_heardRepeater, wxT("        "), 0x00U, 0x00U, 0x00U);
 
 	// The Icom heard timer
@@ -917,6 +917,9 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 
 void CRepeaterHandler::processRepeater(CHeardData& heard)
 {
+	if (m_irc == NULL)
+		return;
+
 	// A second heard has come in before the original has been sent or cancelled
 	if (m_heardTimer.isRunning() && !m_heardTimer.hasExpired())
 		m_irc->sendHeard(m_heardUser, wxT("    "), wxT("        "), m_heardRepeater, wxT("        "), 0x00U, 0x00U, 0x00U);
@@ -930,6 +933,9 @@ void CRepeaterHandler::processRepeater(CHeardData& heard)
 void CRepeaterHandler::processRepeater(CPollData& data)
 {
 	if (!m_pollTimer.hasExpired())
+		return;
+
+	if (m_irc == NULL)
 		return;
 
 	wxString callsign = m_rptCallsign;
@@ -991,9 +997,6 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 		unsigned int id1 = header.getId();
 		unsigned int id2 = id1 + m_index;
 		header.setId(id2);
-
-		if (source != AS_DUP)
-			wxLogMessage(wxT("Rewriting the id from 0x%04X to 0x%04X for %s"), id1, id2, m_rptCallsign.c_str());
 	}
 
 	// Send all original headers to all repeater types, and only send duplicate headers to homebrew repeaters
@@ -1344,7 +1347,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 	}
 
 	// Icom heard timer has expired
-	if (m_heardTimer.isRunning() && m_heardTimer.hasExpired()) {
+	if (m_heardTimer.isRunning() && m_heardTimer.hasExpired() && m_irc != NULL) {
 		m_irc->sendHeard(m_heardUser, wxT("    "), wxT("        "), m_heardRepeater, wxT("        "), 0x00U, 0x00U, 0x00U);
 		m_heardTimer.stop();
 	}
@@ -1744,6 +1747,12 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString& user, CHeaderData& header)
 {
 	if (callsign.Left(1).IsSameAs(wxT("/"))) {
+		if (m_irc == NULL) {
+			wxLogMessage(wxT("%s is trying to G2 route with ircDDB disabled"), user.c_str());
+			m_g2Status = G2_LOCAL;
+			return;
+		}
+
 		// This a repeater route
 		// Convert "/1234567" to "123456 7"
 		wxString repeater = callsign.Mid(1, LONG_CALLSIGN_LENGTH - 2U);
@@ -1762,7 +1771,7 @@ void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString
 			return;
 		}
 
-		wxLogMessage(wxT("%s is trying to G2 route to reflector %s"), user.c_str(), repeater.c_str());
+		wxLogMessage(wxT("%s is trying to G2 route to repeater %s"), user.c_str(), repeater.c_str());
 
 		m_g2Repeater = repeater;
 		m_g2User = wxT("CQCQCQ  ");
@@ -1784,9 +1793,16 @@ void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString
 			delete data;
 		}
 	} else if (!callsign.Right(1).IsSameAs(wxT("L")) && !callsign.Right(1).IsSameAs(wxT("U"))) {
+		if (m_irc == NULL) {
+			wxLogMessage(wxT("%s is trying to G2 route with ircDDB disabled"), user.c_str());
+			m_g2Status = G2_LOCAL;
+			return;
+		}
+
 		// This a callsign route
 		if (callsign.Left(3U).IsSameAs(wxT("REF")) || callsign.Left(3U).IsSameAs(wxT("XRF")) || callsign.Left(3U).IsSameAs(wxT("DCS"))) {
 			wxLogMessage(wxT("%s is trying to G2 route to reflector %s, ignoring"), user.c_str(), callsign.c_str());
+			m_g2Status = G2_LOCAL;
 			return;
 		}
 
@@ -2009,11 +2025,17 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 
 		delete data;
 	} else {
-		m_linkStatus = LS_PENDING;
-		m_irc->findRepeater(callsign);
-		m_queryTimer.start();
-		writeLinkingTo(callsign);
-		triggerInfo();
+		if (m_irc != NULL) {
+			m_linkStatus = LS_PENDING;
+			m_irc->findRepeater(callsign);
+			m_queryTimer.start();
+			writeLinkingTo(callsign);
+			triggerInfo();
+		} else {
+			m_linkStatus = LS_NONE;
+			writeNotLinked();
+			triggerInfo();
+		}
 	}
 }
 
@@ -2160,11 +2182,17 @@ void CRepeaterHandler::startupInt()
 
 			delete data;
 		} else {
-			m_linkStatus = LS_PENDING;
-			m_irc->findRepeater(m_linkStartup);
-			m_queryTimer.start();
-			writeLinkingTo(m_linkStartup);
-			triggerInfo();
+			if (m_irc != NULL) {
+				m_linkStatus = LS_PENDING;
+				m_irc->findRepeater(m_linkStartup);
+				m_queryTimer.start();
+				writeLinkingTo(m_linkStartup);
+				triggerInfo();
+			} else {
+				m_linkStatus = LS_NONE;
+				writeNotLinked();
+				triggerInfo();
+			}
 		}
 	} else {
 		writeNotLinked();
@@ -2372,6 +2400,9 @@ void CRepeaterHandler::writeStatus(CStatusData& statusData)
 
 void CRepeaterHandler::sendHeard(const wxString& text)
 {
+	if (m_irc == NULL)
+		return;
+
 	wxString destination;
 
 	if (m_g2Status == G2_OK) {
@@ -2386,7 +2417,8 @@ void CRepeaterHandler::sendHeard(const wxString& text)
 
 void CRepeaterHandler::sendStats()
 {
-	m_irc->sendHeardWithTXStats(m_myCall1, m_myCall2, m_yourCall, m_rptCall1, m_rptCall2, m_flag1, m_flag2, m_flag3, m_frames, m_silence, m_errors / 2U);
+	if (m_irc != NULL)
+		m_irc->sendHeardWithTXStats(m_myCall1, m_myCall2, m_yourCall, m_rptCall1, m_rptCall2, m_flag1, m_flag2, m_flag3, m_frames, m_silence, m_errors / 2U);
 }
 
 void CRepeaterHandler::triggerInfo()

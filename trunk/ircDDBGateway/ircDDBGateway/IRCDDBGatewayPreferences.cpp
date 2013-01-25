@@ -26,7 +26,7 @@ CIRCDDBGatewayPreferences::CIRCDDBGatewayPreferences(wxWindow* parent, int id, c
 						   const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2, const wxString& description21, const wxString& description22, const wxString& url2,
 						   const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3, const wxString& description31, const wxString& description32, const wxString& url3,
 						   const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4, const wxString& description41, const wxString& description42, const wxString& url4,
-						   const wxString& hostname, const wxString& username, const wxString& password, TEXT_LANG language, bool infoEnabled, bool echoEnabled,
+						   bool ircDDBEnabled, const wxString& ircDDBHostname, const wxString& ircDDBUsername, const wxString& ircDDBPassword, TEXT_LANG language, bool infoEnabled, bool echoEnabled,
 						   bool logEnabled, bool dratsEnabled, bool dtmfEnabled, bool aprsEnabled, const wxString& aprsHostname, unsigned int aprsPort, bool dextraEnabled,
 						   unsigned int maxDExtraDongles, bool dplusEnabled, unsigned int maxDPlusDongles, const wxString& dplusLogin, bool dcsEnabled,
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
@@ -97,7 +97,7 @@ m_miscellaneous(NULL)
 	m_repeaterInfo4 = new CRepeaterInfoSet(noteBook, -1, APPLICATION_NAME, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 	noteBook->AddPage(m_repeaterInfo4, _("Repeater 4"), false);
 
-	m_ircDDB = new CIrcDDBSet(noteBook, -1, APPLICATION_NAME, hostname, username, password);
+	m_ircDDB = new CIRCDDBGatewayIrcDDBSet(noteBook, -1, APPLICATION_NAME, ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
 	noteBook->AddPage(m_ircDDB, wxT("ircDDB"), false);
 
 	m_dprs = new CDPRSSet(noteBook, -1, APPLICATION_NAME, aprsEnabled, aprsHostname, aprsPort);
@@ -664,17 +664,22 @@ wxString CIRCDDBGatewayPreferences::getURL4() const
 	return m_repeaterInfo4->getURL();
 }
 
-wxString CIRCDDBGatewayPreferences::getHostname() const
+bool CIRCDDBGatewayPreferences::getIrcDDBEnabled() const
+{
+	return m_ircDDB->getEnabled();
+}
+
+wxString CIRCDDBGatewayPreferences::getIrcDDBHostname() const
 {
 	return m_ircDDB->getHostname();
 }
 
-wxString CIRCDDBGatewayPreferences::getUsername() const
+wxString CIRCDDBGatewayPreferences::getIrcDDBUsername() const
 {
 	return m_ircDDB->getUsername();
 }
 
-wxString CIRCDDBGatewayPreferences::getPassword() const
+wxString CIRCDDBGatewayPreferences::getIrcDDBPassword() const
 {
 	return m_ircDDB->getPassword();
 }

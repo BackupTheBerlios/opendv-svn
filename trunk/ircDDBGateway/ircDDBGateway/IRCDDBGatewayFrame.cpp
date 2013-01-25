@@ -240,8 +240,9 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	RECONNECT reconnect4;
 	::wxGetApp().getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 
-	wxString hostname, username, password;
-	::wxGetApp().getIrcDDB(hostname, username, password);
+	bool ircDDBEnabled;
+	wxString ircDDBHostname, ircDDBUsername, ircDDBPassword;
+	::wxGetApp().getIrcDDB(ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
 
 	wxString aprsHostname;
 	unsigned int aprsPort;
@@ -305,7 +306,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 		repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2,
 		repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3,
 		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
-		hostname, username, password, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
+		ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
 		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled,
 		starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1,
@@ -350,7 +351,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 		repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2,
 		repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3,
 		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
-		hostname, username, password, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
+		ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
 		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled,
 		starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1,
@@ -455,9 +456,10 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	description42    = dialog1.getDescription42();
 	url4             = dialog1.getURL4();
 
-	hostname         = dialog1.getHostname();
-	username         = dialog1.getUsername();
-	password         = dialog1.getPassword();
+	ircDDBEnabled    = dialog1.getIrcDDBEnabled();
+	ircDDBHostname   = dialog1.getIrcDDBHostname();
+	ircDDBUsername   = dialog1.getIrcDDBUsername();
+	ircDDBPassword   = dialog1.getIrcDDBPassword();
 
 	aprsEnabled      = dialog1.getAPRSEnabled();
 	aprsHostname     = dialog1.getAPRSHostname();
@@ -555,7 +557,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().setRepeater2(repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
 	::wxGetApp().setRepeater3(repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
 	::wxGetApp().setRepeater4(repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
-	::wxGetApp().setIrcDDB(hostname, username, password);
+	::wxGetApp().setIrcDDB(ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
 	::wxGetApp().setDPRS(aprsEnabled, aprsHostname, aprsPort);
 	::wxGetApp().setDExtra(dextraEnabled, maxDExtraDongles);
 	::wxGetApp().setDPlus(dplusEnabled, maxDPlusDongles, dplusLogin);
@@ -591,7 +593,7 @@ void CIRCDDBGatewayFrame::onAbout(wxCommandEvent& event)
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
 	info.AddDeveloper(wxT("Michael Dirska, DL1BFF"));
-	info.SetCopyright(wxT("(C) 2010-2012 using GPL v2 or later"));
+	info.SetCopyright(wxT("(C) 2010-2013 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
 	info.SetDescription(_("This program allows a computer running homebrew repeaters\nto access the ircDDB network for G2 callsign and repeater routing,\nas well as D-Plus and DExtra reflectors. It includes a StarNet\nDigital server."));
@@ -646,7 +648,11 @@ void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
 	if (status == NULL)
 		return;
 
-	switch (status->getIrcDDBStatus()) {
+	IRCDDB_STATUS ircDDBStatus = status->getIrcDDBStatus();
+	switch (ircDDBStatus) {
+		case IS_DISABLED:
+			m_ircDDBStatus->SetLabel(_("Disabled"));
+			break;
 		case IS_DISCONNECTED:
 			m_ircDDBStatus->SetLabel(_("Disconnected"));
 			break;
@@ -658,8 +664,9 @@ void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
 			break;
 	}
 
-	if (status->getDPRSStatus()) {
-		if (status->getIrcDDBStatus() == IS_CONNECTED)
+	bool dprsStatus = status->getDPRSStatus();
+	if (dprsStatus) {
+		if (ircDDBStatus == IS_CONNECTED || ircDDBStatus == IS_DISABLED)
 			m_dprsStatus->SetLabel(_("Active"));
 		else
 			m_dprsStatus->SetLabel(_("Waiting"));

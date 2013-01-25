@@ -74,7 +74,7 @@ m_echoEnabled(true),
 m_dtmfEnabled(true),
 m_logEnabled(false),
 m_ddModeEnabled(false),
-m_lastStatus(IS_DISCONNECTED),
+m_lastStatus(IS_DISABLED),
 m_statusTimer1(1000U, 1U),		// 1 second
 m_statusTimer2(1000U, 1U),		// 1 second
 m_remoteEnabled(false),
@@ -191,7 +191,7 @@ void CIRCDDBGatewayThread::run()
 	}
 
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL)|| m_irc == NULL || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -234,7 +234,10 @@ void CIRCDDBGatewayThread::run()
 
 	CRepeaterHandler::setLocalAddress(m_gatewayAddress);
 	CRepeaterHandler::setG2Handler(m_g2Handler);
-	CRepeaterHandler::setIRC(m_irc);
+
+	if (m_irc != NULL)
+		CRepeaterHandler::setIRC(m_irc);
+
 	CRepeaterHandler::setCache(&m_cache);
 	CRepeaterHandler::setGateway(m_gatewayCallsign);
 	CRepeaterHandler::setLanguage(m_language);
@@ -252,7 +255,10 @@ void CIRCDDBGatewayThread::run()
 	CStarNetHandler::setCache(&m_cache);
 	CStarNetHandler::setGateway(m_gatewayCallsign);
 	CStarNetHandler::setG2Handler(m_g2Handler);
-	CStarNetHandler::setIRC(m_irc);
+
+	if (m_irc != NULL)
+		CStarNetHandler::setIRC(m_irc);
+
 	CStarNetHandler::setLogging(m_logEnabled, m_logDir);
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	CStarNetHandler::link();
@@ -262,8 +268,14 @@ void CIRCDDBGatewayThread::run()
 		CDDHandler::initialise(MAX_DD_ROUTES, m_name);
 		CDDHandler::setLogging(m_logEnabled, m_logDir);
 		CDDHandler::setHeaderLogger(headerLogger);
-		CDDHandler::setIRC(m_irc);
+
+		if (m_irc != NULL)
+			CDDHandler::setIRC(m_irc);
 	}
+
+	// If no ircDDB then APRS is started immediately
+	if (m_aprsWriter != NULL && m_irc == NULL)
+		m_aprsWriter->setEnabled(true);
 
 	if (m_remoteEnabled && !m_remotePassword.IsEmpty() && m_remotePort > 0U) {
 		m_remote = new CRemoteHandler(m_remotePassword, m_remotePort, m_gatewayAddress);
@@ -310,18 +322,25 @@ void CIRCDDBGatewayThread::run()
 				process = true;
 		}
 
-		f = processIrcDDB();
-		if (f)
-			process = true;
+		if (m_irc != NULL) {
+			f = processIrcDDB();
+			if (f)
+				process = true;
+		}
 
-		f = processDExtra();
-		if (f)
-			process = true;
+		if (m_dextraEnabled) {
+			f = processDExtra();
+			if (f)
+				process = true;
+		}
 
-		f = processDPlus();
-		if (f)
-			process = true;
+		if (m_dplusEnabled) {
+			f = processDPlus();
+			if (f)
+				process = true;
+		}
 
+		// DCS is needed for loopback
 		f = processDCS();
 		if (f)
 			process = true;
@@ -344,8 +363,13 @@ void CIRCDDBGatewayThread::run()
 
 		CRepeaterHandler::clock(ms);
 		CG2Handler::clock(ms);
-		CDExtraHandler::clock(ms);
-		CDPlusHandler::clock(ms);
+
+		if (m_dextraEnabled)
+			CDExtraHandler::clock(ms);
+
+		if (m_dplusEnabled)
+			CDPlusHandler::clock(ms);
+
 		CDCSHandler::clock(ms);
 		CStarNetHandler::clock(ms);
 		CDDHandler::clock(ms);
@@ -401,8 +425,10 @@ void CIRCDDBGatewayThread::run()
 	m_g2Handler->close();
 	delete m_g2Handler;
 
-	m_irc->close();
-	delete m_irc;
+	if (m_irc != NULL) {
+		m_irc->close();
+		delete m_irc;
+	}
 
 	if (m_icomRepeaterHandler != NULL) {
 		m_icomRepeaterHandler->close();
@@ -490,6 +516,8 @@ void CIRCDDBGatewayThread::setIRC(CIRCDDB* irc)
 	wxASSERT(irc != NULL);
 
 	m_irc = irc;
+
+	m_lastStatus = IS_DISCONNECTED;
 }
 
 void CIRCDDBGatewayThread::setLanguage(TEXT_LANG language)

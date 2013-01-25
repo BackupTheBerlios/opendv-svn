@@ -2,10 +2,10 @@ all:			ircddbgateway ircddbgatewayd
 
 CFLAGS :=		-I../ircDDB -I../Common $(CFLAGS)
 
-ircddbgateway:	IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o IRCDDBGatewayLogRedirect.o \
+ircddbgateway:	IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o IRCDDBGatewayIrcDDBSet.o IRCDDBGatewayLogRedirect.o \
 				IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o IRCDDBGatewayThreadHelper.o \
 				../ircDDB/libircDDB.a ../Common/Common.a
-				$(CC) $(LDFLAGS) -o ircddbgateway IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o \
+				$(CC) $(LDFLAGS) -o ircddbgateway IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o IRCDDBGatewayIrcDDBSet.o \
 				IRCDDBGatewayLogRedirect.o IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o \
 				IRCDDBGatewayThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
 
@@ -35,6 +35,9 @@ IRCDDBGatewayGatewaySet.o:	IRCDDBGatewayGatewaySet.cpp IRCDDBGatewayGatewaySet.h
 				../Common/PortTextCtrl.h ../Common/CallsignTextCtrl.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayGatewaySet.cpp
 
+IRCDDBGatewayIrcDDBSet.o:	IRCDDBGatewayIrcDDBSet.cpp IRCDDBGatewayIrcDDBSet.h
+				$(CC) $(CFLAGS) -c IRCDDBGatewayIrcDDBSet.cpp
+
 IRCDDBGatewayLogRedirect.o:	IRCDDBGatewayLogRedirect.cpp IRCDDBGatewayLogRedirect.h IRCDDBGatewayApp.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayLogRedirect.cpp
 
@@ -42,7 +45,7 @@ IRCDDBGatewayMiscellaneousSet.o:	IRCDDBGatewayMiscellaneousSet.cpp IRCDDBGateway
 				$(CC) $(CFLAGS) -c IRCDDBGatewayMiscellaneousSet.cpp
 
 IRCDDBGatewayPreferences.o:	IRCDDBGatewayPreferences.cpp IRCDDBGatewayPreferences.h  IRCDDBGatewayMiscellaneousSet.h IRCDDBGatewayGatewaySet.h \
-				../Common/Defs.h ../Common/RepeaterDataSet.h ../Common/IrcDDBSet.h ../Common/DPRSSet.h ../Common/DPlusSet.h ../Common/RemoteSet.h \
+				IRCDDBGatewayIrcDDBSet.h ../Common/Defs.h ../Common/RepeaterDataSet.h ../Common/DPRSSet.h ../Common/DPlusSet.h ../Common/RemoteSet.h \
 				../Common/StarNetSet.h ../Common/DExtraSet.h ../Common/DCSSet.h ../Common/RepeaterInfoSet.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayPreferences.cpp
 

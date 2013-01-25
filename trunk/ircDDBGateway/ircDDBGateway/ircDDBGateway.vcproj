@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IRCDDBGatewayIrcDDBSet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\IRCDDBGatewayLogRedirect.cpp"
 				>
 			</File>
@@ -240,6 +244,10 @@
 			</File>
 			<File
 				RelativePath=".\IRCDDBGatewayGatewaySet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IRCDDBGatewayIrcDDBSet.h"
 				>
 			</File>
 			<File

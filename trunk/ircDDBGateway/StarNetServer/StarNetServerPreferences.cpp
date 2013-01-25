@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ m_miscellaneous(NULL)
 	m_callsign = new CStarNetServerCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, address);
 	noteBook->AddPage(m_callsign, _("Callsign"), true);
 
-	m_ircDDB = new CIrcDDBSet(noteBook, -1, APPLICATION_NAME, hostname, username, password);
+	m_ircDDB = new CStarNetServerIrcDDBSet(noteBook, -1, APPLICATION_NAME, hostname, username, password);
 	noteBook->AddPage(m_ircDDB, wxT("ircDDB"), false);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)

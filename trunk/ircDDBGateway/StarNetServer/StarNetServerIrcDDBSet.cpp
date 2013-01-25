@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "IrcDDBSet.h"
+#include "StarNetServerIrcDDBSet.h"
 
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 200U;
@@ -24,7 +24,7 @@ const unsigned int CONTROL_WIDTH2 = 80U;
 
 const unsigned int PORT_LENGTH   = 5U;
 
-CIrcDDBSet::CIrcDDBSet(wxWindow* parent, int id, const wxString& title, const wxString& hostname, const wxString& username, const wxString& password) :
+CStarNetServerIrcDDBSet::CStarNetServerIrcDDBSet(wxWindow* parent, int id, const wxString& title, const wxString& hostname, const wxString& username, const wxString& password) :
 wxPanel(parent, id),
 m_title(title),
 m_hostname(NULL),
@@ -64,11 +64,11 @@ m_password(NULL)
 }
 
 
-CIrcDDBSet::~CIrcDDBSet()
+CStarNetServerIrcDDBSet::~CStarNetServerIrcDDBSet()
 {
 }
 
-bool CIrcDDBSet::Validate()
+bool CStarNetServerIrcDDBSet::Validate()
 {
 	bool res = getHostname().IsEmpty();
 	if (res) {
@@ -87,17 +87,17 @@ bool CIrcDDBSet::Validate()
 	return true;
 }
 
-wxString CIrcDDBSet::getHostname() const
+wxString CStarNetServerIrcDDBSet::getHostname() const
 {
 	return m_hostname->GetStringSelection();
 }
 
-wxString CIrcDDBSet::getUsername() const
+wxString CStarNetServerIrcDDBSet::getUsername() const
 {
 	return m_username->GetValue();
 }
 
-wxString CIrcDDBSet::getPassword() const
+wxString CStarNetServerIrcDDBSet::getPassword() const
 {
 	return m_password->GetValue();
 }

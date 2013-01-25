@@ -1193,3 +1193,5 @@ Fixed audio problems with multiple reflector links on one gateway.
 
 Convert the DCS hosts files to use hostnames.
 Update the DCS protocol.
+Make ircDDB optional in the gateway.
+Removed some log messages (stream ID rewriting and link pools).

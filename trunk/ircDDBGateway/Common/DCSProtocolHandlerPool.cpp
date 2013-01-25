@@ -62,7 +62,6 @@ CDCSProtocolHandler* CDCSProtocolHandlerPool::getHandler(unsigned int port)
 		for (unsigned int i = 0U; i < m_n; i++) {
 			if (!m_pool[i].m_inUse) {
 				m_pool[i].m_inUse = true;
-				wxLogMessage(wxT("Allocating UDP port %u for DCS"), m_pool[i].m_port);
 				return m_pool[i].m_handler;
 			}
 		}
@@ -70,7 +69,6 @@ CDCSProtocolHandler* CDCSProtocolHandlerPool::getHandler(unsigned int port)
 		for (unsigned int i = 0U; i < m_n; i++) {
 			if (m_pool[i].m_port == port) {
 				m_pool[i].m_inUse = true;
-				wxLogMessage(wxT("Allocating fixed UDP port %u for DCS"), m_pool[i].m_port);
 				return m_pool[i].m_handler;
 			}
 		}
@@ -88,7 +86,6 @@ void CDCSProtocolHandlerPool::release(CDCSProtocolHandler* handler)
 	for (unsigned int i = 0U; i < m_n; i++) {
 		if (m_pool[i].m_handler == handler && m_pool[i].m_inUse) {
 			m_pool[i].m_inUse = false;
-			wxLogMessage(wxT("Releasing UDP port %u for DCS"), m_pool[i].m_port);
 			return;
 		}
 	}
