@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ void CXReflectorFrame::onAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
-	info.SetCopyright(wxT("(C) 2011-2012 using GPL v2 or later"));
+	info.SetCopyright(wxT("(C) 2011-2013 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
 	info.SetDescription(_("This program allows an Internet connected computer \nto become a DExtra and D-Plus Reflector."));
