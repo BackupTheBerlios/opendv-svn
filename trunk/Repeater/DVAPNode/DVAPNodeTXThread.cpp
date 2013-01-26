@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ m_readNum(0U),
 m_networkSeqNo(0U),
 m_watchdogTimer(1000U, 2U),			// 2s
 m_pollTimer(1000U, 60U),			// 60s
-m_dvapPollTimer(1000U, 2U),			// 2s
+m_dvapPollTimer(1000U, 1U),			// 1s
 m_state(DSRS_LISTENING),
 m_tx(false),
 m_killed(false),

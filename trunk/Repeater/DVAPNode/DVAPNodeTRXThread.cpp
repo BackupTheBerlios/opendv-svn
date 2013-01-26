@@ -50,7 +50,7 @@ m_watchdogTimer(1000U, 2U),			// 2s
 m_pollTimer(1000U, 60U),			// 60s
 m_ackTimer(1000U, 0U, 500U),		// 0.5s
 m_beaconTimer(1000U, 600U),			// 10 mins
-m_dvapPollTimer(1000U, 2U),			// 2s
+m_dvapPollTimer(1000U, 1U),			// 1s
 m_state(DSRS_LISTENING),
 m_ackEncoder(),
 m_linkEncoder(),
