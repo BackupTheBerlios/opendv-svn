@@ -1138,7 +1138,7 @@ void CRepeaterHandler::resolveRepeaterInt(const wxString& repeater, const wxStri
 		}
 	}
 
-	if (m_linkStatus == LS_PENDING && m_linkRepeater.IsSameAs(repeater)) {
+	if (m_linkStatus == LS_PENDING_IRCDDB && m_linkRepeater.IsSameAs(repeater)) {
 		m_queryTimer.stop();
 
 		if (!address.IsEmpty()) {
@@ -1335,7 +1335,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 			m_g2Header = NULL;
 		}
 
-		if (m_linkStatus == LS_PENDING) {
+		if (m_linkStatus == LS_PENDING_IRCDDB) {
 			// Repeater not found in time
 			m_linkStatus = LS_NONE;
 			m_linkRepeater.Clear();
@@ -2026,7 +2026,7 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 		delete data;
 	} else {
 		if (m_irc != NULL) {
-			m_linkStatus = LS_PENDING;
+			m_linkStatus = LS_PENDING_IRCDDB;
 			m_irc->findRepeater(callsign);
 			m_queryTimer.start();
 			writeLinkingTo(callsign);
@@ -2183,7 +2183,7 @@ void CRepeaterHandler::startupInt()
 			delete data;
 		} else {
 			if (m_irc != NULL) {
-				m_linkStatus = LS_PENDING;
+				m_linkStatus = LS_PENDING_IRCDDB;
 				m_irc->findRepeater(m_linkStartup);
 				m_queryTimer.start();
 				writeLinkingTo(m_linkStartup);
