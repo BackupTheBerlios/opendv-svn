@@ -1,4 +1,4 @@
-Repeater - 20130111
+Repeater - 20130127
 ===================
 
 20090530
@@ -1770,7 +1770,7 @@ Allow for empty beacons in the Analogue Repeater to suppress them.
 Convert old DV-RPTR configuration values (Windows only).
 Added DCS019.
 
-201301xx
+20130127
 --------
 
 Allow for temporary ack text.

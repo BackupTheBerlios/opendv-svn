@@ -31,6 +31,7 @@
 class CTextData {
 public:
 	CTextData(LINK_STATUS status, const wxString& reflector, const wxString& text, const in_addr& address, unsigned int port, bool temporary = false);
+	CTextData(const wxString& text, const in_addr& address, unsigned int port, bool temporary = true);
 	virtual ~CTextData();
 
 	unsigned int getHBRepeaterData(unsigned char* data, unsigned int length) const;

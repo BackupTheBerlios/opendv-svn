@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "Repeater 20130111"
-  OutFile "Repeater-20130111.exe"
+  Name "Repeater 20130127"
+  OutFile "Repeater-20130127.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\Repeater"
