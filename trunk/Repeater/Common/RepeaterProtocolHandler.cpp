@@ -410,11 +410,10 @@ unsigned int CRepeaterProtocolHandler::readData(unsigned char* buffer, unsigned 
 
 void CRepeaterProtocolHandler::readText(wxString& text, LINK_STATUS& status, wxString& reflector)
 {
-	reflector = wxT("        ");
-	status    = LS_NONE;
-
 	if (m_type != NETWORK_TEXT) {
 		text = wxT("                    ");
+		reflector = wxT("        ");
+		status = LS_NONE;
 		return;
 	}
 
@@ -425,21 +424,14 @@ void CRepeaterProtocolHandler::readText(wxString& text, LINK_STATUS& status, wxS
 	reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
 }
 
-void CRepeaterProtocolHandler::readTempText(wxString& text, LINK_STATUS& status, wxString& reflector)
+void CRepeaterProtocolHandler::readTempText(wxString& text)
 {
-	reflector = wxT("        ");
-	status    = LS_NONE;
-
 	if (m_type != NETWORK_TEMPTEXT) {
 		text = wxT("                    ");
 		return;
 	}
 
 	text = wxString((char*)(m_buffer + 5U), wxConvLocal, 20U);
-
-	status = LINK_STATUS(m_buffer[25U]);
-
-	reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
 }
 
 wxString CRepeaterProtocolHandler::readStatus1()

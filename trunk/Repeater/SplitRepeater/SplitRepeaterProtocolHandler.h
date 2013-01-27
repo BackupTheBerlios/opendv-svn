@@ -45,7 +45,7 @@ public:
 
 	NETWORK_TYPE read();
 	void         readText(wxString& text, LINK_STATUS& status, wxString& reflector);
-	void         readTempText(wxString& text, LINK_STATUS& status, wxString& reflector);
+	void         readTempText(wxString& text);
 	wxString     readStatus1();
 	wxString     readStatus2();
 	wxString     readStatus3();

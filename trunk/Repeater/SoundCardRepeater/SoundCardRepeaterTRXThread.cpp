@@ -719,7 +719,7 @@ void CSoundCardRepeaterTRXThread::receiveNetwork()
 			m_linkEncoder.setTextData(m_ackText);
 			wxLogMessage(wxT("Slow data set to \"%s\""), m_ackText.c_str());
 		} else if (type == NETWORK_TEMPTEXT) {			// Temporary slow data text for the Ack
-			m_protocolHandler->readTempText(m_tempAckText, m_linkStatus, m_reflector);
+			m_protocolHandler->readTempText(m_tempAckText);
 			wxLogMessage(wxT("Temporary slow data set to \"%s\""), m_tempAckText.c_str());
 		} else if (type == NETWORK_STATUS1) {		// Status 1 data text
 			m_status1Text = m_protocolHandler->readStatus1();
@@ -2007,7 +2007,7 @@ void CSoundCardRepeaterTRXThread::endOfRadioData()
 				if (m_ack == AT_BER) {
 					// Create the ack text with the linked reflector and BER
 					wxString ackText;
-					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS)
+					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
 						ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
 					else
 						ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));
@@ -2046,7 +2046,7 @@ void CSoundCardRepeaterTRXThread::endOfRadioData()
 				if (m_ack == AT_BER) {
 					// Create the ack text with the linked reflector and BER
 					wxString ackText;
-					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS)
+					if (m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
 						ackText.Printf(wxT("%-8s  BER: %.1f%%   "), m_reflector.c_str(), float(m_ambeErrors * 100U) / float(m_ambeBits));
 					else
 						ackText.Printf(wxT("BER: %.1f%%            "), float(m_ambeErrors * 100U) / float(m_ambeBits));

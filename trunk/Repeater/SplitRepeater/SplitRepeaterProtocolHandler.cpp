@@ -265,11 +265,10 @@ CSplitRepeaterAMBEData* CSplitRepeaterProtocolHandler::readData()
 
 void CSplitRepeaterProtocolHandler::readText(wxString& text, LINK_STATUS& status, wxString& reflector)
 {
-	reflector = wxT("        ");
-	status    = LS_NONE;
-
 	if (m_type != NETWORK_TEXT) {
 		text = wxT("                    ");
+		reflector = wxT("        ");
+		status = LS_NONE;
 		return;
 	}
 
@@ -280,21 +279,14 @@ void CSplitRepeaterProtocolHandler::readText(wxString& text, LINK_STATUS& status
 	reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
 }
 
-void CSplitRepeaterProtocolHandler::readTempText(wxString& text, LINK_STATUS& status, wxString& reflector)
+void CSplitRepeaterProtocolHandler::readTempText(wxString& text)
 {
-	reflector = wxT("        ");
-	status    = LS_NONE;
-
 	if (m_type != NETWORK_TEMPTEXT) {
 		text = wxT("                    ");
 		return;
 	}
 
 	text = wxString((char*)(m_buffer + 5U), wxConvLocal, 20U);
-
-	status = LINK_STATUS(m_buffer[25U]);
-
-	reflector = wxString((char*)(m_buffer + 26U), wxConvLocal, 8U);
 }
 
 wxString CSplitRepeaterProtocolHandler::readStatus1()
