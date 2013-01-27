@@ -8,5 +8,5 @@
 	export BINDIR  := "$(DESTDIR)/usr/bin"
 	export CC      := $(shell wx-config --cxx)
 	export LDFLAGS := -g
-	export CFLAGS  := -g -O2 -march=armv6 -mfpu=vfp -mfloat-abi=hard -Wall -Wno-non-virtual-dtor -Wno-strict-aliasing -Wno-psabi -DDATA_DIR='$(DATADIR)' -DBIN_DIR='$(BINDIR)' -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -D_RASPBERRYPI -pthread $(shell wx-config --cxxflags)
-	export LIBS := -lportaudio -lusb-1.0 $(shell wx-config --libs adv,core)
+	export CFLAGS  := -g -O2 -march=armv6 -mfpu=vfp -mfloat-abi=hard -Wall -Wno-non-virtual-dtor -Wno-strict-aliasing -Wno-psabi -DDATA_DIR='$(DATADIR)' -DBIN_DIR='$(BINDIR)' -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -DRASPBERRY_PI -pthread $(shell wx-config --cxxflags)
+	export LIBS := -lportaudio -lusb-1.0 -lbcm2835 $(shell wx-config --libs adv,core)
