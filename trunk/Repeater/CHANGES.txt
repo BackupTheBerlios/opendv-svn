@@ -1777,3 +1777,8 @@ Allow for temporary ack text.
 Convert the DCS hosts files to use hostnames.
 Increase DVAP polling speed to increase reliability on slow machines.
 Fixed bug in status reporting.
+
+201301xx
+--------
+
+Upgrade the DCS Gateway to the latest protocol version.

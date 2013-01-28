@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,34 +19,19 @@
 #include "DCSGatewayAMBEData.h"
 
 #include "DStarDefines.h"
-#include "Version.h"
 #include "Utils.h"
 
-const wxString HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=hotspot.jpg></td><td width=\"96%%\"><font size=\"2\"><b>HOTSPOT</b> DCS Gateway %s</font></td></tr></table>");
-
-char* CDCSGatewayAMBEData::m_html = NULL;
 unsigned char* CDCSGatewayAMBEData::m_text = NULL;
 
 void CDCSGatewayAMBEData::initialise()
 {
-	wxString html;
-	html.Printf(HTML, VERSION.Left(8U).c_str());
-
-	unsigned int len = html.Len();
-
-	m_html = new char[len + 1U];
-	::memset(m_html, 0x00, len + 1U);
-
-	for (unsigned int i = 0U; i < len; i++)
-		m_html[i] = html.GetChar(i);
-
 	m_text = new unsigned char[SLOW_DATA_TEXT_LENGTH];
+
 	::memset(m_text, ' ', SLOW_DATA_TEXT_LENGTH);
 }
 
 void CDCSGatewayAMBEData::finalise()
 {
-	delete[] m_html;
 	delete[] m_text;
 }
 
@@ -152,9 +137,9 @@ unsigned int CDCSGatewayAMBEData::getRepeaterData(unsigned char *data, unsigned 
 unsigned int CDCSGatewayAMBEData::getDCSData(unsigned char* data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 600U);
+	wxASSERT(length >= 100U);
 
-	::memset(data, 0x00U, 600U);
+	::memset(data, 0x00U, 100U);
 
 	data[0]  = '0';
 	data[1]  = '0';
@@ -209,13 +194,7 @@ unsigned int CDCSGatewayAMBEData::getDCSData(unsigned char* data, unsigned int l
 	data[82U] = m_text[18U];
 	data[83U] = m_text[19U];
 
-	// Send the HTML every 2 seconds
-	if ((m_rptSeq % 100U) != 0U)
-		return  100U;
-
-	::memcpy(data + 100U, m_html, ::strlen(m_html));
-
-	return 600U;
+	return  100U;
 }
 
 void CDCSGatewayAMBEData::setData(const unsigned char *data, unsigned int length)

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,13 +49,12 @@ public:
 
 	bool isSync() const;
 
+	static void setText(const wxString& text);
+
 	static void initialise();
 	static void finalise();
 
-	static void setText(const wxString& text);
-
 private:
-	static char*          m_html;
 	static unsigned char* m_text;
 
 	unsigned char  m_outSeq;

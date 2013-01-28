@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,35 @@
 #include "DCSGatewayDCSProtocolHandler.h"
 
 #include "DStarDefines.h"
+#include "Version.h"
 #include "Utils.h"
 
 // #define	DUMP_TX
 
 const unsigned int BUFFER_LENGTH = 2000U;
+
+const wxString HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=hotspot.jpg></td><td width=\"96%%\"><font size=\"2\"><b>HOTSPOT</b> DCS Gateway %s</font></td></tr></table>");
+
+char* CDCSGatewayDCSProtocolHandler::m_html = NULL;
+
+void CDCSGatewayDCSProtocolHandler::initialise()
+{
+	wxString html;
+	html.Printf(HTML, VERSION.Left(8U).c_str());
+
+	unsigned int len = html.Len();
+
+	m_html = new char[len + 1U];
+	::memset(m_html, 0x00, len + 1U);
+
+	for (unsigned int i = 0U; i < len; i++)
+		m_html[i] = html.GetChar(i);
+}
+
+void CDCSGatewayDCSProtocolHandler::finalise()
+{
+	delete[] m_html;
+}
 
 CDCSGatewayDCSProtocolHandler::CDCSGatewayDCSProtocolHandler() :
 m_socket(NULL),
@@ -92,11 +116,11 @@ bool CDCSGatewayDCSProtocolHandler::writeData(const CDCSGatewayHeaderData& heade
 {
 	wxASSERT(m_socket != NULL);
 
-	unsigned char buffer[600U];
+	unsigned char buffer[100U];
 
-	unsigned int length = data.getDCSData(buffer, 600U);
+	unsigned int length = data.getDCSData(buffer, 100U);
 
-	header.getDCSData(buffer, 600U);
+	header.getDCSData(buffer, 100U);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
@@ -141,7 +165,7 @@ bool CDCSGatewayDCSProtocolHandler::readPackets()
 		return true;
 	} else {
 		switch (m_length) {
-			case 9U:
+			case 22U:
 				writePollReply();
 				m_connectTimer.reset();
 				return false;
@@ -160,7 +184,7 @@ bool CDCSGatewayDCSProtocolHandler::readPackets()
 	}
 
 	// An unknown type
-	CUtils::dump(wxT("Unknown packet type from DCS"), m_buffer, m_length);
+	// CUtils::dump(wxT("Unknown packet type from DCS"), m_buffer, m_length);
 
 	return true;
 }
@@ -224,8 +248,9 @@ void CDCSGatewayDCSProtocolHandler::unlink()
 
 bool CDCSGatewayDCSProtocolHandler::writeConnect()
 {
-	unsigned char buffer[20U];
+	unsigned char buffer[520U];
 
+	::memset(buffer, 0x00U, 519U);
 	::memset(buffer, 0x20U, 19U);
 
 	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH - 1U);
@@ -238,11 +263,13 @@ bool CDCSGatewayDCSProtocolHandler::writeConnect()
 
 	::memcpy(buffer + 11U, m_reflector, LONG_CALLSIGN_LENGTH - 1U);
 
+	::memcpy(buffer + 19U, m_html, ::strlen(m_html));
+
 #if defined(DUMP_TX)
-	CUtils::dump(wxT("Sending Connect"), buffer, 19U);
+	CUtils::dump(wxT("Sending Connect"), buffer, 519U);
 	return true;
 #else
-	return m_socket->write(buffer, 19U);
+	return m_socket->write(buffer, 519U);
 #endif
 }
 
@@ -250,13 +277,11 @@ bool CDCSGatewayDCSProtocolHandler::writePollReply()
 {
 	unsigned char buffer[20U];
 
-	::memset(buffer, 0x20U, 17U);
-
-	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH - 1U);
+	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH);
 
 	buffer[8U]  = 0x00U;
 
-	::memcpy(buffer + 9U, m_reflector, LONG_CALLSIGN_LENGTH - 1U);
+	::memcpy(buffer + 9U, m_reflector, LONG_CALLSIGN_LENGTH);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Poll Reply"), buffer, 17U);

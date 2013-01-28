@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -85,6 +85,7 @@ void* CDCSGatewayThread::Entry()
 	CDCSGatewayAMBEData::initialise();
 	CDCSGatewayAudioUnit::initialise();
 	CDCSGatewayAudioUnit::setLanguage(m_language);
+	CDCSGatewayDCSProtocolHandler::initialise();
 
 	m_audioUnit = new CDCSGatewayAudioUnit(this, m_repeaterCall);
 
@@ -297,6 +298,7 @@ void* CDCSGatewayThread::Entry()
 	delete m_audioUnit;
 	delete m_echoUnit;
 
+	CDCSGatewayDCSProtocolHandler::finalise();
 	CDCSGatewayAudioUnit::finalise();
 	CDCSGatewayAMBEData::finalise();
 

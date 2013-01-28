@@ -18,7 +18,7 @@ dcsgatewayd:	DCSGatewayD.o DCSGatewayAMBEData.o DCSGatewayAudioUnit.o DCSGateway
 				DCSGatewayEchoUnit.o DCSGatewayRepeaterProtocolHandler.o DCSGatewayDCSProtocolHandler.o DCSGatewayStatusData.o \
 				DCSGatewayThread.o DCSGatewayHostFile.o DCSGatewayHeaderData.o DCSGatewayTextCollector.o ../Common/Common.a $(LIBS)
 
-DCSGatewayAMBEData.o:	DCSGatewayAMBEData.cpp DCSGatewayAMBEData.h ../Common/DStarDefines.h ../Common/Utils.h ../Common/Version.h
+DCSGatewayAMBEData.o:	DCSGatewayAMBEData.cpp DCSGatewayAMBEData.h ../Common/DStarDefines.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c DCSGatewayAMBEData.cpp
 
 DCSGatewayApp.o:	DCSGatewayApp.cpp DCSGatewayApp.h DCSGatewayThread.h DCSGatewayFrame.h DCSGatewayDefs.h DCSGatewayStatusData.h \
@@ -37,7 +37,7 @@ DCSGatewayConfig.o:	DCSGatewayConfig.cpp DCSGatewayConfig.h DCSGatewayDefs.h ../
 				$(CC) $(CFLAGS) -c DCSGatewayConfig.cpp
 
 DCSGatewayDCSProtocolHandler.o:	DCSGatewayDCSProtocolHandler.cpp DCSGatewayDCSProtocolHandler.h DCSGatewayHeaderData.h \
-						DCSGatewayAMBEData.h ../Common/UDPReaderWriter.h ../Common/DStarDefines.h ../Common/Timer.h ../Common/Utils.h
+						DCSGatewayAMBEData.h ../Common/UDPReaderWriter.h ../Common/DStarDefines.h ../Common/Timer.h ../Common/Version.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c DCSGatewayDCSProtocolHandler.cpp
 
 DCSGatewayEchoUnit.o:	DCSGatewayEchoUnit.cpp DCSGatewayEchoUnit.h DCSGatewayCallback.h DCSGatewayHeaderData.h DCSGatewayAMBEData.h \
