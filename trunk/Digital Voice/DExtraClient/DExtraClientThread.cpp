@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ bool CDExtraClientThread::connect(bool connect, const wxString& reflector, const
 		m_protocol.close();
 
 	if (connect) {
-		bool res = m_protocol.open(address.char_str(), DEXTRA_PORT);
+		bool res = m_protocol.open(address, DEXTRA_PORT);
 		if (!res)
 			return false;
 

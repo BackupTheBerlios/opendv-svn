@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public:
 
 	void setCallsign(const wxString& callsign);
 
-	bool open(const char* address, unsigned int port);
+	bool open(const wxString& address, unsigned int port);
 
 	bool writeHeader(const CHeaderData& header);
 	bool writeData(const unsigned char* data, unsigned int length, bool end);

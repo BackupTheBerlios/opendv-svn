@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ void CDCSProtocolHandler::setText(const wxString& text)
 		m_text[i] = text.GetChar(i);
 }
 
-bool CDCSProtocolHandler::open(const wxString& reflector, const char* address, unsigned int port)
+bool CDCSProtocolHandler::open(const wxString& reflector, const wxString& address, unsigned int port)
 {
 	if (m_socket != NULL) {
 		m_socket->close();
@@ -133,9 +133,9 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 	wxASSERT(m_socket != NULL);
 	wxASSERT(length == DV_FRAME_LENGTH_BYTES);
 
-	unsigned char buffer[600U];
+	unsigned char buffer[100U];
 
-	::memset(buffer, 0x00U, 600U);
+	::memset(buffer, 0x00U, 100U);
 
 	buffer[0]  = '0';
 	buffer[1]  = '0';
@@ -227,23 +227,11 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 
 	m_outRptSeq++;
 
-	// Send the HTML every 2 seconds
-	if ((m_outRptSeq % 100U) != 1U) {
 #if defined(DUMP_TX)
-		CUtils::dump(wxT("Sending Data"), buffer, 100U);
-		return true;
-#else
-		return m_socket->write(buffer, 100U);
-#endif
-	}
-
-	::memcpy(buffer + 100U, m_html, ::strlen(m_html));
-
-#if defined(DUMP_TX)
-	CUtils::dump(wxT("Sending Data"), buffer, 600U);
+	CUtils::dump(wxT("Sending Data"), buffer, 100U);
 	return true;
 #else
-	return m_socket->write(buffer, 600U);
+	return m_socket->write(buffer, 100U);
 #endif
 }
 
@@ -282,7 +270,7 @@ bool CDCSProtocolHandler::readPackets()
 		return true;
 	} else {
 		switch (m_length) {
-			case 9U:
+			case 22U:
 				writePollReply();
 				m_connectTimer.reset();
 				return false;
@@ -401,8 +389,9 @@ void CDCSProtocolHandler::close()
 
 bool CDCSProtocolHandler::writeConnect()
 {
-	unsigned char buffer[20U];
+	unsigned char buffer[520U];
 
+	::memset(buffer, 0x00U, 519U);
 	::memset(buffer, 0x20U, 19U);
 
 	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH - 1U);
@@ -415,11 +404,13 @@ bool CDCSProtocolHandler::writeConnect()
 
 	::memcpy(buffer + 11U, m_reflector, LONG_CALLSIGN_LENGTH - 1U);
 
+	::memcpy(buffer + 19U, m_html, ::strlen(m_html));
+
 #if defined(DUMP_TX)
-	CUtils::dump(wxT("Sending Connect"), buffer, 19U);
+	CUtils::dump(wxT("Sending Connect"), buffer, 519U);
 	return true;
 #else
-	return m_socket->write(buffer, 19U);
+	return m_socket->write(buffer, 519U);
 #endif
 }
 
@@ -429,11 +420,11 @@ bool CDCSProtocolHandler::writePollReply()
 
 	::memset(buffer, 0x20U, 17U);
 
-	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH - 1U);
+	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH);
 
 	buffer[8U]  = 0x00U;
 
-	::memcpy(buffer + 9U, m_reflector, LONG_CALLSIGN_LENGTH - 1U);
+	::memcpy(buffer + 9U, m_reflector, LONG_CALLSIGN_LENGTH);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Poll Reply"), buffer, 17U);

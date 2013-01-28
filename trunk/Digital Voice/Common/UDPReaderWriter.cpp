@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2006-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2006-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,49 @@ CUDPReaderWriter::~CUDPReaderWriter()
 {
 }
 
-bool CUDPReaderWriter::open(const char* remoteAddress, unsigned int remotePort, unsigned int localPort)
+in_addr CUDPReaderWriter::lookup(const wxString& hostname)
 {
-	wxASSERT(remoteAddress != NULL);
+	in_addr addr;
+#if defined(WIN32)
+	unsigned long address = ::inet_addr(hostname.mb_str());
+	if (address != INADDR_NONE && address != INADDR_ANY) {
+		addr.s_addr = address;
+		return addr;
+	}
+
+	struct hostent* hp = ::gethostbyname(hostname.mb_str());
+	if (hp != NULL) {
+		::memcpy(&addr, hp->h_addr_list[0], sizeof(struct in_addr));
+		return addr;
+	}
+
+	wxLogError(wxT("Cannot find address for host %s"), hostname.c_str());
+
+	addr.s_addr = INADDR_NONE;
+	return addr;
+#else
+	in_addr_t address = ::inet_addr(hostname.mb_str());
+	if (address != in_addr_t(-1)) {
+		addr.s_addr = address;
+		return addr;
+	}
+
+	struct hostent* hp = ::gethostbyname(hostname.mb_str());
+	if (hp != NULL) {
+		::memcpy(&addr, hp->h_addr_list[0], sizeof(struct in_addr));
+		return addr;
+	}
+
+	wxLogError(wxT("Cannot find address for host %s"), hostname.c_str());
+
+	addr.s_addr = INADDR_NONE;
+	return addr;
+#endif
+}
+
+bool CUDPReaderWriter::open(const wxString& remoteAddress, unsigned int remotePort, unsigned int localPort)
+{
+	wxASSERT(!remoteAddress.IsEmpty());
 	wxASSERT(remotePort > 0U);
 
 #if defined(__WINDOWS__)
@@ -44,23 +84,7 @@ bool CUDPReaderWriter::open(const char* remoteAddress, unsigned int remotePort, 
 	::memset(&m_remAddr, 0x00, sizeof(sockaddr_in));
 	m_remAddr.sin_family = AF_INET;
 	m_remAddr.sin_port   = htons(remotePort);
-
-	hostent* hp = ::gethostbyname(remoteAddress);
-	if (hp == NULL) {
-		m_remAddr.sin_addr.s_addr = ::inet_addr(remoteAddress);
-
-		if (m_remAddr.sin_addr.s_addr == INADDR_NONE) {
-			wxLogError(wxT("The remote address is invalid - %s"), remoteAddress);
-			return false;
-		}
-	} else {
-		if (hp->h_length != 4 && hp->h_length != 8) {
-			wxLogError(wxT("Illegal address length received for host %s"), remoteAddress);
-			return false;
-		}
-
-		::memcpy(&m_remAddr.sin_addr, hp->h_addr, hp->h_length);
-	}
+	m_remAddr.sin_addr   = CUDPReaderWriter::lookup(remoteAddress);
 
 	m_fd = ::socket(PF_INET, SOCK_DGRAM, 0);
 	if (m_fd < 0) {

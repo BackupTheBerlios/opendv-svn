@@ -288,8 +288,10 @@ Include the SVN revision number in the log file.
 Added support for the 70cms DVAP.
 Added support for the XDVRPTR modem firmware.
 
-2012xxxx
+201301xx
 --------
 
 Use the DVAP to validate its own frequency.
-Added DCS016, DCS017, DCS018, and DCS020.
+Added DCS016, DCS017, DCS018, DCS019, and DCS020.
+Update the DExtra hosts file to the latest version.
+Upgrade the DCS protocol to the latest version.
