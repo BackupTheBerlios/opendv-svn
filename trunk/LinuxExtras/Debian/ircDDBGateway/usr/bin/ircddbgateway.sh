@@ -16,8 +16,10 @@ if [ $UID -ne 0 ]; then
 	exit 1
 fi
 
+xhost -
 # start parallel task to configure dd-mode network settings (if enabled)
-su -c "/usr/bin/ircddbgateway-ddmode.sh" opendv &
+/usr/bin/ircddbgateway-ddmode.sh &
 
 # start ircddbgateway
-su -c "/usr/bin/ircddbgateway -gui -logdir=/var/log/dstar" opendv
+su -c "/usr/bin/ircddbgateway -gui -logdir=/var/log/opendv" opendv
+xhost +

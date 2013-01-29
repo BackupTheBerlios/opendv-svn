@@ -34,13 +34,13 @@
 # 2012-11-15 dl5di    bugfixes and rework of initial repeater input loop
 # 2012-12-21 dl5di    bugfixes in comparisons of strings
 # 2013-01-20 dl5di    bugfix
-# 2013-01-25 dl5di    ircddbEnabled setting added
+# 2013-01-29 dl5di    bugfix
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20130125"
+rev="dvrptrnet-20130122"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -470,7 +470,7 @@ function valid_port()
 
     echo " - valid_port: $1" >> $LOG
     if [[ $port =~ ^[0-9]{4,5}$ ]]; then
-	if [ $port -ge 1024 -a $port -lt 65535 ];then
+	if [ $port -ge 1024 -a $port -lt 65535 ]; then
 	    stat=0
 	fi 
     fi
@@ -759,10 +759,10 @@ function basic_setup(){
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
     read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ];then
+    if [ "$?" = 0 ]; then
 	DEFAULT=$VALUE
     fi
-    if [ "$FOUND" = 0 ];then
+    if [ "$FOUND" = 0 ]; then
 	$VALUE=$DEFAULT
     fi
     print_text $var 
@@ -891,7 +891,7 @@ function basic_setup(){
 # /etc/ircddbd/ircDDB.properties:rptr_info_url
 #
     read_value $IRCDDBGWCONFIG "gatewayCallsign"
-    if [ "$?" = 1 ];then
+    if [ "$?" = 1 ]; then
 	DEFAULT="http://status.ircddb.net/qam.php?call=$VALUE"
     fi
 #
@@ -1602,35 +1602,6 @@ function repeater_setup(){
 function ircddb_setup(){
 
     print_text "ircddb_setup" 
-#
-# ircddbEnabled = 0/1 (default 1)
-#
-    var="ircddbEnabled"
-    Dat=`date +%Y%m%d%H%M`
-    echo "$Dat: $var" >> $LOG
-    read_default $var
-    read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ]; then
-	VALUE=$DEFAULT
-    fi
-    print_text $var 
-    request_selection $var $DEFAULT $VALUE
-    INPUT=$?
-    case $INPUT in
-	[0-1])
-    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
-	    ;;
-	2)   
-	    write_value $IRCDDBGWCONFIG $var "$VALUE"
-	    ;;
-	*)
-    	    reset_value $var
-	    ;;
-    esac
-
-    if [ "$INPUT" = 0 ]; then
-	return 0
-    fi
 #
 # ircddbHostname=group1-irc.ircddb.net	
 # /etc/ircddbd/ircDDB.properties:irc_server_name
@@ -2881,7 +2852,7 @@ while [ "$SELECT" -ne 99 ]; do
     select_item "(0-99)" 99 0
     RET=$?
     if [ $RET -ne 1 ]; then
-	SELECT = 0
+	SELECT=0
     fi
 
     Dat=`date +%Y%m%d%H%M`
