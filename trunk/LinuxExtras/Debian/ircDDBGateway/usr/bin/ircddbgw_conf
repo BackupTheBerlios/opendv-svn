@@ -40,7 +40,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20130122"
+rev="dvrptrnet-20130129"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1602,6 +1602,35 @@ function repeater_setup(){
 function ircddb_setup(){
 
     print_text "ircddb_setup" 
+#
+# ircddbEnabled = 0/1 (default 1)
+#
+    var="ircddbEnabled"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    print_text $var 
+    request_selection $var $DEFAULT $VALUE
+    INPUT=$?
+    case $INPUT in
+	[0-1])
+    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $IRCDDBGWCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
+
+    if [ "$INPUT" = 0 ]; then
+	return 0
+    fi
 #
 # ircddbHostname=group1-irc.ircddb.net	
 # /etc/ircddbd/ircDDB.properties:irc_server_name
