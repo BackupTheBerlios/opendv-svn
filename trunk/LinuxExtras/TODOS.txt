@@ -2,6 +2,12 @@
 TODOs
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+2013-01-25:
+dashboard has to be changed or switched off when ircDDB is disabled.
+most of current data are fetched from ircddb.net and no longer available without connectivity.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 2013-01-22:
 Update configuration tool for GPIO settings of Raspbian version
 

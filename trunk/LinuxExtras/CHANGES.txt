@@ -2,6 +2,27 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Fix in startscripts
+FOUND: 2013-01-28
+REPORTED: Andrew M1DNS
+PRIORITY: normal
+SOLVED: 2013-01-28
+COMMIT: 2013-01-29
+
+- pathname of daemon missing, binary check did not work
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: ircDDB enabling optional
+REPORTED: DL5DI
+PRIORITY: normal
+SOLVED: 2013-01-25
+COMMIT: 2013-01-25
+
+- ircDDBGateway can now be run without ircDDB network connect
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Repository server lists updated
 REPORTED: DL5DI
 PRIORITY: normal
