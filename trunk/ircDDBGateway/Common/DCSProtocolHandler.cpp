@@ -111,7 +111,8 @@ bool CDCSProtocolHandler::readPackets()
 	m_length = length;
 
 	if (m_buffer[0] == '0' && m_buffer[1] == '0' && m_buffer[2] == '0' && m_buffer[3] == '1') {
-		if (m_length == 100U || m_length == 600U) {
+		if (m_length == 100U ||
+			m_length == 600U) {		// Old DCS
 			m_type = DC_DATA;
 			return false;
 		}
@@ -125,7 +126,8 @@ bool CDCSProtocolHandler::readPackets()
 				m_type = DC_POLL;
 				return false;
 			case 14U:
-			case 19U:
+			case 19U:		// Old DCS
+			case 519U:
 				m_type = DC_CONNECT;
 				return false;
 			case 35U:

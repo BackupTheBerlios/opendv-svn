@@ -1195,3 +1195,9 @@ Convert the DCS hosts files to use hostnames.
 Update the DCS protocol.
 Make ircDDB optional in the gateway.
 Removed some log messages (stream ID rewriting and link pools).
+
+2013xxxx
+--------
+
+Fix loopback mode.
+Handle APRS failures a little better.

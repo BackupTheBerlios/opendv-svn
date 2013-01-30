@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -70,8 +70,12 @@ void* CAPRSWriterThread::Entry()
 	m_connected = connect();
 
 	while (!m_exit) {
-		if (!m_connected)
+		if (!m_connected) {
 			m_connected = connect();
+
+			if (!m_connected)
+				wxLogError(wxT("Reconnect attempt to the APRS server has failed"));
+		}
 
 		if (m_connected && !m_queue.isEmpty()) {
 			char* p = m_queue.getData();
@@ -92,10 +96,15 @@ void* CAPRSWriterThread::Entry()
 			} else {
 				unsigned char buffer[200U];
 				int length = m_socket.read(buffer, 200U, APRS_TIMEOUT);
+
 				if (length == 0)
-					wxLogError(wxT("No response from the APRS server after %u seconds"), APRS_TIMEOUT);
-				if (length == -1)
+					wxLogWarning(wxT("No response from the APRS server after %u seconds"), APRS_TIMEOUT);
+
+				if (length == -1) {
+					m_connected = false;
+					m_socket.close();
 					wxLogError(wxT("Error when reading from the APRS server"));
+				}
 			}
 #endif
 			delete[] p;

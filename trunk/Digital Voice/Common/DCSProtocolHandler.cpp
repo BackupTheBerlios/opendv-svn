@@ -147,9 +147,14 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 	buffer[6]  = 0x00;
 
 	::memcpy(buffer + 7U,  m_reflector, LONG_CALLSIGN_LENGTH);
-	::memcpy(buffer + 15U, m_callsign,  LONG_CALLSIGN_LENGTH);
+
+	::memcpy(buffer + 15U, m_callsign,  LONG_CALLSIGN_LENGTH - 1U);
+	buffer[22U] = 'D';
+
 	::memcpy(buffer + 23U, "CQCQCQ  ",  LONG_CALLSIGN_LENGTH);
+
 	::memcpy(buffer + 31U, m_callsign,  LONG_CALLSIGN_LENGTH);
+
 	::memcpy(buffer + 39U, "DNGL",      SHORT_CALLSIGN_LENGTH);
 
 	buffer[43] = m_outId % 256U;	// Unique session id
@@ -420,7 +425,9 @@ bool CDCSProtocolHandler::writePollReply()
 
 	::memset(buffer, 0x20U, 17U);
 
-	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH);
+	::memcpy(buffer, m_callsign, LONG_CALLSIGN_LENGTH - 1U);
+
+	buffer[7U]  = 'D';
 
 	buffer[8U]  = 0x00U;
 

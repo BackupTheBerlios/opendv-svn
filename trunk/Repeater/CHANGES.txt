@@ -1778,7 +1778,8 @@ Convert the DCS hosts files to use hostnames.
 Increase DVAP polling speed to increase reliability on slow machines.
 Fixed bug in status reporting.
 
-201301xx
+2013xxxx
 --------
 
 Upgrade the DCS Gateway to the latest protocol version.
+Revert DVAP polling change.

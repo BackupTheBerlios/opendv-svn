@@ -288,7 +288,7 @@ Include the SVN revision number in the log file.
 Added support for the 70cms DVAP.
 Added support for the XDVRPTR modem firmware.
 
-201301xx
+2013xxxx
 --------
 
 Use the DVAP to validate its own frequency.

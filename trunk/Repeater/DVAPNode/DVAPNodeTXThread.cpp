@@ -42,7 +42,7 @@ m_readNum(0U),
 m_networkSeqNo(0U),
 m_watchdogTimer(1000U, 2U),			// 2s
 m_pollTimer(1000U, 60U),			// 60s
-m_dvapPollTimer(1000U, 1U),			// 1s
+m_dvapPollTimer(1000U, 2U),			// 2s
 m_state(DSRS_LISTENING),
 m_tx(false),
 m_killed(false),
