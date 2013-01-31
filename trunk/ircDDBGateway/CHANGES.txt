@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130126
+ircDDB Gateway - 20130131
 =========================
 
 20101010
@@ -1196,7 +1196,7 @@ Update the DCS protocol.
 Make ircDDB optional in the gateway.
 Removed some log messages (stream ID rewriting and link pools).
 
-2013xxxx
+20130131
 --------
 
 Fix loopback mode.

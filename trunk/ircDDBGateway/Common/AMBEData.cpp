@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -398,7 +398,7 @@ unsigned int CAMBEData::getDCSData(unsigned char* data, unsigned int length) con
 	data[61] = 0x01U;
 	data[62] = 0x00U;
 
-	data[63] = 0x00U;
+	data[63] = 0x21U;
 
 	for (unsigned int i = 0U; i < m_text.Len(); i++)
 		data[64 + i] = m_text.GetChar(i);
