@@ -383,6 +383,9 @@ void CDCSClientThread::transmit()
 			}
 		}
 
+		// Allow processing of the incoming polls
+		m_protocol.read();
+
 		Sleep(FRAME_TIME_MS / 4UL);
 	}
 
