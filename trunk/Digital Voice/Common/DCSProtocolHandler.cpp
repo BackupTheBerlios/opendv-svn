@@ -42,7 +42,7 @@ m_inId(0U),
 m_inRptSeq(0U),
 m_buffer(NULL),
 m_length(0U),
-m_connectTimer(TICKS_PER_SEC, 0U, 200U),
+m_connectTimer(TICKS_PER_SEC, 1U),
 m_linked(false)
 {
 	m_callsign  = new unsigned char[LONG_CALLSIGN_LENGTH];
@@ -116,7 +116,14 @@ bool CDCSProtocolHandler::open(const wxString& reflector, const wxString& addres
 
 	m_socket = socket;
 
-	return writeConnect();
+	res = writeConnect();
+	if (!res)
+		return false;
+
+	m_connectTimer.setTimeout(1U);
+	m_connectTimer.start();
+
+	return true;
 }
 
 void CDCSProtocolHandler::startTX()
@@ -202,7 +209,7 @@ bool CDCSProtocolHandler::writeData(const unsigned char* data, unsigned int leng
 	buffer[61] = 0x01U;
 	buffer[62] = 0x00U;
 
-	buffer[63] = 0x00U;
+	buffer[63] = 0x21U;
 
 	// Copy the slow data text
 	buffer[64] = m_text[0];
@@ -280,9 +287,15 @@ bool CDCSProtocolHandler::readPackets()
 				m_connectTimer.reset();
 				return false;
 			case 14U:
-				if (!m_linked) {
+				if (::memcmp(m_buffer + 10U, "ACK", 3U) == 0 && !m_linked) {
 					m_linked = true;
 					m_connectTimer.setTimeout(60U);
+					m_connectTimer.start();
+				} else if (::memcmp(m_buffer + 10U, "NAK", 3U) == 0 && !m_linked) {
+					wxString text((char*)m_reflector, wxConvLocal);
+					wxLogMessage(wxT("Link to %s refused"), text.c_str());
+					m_linked = false;
+					m_connectTimer.stop();
 				}
 				return false;
 			case 35U:
@@ -294,7 +307,7 @@ bool CDCSProtocolHandler::readPackets()
 	}
 
 	// An unknown type
-	CUtils::dump(wxT("Unknown packet type from DCS"), m_buffer, m_length);
+	// CUtils::dump(wxT("Unknown packet type from DCS"), m_buffer, m_length);
 
 	return true;
 }
@@ -351,7 +364,7 @@ unsigned int CDCSProtocolHandler::readData(unsigned char* buffer, unsigned int l
 		m_buffer[56] = 0x2D;
 		m_buffer[57] = 0x16;
 		sync = true;
-	}
+}
 
 	::memcpy(buffer, m_buffer + 46U, length);
 
@@ -363,10 +376,14 @@ void CDCSProtocolHandler::clock()
 	m_connectTimer.clock();
 
 	if (m_connectTimer.hasExpired()) {
-		if (!m_linked)
+		if (!m_linked) {
 			writeConnect();
-		else
+			m_connectTimer.reset();
+		} else {
+			wxString text((char*)m_reflector, wxConvLocal);
+			wxLogMessage(wxT("Link to %s has failed"), text.c_str());
 			m_linked = false;
+		}
 	}
 }
 
@@ -383,12 +400,16 @@ bool CDCSProtocolHandler::isConnected()
 void CDCSProtocolHandler::close()
 {
 	if (m_socket != NULL) {
-		if (m_linked)
+		if (m_linked) {
 			writeDisconnect();
+			m_linked = false;
+		}
 
 		m_socket->close();
 		delete m_socket;
 		m_socket = NULL;
+
+		m_connectTimer.stop();
 	}
 }
 

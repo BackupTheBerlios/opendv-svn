@@ -1,4 +1,4 @@
-Digital Voice - 20120925
+Digital Voice - 20130131
 ========================
 
 20090319
@@ -288,7 +288,7 @@ Include the SVN revision number in the log file.
 Added support for the 70cms DVAP.
 Added support for the XDVRPTR modem firmware.
 
-2013xxxx
+20130131
 --------
 
 Use the DVAP to validate its own frequency.
