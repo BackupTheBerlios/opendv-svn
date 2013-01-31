@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -146,11 +146,6 @@ unsigned int CDCSGatewayAMBEData::getDCSData(unsigned char* data, unsigned int l
 	data[2]  = '0';
 	data[3]  = '1';
 
-	data[4]  = 0x00U;
-	data[5]  = 0x00U;
-	data[6]  = 0x00U;
-
-
 	data[43U] = m_id % 256U;			// Unique session id
 	data[44U] = m_id / 256U;
 
@@ -171,7 +166,7 @@ unsigned int CDCSGatewayAMBEData::getDCSData(unsigned char* data, unsigned int l
 	data[61U] = 0x01U;
 	data[62U] = 0x00U;
 
-	data[63U] = 0x00U;
+	data[63U] = 0x21U;
 
 	data[64U] = m_text[0U];
 	data[65U] = m_text[1U];

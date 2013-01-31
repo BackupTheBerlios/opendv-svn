@@ -1,4 +1,4 @@
-Repeater - 20130127
+Repeater - 20130131
 ===================
 
 20090530
@@ -1778,7 +1778,7 @@ Convert the DCS hosts files to use hostnames.
 Increase DVAP polling speed to increase reliability on slow machines.
 Fixed bug in status reporting.
 
-2013xxxx
+20130131
 --------
 
 Upgrade the DCS Gateway to the latest protocol version.

@@ -56,7 +56,7 @@ m_reflector(NULL),
 m_type(DT_NONE),
 m_buffer(NULL),
 m_length(0U),
-m_connectTimer(1000U, 0U, 200U),
+m_connectTimer(1000U, 1U),
 m_linked(false)
 {
 	m_callsign  = new unsigned char[LONG_CALLSIGN_LENGTH];
@@ -109,7 +109,14 @@ bool CDCSGatewayDCSProtocolHandler::link(const wxString& reflector, const wxStri
 
 	m_socket = socket;
 
-	return writeConnect();
+	res = writeConnect();
+	if (!res)
+		return false;
+
+	m_connectTimer.setTimeout(1U);
+	m_connectTimer.start();
+
+	return true;	
 }
 
 bool CDCSGatewayDCSProtocolHandler::writeData(const CDCSGatewayHeaderData& header, const CDCSGatewayAMBEData& data)
@@ -170,9 +177,15 @@ bool CDCSGatewayDCSProtocolHandler::readPackets()
 				m_connectTimer.reset();
 				return false;
 			case 14U:
-				if (!m_linked) {
+				if (::memcmp(m_buffer + 10U, "ACK", 3U) == 0 && !m_linked) {
 					m_linked = true;
 					m_connectTimer.setTimeout(60U);
+					m_connectTimer.start();
+				} else if (::memcmp(m_buffer + 10U, "NAK", 3U) == 0 && !m_linked) {
+					wxString text((char*)m_reflector, wxConvLocal);
+					wxLogMessage(wxT("Link to %s refused"), text.c_str());
+					m_linked = false;
+					m_connectTimer.stop();
 				}
 				return false;
 			case 35U:
@@ -222,10 +235,14 @@ void CDCSGatewayDCSProtocolHandler::clock(unsigned int ms)
 	m_connectTimer.clock(ms);
 
 	if (m_connectTimer.hasExpired()) {
-		if (!m_linked)
+		if (!m_linked) {
 			writeConnect();
-		else
+			m_connectTimer.reset();
+		} else {
+			wxString text((char*)m_reflector, wxConvLocal);
+			wxLogMessage(wxT("Link to %s has failed"), text.c_str());
 			m_linked = false;
+		}
 	}
 }
 
@@ -237,12 +254,16 @@ bool CDCSGatewayDCSProtocolHandler::isConnected()
 void CDCSGatewayDCSProtocolHandler::unlink()
 {
 	if (m_socket != NULL) {
-		if (m_linked)
+		if (m_linked) {
 			writeDisconnect();
+			m_linked = false;
+		}
 
 		m_socket->close();
 		delete m_socket;
 		m_socket = NULL;
+
+		m_connectTimer.stop();
 	}
 }
 
