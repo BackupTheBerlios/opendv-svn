@@ -1,3 +1,4 @@
-DAEMON_PATH=/usr/bin/soundcardmodemd
-DAEMON_ARGS="-daemon -logdir /var/log/opendv"
+DAEMON_NAME=soundcardmodemd
+DAEMON_PATH=/usr/bin/$DAEMON_NAME
+DAEMON_ARGS="-nolog -daemon -logdir /var/log/opendv"
 DAEMON_USER=opendv

@@ -40,7 +40,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20130125"
+rev="ircddbgw_conf-20130125"
 
 if [ $UID -ne 0 ]; then
 	echo
