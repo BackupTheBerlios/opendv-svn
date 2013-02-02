@@ -5,7 +5,8 @@
 #
 # This is a POSIX shell fragment
 #
-DAEMON=/usr/bin/ircddbgatewayd
+DAEMON_NAME=ircddbgatewayd
+DAEMON_PATH=/usr/bin/$DAEMON_NAME
 # Additional options that are passed to the Daemon.
 DAEMON_ARGS="-nolog -logdir=/var/log/opendv -daemon"
 DAEMON_USER=opendv

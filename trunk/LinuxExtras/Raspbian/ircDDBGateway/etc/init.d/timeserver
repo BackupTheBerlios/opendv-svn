@@ -7,7 +7,6 @@
 # Default-Stop:      0 1 6
 # Short-Description: ircDDBGateway timeserver
 # Description:       ircDDBGateway is a free internet gateway for D-Star Digital Voice on amateur radio
-#                    This version is for installation on Debian based systems.
 ### END INIT INFO
 
 # Author: Hans-J. Barthen DL5DI <dl5di@gmx.de>
@@ -18,7 +17,8 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=timeserver             # Introduce a short description here
 NAME=timeserver             # Introduce the short server's name here
-DAEMON=/usr/bin/timeserverd # Introduce the server's location here
+DAEMON_NAME=timeserverd     # Introduce the server's location here
+DAEMON_PATH=/usr/bin/$DAEMON_NAME
 DAEMON_ARGS=""              # Arguments to run the daemon with
 DAEMON_USER=opendv
 PIDFILE=/var/run/$NAME.pid
@@ -36,7 +36,7 @@ fi
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
 # Exit if the package is not installed
-[ -x $DAEMON ] || exit 0
+[ -x $DAEMON_PATH ] || exit 0
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
@@ -55,14 +55,20 @@ do_start()
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON --test > /dev/null \
+
+        ps aux | grep ntpd | grep -vq grep && /etc/init.d/ntp stop
+        ntpdate pool.ntp.org
+        [ -x /etc/init.d/ntp ] && /etc/init.d/ntp start
+        sleep 2
+
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH --test > /dev/null \
 		|| return 1
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON -- \
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH -- \
 		$DAEMON_ARGS \
 		|| return 2
 	sleep 2
 	# create a watchdog entry to the crontab
-	echo "*/10 * * * * root ps aux | grep $DAEMON | grep -vq grep || /etc/init.d/timeserver start" > /etc/cron.d/timeserver
+	echo "*/10 * * * * root ps aux | grep $DAEMON_NAME | grep -vq grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
 }
 
 #
@@ -124,7 +130,7 @@ case "$1" in
 	esac
 	;;
   status)
-       status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+       status_of_proc "$DAEMON_NAME" "$NAME" && exit 0 || exit $?
        ;;
   #reload|force-reload)
 	#
