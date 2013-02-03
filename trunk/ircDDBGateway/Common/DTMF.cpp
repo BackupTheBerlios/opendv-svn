@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *   Copyright (C) 2011 by DV Developer Group. DJ0ABR
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -157,10 +157,12 @@ wxString CDTMF::translate()
 
 	if (command.GetChar(0U) == wxT('*'))
 		return processDPlus(command.Mid(1U));
+	else if (command.GetChar(0U) == wxT('A'))
+		return processDExtra(command.Mid(1U));
 	else if (command.GetChar(0U) == wxT('D'))
 		return processDCS(command.Mid(1U));
 	else
-		return processDExtra(command);
+		return processCCS(command);
 }
 
 void CDTMF::reset()
@@ -254,4 +256,22 @@ wxString CDTMF::processDCS(const wxString& command) const
 	
 		return out;
 	}
+}
+
+wxString CDTMF::processCCS(const wxString& command) const
+{
+	unsigned int len = command.Len();
+
+	if (len != 4U)
+		return wxEmptyString;
+
+	unsigned long n;
+	command.ToULong(&n);
+	if (n == 0UL)
+		return wxEmptyString;
+
+	wxString out;
+	out.Printf(wxT("CCS%04lu  "), n);
+
+	return out;
 }

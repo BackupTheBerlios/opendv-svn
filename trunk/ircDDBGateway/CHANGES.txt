@@ -1201,3 +1201,8 @@ Removed some log messages (stream ID rewriting and link pools).
 
 Fix loopback mode.
 Handle APRS failures a little better.
+
+201302xx
+--------
+
+Modify DExtra DTMF to start with an 'A'.
