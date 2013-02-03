@@ -40,7 +40,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="dvrptrnet-20130129"
+rev="Raspbian-20130203"
 
 if [ $UID -ne 0 ]; then
 	echo

@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 #
 # Configure script for G4KLX Repeater
 #
@@ -38,6 +38,7 @@
 # 2012-09-29 dl5di    bugfix, reset of logging
 # 2012-12-22 dl5di    ethernet configuration for dvrptrepeater V2
 # 2013-01-29 dl5di    bugfix
+# 2013-02-03 dl5di    set permissions on Raspberry PI's  GPIO device "/dev/mem"
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -47,7 +48,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20130129"
+rev="Debian-20130203"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -255,6 +256,7 @@ function request_input(){
   done
   return $RETVAL
 }
+
 
 function request_value(){
 #
@@ -567,7 +569,7 @@ function valid_port(){
 
     echo " - valid_port $1" >> $LOG
     if [[ $port =~ ^[0-9]{4,5}$ ]]; then
-	if [ $port -ge 1024 -a $port -lt 65535 ]; then
+	if [ $port -lt 65535 ]; then
 	    stat=0
 	fi 
     fi
@@ -699,8 +701,8 @@ function set_language(){
 function basic_setup(){
 
     print_text basic_setup 
-    
-# 				
+
+#
 # first choice for default values is always an exiting own configfile
 # 2nd and 3rd choice - if no better available:
 #
@@ -1425,13 +1427,13 @@ function hwtype1(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -1451,13 +1453,13 @@ function hwtype1(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -1500,6 +1502,7 @@ function hwtype1(){
 # 2: URI USB - 1 ...  URI USB - 6
 # 3: Serial - /dev/ttyS0 ... Serial - /dev/ttyS4
 # 4: /dev/ttyUSB0 ... /dev/ttyUSB4
+# 5: /dev/mem (only on Raspbian with bcm2835)
 #
     var="interfaceType"
     Dat=`date +%Y%m%d%H%M`
@@ -1572,7 +1575,7 @@ function hwtype1(){
 		    ;;
 	    esac
 	    write_value $REPEATERCONFIG $var "URI USB - ${VALUE}"
-    	    echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"0d8c\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-uri.rules
+	    echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"0d8c\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-uri.rules
 	    /etc/init.d/udev reload
 	    ;;
 	3)
@@ -1623,6 +1626,15 @@ function hwtype1(){
 	    /etc/init.d/udev reload
 	    [ -c /dev/ttyUSB${VALUE} ] && chown opendv:opendv /dev/ttyUSB${VALUE}
 	    ;;
+	5)
+	    print_text "iface_rpi_gpio"
+	    if [ -c /dev/mem ]; then
+		chown opendv:opendv /dev/mem
+		echo "KERNEL==\"mem\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-gpio.rules
+	    else
+		print_text "iface_rpi_nogpio"
+	    fi
+	    ;;
 	*)
 	    write_value $REPEATERCONFIG $var "$DEFAULT"
 	    ;;
@@ -1647,7 +1659,7 @@ function hwtype1(){
 	    VALUE=$INPUT
 	    ;;
 	2)
-#	    VALUE=$VALUE	
+#	    VALUE=$VALUE
 	    ;;
 	3)
 	    VALUE=$DEFAULT
@@ -1681,13 +1693,13 @@ function hwtype1(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -1717,7 +1729,7 @@ function hwtype2(){
     INPUT=$?
     case $INPUT in
 	[1-2])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    modemVersion=$INPUT
 	    ;;
 	3)   
@@ -1726,7 +1738,7 @@ function hwtype2(){
 	    ;;
 	*)
 	    modemVersion=$DEFAULT
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -1753,7 +1765,7 @@ function hwtype2(){
 	INPUT=$?
         case $INPUT in
 	    [0-1])
-    		write_value $REPEATERCONFIG $var "$INPUT"
+		write_value $REPEATERCONFIG $var "$INPUT"
 		modemConnection=$INPUT
 		;;
 	    2)   
@@ -1761,7 +1773,7 @@ function hwtype2(){
 		modemConnection=$VALUE
 		;;
 	    *)
-    		reset_value $var
+		reset_value $var
 		modemConnection=$DEFAULT
 		;;
 	esac
@@ -1776,17 +1788,17 @@ function hwtype2(){
 	var="modemUSBPort"
 	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
-    	read_default $var
+	read_default $var
 	DEFAULT=$(echo "$DEFAULT" | sed "s!/dev/ttyACM!!g")
-    	read_value $REPEATERCONFIG $var
+	read_value $REPEATERCONFIG $var
 	if [ "$?" = 0 ]; then
-    	    VALUE="$DEFAULT"
+	    VALUE="$DEFAULT"
 	fi
-    	VALUE=$(echo "$VALUE" | sed "s!/dev/ttyACM!!g")
+	VALUE=$(echo "$VALUE" | sed "s!/dev/ttyACM!!g")
 	print_text $var 
-    	ls /dev/ttyACM*
+	ls /dev/ttyACM*
 	request_value $var 0 9 1 "$VALUE"
-    	RET="$?"
+	RET="$?"
 	case $RET in
 	    1)
 		VALUE=$INPUT
@@ -1814,7 +1826,7 @@ function hwtype2(){
 	read_default "modemIPAddress"
 	read_value $REPEATERCONFIG $var
 	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
+	    VALUE=$DEFAULT
 	fi
 	VALID=1
 	while [ "$VALID" != 0 ]; do
@@ -1839,7 +1851,7 @@ function hwtype2(){
 	read_default $var
 	read_value $REPEATERCONFIG $var
 	if [ "$?" = 0 ]; then
-    	    VALUE=$DEFAULT
+	    VALUE=$DEFAULT
 	fi
 	VALID=1
 	while [ "$VALID" != 0 ]; do
@@ -1874,13 +1886,13 @@ function hwtype2(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -1901,13 +1913,13 @@ function hwtype2(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -1928,13 +1940,13 @@ function hwtype2(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 
@@ -2217,7 +2229,7 @@ function hwtype4(){
 #	    VALUE=$VALUE	
 	    ;;
 	3)
-    	    VALUE=$DEFAULT
+	    VALUE=$DEFAULT
 	    ;;
 	*)
 	    echo "ERROR"
@@ -2251,7 +2263,7 @@ function modulesetup(){
 	print_text $var 
 	select_item $var 4 "$VALUE"
 	RET=$?
-    
+
 	case $RET in
 	    1)
 		MODULE=$SELECT
@@ -2369,7 +2381,7 @@ function logging(){
     if [ ! -z "$INPUT" ]; then
 	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
     fi
-    
+
     var="audiodir"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
@@ -2403,13 +2415,13 @@ function logging(){
     INPUT=$?
     case $INPUT in
 	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+	    write_value $REPEATERCONFIG $var "$INPUT"
 	    ;;
 	2)   
 	    write_value $REPEATERCONFIG $var "$VALUE"
 	    ;;
 	*)
-    	    reset_value $var
+	    reset_value $var
 	    ;;
     esac
 

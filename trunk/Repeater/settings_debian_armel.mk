@@ -1,15 +1,13 @@
 # Makefile-include
 #
-# Special settings for DVRPTR-Net platform, Hans-J. Barthen, 2012-08-08
-# Rename this file to settings.mk before you compile the source for the DVRPTR-Net platform
+# Special settings for  Emdebian Compile for ARM processor, John Hays, June 2012
+# modified by Hans-J. Barthen, DL5DI, 2012-09-07
+# Rename this file to settings.mk before you compile the source for the Debian armel platform
 #
-	export CC      := $(shell wx-config --cxx)
-	export LDFLAGS := -g
-	export BINDIR  := $(DESTDIR)/usr/bin
+	export DEB_HOST_GNU_TYPE := arm-linux-gnueabi
 	export DATADIR := "/home/opendv/data"
-
-#
-# For a native build on ARM add -Wno-psabi to CFLAGS, to get rid of notes
-#
-	export CFLAGS := -g -O2 -Wall -Wno-non-virtual-dtor -Wno-strict-aliasing -Wno-psabi -DDATA_DIR='$(DATADIR)' -DBIN_DIR='$(BINDIR)' $(shell wx-config --cxxflags)
-	export LIBS := -lportaudio -lusb-1.0 $(shell wx-config --libs adv,core)
+	export BINDIR  := "$(DESTDIR)/usr/bin"
+	export CC      := $(DEB_HOST_GNU_TYPE)-g++
+	export LDFLAGS := -g -Xlinker -rpath-link /lib/$(DEB_HOST_GNU_TYPE) -Xlinker -rpath-link /usr/lib/$(DEB_HOST_GNU_TYPE)
+	export CFLAGS  := -g -O2 -Wall -Wno-non-virtual-dtor -Wno-strict-aliasing -Wno-psabi -DDATA_DIR='$(DATADIR)' -DBIN_DIR='$(BINDIR)' -I/usr/include/$(DEB_HOST_GNU_TYPE) -I/usr/$(DEB_HOST_GNU_TYPE)/include -I/usr/include -I/usr/lib/$(DEB_HOST_GNU_TYPE)/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread
+	export LIBS := -L/usr/lib/$(DEB_HOST_GNU_TYPE) -L/usr/$(DEB_HOST_GNU_TYPE)/lib -lportaudio -lusb-1.0 -lwx_gtk2u_adv-2.8 -lwx_gtk2u_core-2.8 -lwx_baseu-2.8 -pthread

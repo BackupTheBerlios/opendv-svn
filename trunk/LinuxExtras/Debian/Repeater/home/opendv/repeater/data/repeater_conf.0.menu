@@ -369,6 +369,7 @@ interfaceType: 1:  "Velleman K8055 - *"
 interfaceType: 2:  "URI USB - *"
 interfaceType: 3:  "Serial - /dev/ttyS*"
 interfaceType: 4:  "/dev/ttyUSB*"
+interfaceType: 5:  "Raspberry Pi GPIOs (only available on Raspbian)
 interfaceType:
 interfaceType:The following interfaces are currently available on your system:
 interfaceType:
@@ -415,6 +416,15 @@ iface_usb: 2:  "/dev/ttyUSB4"
 iface_usb: 
 iface_usb:The following interfaces are currently available on your system:
 iface_usb:
+
+iface_rpi_gpio:
+iface_rpi_gpio:The Raspberry Pi's GPIOs will be enabled
+iface_rpi_gpio:
+
+iface_rpi_nogpio:
+iface_rpi_nogpio:The Raspberry Pi's GPIOs are not supported by your system. 
+iface_rpi_nogpio:You need to run Raspbian with bcm2835 support.
+iface_rpi_nogpio:
 
 interfaceConfig:
 interfaceConfig:Interface Configuration Profile
