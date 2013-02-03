@@ -2,6 +2,47 @@
 OPEN ISSUES
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+FOUND: 2013-02-03
+REPORTED: DL5DI
+VERIFIED: 2012-02-03
+PRIORITY: normal
+SOLVED: open
+
+Check GPIO and soundmodem activation and settings on Rapsberry Pi.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-02
+REPORTED: Tom ON4TOP
+VERIFIED: 2013-02-02
+PRIORITY: high
+SOLVED: open
+
+Check report server uploads.
+Upload process seems to break when one server times out.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-01:
+REPORTED: Alan M0AQC
+VERIFIED: not yet
+PRIORITY: high
+SOLVED: open
+
+Check autostart of repeater packages on Raspberry Pi (and Debian in general)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-01
+REPORTED: Alan M0AQC
+VERIFIED: not yet
+PRIORITY: normal
+SOLVED: open
+
+Check reflector autoconnect and timer of DCS linking in ircddbgw_conf (Raspbian and in general)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: verification issue during installation/upgrade
 FOUND: 2012-09-04
 REPORTED: ON4TOP

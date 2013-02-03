@@ -2,6 +2,34 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Debian armhf packages
+FOUND: 2013-01-22
+REPORTED: ON4TOP
+SOLVED: 2013-02-02
+COMMIT: 2013-02-02
+
+- Debian armhf packages for Hackberry & Co added
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: Documentation
+FOUND: 2013-01-22:
+SOLVED: 2013-01-23
+
+- Documentation of all packages updated
+- Raspbian armhf repository information added
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: Add GPIO activation to repeater_conf
+FOUND: 2013-01-22
+REPORTED: DL5DI
+SOLVED: 2013-02-03
+COMMIT: 2013-02-03
+- Raspberry Pi's GPIO settings added to configuration tool
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Fix in startscripts
 FOUND: 2013-01-28
 REPORTED: Andrew M1DNS
