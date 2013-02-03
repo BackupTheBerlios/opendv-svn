@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -62,12 +62,6 @@ const unsigned int  DVAP_REQ_POWER_LEN = 6U;
 const unsigned char DVAP_RESP_POWER[] = {0x06, 0x00, 0x38, 0x01, 0x00, 0x00};
 const unsigned int  DVAP_RESP_POWER_LEN = 6U;
 
-const unsigned char DVAP_REQ_OFFSET[] = {0x06, 0x00, 0x00, 0x04, 0x00, 0x00};
-const unsigned int  DVAP_REQ_OFFSET_LEN = 6U;
-
-const unsigned char DVAP_RESP_OFFSET[] = {0x06, 0x00, 0x00, 0x04, 0x00, 0x00};
-const unsigned int  DVAP_RESP_OFFSET_LEN = 6U;
-
 const unsigned char DVAP_REQ_FREQUENCY[] = {0x08, 0x00, 0x20, 0x02, 0x00, 0x00, 0x00, 0x00};
 const unsigned int  DVAP_REQ_FREQUENCY_LEN = 8U;
 
@@ -110,7 +104,7 @@ const unsigned char DVAP_RESP_PTT[] = {0x05, 0x20, 0x18, 0x01, 0x00};
 const unsigned int  DVAP_RESP_PTT_LEN = 5U;
 
 const unsigned char DVAP_DATA[] = {0x12, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+								   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const unsigned int  DVAP_DATA_LEN = 18U;
 
 const unsigned char DVAP_STATUS[] = {0x07, 0x20, 0x90, 0x00, 0x00, 0x00, 0x00};
@@ -129,13 +123,12 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-CDVAPController::CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch, int offset) :
+CDVAPController::CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),
 m_serial(port, SERIAL_230400),
 m_frequency(frequency),
 m_power(power),
 m_squelch(squelch),
-m_offset(offset),
 m_space(0U),
 m_ptt(false),
 m_squelchOpen(false),
@@ -153,7 +146,6 @@ m_mutex()
 	wxASSERT(frequency >= 144000000U && frequency <= 148000000U);
 	wxASSERT(power >= -12 && power <= 10);
 	wxASSERT(squelch >= -128 && squelch <= -45);
-	wxASSERT(offset >= -2000 && offset <= 2000);
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
@@ -206,12 +198,6 @@ bool CDVAPController::open()
 	}
 
 	res = setPower();
-	if (!res) {
-		m_serial.close();
-		return false;
-	}
-
-	res = setOffset();
 	if (!res) {
 		m_serial.close();
 		return false;
@@ -812,41 +798,6 @@ bool CDVAPController::setPower()
 	return true;
 }
 
-bool CDVAPController::setOffset()
-{
-	unsigned char buffer[10U];
-
-	::memcpy(buffer, DVAP_REQ_OFFSET, DVAP_REQ_OFFSET_LEN);
-
-	wxInt16 offset = wxINT16_SWAP_ON_BE(m_offset);
-	::memcpy(buffer + 4U, &offset, sizeof(wxInt16));
-
-	int ret = m_serial.write(buffer, DVAP_REQ_OFFSET_LEN);
-	if (ret != int(DVAP_REQ_OFFSET_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
-	unsigned int count = 0U;
-	unsigned int length;
-	RESP_TYPE resp;
-	do {
-		::wxMilliSleep(5UL);
-
-		resp = getResponse(m_buffer, length);
-
-		if (resp != RT_OFFSET) {
-			count++;
-			if (count >= MAX_RESPONSES) {
-				wxLogError(wxT("The DVAP is not responding to the offset command"));
-				return false;
-			}
-		}
-	} while (resp != RT_OFFSET);
-
-	return true;
-}
-
 bool CDVAPController::setFrequency()
 {
 	unsigned char buffer[10U];
@@ -963,8 +914,6 @@ RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& leng
 		return RT_START;
 	else if (::memcmp(buffer, DVAP_RESP_STOP, DVAP_RESP_STOP_LEN) == 0)
 		return RT_STOP;
-	else if (::memcmp(buffer, DVAP_RESP_OFFSET, 4U) == 0)
-		return RT_OFFSET;
 	else if (::memcmp(buffer, DVAP_RESP_NAME, 4U) == 0)
 		return RT_NAME;
 	else if (::memcmp(buffer + 1U, DVAP_RESP_SERIAL + 1U, 3U) == 0)

@@ -1,4 +1,4 @@
-Repeater - 20130131
+Repeater - 20130203
 ===================
 
 20090530
@@ -1783,3 +1783,8 @@ Fixed bug in status reporting.
 
 Upgrade the DCS Gateway to the latest protocol version.
 Revert DVAP polling change.
+
+20130203
+--------
+
+Remove DVAP frequency offset setting.

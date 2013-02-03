@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public:
 	CDVAPClientPreferences(wxWindow* parent, int id, const wxString& callsign1, const wxString& callsign2,
 								   const wxString& readDevice, const wxString& writeDevice,
 								   const wxString& port, unsigned int frequency, int power, int squelch,
-								   int offset, const wxString& dvdDevice, const wxString& message, bool bleep);
+								   const wxString& dvdDevice, const wxString& message, bool bleep);
 	virtual ~CDVAPClientPreferences();
 
 	virtual bool Validate();
@@ -49,7 +49,6 @@ public:
 	virtual unsigned int getFrequency() const;
 	virtual int          getPower() const;
 	virtual int          getSquelch() const;
-	virtual int          getOffset() const;
 
 	virtual wxString     getDVDDevice() const;
 

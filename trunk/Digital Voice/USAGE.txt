@@ -1,4 +1,4 @@
-Digital Voice - 20130131
+Digital Voice - 20130203
 ========================
 
 The package currently consists of six programs, DCS Client, DExtra Client,
@@ -299,8 +299,6 @@ Port: This will be a COM port under Windows or a /dev/ttyUSBx port under Linux.
 Frequency: This is the transmit and receive frequency in Hertz.
 Power: The output power in dBm with the maximum being 10 dBm (10 mW).
 Squelch: The receive level at which the squelch will trigger.
-Offset: This is used to take into account drift within the DVAP to allow the
-correct frequency to be set.
 
 When running, the program logs some information into the DVAPClient.log file in
 the users home directory.

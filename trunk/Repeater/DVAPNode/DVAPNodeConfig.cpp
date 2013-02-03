@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ const wxString  KEY_DVAP_PORT          = wxT("dvapPort");
 const wxString  KEY_DVAP_FREQUENCY     = wxT("dvapFrequency");
 const wxString  KEY_DVAP_POWER         = wxT("dvapPower");
 const wxString  KEY_DVAP_SQUELCH       = wxT("dvapSquelch");
-const wxString  KEY_DVAP_OFFSET        = wxT("dvapOffset");
 const wxString  KEY_TIMEOUT            = wxT("timeout");
 const wxString  KEY_ACK_TIME           = wxT("ackTime");
 const wxString  KEY_BEACON_TIME        = wxT("beaconTime");
@@ -57,7 +56,6 @@ const wxString     DEFAULT_DVAP_PORT       = wxEmptyString;
 const unsigned int DEFAULT_DVAP_FREQUENCY  = 145500000U;
 const int          DEFAULT_DVAP_POWER      = 10;
 const int          DEFAULT_DVAP_SQUELCH    = -100;
-const int          DEFAULT_DVAP_OFFSET     = 0;
 const unsigned int DEFAULT_TIMEOUT         = 180U;
 const unsigned int DEFAULT_ACK_TIME        = 500U;
 const unsigned int DEFAULT_BEACON_TIME     = 600U;
@@ -88,7 +86,6 @@ m_port(DEFAULT_DVAP_PORT),
 m_frequency(DEFAULT_DVAP_FREQUENCY),
 m_power(DEFAULT_DVAP_POWER),
 m_squelch(DEFAULT_DVAP_SQUELCH),
-m_offset(DEFAULT_DVAP_OFFSET),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
@@ -141,9 +138,6 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_DVAP_SQUELCH, &temp, long(DEFAULT_DVAP_SQUELCH));
 	m_squelch = int(temp);
 
-	m_config->Read(m_name + KEY_DVAP_OFFSET, &temp, long(DEFAULT_DVAP_OFFSET));
-	m_offset = int(temp);
-
 	m_config->Read(m_name + KEY_TIMEOUT, &temp, long(DEFAULT_TIMEOUT));
 	m_timeout = (unsigned int)temp;
 
@@ -192,7 +186,6 @@ m_port(DEFAULT_DVAP_PORT),
 m_frequency(DEFAULT_DVAP_FREQUENCY),
 m_power(DEFAULT_DVAP_POWER),
 m_squelch(DEFAULT_DVAP_SQUELCH),
-m_offset(DEFAULT_DVAP_OFFSET),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
@@ -280,9 +273,6 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_DVAP_SQUELCH)) {
 			val.ToLong(&temp1);
 			m_squelch = int(temp1);
-		} else if (key.IsSameAs(KEY_DVAP_OFFSET)) {
-			val.ToLong(&temp1);
-			m_offset = int(temp1);
 		} else if (key.IsSameAs(KEY_TIMEOUT)) {
 			val.ToULong(&temp2);
 			m_timeout = (unsigned int)temp2;
@@ -359,22 +349,20 @@ void CDVAPNodeConfig::setNetwork(const wxString& gatewayAddress, unsigned int ga
 	m_localPort      = localPort;
 }
 
-void CDVAPNodeConfig::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch, int& offset) const
+void CDVAPNodeConfig::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const
 {
 	port      = m_port;
 	frequency = m_frequency;
 	power     = m_power;
 	squelch   = m_squelch;
-	offset    = m_offset;
 }
 
-void CDVAPNodeConfig::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch, int offset)
+void CDVAPNodeConfig::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch)
 {
 	m_port      = port;
 	m_frequency = frequency;
 	m_power     = power;
 	m_squelch   = squelch;
-	m_offset    = offset;
 }
 
 void CDVAPNodeConfig::getTimes(unsigned int& timeout, unsigned int& ackTime) const
@@ -445,7 +433,6 @@ bool CDVAPNodeConfig::write()
 	m_config->Write(m_name + KEY_DVAP_FREQUENCY, long(m_frequency));
 	m_config->Write(m_name + KEY_DVAP_POWER, long(m_power));
 	m_config->Write(m_name + KEY_DVAP_SQUELCH, long(m_squelch));
-	m_config->Write(m_name + KEY_DVAP_OFFSET, long(m_offset));
 	m_config->Write(m_name + KEY_TIMEOUT, long(m_timeout));
 	m_config->Write(m_name + KEY_ACK_TIME, long(m_ackTime));
 	m_config->Write(m_name + KEY_BEACON_TIME, long(m_beaconTime));
@@ -499,7 +486,6 @@ bool CDVAPNodeConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_DVAP_FREQUENCY.c_str(), m_frequency); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVAP_POWER.c_str(), m_power); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVAP_SQUELCH.c_str(), m_squelch); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVAP_OFFSET.c_str(), m_offset); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_TIMEOUT.c_str(), m_timeout); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_ACK_TIME.c_str(), m_ackTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BEACON_TIME.c_str(), m_beaconTime); file.AddLine(buffer);

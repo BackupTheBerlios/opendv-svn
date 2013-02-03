@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ public:
 	void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	void getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch, int& offset) const;
-	void setDVAP(const wxString& port, unsigned int frequency, int power, int squelch, int offset);
+	void getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const;
+	void setDVAP(const wxString& port, unsigned int frequency, int power, int squelch);
 
 	void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
 	void setTimes(unsigned int timeout, unsigned int ackTime);
@@ -79,7 +79,6 @@ private:
 	unsigned int  m_frequency;
 	int           m_power;
 	int           m_squelch;
-	int           m_offset;
 	unsigned int  m_timeout;
 	unsigned int  m_ackTime;
 	unsigned int  m_beaconTime;

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ public:
 	virtual void getCallsign(wxString& callsign1, wxString& callsign2) const;
 	virtual void setCallsign(const wxString& callsign1, const wxString& callsign2) const;
 
-	virtual void getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch, int& offset) const;
-	virtual void setDVAP(const wxString& port, unsigned int address, int power, int squelch, int offset) const;
+	virtual void getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const;
+	virtual void setDVAP(const wxString& port, unsigned int address, int power, int squelch) const;
 
 	virtual void getSoundcard(wxString& readDevice, wxString& writeDevice) const;
 	virtual void setSoundcard(const wxString& readDevice, const wxString& writeDevice) const;

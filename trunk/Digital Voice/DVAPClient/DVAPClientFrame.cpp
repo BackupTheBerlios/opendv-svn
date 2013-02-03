@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -322,8 +322,8 @@ void CDVAPClientFrame::onPreferences(wxCommandEvent& event)
 
 	wxString oldPort;
 	unsigned int oldFrequency;
-	int oldPower, oldSquelch, oldOffset;
-	::wxGetApp().getDVAP(oldPort, oldFrequency, oldPower, oldSquelch, oldOffset);
+	int oldPower, oldSquelch;
+	::wxGetApp().getDVAP(oldPort, oldFrequency, oldPower, oldSquelch);
 
 	wxString oldDVDDevice;
 	::wxGetApp().getDVDongle(oldDVDDevice);
@@ -335,7 +335,7 @@ void CDVAPClientFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getBleep(oldBleep);
 
 	CDVAPClientPreferences dialog(this, -1, oldCallsign1, oldCallsign2, oldReadDevice, oldWriteDevice,
-								   oldPort, oldFrequency, oldPower, oldSquelch, oldOffset, oldDVDDevice,
+								   oldPort, oldFrequency, oldPower, oldSquelch, oldDVDDevice,
 								   oldMessage, oldBleep);
 	if (dialog.ShowModal() != wxID_OK)
 		return;
@@ -348,7 +348,6 @@ void CDVAPClientFrame::onPreferences(wxCommandEvent& event)
 	unsigned int newFrequency = dialog.getFrequency();
 	int      newPower         = dialog.getPower();
 	int      newSquelch       = dialog.getSquelch();
-	int      newOffset        = dialog.getOffset();
 	wxString newDVDDevice     = dialog.getDVDDevice();
 	wxString newMessage       = dialog.getMessage();
 	bool     newBleep         = dialog.getBleep();
@@ -363,8 +362,8 @@ void CDVAPClientFrame::onPreferences(wxCommandEvent& event)
 		changed = true;
 	}
 
-	if (!newPort.IsSameAs(oldPort) || newFrequency != oldFrequency || newPower != oldPower || newSquelch != oldSquelch || newOffset != oldOffset) {
-		::wxGetApp().setDVAP(newPort, newFrequency, newPower, newSquelch, newOffset);
+	if (!newPort.IsSameAs(oldPort) || newFrequency != oldFrequency || newPower != oldPower || newSquelch != oldSquelch) {
+		::wxGetApp().setDVAP(newPort, newFrequency, newPower, newSquelch);
 		changed = true;
 	}
 

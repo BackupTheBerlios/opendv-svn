@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -223,14 +223,14 @@ void CDVAPNodeApp::setNetwork(const wxString& gatewayAddress, unsigned int gatew
 	m_config->setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 }
 
-void CDVAPNodeApp::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch, int& offset) const
+void CDVAPNodeApp::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const
 {
-	m_config->getDVAP(port, frequency, power, squelch, offset);
+	m_config->getDVAP(port, frequency, power, squelch);
 }
 
-void CDVAPNodeApp::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch, int offset)
+void CDVAPNodeApp::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch)
 {
-	m_config->setDVAP(port, frequency, power, squelch, offset);
+	m_config->setDVAP(port, frequency, power, squelch);
 }
 
 void CDVAPNodeApp::getTimes(unsigned int& timeout, unsigned int& ackTime) const
@@ -335,12 +335,12 @@ void CDVAPNodeApp::createThread()
 
 	wxString dvapPort;
 	unsigned int dvapFrequency;
-	int dvapPower, dvapSquelch, dvapOffset;
-	getDVAP(dvapPort, dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
-	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm, offset: %d Hz"), dvapPort.c_str(), dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
+	int dvapPower, dvapSquelch;
+	getDVAP(dvapPort, dvapFrequency, dvapPower, dvapSquelch);
+	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), dvapPort.c_str(), dvapFrequency, dvapPower, dvapSquelch);
 
 	if (!dvapPort.IsEmpty()) {
-		CDVAPController* dvap = new CDVAPController(dvapPort, dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
+		CDVAPController* dvap = new CDVAPController(dvapPort, dvapFrequency, dvapPower, dvapSquelch);
 		bool res = dvap->open();
 		if (!res)
 			wxLogError(wxT("Unable to open the DVAP"));

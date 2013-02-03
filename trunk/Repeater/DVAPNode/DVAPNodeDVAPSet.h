@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 class CDVAPNodeDVAPSet : public wxPanel {
 public:
-	CDVAPNodeDVAPSet(wxWindow* parent, int id, const wxString& title, const wxString& port, unsigned int frequency, int power, int squelch, int offset);
+	CDVAPNodeDVAPSet(wxWindow* parent, int id, const wxString& title, const wxString& port, unsigned int frequency, int power, int squelch);
 	virtual ~CDVAPNodeDVAPSet();
 
 	virtual bool Validate();
@@ -36,7 +36,6 @@ public:
 	virtual unsigned int getFrequency() const;
 	virtual int          getPower() const;
 	virtual int          getSquelch() const;
-	virtual int          getOffset() const;
 
 private:
 	wxString    m_title;
@@ -45,7 +44,6 @@ private:
 	wxTextCtrl* m_frequency;
 	wxSpinCtrl* m_power;
 	wxSpinCtrl* m_squelch;
-	wxSpinCtrl* m_offset;
 };
 
 #endif

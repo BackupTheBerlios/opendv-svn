@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,15 +24,14 @@ const unsigned int BORDER_SIZE   = 5U;
 const unsigned int CONTROL_WIDTH = 100U;
 const unsigned int NAME_WIDTH    = 200U;
 
-CDVAPNodeDVAPSet::CDVAPNodeDVAPSet(wxWindow* parent, int id, const wxString& title, const wxString& port, unsigned int frequency, int power, int squelch, int offset) :
+CDVAPNodeDVAPSet::CDVAPNodeDVAPSet(wxWindow* parent, int id, const wxString& title, const wxString& port, unsigned int frequency, int power, int squelch) :
 wxPanel(parent, id),
 m_title(title),
 m_port(NULL),
 m_band(NULL),
 m_frequency(NULL),
 m_power(NULL),
-m_squelch(NULL),
-m_offset(NULL)
+m_squelch(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
@@ -78,12 +77,6 @@ m_offset(NULL)
 
 	m_squelch = new wxSpinCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1), wxSP_ARROW_KEYS, -128, -45, squelch);
 	sizer->Add(m_squelch, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	wxStaticText* offsetLabel = new wxStaticText(this, -1, _("Offset (Hz)"));
-	sizer->Add(offsetLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	m_offset = new wxSpinCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1), wxSP_ARROW_KEYS, -2000, 2000, offset);
-	sizer->Add(m_offset, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	SetAutoLayout(true);
 
@@ -154,13 +147,6 @@ int CDVAPNodeDVAPSet::getPower() const
 int CDVAPNodeDVAPSet::getSquelch() const
 {
 	int power = m_squelch->GetValue();
-
-	return power;
-}
-
-int CDVAPNodeDVAPSet::getOffset() const
-{
-	int power = m_offset->GetValue();
 
 	return power;
 }

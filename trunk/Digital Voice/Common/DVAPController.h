@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ enum RESP_TYPE {
 	RT_MODE,
 	RT_SQUELCH,
 	RT_POWER,
-	RT_OFFSET,
 	RT_FREQUENCY,
 	RT_FREQLIMITS,
 	RT_STATE,
@@ -52,7 +51,7 @@ enum RESP_TYPE {
 
 class CDVAPController : public wxThread {
 public:
-	CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch, int offset);
+	CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
 	virtual ~CDVAPController();
 
 	virtual void* Entry();
@@ -80,7 +79,6 @@ private:
 	wxUint32                   m_frequency;
 	wxInt16                    m_power;
 	wxInt8                     m_squelch;
-	wxInt16                    m_offset;
 	unsigned int               m_space;
 	bool                       m_ptt;
 	bool                       m_squelchOpen;
@@ -103,7 +101,6 @@ private:
 
 	bool setSquelch();
 	bool setPower();
-	bool setOffset();
 	bool setFrequency();
 
 	bool start();

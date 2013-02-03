@@ -1,4 +1,4 @@
-Digital Voice - 20130131
+Digital Voice - 20130203
 ========================
 
 20090319
@@ -295,3 +295,8 @@ Use the DVAP to validate its own frequency.
 Added DCS016, DCS017, DCS018, DCS019, and DCS020.
 Update the DExtra hosts file to the latest version.
 Upgrade the DCS protocol to the latest version.
+
+20130203
+--------
+
+Remove the Offset parameter in the DVAP Client.

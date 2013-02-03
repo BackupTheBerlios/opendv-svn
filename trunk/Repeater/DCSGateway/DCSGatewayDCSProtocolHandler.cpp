@@ -182,7 +182,7 @@ bool CDCSGatewayDCSProtocolHandler::readPackets()
 					m_connectTimer.setTimeout(60U);
 					m_connectTimer.start();
 				} else if (::memcmp(m_buffer + 10U, "NAK", 3U) == 0 && !m_linked) {
-					wxString text((char*)m_reflector, wxConvLocal);
+					wxString text((char*)m_reflector, wxConvLocal, LONG_CALLSIGN_LENGTH);
 					wxLogMessage(wxT("Link to %s refused"), text.c_str());
 					m_linked = false;
 					m_connectTimer.stop();
@@ -239,7 +239,7 @@ void CDCSGatewayDCSProtocolHandler::clock(unsigned int ms)
 			writeConnect();
 			m_connectTimer.reset();
 		} else {
-			wxString text((char*)m_reflector, wxConvLocal);
+			wxString text((char*)m_reflector, wxConvLocal, LONG_CALLSIGN_LENGTH);
 			wxLogMessage(wxT("Link to %s has failed"), text.c_str());
 			m_linked = false;
 		}

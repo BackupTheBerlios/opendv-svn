@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ CDVAPNodePreferences::CDVAPNodePreferences(wxWindow* parent, int id, const wxStr
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int beaconTime,
 	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, const wxString& port,
-	unsigned int frequency, int power, int squelch, int offset) :
+	unsigned int frequency, int power, int squelch) :
 wxDialog(parent, id, wxString(_("DVAP Node Preferences"))),
 m_callsign(NULL),
 m_network(NULL),
@@ -53,8 +53,8 @@ m_dvap(NULL)
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
 
-	m_dvap = new CDVAPNodeDVAPSet(noteBook, -1, APPLICATION_NAME, port, frequency, power, squelch, offset);
-	noteBook->AddPage(m_dvap, _("DVAP"), false);
+	m_dvap = new CDVAPNodeDVAPSet(noteBook, -1, APPLICATION_NAME, port, frequency, power, squelch);
+	noteBook->AddPage(m_dvap, wxT("DVAP"), false);
 
 	mainSizer->Add(noteBook, 1, wxALL | wxGROW, BORDER_SIZE);
 
@@ -179,9 +179,4 @@ int CDVAPNodePreferences::getPower() const
 int CDVAPNodePreferences::getSquelch() const
 {
 	return m_dvap->getSquelch();
-}
-
-int CDVAPNodePreferences::getOffset() const
-{
-	return m_dvap->getOffset();
 }

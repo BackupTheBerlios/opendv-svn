@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 CDVAPClientPreferences::CDVAPClientPreferences(wxWindow* parent, int id, const wxString& callsign1,
 								   const wxString& callsign2, const wxString& readDevice,
 								   const wxString& writeDevice, const wxString& port, unsigned int frequency,
-								   int power, int squelch, int offset, const wxString& dvdDevice,
+								   int power, int squelch, const wxString& dvdDevice,
 								   const wxString& message, bool bleep) :
 wxDialog(parent, id, wxString(_("DVAP Client Preferences")), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER | wxDEFAULT_DIALOG_STYLE),
 m_callsign(NULL),
@@ -43,7 +43,7 @@ m_bleep(NULL)
 	m_soundcard = new CSoundcardSet(noteBook, -1, APPLICATION_NAME, readDevice, writeDevice);
 	noteBook->AddPage(m_soundcard, _("Sound Card"), false);
 
-	m_modem = new CDVAPClientModemSet(noteBook, -1, APPLICATION_NAME, port, frequency, power, squelch, offset);
+	m_modem = new CDVAPClientModemSet(noteBook, -1, APPLICATION_NAME, port, frequency, power, squelch);
 	noteBook->AddPage(m_modem, _("DVAP"), false);
 
 	m_dongle = new CDVDongleSet(noteBook, -1, APPLICATION_NAME, dvdDevice);
@@ -130,11 +130,6 @@ int CDVAPClientPreferences::getPower() const
 int CDVAPClientPreferences::getSquelch() const
 {
 	return m_modem->getSquelch();
-}
-
-int CDVAPClientPreferences::getOffset() const
-{
-	return m_modem->getOffset();
 }
 
 wxString CDVAPClientPreferences::getDVDDevice() const

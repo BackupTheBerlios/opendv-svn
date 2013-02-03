@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -229,19 +229,17 @@ bool CDVAPNodeD::createThread()
 
 	wxString dvapPort;
 	unsigned int dvapFrequency;
-	int dvapPower, dvapSquelch, dvapOffset;
-	config.getDVAP(dvapPort, dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
-	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm, offset: %d Hz"), dvapPort.c_str(), dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
+	int dvapPower, dvapSquelch;
+	config.getDVAP(dvapPort, dvapFrequency, dvapPower, dvapSquelch);
+	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), dvapPort.c_str(), dvapFrequency, dvapPower, dvapSquelch);
 
 	if (!dvapPort.IsEmpty()) {
-		CDVAPController* dvap = new CDVAPController(dvapPort, dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
+		CDVAPController* dvap = new CDVAPController(dvapPort, dvapFrequency, dvapPower, dvapSquelch);
 		bool res = dvap->open();
-		if (!res) {
+		if (!res)
 			wxLogError(wxT("Unable to open the DVAP"));
-			return false;
-		}
-
-		m_thread->setDVAP(dvap);
+		else
+			m_thread->setDVAP(dvap);
 	}
 
 	bool logging;

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress, 
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, const wxString& port, unsigned int frequency, int power, int squelch, int offset);
+		TEXT_LANG language, const wxString& port, unsigned int frequency, int power, int squelch);
 	virtual ~CDVAPNodePreferences();
 
 	virtual bool Validate();
@@ -64,7 +64,6 @@ public:
 	virtual unsigned int getFrequency() const;
 	virtual int          getPower() const;
 	virtual int          getSquelch() const;
-	virtual int          getOffset() const;
 
 private:
 	CDVAPNodeCallsignSet* m_callsign;

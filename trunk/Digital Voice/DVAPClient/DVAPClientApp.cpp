@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@ static const wxString KEY_DVAP_PORT          = wxT("/dvapPort");
 static const wxString KEY_DVAP_FREQUENCY     = wxT("/dvapFrequency");
 static const wxString KEY_DVAP_POWER         = wxT("/dvapPower");
 static const wxString KEY_DVAP_SQUELCH       = wxT("/dvapSquelch");
-static const wxString KEY_DVAP_OFFSET        = wxT("/dvapOffset");
 static const wxString KEY_SOUND_READ_DEVICE  = wxT("/readDevice");
 static const wxString KEY_SOUND_WRITE_DEVICE = wxT("/writeDevice");
 static const wxString KEY_DVD_DEVICE         = wxT("/dvdDevice");
@@ -57,7 +56,6 @@ static const wxString   DEFAULT_DVAP_PORT          = wxEmptyString;
 static const long       DEFAULT_DVAP_FREQUENCY     = 145500000L;
 static const long       DEFAULT_DVAP_POWER         = 10L;
 static const long       DEFAULT_DVAP_SQUELCH       = -100L;
-static const long       DEFAULT_DVAP_OFFSET        = 0L;
 static const wxString   DEFAULT_SOUND_READ_DEVICE  = wxEmptyString;
 static const wxString   DEFAULT_SOUND_WRITE_DEVICE = wxEmptyString;
 static const wxString   DEFAULT_DVD_DEVICE         = wxEmptyString;
@@ -230,7 +228,7 @@ void CDVAPClientApp::setMessage(const wxString& message) const
 	delete profile;
 }
 
-void CDVAPClientApp::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch, int& offset) const
+void CDVAPClientApp::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const
 {
 	wxConfigBase* profile = new wxConfig(APPLICATION_NAME);
 	wxASSERT(profile != NULL);
@@ -247,15 +245,12 @@ void CDVAPClientApp::getDVAP(wxString& port, unsigned int& frequency, int& power
 	profile->Read(KEY_DVAP_SQUELCH,   &temp, DEFAULT_DVAP_SQUELCH);
 	squelch = int(temp);
 
-	profile->Read(KEY_DVAP_OFFSET,    &temp, DEFAULT_DVAP_OFFSET);
-	offset = int(temp);
-
-	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm, offset: %d Hz"), port.c_str(), frequency, power, squelch, offset);
+	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
 
 	delete profile;
 }
 
-void CDVAPClientApp::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch, int offset) const
+void CDVAPClientApp::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch) const
 {
 	wxConfigBase* profile = new wxConfig(APPLICATION_NAME);
 	wxASSERT(profile != NULL);
@@ -264,10 +259,9 @@ void CDVAPClientApp::setDVAP(const wxString& port, unsigned int frequency, int p
 	profile->Write(KEY_DVAP_FREQUENCY, long(frequency));
 	profile->Write(KEY_DVAP_POWER,     long(power));
 	profile->Write(KEY_DVAP_SQUELCH,   long(squelch));
-	profile->Write(KEY_DVAP_OFFSET,    long(offset));
 	profile->Flush();
 
-	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm, offset: %d Hz"), port.c_str(), frequency, power, squelch, offset);
+	wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
 
 	delete profile;
 }
@@ -558,11 +552,11 @@ void CDVAPClientApp::createThread()
 
 	wxString dvapPort;
 	unsigned int dvapFrequency;
-	int dvapPower, dvapSquelch, dvapOffset;
-	getDVAP(dvapPort, dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
+	int dvapPower, dvapSquelch;
+	getDVAP(dvapPort, dvapFrequency, dvapPower, dvapSquelch);
 
 	if (!dvapPort.IsEmpty()) {
-		CDVAPController* dvap = new CDVAPController(dvapPort, dvapFrequency, dvapPower, dvapSquelch, dvapOffset);
+		CDVAPController* dvap = new CDVAPController(dvapPort, dvapFrequency, dvapPower, dvapSquelch);
 		bool res = dvap->open();
 		if (!res) {
 			wxLogError(wxT("Unable to open the DVAP"));

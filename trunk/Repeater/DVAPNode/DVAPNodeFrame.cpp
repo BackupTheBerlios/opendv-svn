@@ -353,12 +353,12 @@ void CDVAPNodeFrame::onPreferences(wxCommandEvent& event)
 
 	wxString port;
 	unsigned int frequency;
-	int power, squelch, offset;
-	::wxGetApp().getDVAP(port, frequency, power, squelch, offset);
+	int power, squelch;
+	::wxGetApp().getDVAP(port, frequency, power, squelch);
 
 	CDVAPNodePreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation,
 		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText,
-		beaconVoice, language, port, frequency, power, squelch, offset);
+		beaconVoice, language, port, frequency, power, squelch);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -390,8 +390,7 @@ void CDVAPNodeFrame::onPreferences(wxCommandEvent& event)
 	frequency = dialog1.getFrequency();
 	power     = dialog1.getPower();
 	squelch   = dialog1.getSquelch();
-	offset    = dialog1.getOffset();
-	::wxGetApp().setDVAP(port, frequency, power, squelch, offset);
+	::wxGetApp().setDVAP(port, frequency, power, squelch);
 
 	::wxGetApp().writeConfig();
 
