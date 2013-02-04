@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -123,6 +123,7 @@ const wxString  KEY_DPLUS_ENABLED        = wxT("dplusEnabled");
 const wxString  KEY_DPLUS_MAXDONGLES     = wxT("dplusMaxDongles");
 const wxString  KEY_DPLUS_LOGIN          = wxT("dplusLogin");
 const wxString  KEY_DCS_ENABLED          = wxT("dcsEnabled");
+const wxString  KEY_CCS_ENABLED          = wxT("ccsEnabled");
 const wxString  KEY_STARNET_BAND1            = wxT("starNetBand1");
 const wxString  KEY_STARNET_CALLSIGN1        = wxT("starNetCallsign1");
 const wxString  KEY_STARNET_LOGOFF1          = wxT("starNetLogoff1");
@@ -227,6 +228,7 @@ const bool         DEFAULT_DPLUS_ENABLED         = false;
 const unsigned int DEFAULT_DPLUS_MAXDONGLES      = 5U;
 const wxString     DEFAULT_DPLUS_LOGIN           = wxEmptyString;
 const bool         DEFAULT_DCS_ENABLED           = true;
+const bool         DEFAULT_CCS_ENABLED           = true;
 const wxString     DEFAULT_STARNET_BAND          = wxEmptyString;
 const wxString     DEFAULT_STARNET_CALLSIGN      = wxEmptyString;
 const wxString     DEFAULT_STARNET_LOGOFF        = wxEmptyString;
@@ -359,6 +361,7 @@ m_dplusEnabled(DEFAULT_DPLUS_ENABLED),
 m_dplusMaxDongles(DEFAULT_DPLUS_MAXDONGLES),
 m_dplusLogin(DEFAULT_DPLUS_LOGIN),
 m_dcsEnabled(DEFAULT_DCS_ENABLED),
+m_ccsEnabled(DEFAULT_CCS_ENABLED),
 m_starNet1Band(DEFAULT_STARNET_BAND),
 m_starNet1Callsign(DEFAULT_STARNET_CALLSIGN),
 m_starNet1Logoff(DEFAULT_STARNET_LOGOFF),
@@ -665,6 +668,8 @@ m_y(DEFAULT_WINDOW_Y)
 
 	m_config->Read(m_name + KEY_DCS_ENABLED, &m_dcsEnabled, DEFAULT_DCS_ENABLED);
 
+	m_config->Read(m_name + KEY_CCS_ENABLED, &m_ccsEnabled, DEFAULT_CCS_ENABLED);
+
 	m_config->Read(m_name + KEY_STARNET_BAND1, &m_starNet1Band, DEFAULT_STARNET_BAND);
 
 	m_config->Read(m_name + KEY_STARNET_CALLSIGN1, &m_starNet1Callsign, DEFAULT_STARNET_CALLSIGN);
@@ -920,6 +925,7 @@ m_dplusEnabled(DEFAULT_DPLUS_ENABLED),
 m_dplusMaxDongles(DEFAULT_DPLUS_MAXDONGLES),
 m_dplusLogin(DEFAULT_DPLUS_LOGIN),
 m_dcsEnabled(DEFAULT_DCS_ENABLED),
+m_ccsEnabled(DEFAULT_CCS_ENABLED),
 m_starNet1Band(DEFAULT_STARNET_BAND),
 m_starNet1Callsign(DEFAULT_STARNET_CALLSIGN),
 m_starNet1Logoff(DEFAULT_STARNET_LOGOFF),
@@ -1268,6 +1274,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_DCS_ENABLED)) {
 			val.ToLong(&temp1);
 			m_dcsEnabled = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_CCS_ENABLED)) {
+			val.ToLong(&temp1);
+			m_ccsEnabled = temp1 == 1L;
 		} else if (key.IsSameAs(KEY_STARNET_BAND1)) {
 			m_starNet1Band = val;
 		} else if (key.IsSameAs(KEY_STARNET_CALLSIGN1)) {
@@ -1711,14 +1720,16 @@ void CIRCDDBGatewayConfig::setDPlus(bool enabled, unsigned int maxDongles, const
 	m_dplusLogin      = login;
 }
 
-void CIRCDDBGatewayConfig::getDCS(bool& enabled) const
+void CIRCDDBGatewayConfig::getDCS(bool& dcsEnabled, bool& ccsEnabled) const
 {
-	enabled = m_dcsEnabled;
+	dcsEnabled = m_dcsEnabled;
+	ccsEnabled = m_ccsEnabled;
 }
 
-void CIRCDDBGatewayConfig::setDCS(bool enabled)
+void CIRCDDBGatewayConfig::setDCS(bool dcsEnabled, bool ccsEnabled)
 {
-	m_dcsEnabled = enabled;
+	m_dcsEnabled = dcsEnabled;
+	m_ccsEnabled = ccsEnabled;
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
@@ -2128,6 +2139,7 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_DPLUS_MAXDONGLES, long(m_dplusMaxDongles));
 	m_config->Write(m_name + KEY_DPLUS_LOGIN, m_dplusLogin);
 	m_config->Write(m_name + KEY_DCS_ENABLED, m_dcsEnabled);
+	m_config->Write(m_name + KEY_CCS_ENABLED, m_ccsEnabled);
 	m_config->Write(m_name + KEY_STARNET_BAND1, m_starNet1Band);
 	m_config->Write(m_name + KEY_STARNET_CALLSIGN1, m_starNet1Callsign);
 	m_config->Write(m_name + KEY_STARNET_LOGOFF1, m_starNet1Logoff);
@@ -2323,6 +2335,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_DPLUS_MAXDONGLES.c_str(), m_dplusMaxDongles); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_DPLUS_LOGIN.c_str(), m_dplusLogin.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DCS_ENABLED.c_str(), m_dcsEnabled ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_CCS_ENABLED.c_str(), m_ccsEnabled ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_STARNET_BAND1.c_str(), m_starNet1Band.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_STARNET_CALLSIGN1.c_str(), m_starNet1Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_STARNET_LOGOFF1.c_str(), m_starNet1Logoff.c_str()); file.AddLine(buffer);

@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	RepeaterProtocolHander_H
-#define	RepeaterProtocolHander_H
+#ifndef	RepeaterProtocolHandler_H
+#define	RepeaterProtocolHandler_H
 
 #include "HeaderData.h"
 #include "StatusData.h"

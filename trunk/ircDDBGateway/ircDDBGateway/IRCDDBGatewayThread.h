@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "IRCDDBGatewayStatusData.h"
 #include "DCSProtocolHandlerPool.h"
 #include "DExtraProtocolHandler.h"
+#include "CCSProtocolHandler.h"
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -57,6 +58,7 @@ public:
 	virtual void setDExtra(bool enabled, unsigned int maxDongles);
 	virtual void setDPlus(bool enabled, unsigned int maxDongles, const wxString& login);
 	virtual void setDCS(bool enabled);
+	virtual void setCCS(bool enabled);
 	virtual void setLog(bool enabled);
 	virtual void setAPRSWriter(CAPRSWriter* writer);
 	virtual void setInfoEnabled(bool enabled);
@@ -83,6 +85,7 @@ private:
 	CDExtraProtocolHandler*        m_dextraHandler;
 	CDPlusProtocolHandlerPool*     m_dplusPool;
 	CDCSProtocolHandlerPool*       m_dcsPool;
+	CCCSProtocolHandler*           m_ccsHandler;
 	CG2ProtocolHandler*       m_g2Handler;
 	CAPRSWriter*              m_aprsWriter;
 	CIRCDDB*                  m_irc;
@@ -94,6 +97,7 @@ private:
 	unsigned int              m_dplusMaxDongles;
 	wxString                  m_dplusLogin;
 	bool                      m_dcsEnabled;
+	bool                      m_ccsEnabled;
 	bool                      m_infoEnabled;
 	bool                      m_echoEnabled;
 	bool                      m_dtmfEnabled;
@@ -118,6 +122,7 @@ private:
 	bool processDExtra();
 	bool processDPlus();
 	bool processDCS();
+	bool processCCS();
 	bool processG2();
 	bool processDD();
 

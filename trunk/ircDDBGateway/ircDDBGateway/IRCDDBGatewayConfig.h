@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@ public:
 	void getDPlus(bool& enabled, unsigned int& maxDongles, wxString& login) const;
 	void setDPlus(bool enabled, unsigned int maxDongles, const wxString& login);
 
-	void getDCS(bool& enabled) const;
-	void setDCS(bool enabled);
+	void getDCS(bool& dcsEnabled, bool& ccsEnabled) const;
+	void setDCS(bool dcsEnabled, bool ccsEnabled);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	void getStarNet1(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const;
@@ -218,6 +218,7 @@ private:
 	unsigned int  m_dplusMaxDongles;
 	wxString      m_dplusLogin;
 	bool          m_dcsEnabled;
+	bool          m_ccsEnabled;
 	wxString      m_starNet1Band;
 	wxString      m_starNet1Callsign;
 	wxString      m_starNet1Logoff;

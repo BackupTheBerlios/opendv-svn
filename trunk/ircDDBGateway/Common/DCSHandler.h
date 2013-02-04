@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DCSHander_H
-#define	DCSHander_H
+#ifndef	DCSHandler_H
+#define	DCSHandler_H
 
 #include "DCSProtocolHandlerPool.h"
 #include "ReflectorCallback.h"

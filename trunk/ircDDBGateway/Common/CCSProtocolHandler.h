@@ -16,18 +16,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DummyRepeaterProtocolHandler_H
-#define	DummyRepeaterProtocolHandler_H
+#ifndef	CCSProtocolHandler_H
+#define	CCSProtocolHandler_H
 
-#include "RepeaterProtocolHandler.h"
+#include "UDPReaderWriter.h"
 #include "DStarDefines.h"
-#include "HeaderData.h"
-#include "StatusData.h"
+#include "ConnectData.h"
 #include "HeardData.h"
 #include "AMBEData.h"
-#include "TextData.h"
 #include "PollData.h"
-#include "DDData.h"
 
 #if defined(__WINDOWS__)
 #include "Inaddr.h"
@@ -37,31 +34,44 @@
 
 #include <wx/wx.h>
 
-class CDummyRepeaterProtocolHandler : public IRepeaterProtocolHandler {
+enum CCS_TYPE {
+	CT_NONE,
+	CT_DATA,
+	CT_POLL,
+	CT_CONNECT
+};
+
+class CCCSProtocolHandler {
 public:
-	CDummyRepeaterProtocolHandler();
-	~CDummyRepeaterProtocolHandler();
+	CCCSProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	~CCCSProtocolHandler();
 
-	virtual bool open();
+	bool open();
 
-	virtual bool writeHeader(CHeaderData& header);
-	virtual bool writeAMBE(CAMBEData& data);
-	virtual bool writeDD(CDDData& data);
-	virtual bool writeText(CTextData& text);
-	virtual bool writeStatus(CStatusData& status);
+	unsigned int getPort() const;
 
-	virtual REPEATER_TYPE read();
-	virtual CPollData*    readPoll();
-	virtual CHeardData*   readHeard();
-	virtual CHeaderData*  readHeader();
-	virtual CAMBEData*    readAMBE();
-	virtual CDDData*      readDD();
-	virtual CHeaderData*  readBusyHeader();
-	virtual CAMBEData*    readBusyAMBE();
+	bool writeData(const CAMBEData& data);
+	bool writeConnect(const CConnectData& connect);
+	bool writePoll(const CPollData& poll);
+	bool writeHeard(const CHeardData& poll);
 
-	virtual void close();
+	CCS_TYPE      read();
+	CAMBEData*    readData();
+	CPollData*    readPoll();
+	CConnectData* readConnect();
+
+	void close();
 
 private:
+	CUDPReaderWriter m_socket;
+	CCS_TYPE         m_type;
+	unsigned char*   m_buffer;
+	unsigned int     m_length;
+	in_addr          m_yourAddress;
+	unsigned int     m_yourPort;
+	unsigned int     m_myPort;
+
+	bool readPackets();
 };
 
 #endif

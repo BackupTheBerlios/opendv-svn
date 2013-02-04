@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	G2ProtocolHander_H
-#define	G2ProtocolHander_H
+#ifndef	G2ProtocolHandler_H
+#define	G2ProtocolHandler_H
 
 #include "UDPReaderWriter.h"
 #include "DStarDefines.h"

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,13 +27,13 @@
 const unsigned int BORDER_SIZE = 5U;
 
 #if defined(__WINDOWS__)
-const unsigned int IRCDDB_WIDTH   = 230U;
+const unsigned int IRCDDB_WIDTH   = 138U;
 const unsigned int LINKED_WIDTH   = 160U;
 const unsigned int INCOMING_WIDTH = 320U;
 const unsigned int DONGLES_WIDTH  = 560U;
 const unsigned int LOGTEXT_WIDTH  = 560U;
 #else
-const unsigned int IRCDDB_WIDTH   = 288U;
+const unsigned int IRCDDB_WIDTH   = 144U;
 const unsigned int LINKED_WIDTH   = 220U;
 const unsigned int INCOMING_WIDTH = 385U;
 const unsigned int DONGLES_WIDTH  = 700U;
@@ -67,6 +67,7 @@ CIRCDDBGatewayFrame::CIRCDDBGatewayFrame(const wxString& title, const wxPoint& p
 wxFrame(NULL, -1, title, position),
 m_timer(this),
 m_ircDDBStatus(NULL),
+m_ccsStatus(NULL),
 m_dprsStatus(NULL),
 #if defined(__WXDEBUG__)
 m_updates(true)
@@ -83,13 +84,19 @@ m_updates(gui)
 	wxBoxSizer* panelSizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticBoxSizer* status1Sizer = new wxStaticBoxSizer(new wxStaticBox(panel, -1, _("Status")), wxVERTICAL);
-	wxFlexGridSizer* status2Sizer = new wxFlexGridSizer(4);
+	wxFlexGridSizer* status2Sizer = new wxFlexGridSizer(6);
 
 	wxStaticText* ircDDBStatusLabel = new wxStaticText(panel, -1, _("ircDDB:"));
 	status2Sizer->Add(ircDDBStatusLabel, 0, wxALL, BORDER_SIZE);
 
 	m_ircDDBStatus = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(IRCDDB_WIDTH, -1));
 	status2Sizer->Add(m_ircDDBStatus, 0, wxALL, BORDER_SIZE);
+
+	wxStaticText* ccsStatusLabel = new wxStaticText(panel, -1, _("CCS:"));
+	status2Sizer->Add(ccsStatusLabel, 0, wxALL, BORDER_SIZE);
+
+	m_ccsStatus = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(IRCDDB_WIDTH, -1));
+	status2Sizer->Add(m_ccsStatus, 0, wxALL, BORDER_SIZE);
 
 	wxStaticText* dprsStatusLabel = new wxStaticText(panel, -1, _("D-PRS:"));
 	status2Sizer->Add(dprsStatusLabel, 0, wxALL, BORDER_SIZE);
@@ -258,8 +265,8 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	bool dplusEnabled;
 	::wxGetApp().getDPlus(dplusEnabled, maxDPlusDongles, dplusLogin);
 
-	bool dcsEnabled;
-	::wxGetApp().getDCS(dcsEnabled);
+	bool dcsEnabled, ccsEnabled;
+	::wxGetApp().getDCS(dcsEnabled, ccsEnabled);
 
 	unsigned int remotePort;
 	wxString remotePassword;
@@ -308,7 +315,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
 		ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
-		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled,
+		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled, ccsEnabled,
 		starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1,
 		starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, starNetLink2,
 		starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, starNetLink3,
@@ -353,7 +360,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
 		ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
-		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled,
+		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled, ccsEnabled,
 		starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1,
 		starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2,
 		starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3,
@@ -473,6 +480,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	dplusLogin       = dialog1.getDPlusLogin();
 
 	dcsEnabled       = dialog1.getDCSEnabled();
+	ccsEnabled       = dialog1.getCCSEnabled();
 
 	starNetBand1         = dialog1.getStarNetBand1();
 	starNetCallsign1     = dialog1.getStarNetCallsign1();
@@ -561,7 +569,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().setDPRS(aprsEnabled, aprsHostname, aprsPort);
 	::wxGetApp().setDExtra(dextraEnabled, maxDExtraDongles);
 	::wxGetApp().setDPlus(dplusEnabled, maxDPlusDongles, dplusLogin);
-	::wxGetApp().setDCS(dcsEnabled);
+	::wxGetApp().setDCS(dcsEnabled, ccsEnabled);
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	::wxGetApp().setStarNet1(starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1);
 	::wxGetApp().setStarNet2(starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, starNetLink2);
@@ -661,6 +669,19 @@ void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
 			break;
 		default:
 			m_ircDDBStatus->SetLabel(_("Connected"));
+			break;
+	}
+
+	CCS_STATUS ccsStatus = status->getCCSStatus();
+	switch (ccsStatus) {
+		case CS_DISABLED:
+			m_ccsStatus->SetLabel(_("Disabled"));
+			break;
+		case CS_CONNECTING:
+			m_ccsStatus->SetLabel(_("Connecting"));
+			break;
+		default:
+			m_ccsStatus->SetLabel(_("Connected"));
 			break;
 	}
 

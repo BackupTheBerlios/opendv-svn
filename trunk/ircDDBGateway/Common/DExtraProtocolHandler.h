@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DExtraProtocolHander_H
-#define	DExtraProtocolHander_H
+#ifndef	DExtraProtocolHandler_H
+#define	DExtraProtocolHandler_H
 
 #include "UDPReaderWriter.h"
 #include "DStarDefines.h"

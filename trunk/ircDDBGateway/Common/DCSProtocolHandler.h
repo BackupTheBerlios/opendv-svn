@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DCSProtocolHander_H
-#define	DCSProtocolHander_H
+#ifndef	DCSProtocolHandler_H
+#define	DCSProtocolHandler_H
 
 #include "UDPReaderWriter.h"
 #include "DStarDefines.h"

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -84,6 +84,12 @@ enum IRCDDB_STATUS {
 	IS_DISCONNECTED,
 	IS_CONNECTING,
 	IS_CONNECTED
+};
+
+enum CCS_STATUS {
+	CS_DISABLED,
+	CS_CONNECTING,
+	CS_CONNECTED
 };
 
 enum G2_STATUS {

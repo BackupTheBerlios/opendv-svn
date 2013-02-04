@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,21 +22,31 @@ const unsigned int CONTROL_WIDTH = 130U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CDCSSet::CDCSSet(wxWindow* parent, int id, const wxString& title, bool enabled) :
+CDCSSet::CDCSSet(wxWindow* parent, int id, const wxString& title, bool dcsEnabled, bool ccsEnabled) :
 wxPanel(parent, id),
 m_title(title),
-m_enabled(NULL)
+m_dcsEnabled(NULL),
+m_ccsEnabled(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
-	wxStaticText* enabledLabel = new wxStaticText(this, -1, _("DCS"));
-	sizer->Add(enabledLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+	wxStaticText* dcsEnabledLabel = new wxStaticText(this, -1, wxT("DCS"));
+	sizer->Add(dcsEnabledLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_enabled = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	m_enabled->Append(_("Disabled"));
-	m_enabled->Append(_("Enabled"));
-	sizer->Add(m_enabled, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-	m_enabled->SetSelection(enabled ? 1 : 0);
+	m_dcsEnabled = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_dcsEnabled->Append(_("Disabled"));
+	m_dcsEnabled->Append(_("Enabled"));
+	sizer->Add(m_dcsEnabled, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_dcsEnabled->SetSelection(dcsEnabled ? 1 : 0);
+
+	wxStaticText* ccsEnabledLabel = new wxStaticText(this, -1, wxT("CCS"));
+	sizer->Add(ccsEnabledLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_ccsEnabled = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_ccsEnabled->Append(_("Disabled"));
+	m_ccsEnabled->Append(_("Enabled"));
+	sizer->Add(m_ccsEnabled, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_ccsEnabled->SetSelection(ccsEnabled ? 1 : 0);
 
 	SetAutoLayout(true);
 
@@ -50,16 +60,29 @@ CDCSSet::~CDCSSet()
 
 bool CDCSSet::Validate()
 {
-	int n = m_enabled->GetCurrentSelection();
+	int n = m_dcsEnabled->GetCurrentSelection();
+	if (n == wxNOT_FOUND)
+		return false;
+
+	n = m_ccsEnabled->GetCurrentSelection();
 	if (n == wxNOT_FOUND)
 		return false;
 
 	return true;
 }
 
-bool CDCSSet::getEnabled() const
+bool CDCSSet::getDCSEnabled() const
 {
-	int c = m_enabled->GetCurrentSelection();
+	int c = m_dcsEnabled->GetCurrentSelection();
+	if (c == wxNOT_FOUND)
+		return false;
+
+	return c == 1;
+}
+
+bool CDCSSet::getCCSEnabled() const
+{
+	int c = m_ccsEnabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
 		return false;
 

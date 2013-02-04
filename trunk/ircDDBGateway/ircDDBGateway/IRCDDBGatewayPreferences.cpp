@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ CIRCDDBGatewayPreferences::CIRCDDBGatewayPreferences(wxWindow* parent, int id, c
 						   const wxString& repeaterBand4, HW_TYPE repeaterType4, const wxString& repeaterAddress4, unsigned int repeaterPort4, unsigned char band41, unsigned char band42, unsigned char band43, const wxString& reflector4, bool atStartup4, RECONNECT reconnect4, double frequency4, double offset4, double range4, double latitude4, double longitude4, double agl4, const wxString& description41, const wxString& description42, const wxString& url4,
 						   bool ircDDBEnabled, const wxString& ircDDBHostname, const wxString& ircDDBUsername, const wxString& ircDDBPassword, TEXT_LANG language, bool infoEnabled, bool echoEnabled,
 						   bool logEnabled, bool dratsEnabled, bool dtmfEnabled, bool aprsEnabled, const wxString& aprsHostname, unsigned int aprsPort, bool dextraEnabled,
-						   unsigned int maxDExtraDongles, bool dplusEnabled, unsigned int maxDPlusDongles, const wxString& dplusLogin, bool dcsEnabled,
+						   unsigned int maxDExtraDongles, bool dplusEnabled, unsigned int maxDPlusDongles, const wxString& dplusLogin, bool dcsEnabled, bool ccsEnabled,
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 						   const wxString& starNetBand1, const wxString& callsign1, const wxString& logoff1, const wxString& info1, const wxString& permanent1, unsigned int userTimeout1, unsigned int groupTimeout1, STARNET_CALLSIGN_SWITCH callsignSwitch1, bool txMsgSwitch1, const wxString& link1,
 						   const wxString& starNetBand2, const wxString& callsign2, const wxString& logoff2, const wxString& info2, const wxString& permanent2, unsigned int userTimeout2, unsigned int groupTimeout2, STARNET_CALLSIGN_SWITCH callsignSwitch2, bool txMsgSwitch2, const wxString& link2,
@@ -109,8 +109,8 @@ m_miscellaneous(NULL)
 	m_dplus = new CDPlusSet(noteBook, -1, APPLICATION_NAME, dplusEnabled, maxDPlusDongles, dplusLogin);
 	noteBook->AddPage(m_dplus, wxT("D-Plus"), false);
 
-	m_dcs = new CDCSSet(noteBook, -1, APPLICATION_NAME, dcsEnabled);
-	noteBook->AddPage(m_dcs, wxT("DCS"), false);
+	m_dcs = new CDCSSet(noteBook, -1, APPLICATION_NAME, dcsEnabled, ccsEnabled);
+	noteBook->AddPage(m_dcs, _("DCS and CCS"), false);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	m_starNet1 = new CStarNetSet(noteBook, -1, APPLICATION_NAME, starNetBand1, callsign1, logoff1, info1, permanent1, userTimeout1, groupTimeout1, callsignSwitch1, txMsgSwitch1, link1);
@@ -741,7 +741,12 @@ wxString CIRCDDBGatewayPreferences::getDPlusLogin() const
 
 bool CIRCDDBGatewayPreferences::getDCSEnabled() const
 {
-	return m_dcs->getEnabled();
+	return m_dcs->getDCSEnabled();
+}
+
+bool CIRCDDBGatewayPreferences::getCCSEnabled() const
+{
+	return m_dcs->getCCSEnabled();
 }
 
 bool CIRCDDBGatewayPreferences::getAPRSEnabled() const

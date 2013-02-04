@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "DPlusHandler.h"
 #include "HeaderLogger.h"
 #include "ConnectData.h"
+#include "CCSHandler.h"
 #include "HeaderData.h"
 #include "StatusData.h"
 #include "DCSHandler.h"
@@ -36,6 +37,7 @@
 #include "HostFile.h"
 #include "DDData.h"
 #include "Utils.h"
+#include "Defs.h"
 
 #include <wx/filename.h>
 #include <wx/textfile.h>
@@ -58,6 +60,7 @@ m_dummyRepeaterHandler(NULL),
 m_dextraHandler(NULL),
 m_dplusPool(NULL),
 m_dcsPool(NULL),
+m_ccsHandler(NULL),
 m_g2Handler(NULL),
 m_aprsWriter(NULL),
 m_irc(NULL),
@@ -69,6 +72,7 @@ m_dplusEnabled(false),
 m_dplusMaxDongles(0U),
 m_dplusLogin(),
 m_dcsEnabled(true),
+m_ccsEnabled(true),
 m_infoEnabled(true),
 m_echoEnabled(true),
 m_dtmfEnabled(true),
@@ -96,6 +100,7 @@ m_status5()
 	CDCSHandler::initialise(MAX_DCS_LINKS);
 	CRepeaterHandler::initialise(MAX_REPEATERS);
 	CStarNetHandler::initialise(MAX_STARNETS, m_name);
+	CCCSHandler::initialise();
 	CAudioUnit::initialise();
 }
 
@@ -109,6 +114,7 @@ CIRCDDBGatewayThread::~CIRCDDBGatewayThread()
 	CDCSHandler::finalise();
 	CRepeaterHandler::finalise();
 	CStarNetHandler::finalise();
+	CCCSHandler::finalise();
 	CAudioUnit::finalise();
 }
 
@@ -190,8 +196,17 @@ void CIRCDDBGatewayThread::run()
 		m_g2Handler = NULL;
 	}
 
+	wxString ccsAddress = m_ccsEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
+	m_ccsHandler = new CCCSProtocolHandler(CCS_PORT, ccsAddress);
+	ret = m_ccsHandler->open();
+	if (!ret) {
+		wxLogError(wxT("Could not open the CCS protocol handler"));
+		delete m_ccsHandler;
+		m_ccsHandler = NULL;
+	}
+
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || m_ccsHandler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -273,6 +288,13 @@ void CIRCDDBGatewayThread::run()
 			CDDHandler::setIRC(m_irc);
 	}
 
+	if (m_ccsEnabled) {
+		CCCSHandler::setCCSProtocolHandler(m_ccsHandler);
+		CCCSHandler::setHeaderLogger(headerLogger);
+		CCCSHandler::setCallsign(m_gatewayCallsign);
+		CCCSHandler::link();
+	}
+
 	// If no ircDDB then APRS is started immediately
 	if (m_aprsWriter != NULL && m_irc == NULL)
 		m_aprsWriter->setEnabled(true);
@@ -349,6 +371,12 @@ void CIRCDDBGatewayThread::run()
 		if (f)
 			process = true;
 
+		if (m_ccsEnabled) {
+			f = processCCS();
+			if (f)
+				process = true;
+		}
+
 		if (m_ddModeEnabled) {
 			f = processDD();
 			if (f)
@@ -373,6 +401,9 @@ void CIRCDDBGatewayThread::run()
 		CDCSHandler::clock(ms);
 		CStarNetHandler::clock(ms);
 		CDDHandler::clock(ms);
+
+		if (m_ccsEnabled)
+		 	CCCSHandler::clock(ms);
 
 		m_statusTimer2.clock(ms);
 
@@ -407,6 +438,9 @@ void CIRCDDBGatewayThread::run()
 	CDPlusHandler::unlink();
 	CDCSHandler::unlink();
 
+	// Unlink from CCS
+	CCCSHandler::unlink();
+
 	if (m_ddModeEnabled)
 		CDDHandler::finalise();
 
@@ -424,6 +458,9 @@ void CIRCDDBGatewayThread::run()
 
 	m_g2Handler->close();
 	delete m_g2Handler;
+
+	m_ccsHandler->close();
+	delete m_ccsHandler;
 
 	if (m_irc != NULL) {
 		m_irc->close();
@@ -552,6 +589,11 @@ void CIRCDDBGatewayThread::setDPlus(bool enabled, unsigned int maxDongles, const
 void CIRCDDBGatewayThread::setDCS(bool enabled)
 {
 	m_dcsEnabled = enabled;
+}
+
+void CIRCDDBGatewayThread::setCCS(bool enabled)
+{
+	m_ccsEnabled = enabled;
 }
 
 void CIRCDDBGatewayThread::setLog(bool enabled)
@@ -950,6 +992,46 @@ bool CIRCDDBGatewayThread::processDCS()
 	return true;
 }
 
+bool CIRCDDBGatewayThread::processCCS()
+{
+	CCS_TYPE type = m_ccsHandler->read();
+
+	switch (type) {
+		case CT_POLL: {
+				CPollData* poll = m_ccsHandler->readPoll();
+				if (poll != NULL) {
+					CCCSHandler::process(*poll);
+					delete poll;
+				}
+			}
+			break;
+
+		case CT_CONNECT: {
+				CConnectData* connect = m_ccsHandler->readConnect();
+				if (connect != NULL) {
+					CCCSHandler::process(*connect);
+					delete connect;
+				}
+			}
+			break;
+
+		case CT_DATA: {
+				CAMBEData* data = m_ccsHandler->readData();
+				if (data != NULL) {
+					// wxLogMessage(wxT("CCS header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
+					CCCSHandler::process(*data);
+					delete data;
+				}
+			}
+			break;
+
+		default:
+			return false;
+	}
+
+	return true;
+}
+
 bool CIRCDDBGatewayThread::processG2()
 {
 	G2_TYPE type = m_g2Handler->read();
@@ -1169,7 +1251,9 @@ CIRCDDBGatewayStatusData* CIRCDDBGatewayThread::getStatus() const
 	if (m_aprsWriter != NULL)
 		aprsStatus = m_aprsWriter->isConnected();
 
-	CIRCDDBGatewayStatusData* status = new CIRCDDBGatewayStatusData(m_lastStatus, aprsStatus);
+	CCS_STATUS ccsStatus = CCCSHandler::getState();
+
+	CIRCDDBGatewayStatusData* status = new CIRCDDBGatewayStatusData(m_lastStatus, ccsStatus, aprsStatus);
 
 	for (unsigned int i = 0U; i < 4U; i++) {
 		wxString callsign, linkCallsign;

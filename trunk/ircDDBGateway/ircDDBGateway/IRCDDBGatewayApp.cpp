@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -282,14 +282,14 @@ void CIRCDDBGatewayApp::setDPlus(bool enabled, unsigned int maxDongles, const wx
 	m_config->setDPlus(enabled, maxDongles, login);
 }
 
-void CIRCDDBGatewayApp::getDCS(bool& enabled) const
+void CIRCDDBGatewayApp::getDCS(bool& dcsEnabled, bool& ccsEnabled) const
 {
-	m_config->getDCS(enabled);
+	m_config->getDCS(dcsEnabled, ccsEnabled);
 }
 
-void CIRCDDBGatewayApp::setDCS(bool enabled)
+void CIRCDDBGatewayApp::setDCS(bool dcsEnabled, bool ccsEnabled)
 {
-	m_config->setDCS(enabled);
+	m_config->setDCS(dcsEnabled, ccsEnabled);
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
@@ -954,9 +954,9 @@ void CIRCDDBGatewayApp::createThread()
 	getDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	wxLogInfo(wxT("D-Plus enabled: %d, max. dongles; %u, login: %s"), int(dplusEnabled), dplusMaxDongles, dplusLogin.c_str());
 
-	bool dcsEnabled;
-	getDCS(dcsEnabled);
-	wxLogInfo(wxT("DCS enabled: %d"), int(dcsEnabled));
+	bool dcsEnabled, ccsEnabled;
+	getDCS(dcsEnabled, ccsEnabled);
+	wxLogInfo(wxT("DCS enabled: %d, CCS enabled: %d"), int(dcsEnabled), int(ccsEnabled));
 
 	if (repeaterBand1.Len() > 1U || repeaterBand2.Len() > 1U ||
 		repeaterBand3.Len() > 1U || repeaterBand4.Len() > 1U) {
@@ -971,6 +971,7 @@ void CIRCDDBGatewayApp::createThread()
 	thread->setDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	thread->setDExtra(dextraEnabled, dextraMaxDongles);
 	thread->setDCS(dcsEnabled);
+	thread->setCCS(ccsEnabled);
 	thread->setInfoEnabled(infoEnabled);
 	thread->setEchoEnabled(echoEnabled);
 	thread->setDTMFEnabled(dtmfEnabled);

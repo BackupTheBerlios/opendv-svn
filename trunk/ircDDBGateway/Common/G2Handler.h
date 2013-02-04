@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	G2Hander_H
-#define	G2Hander_H
+#ifndef	G2Handler_H
+#define	G2Handler_H
 
 #include "G2ProtocolHandler.h"
 #include "RepeaterHandler.h"

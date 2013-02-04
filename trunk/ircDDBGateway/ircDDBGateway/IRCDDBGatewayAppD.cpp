@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -689,9 +689,9 @@ bool CIRCDDBGatewayAppD::createThread()
 	config.getDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	wxLogInfo(wxT("D-Plus enabled: %d, max. dongles; %u, login: %s"), int(dplusEnabled), dplusMaxDongles, dplusLogin.c_str());
 
-	bool dcsEnabled;
-	config.getDCS(dcsEnabled);
-	wxLogInfo(wxT("DCS enabled: %d"), int(dcsEnabled));
+	bool dcsEnabled, ccsEnabled;
+	config.getDCS(dcsEnabled, ccsEnabled);
+	wxLogInfo(wxT("DCS enabled: %d, CCS enabled: %d"), int(dcsEnabled), int(ccsEnabled));
 
 	if (repeaterBand1.Len() > 1U || repeaterBand2.Len() > 1U ||
 		repeaterBand3.Len() > 1U || repeaterBand4.Len() > 1U) {
@@ -706,6 +706,7 @@ bool CIRCDDBGatewayAppD::createThread()
 	m_thread->setDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	m_thread->setDExtra(dextraEnabled, dextraMaxDongles);
 	m_thread->setDCS(dcsEnabled);
+	m_thread->setCCS(ccsEnabled);
 	m_thread->setInfoEnabled(infoEnabled);
 	m_thread->setEchoEnabled(echoEnabled);
 	m_thread->setDTMFEnabled(dtmfEnabled);

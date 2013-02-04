@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	HBRepeaterProtocolHander_H
-#define	HBRepeaterProtocolHander_H
+#ifndef	HBRepeaterProtocolHandler_H
+#define	HBRepeaterProtocolHandler_H
 
 #include "RepeaterProtocolHandler.h"
 #include "UDPReaderWriter.h"

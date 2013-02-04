@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	XReflectorDExtraHander_H
-#define	XReflectorDExtraHander_H
+#ifndef	XReflectorDExtraHandler_H
+#define	XReflectorDExtraHandler_H
 
 #include "XReflectorReflectorCallback.h"
 #include "DExtraProtocolHandler.h"

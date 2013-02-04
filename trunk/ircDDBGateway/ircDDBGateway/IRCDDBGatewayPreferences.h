@@ -47,7 +47,7 @@ public:
 				 bool dratsEnabled, bool dtmfEnabled, bool aprsEnabled, const wxString& aprsHostname,
 				 unsigned int aprsPort, bool dextraEnabled, unsigned int maxDExtraDongles,
 				 bool dplusEnabled, unsigned int maxDPlusDongles, const wxString& dplusLogin,
-				 bool dcsEnabled,
+				 bool dcsEnabled, bool ccsEnabled,
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 				 const wxString& starNetBand1, const wxString& callsign1, const wxString& logoff1, const wxString& info1, const wxString& permanent1, unsigned int userTimeout1, unsigned int groupTimeout1, STARNET_CALLSIGN_SWITCH callsignSwitch1, bool txMsgSwitch1, const wxString& link1,
 				 const wxString& starNetBand2, const wxString& callsign2, const wxString& logoff2, const wxString& info2, const wxString& permanent2, unsigned int userTimeout2, unsigned int groupTimeout2, STARNET_CALLSIGN_SWITCH callsignSwitch2, bool txMsgSwitch2, const wxString& link2,
@@ -182,6 +182,7 @@ public:
 	virtual wxString     getDPlusLogin() const;
 
 	virtual bool         getDCSEnabled() const;
+	virtual bool         getCCSEnabled() const;
 
 	virtual bool         getAPRSEnabled() const;
 	virtual wxString     getAPRSHostname() const;

@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009-2012 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009-2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -13,6 +13,8 @@
 
 #ifndef	DStarDefines_H
 #define	DStarDefines_H
+
+#include <wx/wx.h>
 
 const unsigned int DSTAR_GMSK_SYMBOL_RATE = 4800U;
 const float        DSTAR_GMSK_BT          = 0.5F;
@@ -110,8 +112,11 @@ const unsigned char SCRAMBLER_BYTE3 = 0x93U;
 const unsigned int  DPLUS_PORT  = 20001U;
 const unsigned int  DEXTRA_PORT = 30001U;
 const unsigned int  DCS_PORT    = 30051U;
+const unsigned int  CCS_PORT    = 30061U;
 const unsigned int  G2_DV_PORT  = 40000U;
 const unsigned int  G2_DD_PORT  = 40001U;
+
+const wxString CCS_HOSTNAME = wxT("ccs004.xreflector.net");
 
 enum DSTAR_PROTOCOL {
 	DP_UNKNOWN,
@@ -131,7 +136,8 @@ enum AUDIO_SOURCE {
 	AS_DEXTRA,
 	AS_DCS,
 	AS_DUP,
-	AS_VERSION
+	AS_VERSION,
+	AS_CCS
 };
 
 enum DSTAR_RX_STATE {

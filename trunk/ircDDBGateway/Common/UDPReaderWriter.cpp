@@ -89,9 +89,9 @@ bool CUDPReaderWriter::open()
 	m_fd = ::socket(PF_INET, SOCK_DGRAM, 0);
 	if (m_fd < 0) {
 #if defined(__WINDOWS__)
-		wxLogError(wxT("Cannot create the UDP socket, err=%d"), ::GetLastError());
+		wxLogError(wxT("Cannot create the UDP socket, err: %d"), ::GetLastError());
 #else
-		wxLogError(wxT("Cannot create the UDP socket, err=%d"), errno);
+		wxLogError(wxT("Cannot create the UDP socket, err: %d"), errno);
 #endif
 		return false;
 	}
@@ -118,18 +118,18 @@ bool CUDPReaderWriter::open()
 		int reuse = 1;
 		if (::setsockopt(m_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse, sizeof(reuse)) == -1) {
 #if defined(__WINDOWS__)
-			wxLogError(wxT("Cannot set the UDP socket option, err=%d"), ::GetLastError());
+			wxLogError(wxT("Cannot set the UDP socket option (port: %u), err: %d"), m_port, ::GetLastError());
 #else
-			wxLogError(wxT("Cannot set the UDP socket option, err=%d"), errno);
+			wxLogError(wxT("Cannot set the UDP socket option (port: %u), err: %d"), m_port, errno);
 #endif
 			return false;
 		}
 
 		if (::bind(m_fd, (sockaddr*)&addr, sizeof(sockaddr_in)) == -1) {
 #if defined(__WINDOWS__)
-			wxLogError(wxT("Cannot bind the UDP address, err=%d"), ::GetLastError());
+			wxLogError(wxT("Cannot bind the UDP address (port: %u), err: %d"), m_port, ::GetLastError());
 #else
-			wxLogError(wxT("Cannot bind the UDP address, err=%d"), errno);
+			wxLogError(wxT("Cannot bind the UDP address (port: %u), err: %d"), m_port, errno);
 #endif
 			return false;
 		}
@@ -157,9 +157,9 @@ int CUDPReaderWriter::read(unsigned char* buffer, unsigned int length, in_addr& 
 	int ret = ::select(m_fd + 1, &readFds, NULL, NULL, &tv);
 	if (ret < 0) {
 #if defined(__WINDOWS__)
-		wxLogError(wxT("Error returned from UDP select, err=%d"), ::GetLastError());
+		wxLogError(wxT("Error returned from UDP select (port: %u), err: %d"), m_port, ::GetLastError());
 #else
-		wxLogError(wxT("Error returned from UDP select, err=%d"), errno);
+		wxLogError(wxT("Error returned from UDP select (port: %u), err: %d"), m_port, errno);
 #endif
 		return -1;
 	}
@@ -177,9 +177,9 @@ int CUDPReaderWriter::read(unsigned char* buffer, unsigned int length, in_addr& 
 	ssize_t len = ::recvfrom(m_fd, (char*)buffer, length, 0, (sockaddr *)&addr, &size);
 	if (len <= 0) {
 #if defined(__WINDOWS__)
-		wxLogError(wxT("Error returned from recvfrom, err=%d"), ::GetLastError());
+		wxLogError(wxT("Error returned from recvfrom (port: %u), err: %d"), m_port, ::GetLastError());
 #else
-		wxLogError(wxT("Error returned from recvfrom, err=%d"), errno);
+		wxLogError(wxT("Error returned from recvfrom (port: %u), err: %d"), m_port, errno);
 #endif
 		return -1;
 	}
@@ -202,9 +202,9 @@ bool CUDPReaderWriter::write(const unsigned char* buffer, unsigned int length, c
 	ssize_t ret = ::sendto(m_fd, (char *)buffer, length, 0, (sockaddr *)&addr, sizeof(sockaddr_in));
 	if (ret < 0) {
 #if defined(__WINDOWS__)
-		wxLogError(wxT("Error returned from sendto, err=%d"), ::GetLastError());
+		wxLogError(wxT("Error returned from sendto (port: %u), err: %d"), m_port, ::GetLastError());
 #else
-		wxLogError(wxT("Error returned from sendto, err=%d"), errno);
+		wxLogError(wxT("Error returned from sendto (port: %u), err: %d"), m_port, errno);
 #endif
 		return false;
 	}

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 #include "IRCDDBGatewayStatusData.h"
 
-CIRCDDBGatewayStatusData::CIRCDDBGatewayStatusData(IRCDDB_STATUS ircDDBStatus, bool dprsStatus) :
+CIRCDDBGatewayStatusData::CIRCDDBGatewayStatusData(IRCDDB_STATUS ircDDBStatus, CCS_STATUS ccsStatus, bool dprsStatus) :
 m_ircDDBStatus(ircDDBStatus),
+m_ccsStatus(ccsStatus),
 m_dprsStatus(dprsStatus)
 {
 }
@@ -46,6 +47,11 @@ void CIRCDDBGatewayStatusData::setDongles(const wxString& dongles)
 IRCDDB_STATUS CIRCDDBGatewayStatusData::getIrcDDBStatus() const
 {
 	return m_ircDDBStatus;
+}
+
+CCS_STATUS CIRCDDBGatewayStatusData::getCCSStatus() const
+{
+	return m_ccsStatus;
 }
 
 bool CIRCDDBGatewayStatusData::getDPRSStatus() const

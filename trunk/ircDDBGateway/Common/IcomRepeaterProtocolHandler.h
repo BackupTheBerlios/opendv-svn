@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	IcomRepeaterProtocolHander_H
-#define	IcomRepeaterProtocolHander_H
+#ifndef	IcomRepeaterProtocolHandler_H
+#define	IcomRepeaterProtocolHandler_H
 
 #include "RepeaterProtocolHandler.h"
 #include "UDPReaderWriter.h"

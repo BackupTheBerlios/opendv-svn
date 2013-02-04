@@ -193,6 +193,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCSHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CCSProtocolHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ConnectData.cpp"
 				>
 			</File>
@@ -472,6 +480,14 @@
 			</File>
 			<File
 				RelativePath=".\CCITTChecksum.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CCSHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CCSProtocolHandler.h"
 				>
 			</File>
 			<File
