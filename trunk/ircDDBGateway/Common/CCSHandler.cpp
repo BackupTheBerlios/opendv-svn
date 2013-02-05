@@ -112,12 +112,18 @@ void CCCSHandler::process(CAMBEData& data)
 			if (handler == NULL)
 				return;
 
+			// Write to Header.log if it's enabled
+			if (m_headerLogger != NULL)
+				m_headerLogger->write(wxT("CCS"), header);
+
 			if (yourCall.Left(1U).IsSameAs(wxT("*")))
 				header.setCQCQCQ();
 
 			bool busy = !handler->process(header, DIR_INCOMING, AS_CCS);
 
-			if (!busy)
+			if (busy)
+				m_handler->writeBusy(wxT("We're busy!"), m_address, CCS_PORT);
+			else
 				handler->process(data, DIR_INCOMING, AS_CCS);
 
 			m_incoming[i] = new CCCSAudioIncoming;

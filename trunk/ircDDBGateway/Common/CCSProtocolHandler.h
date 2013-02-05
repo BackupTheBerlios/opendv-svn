@@ -54,6 +54,7 @@ public:
 	bool writeConnect(const CConnectData& connect);
 	bool writePoll(const CPollData& poll);
 	bool writeHeard(const CHeardData& poll);
+	bool writeBusy(const wxString& text, const in_addr& address, unsigned int port);
 
 	CCS_TYPE      read();
 	CAMBEData*    readData();

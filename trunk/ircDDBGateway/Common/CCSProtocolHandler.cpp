@@ -100,6 +100,21 @@ bool CCCSProtocolHandler::writeConnect(const CConnectData& connect)
 	return m_socket.write(buffer, length, connect.getYourAddress(), connect.getYourPort());
 }
 
+bool CCCSProtocolHandler::writeBusy(const wxString& text, const in_addr& address, unsigned int port)
+{
+	unsigned char buffer[38U];
+
+	::memset(buffer, ' ', 38U);
+	for (unsigned int i = 0U; i < text.Len() && i < 38U; i++)
+		buffer[i] = text.GetChar(i);
+
+// #if defined(DUMP_TX)
+	CUtils::dump(wxT("Sending Busy"), buffer, 38U);
+// #endif
+
+	return m_socket.write(buffer, 38U, address, port);
+}
+
 CCS_TYPE CCCSProtocolHandler::read()
 {
 	bool res = true;
@@ -140,6 +155,9 @@ bool CCCSProtocolHandler::readPackets()
 			case 25U:
 				m_type = CT_POLL;
 				return false;
+			case 100U:
+				CUtils::dump(wxT("Busy data"), m_buffer, m_length);
+				return true;
 			default:
 				break;
 		}

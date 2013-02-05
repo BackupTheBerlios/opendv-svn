@@ -699,6 +699,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			wxString command = m_dtmf.translate();
 			if (command.IsEmpty()) {
 				// Do nothing
+			} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
+				// CCS processing here
 			} else if (command.IsSameAs(wxT("       I"))) {
 				m_g2Status = G2_INFO;
 			} else {
@@ -901,6 +903,8 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 			wxString command = m_dtmf.translate();
 			if (command.IsEmpty()) {
 				// Do nothing
+			} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
+				// Do nothing, no CCS as background
 			} else if (command.IsSameAs(wxT("       I"))) {
 				// Do nothing
 			} else {
