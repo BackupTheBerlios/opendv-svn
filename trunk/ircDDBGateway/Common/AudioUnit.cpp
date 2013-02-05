@@ -232,7 +232,7 @@ void CAudioUnit::clock(unsigned int ms)
 		header.setYourCall(wxT("CQCQCQ  "));
 		header.setId(id);
 
-		m_handler->process(header, AS_INFO);
+		m_handler->process(header, DIR_INCOMING, AS_INFO);
 
 		m_out    = 0U;
 		m_seqNo  = 0U;
@@ -254,7 +254,7 @@ void CAudioUnit::clock(unsigned int ms)
 			if (m_in == m_out)
 				data->setEnd(true);
 
-			m_handler->process(*data, AS_INFO);
+			m_handler->process(*data, DIR_INCOMING, AS_INFO);
 
 			delete data;
 

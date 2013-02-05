@@ -976,6 +976,7 @@ void CIRCDDBGatewayApp::createThread()
 	thread->setEchoEnabled(echoEnabled);
 	thread->setDTMFEnabled(dtmfEnabled);
 	thread->setLog(logEnabled);
+	thread->setLocation(latitude, longitude);
 
 	// Convert the worker class into a thread
 	m_thread = new CIRCDDBGatewayThreadHelper(thread);

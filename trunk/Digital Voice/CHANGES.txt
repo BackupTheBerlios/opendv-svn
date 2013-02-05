@@ -300,3 +300,9 @@ Upgrade the DCS protocol to the latest version.
 --------
 
 Remove the Offset parameter in the DVAP Client.
+
+201302xx
+--------
+
+Updated XRF123s IP address.
+Move DExtra Client to use the new DExtra dongle UDP port.

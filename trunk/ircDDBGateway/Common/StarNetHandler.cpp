@@ -784,7 +784,7 @@ bool CStarNetHandler::logoff(const wxString &callsign)
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-bool CStarNetHandler::process(CHeaderData &header, AUDIO_SOURCE source)
+bool CStarNetHandler::process(CHeaderData &header, DIRECTION direction, AUDIO_SOURCE source)
 {
 	if (m_id != 0x00U)
 		return false;
@@ -851,7 +851,7 @@ bool CStarNetHandler::process(CHeaderData &header, AUDIO_SOURCE source)
 	return true;
 }
 
-bool CStarNetHandler::process(CAMBEData &data, AUDIO_SOURCE source)
+bool CStarNetHandler::process(CAMBEData &data, DIRECTION direction, AUDIO_SOURCE source)
 {
 	unsigned int id = data.getId();
 	if (id != m_id)
@@ -1095,7 +1095,7 @@ void CStarNetHandler::sendToRepeaters(CHeaderData& header) const
 			header.setDestination(repeater->m_address, G2_DV_PORT);
 			header.setRepeaters(repeater->m_gateway, repeater->m_repeater);
 			if (repeater->m_local != NULL)
-				repeater->m_local->process(header, AS_G2);
+				repeater->m_local->process(header, DIR_INCOMING, AS_G2);
 			else
 				m_g2Handler->writeHeader(header);
 		}
@@ -1109,7 +1109,7 @@ void CStarNetHandler::sendToRepeaters(CAMBEData& data) const
 		if (repeater != NULL) {
 			data.setDestination(repeater->m_address, G2_DV_PORT);
 			if (repeater->m_local != NULL)
-				repeater->m_local->process(data, AS_G2);
+				repeater->m_local->process(data, DIR_INCOMING, AS_G2);
 			else
 				m_g2Handler->writeAMBE(data);
 		}

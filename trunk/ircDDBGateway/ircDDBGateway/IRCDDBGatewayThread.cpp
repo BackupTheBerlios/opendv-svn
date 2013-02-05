@@ -90,7 +90,9 @@ m_status1(),
 m_status2(),
 m_status3(),
 m_status4(),
-m_status5()
+m_status5(),
+m_latitude(0.0),
+m_longitude(0.0)
 {
 	CHeaderData::initialise();
 	CConnectData::initialise();
@@ -289,10 +291,11 @@ void CIRCDDBGatewayThread::run()
 	}
 
 	if (m_ccsEnabled) {
+		CCCSHandler::setLocation(m_latitude, m_longitude);
 		CCCSHandler::setCCSProtocolHandler(m_ccsHandler);
 		CCCSHandler::setHeaderLogger(headerLogger);
 		CCCSHandler::setCallsign(m_gatewayCallsign);
-		CCCSHandler::link();
+		CCCSHandler::connect();
 	}
 
 	// If no ircDDB then APRS is started immediately
@@ -438,8 +441,8 @@ void CIRCDDBGatewayThread::run()
 	CDPlusHandler::unlink();
 	CDCSHandler::unlink();
 
-	// Unlink from CCS
-	CCCSHandler::unlink();
+	// Disconnect from CCS
+	CCCSHandler::disconnect();
 
 	if (m_ddModeEnabled)
 		CDDHandler::finalise();
@@ -624,6 +627,12 @@ void CIRCDDBGatewayThread::setDTMFEnabled(bool enabled)
 void CIRCDDBGatewayThread::setDDModeEnabled(bool enabled)
 {
 	m_ddModeEnabled = enabled;
+}
+
+void CIRCDDBGatewayThread::setLocation(double latitude, double longitude)
+{
+	m_latitude  = latitude;
+	m_longitude = longitude;
 }
 
 void CIRCDDBGatewayThread::setRemote(bool enabled, const wxString& password, unsigned int port)

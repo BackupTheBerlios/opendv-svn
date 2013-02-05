@@ -62,6 +62,8 @@ public:
 	unsigned int  getYourPort() const;
 	unsigned int  getMyPort() const;
 
+	void setLocator(const wxString& locator);
+
 	static void initialise();
 	static void finalise();
 
@@ -71,6 +73,7 @@ private:
 	wxString      m_repeater;
 	wxString      m_reflector;
 	CD_TYPE       m_type;
+	wxString      m_locator;
 	in_addr       m_yourAddress;
 	unsigned int  m_yourPort;
 	unsigned int  m_myPort;

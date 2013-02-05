@@ -1206,3 +1206,4 @@ Handle APRS failures a little better.
 --------
 
 Modify DExtra DTMF to start with an 'A'.
+Updated XRF123s IP address.

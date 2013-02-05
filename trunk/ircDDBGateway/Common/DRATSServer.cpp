@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ void* CDRATSServer::Entry()
 #if defined(LOOPBACK)
 			writeHeader(header);
 #else
-			m_handler->process(header, AS_DRATS);
+			m_handler->process(header, DIR_INCOMING, AS_DRATS);
 #endif
 
 			m_readState = SS_FIRST;
@@ -265,7 +265,7 @@ void* CDRATSServer::Entry()
 #if defined(LOOPBACK)
 				writeData(data);
 #else
-				m_handler->process(data, AS_DRATS);
+				m_handler->process(data, DIR_INCOMING, AS_DRATS);
 #endif
 
 				if (m_readPos == m_readLength) {
@@ -288,7 +288,7 @@ void* CDRATSServer::Entry()
 #if defined(LOOPBACK)
 						writeData(data);
 #else
-						m_handler->process(data, AS_DRATS);
+						m_handler->process(data, DIR_INCOMING, AS_DRATS);
 #endif
 					}
 
@@ -309,7 +309,7 @@ void* CDRATSServer::Entry()
 #if defined(LOOPBACK)
 					writeData(data);
 #else
-					m_handler->process(data, AS_DRATS);
+					m_handler->process(data, DIR_INCOMING, AS_DRATS);
 #endif
 
 					m_readLength = 0U;

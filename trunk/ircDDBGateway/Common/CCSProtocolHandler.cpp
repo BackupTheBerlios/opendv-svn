@@ -21,7 +21,7 @@
 #include "DStarDefines.h"
 #include "Utils.h"
 
-#define	DUMP_TX
+// #define	DUMP_TX
 
 const unsigned int BUFFER_LENGTH = 2000U;
 
@@ -57,9 +57,9 @@ bool CCCSProtocolHandler::writeData(const CAMBEData& data)
 	unsigned char buffer[100U];
 	unsigned int length = data.getCCSData(buffer, 100U);
 
-#if defined(DUMP_TX)
+// #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
-#endif
+// #endif
 
 	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 }

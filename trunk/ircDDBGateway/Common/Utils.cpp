@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -198,4 +198,51 @@ void CUtils::byteToBitsRev(unsigned char byte, bool* data)
 	unsigned char mask = 0x01U;
 	for (unsigned int i = 0U; i < 8U; i++, mask <<= 1)
 		data[i] = byte & mask ? true : false;
+}
+
+wxString CUtils::latLonToLoc(double latitude, double longitude)
+{
+	if (latitude < -90.0 || latitude > 90.0)
+		return wxEmptyString;
+
+	if (longitude < -360.0 || longitude > 360.0)
+		return wxEmptyString;
+
+	latitude += 90.0;
+
+	if (longitude > 180.0)
+		longitude -= 360.0;
+
+	if (longitude < -180.0)
+		longitude += 360.0;
+
+	longitude += 180.0;
+
+	char locator[6U];
+
+	double lon = ::floor(longitude / 20.0);
+	double lat = ::floor(latitude / 10.0);
+
+	locator[0U] = 'A' + (unsigned int)lon;
+	locator[1U] = 'A' + (unsigned int)lat;
+
+	longitude -= lon * 20.0;
+	latitude  -= lat * 10.0;
+
+	lon = ::floor(longitude / 2.0);
+	lat = ::floor(latitude / 1.0);
+
+	locator[2U] = '0' + (unsigned int)lon;
+	locator[3U] = '0' + (unsigned int)lat;
+
+	longitude -= lon * 2.0;
+	latitude  -= lat * 1.0;
+
+	lon = ::floor(longitude / (2.0 / 24.0));
+	lat = ::floor(latitude / (1.0 / 24.0));
+
+	locator[4U] = 'A' + (unsigned int)lon;
+	locator[5U] = 'A' + (unsigned int)lat;
+
+	return wxString(locator, wxConvLocal, 6U);
 }

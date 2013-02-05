@@ -49,6 +49,7 @@ CConnectData::CConnectData(const wxString& repeater, const wxString& reflector, 
 m_repeater(repeater),
 m_reflector(reflector),
 m_type(type),
+m_locator(),
 m_yourAddress(yourAddress),
 m_yourPort(yourPort),
 m_myPort(myPort)
@@ -64,6 +65,7 @@ CConnectData::CConnectData(const wxString& repeater, CD_TYPE type, const in_addr
 m_repeater(repeater),
 m_reflector(),
 m_type(type),
+m_locator(),
 m_yourAddress(yourAddress),
 m_yourPort(yourPort),
 m_myPort(myPort)
@@ -78,6 +80,7 @@ CConnectData::CConnectData(const wxString& repeater, const in_addr& yourAddress,
 m_repeater(repeater),
 m_reflector(),
 m_type(CT_UNLINK),
+m_locator(),
 m_yourAddress(yourAddress),
 m_yourPort(yourPort),
 m_myPort(myPort)
@@ -92,6 +95,7 @@ CConnectData::CConnectData(CD_TYPE type, const in_addr& yourAddress, unsigned in
 m_repeater(),
 m_reflector(),
 m_type(type),
+m_locator(),
 m_yourAddress(yourAddress),
 m_yourPort(yourPort),
 m_myPort(myPort)
@@ -105,6 +109,7 @@ CConnectData::CConnectData() :
 m_repeater(wxT("        ")),
 m_reflector(),
 m_type(CT_LINK1),
+m_locator(),
 m_yourAddress(),
 m_yourPort(0U),
 m_myPort(0U)
@@ -392,6 +397,10 @@ unsigned int CConnectData::getCCSData(unsigned char *data, unsigned int length) 
 		case CT_LINK2: {
 				data[9U]  = 0x41U;
 				data[10U] = '@';
+
+				for (unsigned int i = 0U; i < m_locator.Len(); i++)
+					data[11U + i] = m_locator.GetChar(i);
+
 				data[17U] = 0x20U;
 				data[18U] = '@';
 
@@ -514,4 +523,9 @@ wxString CConnectData::getReflector() const
 CD_TYPE CConnectData::getType() const
 {
 	return m_type;
+}
+
+void CConnectData::setLocator(const wxString& locator)
+{
+	m_locator = locator;
 }

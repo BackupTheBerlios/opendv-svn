@@ -21,6 +21,8 @@
 #include "CCSHandler.h"
 #include "Utils.h"
 
+const unsigned int MAX_CCS_INCOMING = 5U;
+
 CCS_STATUS               CCCSHandler::m_state = CS_DISABLED;
 
 wxString                 CCCSHandler::m_callsign = wxEmptyString;
@@ -36,8 +38,17 @@ CTimer                   CCCSHandler::m_pollTimer(1000U, 10U);
 CTimer                   CCCSHandler::m_tryTimer(1000U, 1U);
 unsigned int             CCCSHandler::m_tryCount = 0U;
 
+double                   CCCSHandler::m_latitude = 0.0;
+double                   CCCSHandler::m_longitude = 0.0;
+
+CCCSAudioIncoming**      CCCSHandler::m_incoming = NULL;
+
 void CCCSHandler::initialise()
 {
+	m_incoming = new CCCSAudioIncoming*[MAX_CCS_INCOMING];
+
+	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++)
+		m_incoming[i] = NULL;
 }
 
 void CCCSHandler::setCCSProtocolHandler(CCCSProtocolHandler* handler)
@@ -57,8 +68,69 @@ void CCCSHandler::setCallsign(const wxString& callsign)
 	m_callsign = callsign;
 }
 
+void CCCSHandler::setLocation(double latitude, double longitude)
+{
+	m_latitude  = latitude;
+	m_longitude = longitude;
+}
+
 void CCCSHandler::process(CAMBEData& data)
 {
+	CHeaderData& header = data.getHeader();
+	wxString yourCall = header.getYourCall();
+	unsigned int seqNo = data.getSeq();
+	unsigned int id = data.getId();
+
+	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++) {
+		if (m_incoming[i] != NULL) {
+			if (m_incoming[i]->m_id == id) {
+				m_incoming[i]->m_timer.reset();
+
+				if (seqNo == 0U && !m_incoming[i]->m_busy) {
+					if (yourCall.Left(1U).IsSameAs(wxT("*")))
+						header.setCQCQCQ();
+					m_incoming[i]->m_handler->process(header, DIR_INCOMING, AS_DUP);
+				}
+
+				if (!m_incoming[i]->m_busy)
+					m_incoming[i]->m_handler->process(data, DIR_INCOMING, AS_CCS);
+
+				if (data.isEnd()) {
+					delete m_incoming[i];
+					m_incoming[i] = NULL;
+				}
+
+				return;
+			}
+		}
+	}
+
+	// A new incoming CCS transmission
+	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++) {
+		if (m_incoming[i] == NULL) {
+			IRepeaterCallback* handler = CRepeaterHandler::findDVRepeater(header.getRptCall1());
+			if (handler == NULL)
+				return;
+
+			if (yourCall.Left(1U).IsSameAs(wxT("*")))
+				header.setCQCQCQ();
+
+			bool busy = !handler->process(header, DIR_INCOMING, AS_CCS);
+
+			if (!busy)
+				handler->process(data, DIR_INCOMING, AS_CCS);
+
+			m_incoming[i] = new CCCSAudioIncoming;
+			m_incoming[i]->m_id = id;
+			m_incoming[i]->m_handler = handler;
+			m_incoming[i]->m_busy = busy;
+			m_incoming[i]->m_timer.start();
+
+			return;
+		}
+	}
+
+	wxLogWarning(wxT("No space to add new incoming CCS audio"));
 }
 
 void CCCSHandler::process(CPollData& poll)
@@ -71,7 +143,8 @@ void CCCSHandler::process(CConnectData& connect)
 	CD_TYPE type = connect.getType();
 
 	if (type == CT_ACK && m_state == CS_CONNECTING) {
-		m_pollInactivityTimer.reset();
+		wxLogMessage(wxT("Connected to CCS"));
+		m_pollInactivityTimer.start();
 		m_pollTimer.start();
 		m_tryTimer.stop();
 		m_state = CS_CONNECTED;
@@ -79,23 +152,27 @@ void CCCSHandler::process(CConnectData& connect)
 	}
 
 	if (type == CT_NAK && m_state == CS_CONNECTING) {
-		m_pollInactivityTimer.stop();
+		wxLogMessage(wxT("Connection refused by CCS"));
 		m_tryTimer.stop();
 		m_state = CS_DISABLED;
 		return;
 	}
 }
 
-bool CCCSHandler::link()
+bool CCCSHandler::connect()
 {
 	m_address = CUDPReaderWriter::lookup(CCS_HOSTNAME);
 
 	CConnectData connect(m_callsign, CT_LINK1, m_address, CCS_PORT);
+
+	if (m_latitude != 0.0 && m_longitude != 0.0) {
+		wxString locator = CUtils::latLonToLoc(m_latitude, m_longitude);
+		connect.setLocator(locator);
+	}
+
 	m_handler->writeConnect(connect);
 
-	wxLogMessage(wxT("Linking to CCS on host %s"), CCS_HOSTNAME.c_str());
-
-	m_pollInactivityTimer.start();
+	wxLogMessage(wxT("Connecting to CCS on host %s"), CCS_HOSTNAME.c_str());
 
 	m_tryTimer.setTimeout(1U);
 	m_tryTimer.start();
@@ -107,7 +184,7 @@ bool CCCSHandler::link()
 	return true;
 }
 
-void CCCSHandler::unlink()
+void CCCSHandler::disconnect()
 {
 	CConnectData connect(m_callsign, CT_UNLINK, m_address, CCS_PORT);
 	m_handler->writeConnect(connect);
@@ -117,15 +194,30 @@ void CCCSHandler::unlink()
 
 	m_state = CS_DISABLED;
 
-	wxLogMessage(wxT("Unlinking from CCS"));
+	wxLogMessage(wxT("Disconnecting from CCS"));
 }
 
-void CCCSHandler::writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction)
+void CCCSHandler::writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source)
 {
+	if (m_state != CS_CONNECTED)
+		return;
+
+	CHeardData heard(data, repeater, reflector, source);
+	heard.setDestination(m_address, CCS_PORT);
+
+	m_handler->writeHeard(heard);
 }
 
-void CCCSHandler::writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction)
+void CCCSHandler::writeHeader(CHeaderData& header)
 {
+	if (m_state != CS_CONNECTED)
+		return;
+}
+
+void CCCSHandler::writeAMBE(CAMBEData& data)
+{
+	if (m_state != CS_CONNECTED)
+		return;
 }
 
 void CCCSHandler::clock(unsigned int ms)
@@ -135,21 +227,17 @@ void CCCSHandler::clock(unsigned int ms)
 	m_tryTimer.clock(ms);
 
 	if (m_pollInactivityTimer.isRunning() && m_pollInactivityTimer.hasExpired()) {
-		switch (m_state) {
-			case CS_CONNECTING:
-				wxLogMessage(wxT("CCS has failed to connect"));
-				m_tryTimer.stop();
-				break;
-			case CS_CONNECTED:
-				wxLogMessage(wxT("CCS connection has failed (poll inactivity)"));
-				m_pollTimer.stop();
-				break;
-			default:
-				break;
-		}
+		wxLogMessage(wxT("CCS connection has failed (poll inactivity), reconnecting"));
 
 		m_pollInactivityTimer.stop();
-		m_state = CS_DISABLED;
+		m_pollTimer.stop();
+
+		m_tryTimer.setTimeout(1U);
+		m_tryTimer.start();
+
+		m_tryCount = 1U;
+
+		m_state = CS_CONNECTING;
 		return;
 	}
 
@@ -168,10 +256,25 @@ void CCCSHandler::clock(unsigned int ms)
 
 		m_pollTimer.reset();
 	}
+
+	// Handle inactivity on incoming audio
+	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++) {
+		if (m_incoming[i] != NULL) {
+			m_incoming[i]->m_timer.clock(ms);
+			if (m_incoming[i]->m_timer.isRunning() && m_incoming[i]->m_timer.hasExpired()) {
+				delete m_incoming[i];
+				m_incoming[i] = NULL;
+			}
+		}
+	}
 }
 
 void CCCSHandler::finalise()
 {
+	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++)
+		delete m_incoming[i];
+
+	delete[] m_incoming;
 }
 
 CCS_STATUS CCCSHandler::getState()

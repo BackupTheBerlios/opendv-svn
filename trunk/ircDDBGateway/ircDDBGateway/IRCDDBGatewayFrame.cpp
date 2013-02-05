@@ -33,7 +33,7 @@ const unsigned int INCOMING_WIDTH = 320U;
 const unsigned int DONGLES_WIDTH  = 560U;
 const unsigned int LOGTEXT_WIDTH  = 560U;
 #else
-const unsigned int IRCDDB_WIDTH   = 144U;
+const unsigned int IRCDDB_WIDTH   = 174U;
 const unsigned int LINKED_WIDTH   = 220U;
 const unsigned int INCOMING_WIDTH = 385U;
 const unsigned int DONGLES_WIDTH  = 700U;

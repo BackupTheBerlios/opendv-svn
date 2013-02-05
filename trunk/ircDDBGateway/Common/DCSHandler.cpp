@@ -345,7 +345,7 @@ void CDCSHandler::unlink(IReflectorCallback* handler, const wxString& exclude)
 					data.setEnd(true);
 					data.setId(reflector->m_dcsId);
 
-					reflector->m_destination->process(data, AS_DCS);
+					reflector->m_destination->process(data, reflector->m_direction, AS_DCS);
 				}
 
 				m_stateChange = true;
@@ -476,7 +476,7 @@ void CDCSHandler::processInt(CAMBEData& data)
 				header.setCQCQCQ();
 				header.setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(header, AS_DCS);
+				m_destination->process(header, m_direction, AS_DCS);
 			}
 			
 			if (id == m_dcsId) {
@@ -489,10 +489,10 @@ void CDCSHandler::processInt(CAMBEData& data)
 					header.setCQCQCQ();
 					header.setFlags(0x00U, 0x00U, 0x00U);
 
-					m_destination->process(header, AS_DUP);
+					m_destination->process(header, m_direction, AS_DUP);
 				}
 
-				m_destination->process(temp, AS_DCS);
+				m_destination->process(temp, m_direction, AS_DCS);
 
 				if (temp.isEnd()) {
 					m_dcsId  = 0x00U;
@@ -521,7 +521,7 @@ void CDCSHandler::processInt(CAMBEData& data)
 				header.setCQCQCQ();
 				header.setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(header, AS_DCS);
+				m_destination->process(header, m_direction, AS_DCS);
 			}
 
 			if (id == m_dcsId) {
@@ -534,10 +534,10 @@ void CDCSHandler::processInt(CAMBEData& data)
 					header.setCQCQCQ();
 					header.setFlags(0x00U, 0x00U, 0x00U);
 
-					m_destination->process(header, AS_DUP);
+					m_destination->process(header, m_direction, AS_DUP);
 				}
 
-				m_destination->process(temp, AS_DCS);
+				m_destination->process(temp, m_direction, AS_DCS);
 
 				if (temp.isEnd()) {
 					m_dcsId  = 0x00U;

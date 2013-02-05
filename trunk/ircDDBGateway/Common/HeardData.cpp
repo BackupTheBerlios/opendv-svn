@@ -16,23 +16,41 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarDefines.h"
 #include "HeardData.h"
 
 CHeardData::CHeardData() :
+m_reflector(),
 m_repeater(),
 m_user(),
+m_ext(),
+m_source(),
 m_address(),
 m_port(0U)
 {
 }
 
 CHeardData::CHeardData(const CHeardData& data) :
+m_reflector(data.m_reflector),
 m_repeater(data.m_repeater),
 m_user(data.m_user),
+m_ext(data.m_ext),
+m_source(data.m_source),
 m_address(data.m_address),
 m_port(data.m_port)
 {
+}
+
+CHeardData::CHeardData(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source) :
+m_reflector(reflector),
+m_repeater(repeater),
+m_user(),
+m_ext(),
+m_source(source),
+m_address(),
+m_port()
+{
+	m_user = data.getMyCall1();
+	m_ext  = data.getMyCall2();
 }
 
 CHeardData::~CHeardData()
@@ -65,7 +83,21 @@ unsigned int CHeardData::getCCSData(unsigned char *data, unsigned int length) co
 	data[2U] = '0';
 	data[3U] = '1';
 
-	::memcpy(data + 23U, "CQCQCQ  ", LONG_CALLSIGN_LENGTH);
+	::memset(data + 7U, ' ', 36U);
+
+	for (unsigned int i = 0U; i < m_reflector.Len(); i++)
+		data[i + 7U] = m_reflector.GetChar(i);
+
+	for (unsigned int i = 0U; i < m_repeater.Len(); i++)
+		data[i + 15U] = m_repeater.GetChar(i);
+
+	::memcpy(data + 23U, "CQCQCQ  ",  LONG_CALLSIGN_LENGTH);
+
+	for (unsigned int i = 0U; i < m_user.Len(); i++)
+		data[i + 31U] = m_user.GetChar(i);
+
+	for (unsigned int i = 0U; i < m_ext.Len(); i++)
+		data[i + 39U] = m_ext.GetChar(i);
 
 	data[61U] = 0x01U;
 
@@ -73,7 +105,23 @@ unsigned int CHeardData::getCCSData(unsigned char *data, unsigned int length) co
 
 	::memset(data + 64U, ' ', 20U);
 
-	data[93U] = 0x30U;		// XXX
+	switch (m_source) {
+		case AS_DEXTRA:
+			data[93U] = 0x31U;
+			break;
+		case AS_DCS:
+			data[93U] = 0x32U;
+			break;
+		case AS_DPLUS:
+			data[93U] = 0x34U;
+			break;
+		case AS_CCS:
+			data[93U] = 0x35U;
+			break;
+		default:
+			data[93U] = 0x30U;
+			break;
+	}
 
 	return 100U;
 }
@@ -86,6 +134,12 @@ wxString CHeardData::getRepeater() const
 wxString CHeardData::getUser() const
 {
 	return m_user;
+}
+
+void CHeardData::setDestination(const in_addr& address, unsigned int port)
+{
+	m_address = address;
+	m_port    = port;
 }
 
 in_addr CHeardData::getAddress() const

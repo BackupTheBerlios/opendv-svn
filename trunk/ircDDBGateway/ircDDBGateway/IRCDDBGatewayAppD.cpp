@@ -711,6 +711,7 @@ bool CIRCDDBGatewayAppD::createThread()
 	m_thread->setEchoEnabled(echoEnabled);
 	m_thread->setDTMFEnabled(dtmfEnabled);
 	m_thread->setLog(logEnabled);
+	m_thread->setLocation(latitude, longitude);
 
 	return true;
 }

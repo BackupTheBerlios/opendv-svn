@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -425,7 +425,7 @@ void CDExtraHandler::unlink(IReflectorCallback* handler, const wxString& exclude
 					data.setEnd(true);
 					data.setId(reflector->m_dExtraId);
 
-					reflector->m_destination->process(data, AS_DEXTRA);
+					reflector->m_destination->process(data, reflector->m_direction, AS_DEXTRA);
 				}
 
 				m_stateChange = true;
@@ -555,7 +555,7 @@ void CDExtraHandler::processInt(CHeaderData& header)
 				m_header->setCQCQCQ();
 				m_header->setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(*m_header, AS_DEXTRA);
+				m_destination->process(*m_header, m_direction, AS_DEXTRA);
 			}
 			break;
 
@@ -583,7 +583,7 @@ void CDExtraHandler::processInt(CHeaderData& header)
 				m_header->setCQCQCQ();
 				m_header->setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(*m_header, AS_DEXTRA);
+				m_destination->process(*m_header, m_direction, AS_DEXTRA);
 			} else {
 				// A Dongle connection
 				// Check the destination callsign
@@ -612,7 +612,7 @@ void CDExtraHandler::processInt(CHeaderData& header)
 				m_header->setCQCQCQ();
 				m_header->setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(*m_header, AS_DEXTRA);
+				m_destination->process(*m_header, m_direction, AS_DEXTRA);
 			}
 			break;
 	}
@@ -632,12 +632,12 @@ void CDExtraHandler::processInt(CAMBEData& data)
 
 	// Send the header every 21 frames
 	if (m_dExtraSeq == 0U)
-		m_destination->process(*m_header, AS_DUP);
+		m_destination->process(*m_header, m_direction, AS_DUP);
 
 	// Copy the data to ensure it remains unchanged
 	CAMBEData temp(data);
 
-	m_destination->process(temp, AS_DEXTRA);
+	m_destination->process(temp, m_direction, AS_DEXTRA);
 
 	if (temp.isEnd()) {
 		delete m_header;

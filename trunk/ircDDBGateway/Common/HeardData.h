@@ -21,6 +21,9 @@
 
 #include <wx/wx.h>
 
+#include "DStarDefines.h"
+#include "HeaderData.h"
+
 #if defined(__WINDOWS__)
 #include "Inaddr.h"
 #else
@@ -31,6 +34,7 @@ class CHeardData {
 public:
 	CHeardData();
 	CHeardData(const CHeardData& data);
+	CHeardData(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source);
 	~CHeardData();
 
 	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
@@ -40,12 +44,17 @@ public:
 	wxString     getRepeater() const;
 	wxString     getUser() const;
 
+	void setDestination(const in_addr& address, unsigned int port);
+
 	in_addr      getAddress() const;
 	unsigned int getPort() const;
 
 private:
+	wxString     m_reflector;
 	wxString     m_repeater;
 	wxString     m_user;
+	wxString     m_ext;
+	AUDIO_SOURCE m_source;
 	in_addr      m_address;
 	unsigned int m_port;
 };

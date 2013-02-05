@@ -21,6 +21,7 @@
 #include "DPlusHandler.h"
 #include "DStarDefines.h"
 #include "DCSHandler.h"
+#include "CCSHandler.h"
 #include "HeaderData.h"
 #include "DDHandler.h"
 #include "AMBEData.h"
@@ -543,6 +544,12 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	if (!m_myCall1.IsSameAs(m_heardUser) && m_irc != NULL)
 		m_irc->sendHeard(m_heardUser, wxT("    "), wxT("        "), m_heardRepeater, wxT("        "), 0x00U, 0x00U, 0x00U);
 
+	// Inform CCS
+	if (m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
+		CCCSHandler::writeHeard(header, m_rptCallsign, m_linkRepeater, AS_DUP);
+	else
+		CCCSHandler::writeHeard(header, m_rptCallsign, wxEmptyString, AS_DUP);
+
 	// The Icom heard timer
 	m_heardTimer.stop();
 
@@ -609,7 +616,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		if (repeater != NULL) {
 			wxLogMessage(wxT("Cross-band routing by %s from %s to %s"), m_myCall1.c_str(), m_rptCallsign.c_str(), m_rptCall2.c_str());
 			m_xBandRptr = repeater;
-			m_xBandRptr->process(header, AS_XBAND);
+			m_xBandRptr->process(header, DIR_INCOMING, AS_XBAND);
 			m_g2Status = G2_XBAND;
 		} else {
 			// Keep the transmission local
@@ -771,7 +778,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			break;
 
 		case G2_XBAND:
-			m_xBandRptr->process(data, AS_XBAND);
+			m_xBandRptr->process(data, DIR_INCOMING, AS_XBAND);
 
 			if (data.isEnd()) {
 				m_repeaterId = 0x00U;
@@ -986,7 +993,7 @@ bool CRepeaterHandler::process(CDDData& data)
 	return true;
 }
 
-bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
+bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_SOURCE source)
 {
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
@@ -997,6 +1004,14 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 		unsigned int id1 = header.getId();
 		unsigned int id2 = id1 + m_index;
 		header.setId(id2);
+	}
+
+	// Inform CCS of "Dongle" users
+	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS)) {
+		if (m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
+			CCCSHandler::writeHeard(header, m_rptCallsign, m_linkRepeater, source);
+		else
+			CCCSHandler::writeHeard(header, m_rptCallsign, wxEmptyString, source);
 	}
 
 	// Send all original headers to all repeater types, and only send duplicate headers to homebrew repeaters
@@ -1016,7 +1031,7 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_CCS) {
 		wxLogMessage(wxT("Not passing UR:%s MY:%s/%s src: %d, to outgoing links"), header.getYourCall().c_str(), header.getMyCall1().c_str(), header.getMyCall2().c_str(), int(source));
-		return false;
+		return true;
 	}
 
 	// Reset the slow data text collector, used for DCS text passing
@@ -1028,7 +1043,7 @@ bool CRepeaterHandler::process(CHeaderData& header, AUDIO_SOURCE source)
 	return true;
 }
 
-bool CRepeaterHandler::process(CAMBEData& data, AUDIO_SOURCE source)
+bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source)
 {
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
@@ -1049,7 +1064,7 @@ bool CRepeaterHandler::process(CAMBEData& data, AUDIO_SOURCE source)
 	sendToIncoming(data);
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_CCS)
-		return false;
+		return true;
 
 	// Collect the text from the slow data for DCS
 	if (m_text.IsEmpty() && !data.isEnd()) {

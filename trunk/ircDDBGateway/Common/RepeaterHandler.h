@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -112,8 +112,8 @@ public:
 
 	CRemoteRepeaterData* getInfo() const;
 
-	virtual bool process(CHeaderData& header, AUDIO_SOURCE source);
-	virtual bool process(CAMBEData& data, AUDIO_SOURCE source);
+	virtual bool process(CHeaderData& header, DIRECTION direction, AUDIO_SOURCE source);
+	virtual bool process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source);
 	virtual bool process(CDDData& data);
 
 	virtual void linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign);

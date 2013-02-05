@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -412,7 +412,7 @@ void CDPlusHandler::unlink(IReflectorCallback* handler, const wxString& exclude)
 					data.setEnd(true);
 					data.setId(reflector->m_dPlusId);
 
-					reflector->m_destination->process(data, AS_DPLUS);
+					reflector->m_destination->process(data, reflector->m_direction, AS_DPLUS);
 				}
 
 				m_stateChange = true;
@@ -542,7 +542,7 @@ void CDPlusHandler::processInt(CHeaderData& header)
 				m_header->setCQCQCQ();
 				m_header->setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(*m_header, AS_DPLUS);
+				m_destination->process(*m_header, m_direction, AS_DPLUS);
 			}
 			break;
 
@@ -572,7 +572,7 @@ void CDPlusHandler::processInt(CHeaderData& header)
 				m_header->setCQCQCQ();
 				m_header->setFlags(0x00U, 0x00U, 0x00U);
 
-				m_destination->process(*m_header, AS_DPLUS);
+				m_destination->process(*m_header, m_direction, AS_DPLUS);
 			}
 			break;
 	}
@@ -589,12 +589,12 @@ void CDPlusHandler::processInt(CAMBEData& data)
 
 	// Send the header every 21 frames
 	if (m_dPlusSeq == 0U)
-		m_destination->process(*m_header, AS_DUP);
+		m_destination->process(*m_header, m_direction, AS_DUP);
 
 	m_inactivityTimer.reset();
 	m_pollInactivityTimer.reset();
 
-	m_destination->process(data, AS_DPLUS);
+	m_destination->process(data, m_direction, AS_DPLUS);
 
 	if (data.isEnd()) {
 		m_dPlusId  = 0x00U;

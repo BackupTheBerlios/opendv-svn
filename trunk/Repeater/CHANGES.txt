@@ -1788,3 +1788,9 @@ Revert DVAP polling change.
 --------
 
 Remove DVAP frequency offset setting.
+
+201302xx
+--------
+
+Updated XRF123s IP address.
+Move DExtra Gateway to use the new DExtra dongle UDP port.

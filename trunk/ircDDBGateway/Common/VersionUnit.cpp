@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ void CVersionUnit::clock(unsigned int ms)
 		header.setYourCall(wxT("CQCQCQ  "));
 		header.setId(m_id);
 
-		m_handler->process(header, AS_VERSION);
+		m_handler->process(header, DIR_INCOMING, AS_VERSION);
 
 		m_out    = 0U;
 		m_status = VS_TRANSMIT;
@@ -120,7 +120,7 @@ void CVersionUnit::clock(unsigned int ms)
 
 			m_out++;
 
-			m_handler->process(*data, AS_VERSION);
+			m_handler->process(*data, DIR_INCOMING, AS_VERSION);
 
 			if (m_out == NUM_FRAMES) {
 				m_out    = 0U;

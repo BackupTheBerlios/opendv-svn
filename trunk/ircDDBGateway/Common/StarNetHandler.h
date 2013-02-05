@@ -148,8 +148,8 @@ public:
 	bool logoff(const wxString& callsign);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-	virtual bool process(CHeaderData& header, AUDIO_SOURCE source);
-	virtual bool process(CAMBEData& data, AUDIO_SOURCE source);
+	virtual bool process(CHeaderData& header, DIRECTION direction, AUDIO_SOURCE source);
+	virtual bool process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source);
 
 	virtual void linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign);
 	virtual void linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign);

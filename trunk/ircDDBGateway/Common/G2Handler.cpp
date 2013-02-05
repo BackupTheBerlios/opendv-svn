@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ void CG2Handler::process(CHeaderData& header)
 			if (m_headerLogger != NULL)
 				m_headerLogger->write(wxT("G2"), header);
 
-			repeater->process(header, AS_G2);
+			repeater->process(header, DIR_INCOMING, AS_G2);
 			return;
 		}
 	}
@@ -150,7 +150,7 @@ void CG2Handler::process(CAMBEData& data)
 		if (route != NULL) {
 			if (route->m_id == id) {
 				route->m_inactivityTimer.reset();
-				route->m_repeater->process(data, AS_G2);
+				route->m_repeater->process(data, DIR_INCOMING, AS_G2);
 
 				if (data.isEnd()) {
 					delete route;

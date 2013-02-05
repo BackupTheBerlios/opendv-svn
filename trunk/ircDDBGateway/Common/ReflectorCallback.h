@@ -22,14 +22,15 @@
 #include "DStarDefines.h"
 #include "HeaderData.h"
 #include "AMBEData.h"
+#include "Defs.h"
 
 #include <wx/wx.h>
 
 class IReflectorCallback {
 public:
-	virtual bool process(CHeaderData& header, AUDIO_SOURCE source) = 0;
+	virtual bool process(CHeaderData& header, DIRECTION direction, AUDIO_SOURCE source) = 0;
 
-	virtual bool process(CAMBEData& data, AUDIO_SOURCE source) = 0;
+	virtual bool process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source) = 0;
 
 	virtual bool linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable) = 0;
 

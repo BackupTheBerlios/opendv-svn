@@ -66,6 +66,7 @@ public:
 	virtual void setDTMFEnabled(bool enabled);
 	virtual void setDDModeEnabled(bool enabled);
 	virtual void setRemote(bool enabled, const wxString& password, unsigned int port);
+	virtual void setLocation(double latitude, double longitude);
 
 	virtual CIRCDDBGatewayStatusData* getStatus() const;
 
@@ -116,6 +117,8 @@ private:
 	wxString                  m_status3;
 	wxString                  m_status4;
 	wxString                  m_status5;
+	double                    m_latitude;
+	double                    m_longitude;
 
 	bool processIrcDDB();
 	bool processRepeater(IRepeaterProtocolHandler* handler);

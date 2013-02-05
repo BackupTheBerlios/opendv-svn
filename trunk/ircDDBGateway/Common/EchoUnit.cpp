@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ void CEchoUnit::clock(unsigned int ms)
 		m_header->setMyCall2(wxT("ECHO"));
 		m_header->setYourCall(wxT("CQCQCQ  "));
 
-		m_handler->process(*m_header, AS_ECHO);
+		m_handler->process(*m_header, DIR_INCOMING, AS_ECHO);
 
 		delete m_header;
 
@@ -121,7 +121,7 @@ void CEchoUnit::clock(unsigned int ms)
 			if (m_in == m_out)
 				data->setEnd(true);
 
-			m_handler->process(*data, AS_ECHO);
+			m_handler->process(*data, DIR_INCOMING, AS_ECHO);
 
 			delete data;
 

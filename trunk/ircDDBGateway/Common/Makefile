@@ -51,7 +51,7 @@ CCITTChecksum.o:	CCITTChecksum.cpp CCITTChecksum.h Checksum.h Utils.h
 				$(CC) $(CFLAGS) -c CCITTChecksum.cpp
 
 CCSHandler.o:	CCSHandler.cpp CCSHandler.h DStarDefines.h RepeaterHandler.h Utils.h CCSProtocolHandler.h ConnectData.h AMBEData.h \
-				PollData.h Timer.h Defs.h HeaderLogger.h ReflectorCallback.h HeaderData.h
+				PollData.h Timer.h Defs.h HeaderLogger.h RepeaterCallback.h HeaderData.h
 				$(CC) $(CFLAGS) -c CCSHandler.cpp
 
 CCSProtocolHandler.o:	CCSProtocolHandler.cpp CCSProtocolHandler.h AMBEData.h UDPReaderWriter.h DStarDefines.h Timer.h Utils.h ConnectData.h PollData.h \
@@ -145,7 +145,7 @@ HeaderData.o:	HeaderData.cpp HeaderData.h CCITTChecksum.h DStarDefines.h Utils.h
 HeaderLogger.o:	HeaderLogger.cpp HeaderLogger.h HeaderData.h DDData.h Defs.h
 				$(CC) $(CFLAGS) -c HeaderLogger.cpp
 
-HeardData.o:	HeardData.cpp HeardData.h DStarDefines.h
+HeardData.o:	HeardData.cpp HeardData.h HeaderData.h DStarDefines.h
 				$(CC) $(CFLAGS) -c HeardData.cpp
 
 HostFile.o:		HostFile.cpp HostFile.h DStarDefines.h
@@ -199,7 +199,7 @@ RepeaterHandler.o:		RepeaterHandler.cpp RepeaterHandler.h RepeaterProtocolHandle
 						DPlusProtocolHandler.h G2ProtocolHandler.h CacheManager.h Timer.h DExtraHandler.h DPlusHandler.h DStarDefines.h HeaderData.h \
 						AMBEData.h Utils.h Defs.h HeaderLogger.h APRSWriter.h TextCollector.h EchoUnit.h RepeaterCallback.h AudioUnit.h DRATSServer.h \
 						StarNetHandler.h ReflectorCallback.h DDData.h DDHandler.h RemoteRepeaterData.h StatusData.h DTMF.h HeardData.h VersionUnit.h \
-						PollData.h ../ircDDB/IRCDDB.h
+						PollData.h DCSHandler.h CCSHandler.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c RepeaterHandler.cpp
 
 RepeaterDataSet.o:	RepeaterDataSet.cpp RepeaterDataSet.h Defs.h DStarDefines.h AddressTextCtrl.h PortTextCtrl.h HostFile.h

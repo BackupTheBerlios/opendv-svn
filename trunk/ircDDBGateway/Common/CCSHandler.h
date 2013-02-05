@@ -20,7 +20,7 @@
 #define	CCSHandler_H
 
 #include "CCSProtocolHandler.h"
-#include "ReflectorCallback.h"
+#include "RepeaterCallback.h"
 #include "DStarDefines.h"
 #include "HeaderLogger.h"
 #include "ConnectData.h"
@@ -38,19 +38,41 @@
 #include <wx/wx.h>
 #include <wx/ffile.h>
 
+class CCCSAudioIncoming {
+public:
+	CCCSAudioIncoming() :
+	m_id(0x00U),
+	m_handler(NULL),
+	m_busy(false),
+	m_timer(1000U, 2U)
+	{
+	}
+
+	~CCCSAudioIncoming()
+	{
+	}
+
+	unsigned int       m_id;
+	IRepeaterCallback* m_handler;
+	bool               m_busy;
+	CTimer             m_timer;
+};
+
 class CCCSHandler {
 public:
 	static void initialise();
 
+	static void setLocation(double latitude, double longitude);
 	static void setCCSProtocolHandler(CCCSProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
 	static void setCallsign(const wxString& callsign);
 
-	static bool link();
-	static void unlink();
+	static bool connect();
+	static void disconnect();
 
-	static void writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
-	static void writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
+	static void writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source);
+	static void writeHeader(CHeaderData& header);
+	static void writeAMBE(CAMBEData& data);
 
 	static void process(CAMBEData& header);
 	static void process(CPollData& data);
@@ -77,6 +99,11 @@ private:
 	static CTimer                   m_pollTimer;
 	static CTimer                   m_tryTimer;
 	static unsigned int             m_tryCount;
+
+	static double                   m_latitude;
+	static double                   m_longitude;
+
+	static CCCSAudioIncoming**      m_incoming;
 
 	static unsigned int calcBackoff();
 };
