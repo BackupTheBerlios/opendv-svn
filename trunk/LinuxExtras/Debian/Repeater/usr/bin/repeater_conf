@@ -2333,7 +2333,6 @@ function hwsetup(){
 	    ;;
 	*)
 	    print_text "hw_keep"
-	    INPUT=2
 	    ;;
 	esac
     return $RET

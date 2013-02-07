@@ -27,7 +27,7 @@ if [ $UID -ne 0 ]; then
 	exit 1
 fi
 
-# Read configuration file if it is present
+# Read configuration file if it exists
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME || exit 2
 
 # Exit if the package is not installed
