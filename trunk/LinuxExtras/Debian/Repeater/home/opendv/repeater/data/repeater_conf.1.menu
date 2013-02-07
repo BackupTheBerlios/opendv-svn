@@ -115,6 +115,20 @@ hw_module:*** Konfiguration des Repeater Modul Index.
 hw_module:********************************************************************************
 hw_module: 
 
+hw_reset:
+hw_reset:Soll eine neue Konfiguration erzeugt werden?
+hw_reset:  0: behalte die bisherigen Autostart-Einstellungen bei
+hw_reset:  1: setze die Autostart-Einstellungen auf ihre Grundeinstellung zurueck
+hw_reset:
+
+hw_new:
+hw_new:Die Autostart-Einstellungen wurden zurueckgesetzt.
+hw_new:
+
+hw_keep:
+hw_keep:Die bisherigen Autostart-Einstellungen werden uebernommen.
+hw_keep:
+
 sel_module:
 sel_module:Waehle Repeater-Modul 1-4
 sel_module:

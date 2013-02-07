@@ -119,6 +119,20 @@ hw_module:*** Configuration of the Repeater Modules Index.
 hw_module:********************************************************************************
 hw_module: 
 
+hw_reset:
+hw_reset:Do you want to start a new configuration?
+hw_reset:  0: keep old daemon settings for autostart
+hw_reset:  1: reset autostart settings to default values
+hw_reset:
+
+hw_new:
+hw_new:Reset any existing autostart configuration for this module.
+hw_new:
+
+hw_keep:
+hw_keep:Keep existing daemon configuration 
+hw_keep:
+
 sel_module:
 sel_module:Select index of the repeater module 1-4
 sel_module:

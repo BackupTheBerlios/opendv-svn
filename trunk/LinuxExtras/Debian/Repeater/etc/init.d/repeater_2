@@ -16,10 +16,6 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=repeater             # Introduce a short description here
 NAME=repeater_2           # Introduce the short server's name here
-DAEMON_NAME=dvrptrrepeaterd
-DAEMON_PATH=/usr/bin/$DAEMON_NAME
-DAEMON_ARGS=""            # Arguments to run the daemon with
-DAEMON_USER=opendv
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -31,7 +27,7 @@ if [ $UID -ne 0 ]; then
 	exit 1
 fi
 
-# Read configuration variable file if it is present
+# Read configuration file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME || exit 2
 
 # Exit if the package is not installed

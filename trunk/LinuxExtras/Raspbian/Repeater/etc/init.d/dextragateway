@@ -31,8 +31,8 @@ if [ $UID -ne 0 ]; then
 	exit 1
 fi
 
-# Read configuration variable file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+# Read configuration file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME || exit 2
 
 # Exit if the package is not installed
 [ -x $DAEMON_PATH ] || exit 0
@@ -79,10 +79,10 @@ do_stop()
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
 
-	ps aux | grep ntpd | grep -vq grep && /etc/init.d/ntp stop
-	ntpdate pool.ntp.org
-	[ -x /etc/init.d/ntp ] && /etc/init.d/ntp start
-	sleep 2
+        ps aux | grep ntpd | grep -vq grep && /etc/init.d/ntp stop
+        ntpdate pool.ntp.org
+        [ -x /etc/init.d/ntp ] && /etc/init.d/ntp start
+        sleep 2
 
 	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
 	RETVAL="$?"

@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 #
 # Configure script for G4KLX Repeater
 #
@@ -39,6 +39,7 @@
 # 2012-12-22 dl5di    ethernet configuration for dvrptrepeater V2
 # 2013-01-29 dl5di    bugfix
 # 2013-02-03 dl5di    set permissions on Raspberry PI's  GPIO device "/dev/mem"
+# 2013-02-07 dl5di    bugfixes
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -48,7 +49,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="Debian-20130203"
+rev="20130207"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1630,7 +1631,7 @@ function hwtype1(){
 	    print_text "iface_rpi_gpio"
 	    if [ -c /dev/mem ]; then
 		chown opendv:opendv /dev/mem
-		echo "KERNEL==\"mem\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"664\"" > /etc/udev/rules.d/92-gpio.rules
+		echo "KERNEL==\"mem\", OWNER=\"opendv\", GROUP=\"opendv\", MODE=\"666\"" > /etc/udev/rules.d/92-gpio.rules
 	    else
 		print_text "iface_rpi_nogpio"
 	    fi
@@ -2312,17 +2313,29 @@ function hwsetup(){
 
     readconfig2
 
-    if [ "$HWTYPE" != "$OLDVALUE" ]; then
-	hwtype${HWTYPE}
-	write_value $CFG hwtype_${MODULE} "$HWTYPE"
-	cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_PATH" > /etc/default/repeater_$MODULE
-	cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_ARGS" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
-	cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_USER" >> /etc/default/repeater_$MODULE
-	echo "OK ($HWTYPE)"
-    else
-	echo "OK"
-    fi
-    echo " "
+    var="hw_reset"
+    print_text $var
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+
+    request_selection "$var" 1 0
+    INPUT=$?
+    case $INPUT in
+	0)
+	    print_text "hw_new"
+	    hwtype${HWTYPE}
+	    write_value $CFG hwtype_${MODULE} "$HWTYPE"
+	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_PATH" > /etc/default/repeater_$MODULE
+	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_ARGS" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
+	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_USER" >> /etc/default/repeater_$MODULE
+	    rm $REPEATERCONFIG
+	    echo "OK ($HWTYPE)"
+	    ;;
+	*)
+	    print_text "hw_keep"
+	    INPUT=2
+	    ;;
+	esac
     return $RET
 }
 
