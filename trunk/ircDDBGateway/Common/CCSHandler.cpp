@@ -22,6 +22,7 @@
 #include "Utils.h"
 
 const unsigned int MAX_CCS_INCOMING = 5U;
+const unsigned int MAX_CCS_OUTGOING = 5U;
 
 CCS_STATUS               CCCSHandler::m_state = CS_DISABLED;
 
@@ -38,17 +39,21 @@ CTimer                   CCCSHandler::m_pollTimer(1000U, 10U);
 CTimer                   CCCSHandler::m_tryTimer(1000U, 1U);
 unsigned int             CCCSHandler::m_tryCount = 0U;
 
-double                   CCCSHandler::m_latitude = 0.0;
-double                   CCCSHandler::m_longitude = 0.0;
+wxString                 CCCSHandler::m_locator = wxEmptyString;
 
 CCCSAudioIncoming**      CCCSHandler::m_incoming = NULL;
+CCCSAudioOutgoing**      CCCSHandler::m_outgoing = NULL;
 
 void CCCSHandler::initialise()
 {
 	m_incoming = new CCCSAudioIncoming*[MAX_CCS_INCOMING];
+	m_outgoing = new CCCSAudioOutgoing*[MAX_CCS_OUTGOING];
 
 	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++)
 		m_incoming[i] = NULL;
+
+	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++)
+		m_outgoing[i] = NULL;
 }
 
 void CCCSHandler::setCCSProtocolHandler(CCCSProtocolHandler* handler)
@@ -70,8 +75,20 @@ void CCCSHandler::setCallsign(const wxString& callsign)
 
 void CCCSHandler::setLocation(double latitude, double longitude)
 {
-	m_latitude  = latitude;
-	m_longitude = longitude;
+	if (latitude != 0.0 && longitude != 0.0)
+		m_locator = CUtils::latLonToLoc(latitude, longitude);
+}
+
+void CCCSHandler::addRepeater(IRepeaterCallback* handler)
+{
+	wxASSERT(handler != NULL);
+
+	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++) {
+		if (m_outgoing[i] == NULL) {
+			m_outgoing[i] = new CCCSAudioOutgoing(handler);
+			return;
+		}
+	}
 }
 
 void CCCSHandler::process(CAMBEData& data)
@@ -126,11 +143,7 @@ void CCCSHandler::process(CAMBEData& data)
 			else
 				handler->process(data, DIR_INCOMING, AS_CCS);
 
-			m_incoming[i] = new CCCSAudioIncoming;
-			m_incoming[i]->m_id = id;
-			m_incoming[i]->m_handler = handler;
-			m_incoming[i]->m_busy = busy;
-			m_incoming[i]->m_timer.start();
+			m_incoming[i] = new CCCSAudioIncoming(id, handler, busy);
 
 			return;
 		}
@@ -171,10 +184,8 @@ bool CCCSHandler::connect()
 
 	CConnectData connect(m_callsign, CT_LINK1, m_address, CCS_PORT);
 
-	if (m_latitude != 0.0 && m_longitude != 0.0) {
-		wxString locator = CUtils::latLonToLoc(m_latitude, m_longitude);
-		connect.setLocator(locator);
-	}
+	if (!m_locator.IsEmpty())
+		connect.setLocator(m_locator);
 
 	m_handler->writeConnect(connect);
 
@@ -203,27 +214,67 @@ void CCCSHandler::disconnect()
 	wxLogMessage(wxT("Disconnecting from CCS"));
 }
 
-void CCCSHandler::writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source)
+void CCCSHandler::writeEnd(const wxString& local, const wxString& remote)
 {
 	if (m_state != CS_CONNECTED)
 		return;
 
-	CHeardData heard(data, repeater, reflector, source);
+	m_handler->writeEnd(local, remote, m_address, CCS_PORT);
+}
+
+void CCCSHandler::writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector)
+{
+	if (m_state != CS_CONNECTED)
+		return;
+
+	CHeardData heard(data, repeater, reflector);
 	heard.setDestination(m_address, CCS_PORT);
 
 	m_handler->writeHeard(heard);
 }
 
-void CCCSHandler::writeHeader(CHeaderData& header)
+void CCCSHandler::writeHeader(IRepeaterCallback* handler, CHeaderData& header)
 {
 	if (m_state != CS_CONNECTED)
 		return;
+
+	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++) {
+		if (m_outgoing[i] != NULL) {
+			if (m_outgoing[i]->m_handler == handler) {
+				m_outgoing[i]->m_rptCall1 = header.getRptCall1();
+				m_outgoing[i]->m_rptCall2 = header.getRptCall2();
+				m_outgoing[i]->m_yourCall = header.getYourCall();
+				m_outgoing[i]->m_myCall1  = header.getMyCall1();
+				m_outgoing[i]->m_myCall2  = header.getMyCall2();
+				m_outgoing[i]->m_seqNo = 0U;
+				return;
+			}
+		}
+	}
 }
 
-void CCCSHandler::writeAMBE(CAMBEData& data)
+void CCCSHandler::writeAMBE(IRepeaterCallback* handler, CAMBEData& data)
 {
 	if (m_state != CS_CONNECTED)
 		return;
+
+	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++) {
+		if (m_outgoing[i] != NULL) {
+			if (m_outgoing[i]->m_handler == handler) {
+				CHeaderData& header = data.getHeader();
+				header.setMyCall1(m_outgoing[i]->m_myCall1);
+				header.setMyCall2(m_outgoing[i]->m_myCall2);
+				header.setYourCall(m_outgoing[i]->m_yourCall);
+				header.setRptCall1(m_outgoing[i]->m_rptCall1);
+				header.setRptCall2(m_outgoing[i]->m_rptCall2);
+
+				data.setRptSeq(m_outgoing[i]->m_seqNo++);
+				data.setDestination(m_address, CCS_PORT);
+				m_handler->writeData(data);
+				return;
+			}
+		}
+	}
 }
 
 void CCCSHandler::clock(unsigned int ms)
@@ -280,7 +331,11 @@ void CCCSHandler::finalise()
 	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++)
 		delete m_incoming[i];
 
+	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++)
+		delete m_outgoing[i];
+
 	delete[] m_incoming;
+	delete[] m_outgoing;
 }
 
 CCS_STATUS CCCSHandler::getState()

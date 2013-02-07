@@ -103,15 +103,18 @@ const unsigned int  DVAP_RESP_HEADER_LEN = 47U;
 const unsigned char DVAP_RESP_PTT[] = {0x05, 0x20, 0x18, 0x01, 0x00};
 const unsigned int  DVAP_RESP_PTT_LEN = 5U;
 
-const unsigned char DVAP_DATA[] = {0x12, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-								   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-const unsigned int  DVAP_DATA_LEN = 18U;
+const unsigned char DVAP_GMSK_DATA[] = {0x12, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+										0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+const unsigned int  DVAP_GMSK_DATA_LEN = 18U;
 
 const unsigned char DVAP_STATUS[] = {0x07, 0x20, 0x90, 0x00, 0x00, 0x00, 0x00};
 const unsigned int  DVAP_STATUS_LEN = 7U;
 
 const unsigned char DVAP_ACK[] = {0x03, 0x60, 0x00};
 const unsigned int  DVAP_ACK_LEN = 3U;
+
+const unsigned char DVAP_FM_DATA[] = {0x42, 0x81};
+const unsigned int  DVAP_FM_DATA_LEN = 2U;
 
 const unsigned int DVAP_HEADER_LENGTH = 2U;
 
@@ -237,11 +240,10 @@ void* CDVAPController::Entry()
 				wxLogMessage(wxT("Stopping DVAP Controller thread"));
 				m_serial.close();
 				return NULL;
-			case RT_STATE: {
-					m_signal      = int(m_buffer[4U]) - 256;
-					m_squelchOpen = m_buffer[5U] == 0x01U;
-					m_space       = m_buffer[6U];
-				}
+			case RT_STATE:
+				m_signal      = int(m_buffer[4U]) - 256;
+				m_squelchOpen = m_buffer[5U] == 0x01U;
+				m_space       = m_buffer[6U];
 				break;
 			case RT_PTT:
 				m_ptt = m_buffer[4U] == 0x01U;	
@@ -271,7 +273,7 @@ void* CDVAPController::Entry()
 				break;
 			case RT_HEADER_ACK:
 				break;
-			case RT_DATA: {
+			case RT_GMSK_DATA: {
 					m_mutex.Lock();
 
 					unsigned int space = m_rxData.freeSpace();
@@ -288,6 +290,12 @@ void* CDVAPController::Entry()
 
 					m_mutex.Unlock();
 				}
+				break;
+			case RT_FM_DATA:
+				wxLogWarning(wxT("The DVAP has gone into FM mode, restarting the DVAP"));
+				stop();
+				setModulation();
+				start();
 				break;
 			default:
 				wxLogMessage(wxT("Unknown message"));
@@ -459,7 +467,7 @@ bool CDVAPController::writeData(const unsigned char* data, unsigned int length, 
 {
 	unsigned char buffer[20U];
 
-	::memcpy(buffer + 0U, DVAP_DATA, DVAP_DATA_LEN);
+	::memcpy(buffer + 0U, DVAP_GMSK_DATA, DVAP_GMSK_DATA_LEN);
 
 	if (::memcmp(data + VOICE_FRAME_LENGTH_BYTES, DATA_SYNC_BYTES, DATA_FRAME_LENGTH_BYTES) == 0)
 		m_framePos = 0U;
@@ -481,10 +489,10 @@ bool CDVAPController::writeData(const unsigned char* data, unsigned int length, 
 	if (space < 19U)
 		return false;
 
-	unsigned char len = DVAP_DATA_LEN;
+	unsigned char len = DVAP_GMSK_DATA_LEN;
 	m_txData.addData(&len, 1U);
 
-	m_txData.addData(buffer, DVAP_DATA_LEN);
+	m_txData.addData(buffer, DVAP_GMSK_DATA_LEN);
 
 	m_framePos++;
 	m_seq++;
@@ -900,8 +908,8 @@ RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& leng
 
 	if (::memcmp(buffer, DVAP_STATUS, 4U) == 0)
 		return RT_STATE;
-	else if (::memcmp(buffer, DVAP_DATA, 2U) == 0)
-		return RT_DATA;
+	else if (::memcmp(buffer, DVAP_GMSK_DATA, 2U) == 0)
+		return RT_GMSK_DATA;
 	else if (::memcmp(buffer, DVAP_HEADER, 2U) == 0)
 		return RT_HEADER;
 	else if (::memcmp(buffer, DVAP_RESP_HEADER, 2U) == 0)
@@ -910,6 +918,8 @@ RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& leng
 		return RT_PTT;
 	else if (::memcmp(buffer, DVAP_ACK, DVAP_ACK_LEN) == 0)
 		return RT_ACK;
+	else if (::memcmp(buffer, DVAP_FM_DATA, 2U) == 0)
+		return RT_FM_DATA;
 	else if (::memcmp(buffer, DVAP_RESP_START, DVAP_RESP_START_LEN) == 0)
 		return RT_START;
 	else if (::memcmp(buffer, DVAP_RESP_STOP, DVAP_RESP_STOP_LEN) == 0)

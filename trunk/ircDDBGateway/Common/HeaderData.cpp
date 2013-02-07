@@ -255,6 +255,8 @@ void CHeaderData::setCCSData(const unsigned char *data, unsigned int length, con
 
 	m_id = data[44U] * 256U + data[43U];
 
+	::memcpy(m_rptCall2, data + 7U,  LONG_CALLSIGN_LENGTH);
+	::memcpy(m_rptCall1, data + 15U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_yourCall, data + 23U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall1,  data + 31U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 39U, SHORT_CALLSIGN_LENGTH);
@@ -494,6 +496,8 @@ void CHeaderData::getCCSData(unsigned char *data, unsigned int length) const
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 100U);
 
+	::memcpy(data + 7U,  m_rptCall2, LONG_CALLSIGN_LENGTH);
+	::memcpy(data + 15U, m_rptCall1, LONG_CALLSIGN_LENGTH);
 	::memcpy(data + 23U, m_yourCall, LONG_CALLSIGN_LENGTH);
 	::memcpy(data + 31U, m_myCall1,  LONG_CALLSIGN_LENGTH);
 	::memcpy(data + 39U, m_myCall2,  SHORT_CALLSIGN_LENGTH);

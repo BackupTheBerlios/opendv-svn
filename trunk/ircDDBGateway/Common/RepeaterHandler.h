@@ -243,6 +243,11 @@ private:
 	// Poll timer
 	CTimer                    m_pollTimer;
 
+	// CCS info
+	wxString                  m_ccsLocal;
+	wxString                  m_ccsRemote;
+	CTimer                    m_ccsTimer;
+
 	// Icom heard data
 	wxString                  m_heardUser;
 	wxString                  m_heardRepeater;

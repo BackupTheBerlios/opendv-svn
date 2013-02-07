@@ -405,7 +405,7 @@ unsigned int CConnectData::getCCSData(unsigned char *data, unsigned int length) 
 				data[18U] = '@';
 
 				wxString text;
-				text.Printf(wxT("CCS_GW-%s"), VERSION.Left(8U).c_str());
+				text.Printf(wxT("ircDDB_GW-%s"), VERSION.Left(8U).c_str());
 
 				for (unsigned int i = 0U; i < text.Len(); i++)
 					data[19U + i] = text.GetChar(i);

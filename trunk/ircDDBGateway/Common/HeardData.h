@@ -34,7 +34,7 @@ class CHeardData {
 public:
 	CHeardData();
 	CHeardData(const CHeardData& data);
-	CHeardData(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source);
+	CHeardData(const CHeaderData& data, const wxString& repeater, const wxString& reflector);
 	~CHeardData();
 
 	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& address, unsigned int port);
@@ -54,7 +54,6 @@ private:
 	wxString     m_repeater;
 	wxString     m_user;
 	wxString     m_ext;
-	AUDIO_SOURCE m_source;
 	in_addr      m_address;
 	unsigned int m_port;
 };

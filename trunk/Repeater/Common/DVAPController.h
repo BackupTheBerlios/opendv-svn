@@ -46,7 +46,8 @@ enum RESP_TYPE {
 	RT_ACK,
 	RT_HEADER,
 	RT_HEADER_ACK,
-	RT_DATA
+	RT_GMSK_DATA,
+	RT_FM_DATA
 };
 
 class CDVAPController : public wxThread {

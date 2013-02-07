@@ -23,7 +23,6 @@ m_reflector(),
 m_repeater(),
 m_user(),
 m_ext(),
-m_source(),
 m_address(),
 m_port(0U)
 {
@@ -34,18 +33,16 @@ m_reflector(data.m_reflector),
 m_repeater(data.m_repeater),
 m_user(data.m_user),
 m_ext(data.m_ext),
-m_source(data.m_source),
 m_address(data.m_address),
 m_port(data.m_port)
 {
 }
 
-CHeardData::CHeardData(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source) :
+CHeardData::CHeardData(const CHeaderData& data, const wxString& repeater, const wxString& reflector) :
 m_reflector(reflector),
 m_repeater(repeater),
 m_user(),
 m_ext(),
-m_source(source),
 m_address(),
 m_port()
 {
@@ -105,23 +102,7 @@ unsigned int CHeardData::getCCSData(unsigned char *data, unsigned int length) co
 
 	::memset(data + 64U, ' ', 20U);
 
-	switch (m_source) {
-		case AS_DEXTRA:
-			data[93U] = 0x31U;
-			break;
-		case AS_DCS:
-			data[93U] = 0x32U;
-			break;
-		case AS_DPLUS:
-			data[93U] = 0x34U;
-			break;
-		case AS_CCS:
-			data[93U] = 0x35U;
-			break;
-		default:
-			data[93U] = 0x30U;
-			break;
-	}
+	data[93U] = 0x36U;
 
 	return 100U;
 }

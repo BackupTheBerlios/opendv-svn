@@ -467,7 +467,7 @@ unsigned int CAMBEData::getCCSData(unsigned char* data, unsigned int length) con
 	for (unsigned int i = 0U; i < m_text.Len(); i++)
 		data[64 + i] = m_text.GetChar(i);
 
-	data[93U] = 0x30U;		// XXX
+	data[93U] = 0x36U;
 
 	m_header.getCCSData(data, 100U);
 

@@ -40,12 +40,15 @@
 
 class CCCSAudioIncoming {
 public:
-	CCCSAudioIncoming() :
-	m_id(0x00U),
-	m_handler(NULL),
-	m_busy(false),
+	CCCSAudioIncoming(unsigned int id, IRepeaterCallback* handler, bool busy) :
+	m_id(id),
+	m_handler(handler),
+	m_busy(busy),
 	m_timer(1000U, 2U)
 	{
+		wxASSERT(handler != NULL);
+
+		m_timer.start();
 	}
 
 	~CCCSAudioIncoming()
@@ -58,6 +61,33 @@ public:
 	CTimer             m_timer;
 };
 
+class CCCSAudioOutgoing {
+public:
+	CCCSAudioOutgoing(IRepeaterCallback* handler) :
+	m_handler(handler),
+	m_seqNo(0U),
+	m_rptCall1(),
+	m_rptCall2(),
+	m_yourCall(),
+	m_myCall1(),
+	m_myCall2()
+	{
+		wxASSERT(handler != NULL);
+	}
+
+	~CCCSAudioOutgoing()
+	{
+	}
+
+	IRepeaterCallback* m_handler;
+	unsigned int       m_seqNo;
+	wxString           m_rptCall1;
+	wxString           m_rptCall2;
+	wxString           m_yourCall;
+	wxString           m_myCall1;
+	wxString           m_myCall2;
+};
+
 class CCCSHandler {
 public:
 	static void initialise();
@@ -67,12 +97,15 @@ public:
 	static void setHeaderLogger(CHeaderLogger* logger);
 	static void setCallsign(const wxString& callsign);
 
+	static void addRepeater(IRepeaterCallback* handler);
+
 	static bool connect();
 	static void disconnect();
 
-	static void writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector, AUDIO_SOURCE source);
-	static void writeHeader(CHeaderData& header);
-	static void writeAMBE(CAMBEData& data);
+	static void writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector = wxEmptyString);
+	static void writeEnd(const wxString& local, const wxString& remote);
+	static void writeHeader(IRepeaterCallback* handler, CHeaderData& header);
+	static void writeAMBE(IRepeaterCallback* handler, CAMBEData& data);
 
 	static void process(CAMBEData& header);
 	static void process(CPollData& data);
@@ -100,10 +133,10 @@ private:
 	static CTimer                   m_tryTimer;
 	static unsigned int             m_tryCount;
 
-	static double                   m_latitude;
-	static double                   m_longitude;
+	static wxString                 m_locator;
 
 	static CCCSAudioIncoming**      m_incoming;
+	static CCCSAudioOutgoing**      m_outgoing;
 
 	static unsigned int calcBackoff();
 };
