@@ -241,19 +241,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DongleHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DongleProtocolHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DongleProtocolHandlerPool.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DPlusAuthenticator.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\DPlusHandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DPlusProtocolHandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DPlusProtocolHandlerPool.cpp"
 				>
 			</File>
 			<File
@@ -539,19 +543,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DongleHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DongleProtocolHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DongleProtocolHandlerPool.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DPlusAuthenticator.h"
 				>
 			</File>
 			<File
 				RelativePath=".\DPlusHandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DPlusProtocolHandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DPlusProtocolHandlerPool.h"
 				>
 			</File>
 			<File

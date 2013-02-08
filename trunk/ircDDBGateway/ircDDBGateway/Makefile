@@ -57,13 +57,13 @@ IRCDDBGatewayThreadHelper.o:		IRCDDBGatewayThreadHelper.cpp IRCDDBGatewayThreadH
 
 IRCDDBGatewayThread.o:		IRCDDBGatewayThread.cpp IRCDDBGatewayThread.h IRCDDBGatewayStatusData.h IRCDDBGatewayApp.h ../Common/Defs.h \
 				../Common/CacheManager.h ../Common/HeaderData.h ../Common/AMBEData.h ../Common/HostFile.h ../Common/RepeaterProtocolHandler.h \
-				../Common/DCSProtocolHandler.h ../Common/DExtraProtocolHandler.h ../Common/DPlusProtocolHandler.h ../Common/G2ProtocolHandler.h \
+				../Common/DCSProtocolHandler.h ../Common/DExtraProtocolHandler.h ../Common/DongleProtocolHandler.h ../Common/G2ProtocolHandler.h \
 				../Common/DCSHandler.h ../Common/DExtraHandler.h ../Common/DPlusHandler.h ../Common/ConnectData.h ../Common/DStarDefines.h \
 				../Common/Utils.h ../Common/Timer.h ../Common/G2Handler.h ../Common/RepeaterHandler.h ../Common/PollData.h ../Common/HeaderLogger.h \
 				../Common/APRSWriter.h ../Common/AudioUnit.h ../Common/StarNetHandler.h ../Common/DDData.h ../Common/RemoteHandler.h ../Common/DDHandler.h \
 				../Common/HBRepeaterProtocolHandler.h ../Common/IcomRepeaterProtocolHandler.h ../Common/StatusData.h ../Common/CallsignServer.h \
-				../Common/HeardData.h ../Common/DCSProtocolHandlerPool.h ../Common/DPlusProtocolHandlerPool.h ../Common/DummyRepeaterProtocolHandler.h \
-				../Common/CCSHandler.h ../Common/CCSProtocolHandler.h ../ircDDB/IRCDDB.h
+				../Common/HeardData.h ../Common/DCSProtocolHandlerPool.h ../Common/DongleProtocolHandlerPool.h ../Common/DummyRepeaterProtocolHandler.h \
+				../Common/CCSHandler.h ../Common/CCSProtocolHandler.h ../Common/DongleHandler.h ../ircDDB/IRCDDB.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayThread.cpp
 
 install:		ircddbgateway ircddbgatewayd

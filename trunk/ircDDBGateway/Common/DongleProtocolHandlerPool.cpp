@@ -16,9 +16,9 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DPlusProtocolHandlerPool.h"
+#include "DongleProtocolHandlerPool.h"
 
-CDPlusProtocolHandlerPool::CDPlusProtocolHandlerPool(unsigned int n, unsigned int port, const wxString& addr) :
+CDongleProtocolHandlerPool::CDongleProtocolHandlerPool(unsigned int n, unsigned int port, const wxString& addr) :
 m_pool(NULL),
 m_n(n),
 m_index(0U)
@@ -26,18 +26,18 @@ m_index(0U)
 	wxASSERT(port > 0U);
 	wxASSERT(n > 0U);
 
-	m_pool = new CDPlusProtocolHandlerEntry[n];
+	m_pool = new CDongleProtocolHandlerEntry[n];
 
 	for (unsigned int i = 0U; i < n; i++) {
-		m_pool[i].m_handler = new CDPlusProtocolHandler(port + i, addr);
+		m_pool[i].m_handler = new CDongleProtocolHandler(port + i, addr);
 		m_pool[i].m_port    = port + i;
 		m_pool[i].m_inUse   = false;
 	}
 
-	wxLogMessage(wxT("Allocated UDP ports %u-%u to D-Plus"), port, port + n - 1U);
+	wxLogMessage(wxT("Allocated UDP ports %u-%u to Dongles"), port, port + n - 1U);
 }
 
-CDPlusProtocolHandlerPool::~CDPlusProtocolHandlerPool()
+CDongleProtocolHandlerPool::~CDongleProtocolHandlerPool()
 {
 	for (unsigned int i = 0U; i < m_n; i++)
 		delete m_pool[i].m_handler;
@@ -45,7 +45,7 @@ CDPlusProtocolHandlerPool::~CDPlusProtocolHandlerPool()
 	delete[] m_pool;
 }
 
-bool CDPlusProtocolHandlerPool::open()
+bool CDongleProtocolHandlerPool::open()
 {
 	for (unsigned int i = 0U; i < m_n; i++) {
 		bool ret = m_pool[i].m_handler->open();
@@ -56,7 +56,7 @@ bool CDPlusProtocolHandlerPool::open()
 	return true;
 }
 
-CDPlusProtocolHandler* CDPlusProtocolHandlerPool::getHandler(unsigned int port)
+CDongleProtocolHandler* CDongleProtocolHandlerPool::getHandler(unsigned int port)
 {
 	if (port == 0U) {
 		for (unsigned int i = 0U; i < m_n; i++) {
@@ -74,12 +74,12 @@ CDPlusProtocolHandler* CDPlusProtocolHandlerPool::getHandler(unsigned int port)
 		}
 	}
 
-	wxLogError(wxT("Cannot find a free D-Plus port in the pool"));
+	wxLogError(wxT("Cannot find a free Dongle port in the pool"));
 
 	return NULL;
 }
 
-void CDPlusProtocolHandlerPool::release(CDPlusProtocolHandler* handler)
+void CDongleProtocolHandlerPool::release(CDongleProtocolHandler* handler)
 {
 	wxASSERT(handler != NULL);
 
@@ -90,14 +90,14 @@ void CDPlusProtocolHandlerPool::release(CDPlusProtocolHandler* handler)
 		}
 	}
 
-	wxLogError(wxT("Trying to release an unused D-Plus port"));
+	wxLogError(wxT("Trying to release an unused Dongle port"));
 }
 
-DPLUS_TYPE CDPlusProtocolHandlerPool::read()
+DONGLE_TYPE CDongleProtocolHandlerPool::read()
 {
 	while (m_index < m_n) {
 		if (m_pool[m_index].m_inUse) {
-			DPLUS_TYPE type = m_pool[m_index].m_handler->read();
+			DONGLE_TYPE type = m_pool[m_index].m_handler->read();
 			if (type != DP_NONE)
 				return type;
 		}
@@ -110,27 +110,42 @@ DPLUS_TYPE CDPlusProtocolHandlerPool::read()
 	return DP_NONE;
 }
 
-CHeaderData* CDPlusProtocolHandlerPool::readHeader()
+CHeaderData* CDongleProtocolHandlerPool::readDPlusHeader()
 {
-	return m_pool[m_index].m_handler->readHeader();
+	return m_pool[m_index].m_handler->readDPlusHeader();
 }
 
-CAMBEData* CDPlusProtocolHandlerPool::readAMBE()
+CAMBEData* CDongleProtocolHandlerPool::readDPlusAMBE()
 {
-	return m_pool[m_index].m_handler->readAMBE();
+	return m_pool[m_index].m_handler->readDPlusAMBE();
 }
 
-CPollData* CDPlusProtocolHandlerPool::readPoll()
+CPollData* CDongleProtocolHandlerPool::readDPlusPoll()
 {
-	return m_pool[m_index].m_handler->readPoll();
+	return m_pool[m_index].m_handler->readDPlusPoll();
 }
 
-CConnectData* CDPlusProtocolHandlerPool::readConnect()
+CConnectData* CDongleProtocolHandlerPool::readDPlusConnect()
 {
-	return m_pool[m_index].m_handler->readConnect();
+	return m_pool[m_index].m_handler->readDPlusConnect();
 }
 
-void CDPlusProtocolHandlerPool::close()
+CHeaderData* CDongleProtocolHandlerPool::readDExtraHeader()
+{
+	return m_pool[m_index].m_handler->readDExtraHeader();
+}
+
+CAMBEData* CDongleProtocolHandlerPool::readDExtraAMBE()
+{
+	return m_pool[m_index].m_handler->readDExtraAMBE();
+}
+
+CPollData* CDongleProtocolHandlerPool::readDExtraPoll()
+{
+	return m_pool[m_index].m_handler->readDExtraPoll();
+}
+
+void CDongleProtocolHandlerPool::close()
 {
 	for (unsigned int i = 0U; i < m_n; i++)
 		m_pool[i].m_handler->close();

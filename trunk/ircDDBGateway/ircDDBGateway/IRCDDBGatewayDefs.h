@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,13 +37,14 @@ const wxString STATUS3_FILE_NAME = wxT("status3.txt");
 const wxString STATUS4_FILE_NAME = wxT("status4.txt");
 const wxString STATUS5_FILE_NAME = wxT("status5.txt");
 
-const unsigned int MAX_OUTGOING     = 6U;
-const unsigned int MAX_REPEATERS    = 4U;
-const unsigned int MAX_DEXTRA_LINKS = 5U;
-const unsigned int MAX_DPLUS_LINKS  = 5U;
-const unsigned int MAX_DCS_LINKS    = 5U;
-const unsigned int MAX_STARNETS     = 5U;
-const unsigned int MAX_ROUTES       = MAX_REPEATERS + 5U;
-const unsigned int MAX_DD_ROUTES    = 20U;
+const unsigned int MAX_OUTGOING       = 6U;
+const unsigned int MAX_REPEATERS      = 4U;
+const unsigned int MAX_DEXTRA_LINKS   = 5U;
+const unsigned int MAX_DEXTRA_DONGLES = 5U;
+const unsigned int MAX_DPLUS_LINKS    = 5U;
+const unsigned int MAX_DCS_LINKS      = 5U;
+const unsigned int MAX_STARNETS       = 5U;
+const unsigned int MAX_ROUTES         = MAX_REPEATERS + 5U;
+const unsigned int MAX_DD_ROUTES      = 20U;
 
 #endif

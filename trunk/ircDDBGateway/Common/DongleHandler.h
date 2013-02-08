@@ -16,14 +16,13 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DExtraHandler_H
-#define	DExtraHandler_H
+#ifndef	DongleHandler_H
+#define	DongleHandler_H
 
-#include "DExtraProtocolHandler.h"
+#include "DongleProtocolHandler.h"
 #include "ReflectorCallback.h"
 #include "DStarDefines.h"
 #include "HeaderLogger.h"
-#include "ConnectData.h"
 #include "HeaderData.h"
 #include "AMBEData.h"
 #include "PollData.h"
@@ -39,33 +38,22 @@
 #include <wx/wx.h>
 #include <wx/ffile.h>
 
-enum DEXTRA_STATE {
-	DEXTRA_LINKING,
-	DEXTRA_LINKED,
-	DEXTRA_UNLINKING
-};
-
-class CDExtraHandler {
+class CDongleHandler {
 public:
-	static void initialise(unsigned int maxLinks);
+	static void initialise(unsigned int maxReflectors);
 
 	static void setCallsign(const wxString& callsign);
-	static void setDExtraProtocolHandler(CDExtraProtocolHandler* handler);
+	static void setDongleProtocolHandler(CDongleProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
+	static void setMaxDongles(unsigned int maxDongles);
 
-	static void link(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, const in_addr& address);
-	static void unlink(IReflectorCallback* handler, const wxString& exclude = wxEmptyString);
-	static void unlink();
-
-	static void writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
-	static void writeAMBE(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
+	static void writeHeader(IReflectorCallback* handler, CHeaderData& header);
+	static void writeAMBE(IReflectorCallback* handler, CAMBEData& data);
 
 	static void process(CHeaderData& header);
 	static void process(CAMBEData& data);
 	static void process(const CPollData& poll);
-	static void process(CConnectData& connect);
 
-	static void gatewayUpdate(const wxString& reflector, const wxString& address);
 	static void clock(unsigned int ms);
 
 	static bool stateChange();
@@ -75,50 +63,43 @@ public:
 
 	static void getInfo(IReflectorCallback* handler, CRemoteRepeaterData& data);
 
-	static wxString getIncoming(const wxString& callsign);
+	static wxString getDongles();
 
 protected:
-	CDExtraHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, const in_addr& address, unsigned int port, DIRECTION direction);
-	~CDExtraHandler();
+	CDongleHandler(const wxString& reflector, const in_addr& address, unsigned int port);
+	~CDongleHandler();
 
 	void processInt(CHeaderData& header);
 	void processInt(CAMBEData& data);
-	bool processInt(CConnectData& connect, CD_TYPE type);
 
-	void writeHeaderInt(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);
-	void writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, DIRECTION direction);
+	void writeHeaderInt(IReflectorCallback* handler, CHeaderData& header);
+	void writeAMBEInt(IReflectorCallback* handler, CAMBEData& data);
 
 	bool clockInt(unsigned int ms);
 
 private:
 	static unsigned int            m_maxReflectors;
-	static CDExtraHandler**        m_reflectors;
+	static unsigned int            m_maxDongles;
+	static CDongleHandler**        m_reflectors;
 
 	static wxString                m_callsign;
-	static CDExtraProtocolHandler* m_handler;
+	static CDongleProtocolHandler* m_handler;
 
 	static bool                    m_stateChange;
 
 	static CHeaderLogger*          m_headerLogger;
 
 	wxString            m_reflector;
-	wxString            m_repeater;
 	in_addr             m_yourAddress;
 	unsigned int        m_yourPort;
-	DIRECTION           m_direction;
-	DEXTRA_STATE        m_linkState;
 	IReflectorCallback* m_destination;
 	time_t              m_time;
 	CTimer              m_pollTimer;
 	CTimer              m_pollInactivityTimer;
-	CTimer              m_tryTimer;
-	unsigned int        m_tryCount;
 	unsigned int        m_dExtraId;
 	unsigned int        m_dExtraSeq;
 	CTimer              m_inactivityTimer;
 	CHeaderData*        m_header;
-
-	unsigned int calcBackoff();
 };
 
 #endif

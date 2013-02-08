@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DPlusProtocolHandler_H
-#define	DPlusProtocolHandler_H
+#ifndef	DongleProtocolHandler_H
+#define	DongleProtocolHandler_H
 
 #include "UDPReaderWriter.h"
 #include "DStarDefines.h"
@@ -34,39 +34,53 @@
 
 #include <wx/wx.h>
 
-enum DPLUS_TYPE {
+enum DONGLE_TYPE {
 	DP_NONE,
-	DP_HEADER,
-	DP_AMBE,
-	DP_POLL,
-	DP_CONNECT
+
+	DP_DPLUS_HEADER,
+	DP_DPLUS_AMBE,
+	DP_DPLUS_POLL,
+	DP_DPLUS_CONNECT,
+
+	DP_DEXTRA_HEADER,
+	DP_DEXTRA_AMBE,
+	DP_DEXTRA_POLL
 };
 
-class CDPlusProtocolHandler {
+class CDongleProtocolHandler {
 public:
-	CDPlusProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
-	~CDPlusProtocolHandler();
+	CDongleProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	~CDongleProtocolHandler();
 
 	bool open();
 
 	unsigned int getPort() const;
 
-	bool writeHeader(const CHeaderData& header);
-	bool writeAMBE(const CAMBEData& data);
-	bool writeConnect(const CConnectData& connect);
-	bool writePoll(const CPollData& poll);
+	bool writeDPlusHeader(const CHeaderData& header);
+	bool writeDPlusAMBE(const CAMBEData& data);
+	bool writeDPlusConnect(const CConnectData& connect);
+	bool writeDPlusPoll(const CPollData& poll);
 
-	DPLUS_TYPE    read();
-	CHeaderData*  readHeader();
-	CAMBEData*    readAMBE();
-	CPollData*    readPoll();
-	CConnectData* readConnect();
+	bool writeDExtraHeader(const CHeaderData& header);
+	bool writeDExtraAMBE(const CAMBEData& data);
+	bool writeDExtraPoll(const CPollData& poll);
+
+	DONGLE_TYPE   read();
+
+	CHeaderData*  readDPlusHeader();
+	CAMBEData*    readDPlusAMBE();
+	CPollData*    readDPlusPoll();
+	CConnectData* readDPlusConnect();
+
+	CHeaderData*  readDExtraHeader();
+	CAMBEData*    readDExtraAMBE();
+	CPollData*    readDExtraPoll();
 
 	void close();
 
 private:
 	CUDPReaderWriter m_socket;
-	DPLUS_TYPE       m_type;
+	DONGLE_TYPE      m_type;
 	unsigned char*   m_buffer;
 	unsigned int     m_length;
 	in_addr          m_yourAddress;

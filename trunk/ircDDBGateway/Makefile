@@ -5,7 +5,7 @@
 
 include settings.mk
 
-all:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver XReflector/xreflector
+all:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver
 
 ircDDBGateway/ircddbgateway:	ircDDB/libircDDB.a Common/Common.a
 		make -C ircDDBGateway
@@ -22,9 +22,6 @@ TimerControl/timercontrol:	Common/Common.a
 TimeServer/timeserver:	Common/Common.a
 		make -C TimeServer
 
-XReflector/xreflector:	ircDDB/libircDDB.a Common/Common.a
-		make -C XReflector
-
 Common/Common.a:
 		make -C Common
 
@@ -37,7 +34,6 @@ install:	all
 		make -C StarNetServer install
 		make -C TimerControl install
 		make -C TimeServer install
-		make -C XReflector install
 		make -C Data install
 
 clean:
@@ -49,6 +45,5 @@ clean:
 		make -C StarNetServer clean
 		make -C TimerControl clean
 		make -C TimeServer clean
-		make -C XReflector clean
 		
 include package.mk

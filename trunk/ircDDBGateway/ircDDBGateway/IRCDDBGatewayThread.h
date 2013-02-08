@@ -22,7 +22,7 @@
 #include "DummyRepeaterProtocolHandler.h"
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
-#include "DPlusProtocolHandlerPool.h"
+#include "DongleProtocolHandlerPool.h"
 #include "RepeaterProtocolHandler.h"
 #include "IRCDDBGatewayStatusData.h"
 #include "DCSProtocolHandlerPool.h"
@@ -84,7 +84,7 @@ private:
 	CHBRepeaterProtocolHandler*    m_hbRepeaterHandler;
 	CDummyRepeaterProtocolHandler* m_dummyRepeaterHandler;
 	CDExtraProtocolHandler*        m_dextraHandler;
-	CDPlusProtocolHandlerPool*     m_dplusPool;
+	CDongleProtocolHandlerPool*    m_donglePool;
 	CDCSProtocolHandlerPool*       m_dcsPool;
 	CCCSProtocolHandler*           m_ccsHandler;
 	CG2ProtocolHandler*       m_g2Handler;
@@ -123,7 +123,7 @@ private:
 	bool processIrcDDB();
 	bool processRepeater(IRepeaterProtocolHandler* handler);
 	bool processDExtra();
-	bool processDPlus();
+	bool processDongles();
 	bool processDCS();
 	bool processCCS();
 	bool processG2();

@@ -51,7 +51,6 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\StarNetServer.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\TimerControl.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\TimeServer.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\XReflector.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\wxbase28u_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\wxmsw28u_adv_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\wxmsw28u_core_vc_custom.dll"
@@ -97,7 +96,6 @@ Section "Repeater Program Files" SecProgram
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\StarNet Server.lnk"   "$INSTDIR\StarNetServer.exe"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Timer Control.lnk"    "$INSTDIR\TimerControl.exe"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Time Server.lnk"      "$INSTDIR\TimeServer.exe"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\XReflector.lnk"       "$INSTDIR\XReflector.exe"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Changes.lnk"          "$INSTDIR\CHANGES.txt"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Licence.lnk"          "$INSTDIR\COPYING.txt"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\ToDo.lnk"             "$INSTDIR\TODO.txt"
@@ -124,6 +122,5 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\StarNet Server"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Timer Control"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Time Server"
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\XReflector"
 
 SectionEnd

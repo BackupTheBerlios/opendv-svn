@@ -22,6 +22,7 @@
 #include "StarNetHandler.h"
 #include "CallsignServer.h"
 #include "DExtraHandler.h"
+#include "DongleHandler.h"
 #include "DPlusHandler.h"
 #include "HeaderLogger.h"
 #include "ConnectData.h"
@@ -58,7 +59,7 @@ m_icomRepeaterHandler(NULL),
 m_hbRepeaterHandler(NULL),
 m_dummyRepeaterHandler(NULL),
 m_dextraHandler(NULL),
-m_dplusPool(NULL),
+m_donglePool(NULL),
 m_dcsPool(NULL),
 m_ccsHandler(NULL),
 m_g2Handler(NULL),
@@ -98,6 +99,7 @@ m_longitude(0.0)
 	CConnectData::initialise();
 	CG2Handler::initialise(MAX_ROUTES);
 	CDExtraHandler::initialise(MAX_DEXTRA_LINKS);
+	CDongleHandler::initialise(MAX_DEXTRA_DONGLES);
 	CDPlusHandler::initialise(MAX_DPLUS_LINKS);
 	CDCSHandler::initialise(MAX_DCS_LINKS);
 	CRepeaterHandler::initialise(MAX_REPEATERS);
@@ -112,6 +114,7 @@ CIRCDDBGatewayThread::~CIRCDDBGatewayThread()
 	CConnectData::finalise();
 	CG2Handler::finalise();
 	CDExtraHandler::finalise();
+	CDongleHandler::finalise();
 	CDPlusHandler::finalise();
 	CDCSHandler::finalise();
 	CRepeaterHandler::finalise();
@@ -162,18 +165,19 @@ void CIRCDDBGatewayThread::run()
 		m_dextraHandler = NULL;
 	}
 
-	wxString dplusAddress = m_dplusEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
-	m_dplusPool = new CDPlusProtocolHandlerPool(MAX_OUTGOING + 1U, DPLUS_PORT, dplusAddress);
-	ret = m_dplusPool->open();
+	wxString dplusAddress = (m_dplusEnabled || m_dextraEnabled) ? m_gatewayAddress : LOOPBACK_ADDRESS;
+	m_donglePool = new CDongleProtocolHandlerPool(MAX_OUTGOING + 1U, DPLUS_PORT, dplusAddress);
+	ret = m_donglePool->open();
 	if (!ret) {
 		wxLogError(wxT("Could not open the D-Plus protocol pool"));
-		delete m_dplusPool;
-		m_dplusPool = NULL;
+		delete m_donglePool;
+		m_donglePool = NULL;
 	} else {
 		// Allocate the incoming port
-		CDPlusProtocolHandler* handler = m_dplusPool->getHandler(DPLUS_PORT);
-		CDPlusHandler::setDPlusProtocolIncoming(handler);
-		CDPlusHandler::setDPlusProtocolHandlerPool(m_dplusPool);
+		CDongleProtocolHandler* handler = m_donglePool->getHandler(DPLUS_PORT);
+		CDPlusHandler::setDongleProtocolIncoming(handler);
+		CDongleHandler::setDongleProtocolHandler(handler);
+		CDPlusHandler::setDongleProtocolHandlerPool(m_donglePool);
 	}
 
 	wxString dcsAddress = m_dcsEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
@@ -208,7 +212,7 @@ void CIRCDDBGatewayThread::run()
 	}
 
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || m_ccsHandler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraHandler == NULL || m_donglePool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || m_ccsHandler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -238,7 +242,10 @@ void CIRCDDBGatewayThread::run()
 	CDExtraHandler::setCallsign(m_gatewayCallsign);
 	CDExtraHandler::setDExtraProtocolHandler(m_dextraHandler);
 	CDExtraHandler::setHeaderLogger(headerLogger);
-	CDExtraHandler::setMaxDongles(m_dextraMaxDongles);
+
+	CDongleHandler::setCallsign(m_gatewayCallsign);
+	CDongleHandler::setHeaderLogger(headerLogger);
+	CDongleHandler::setMaxDongles(m_dextraMaxDongles);
 
 	CDPlusHandler::setCallsign(m_gatewayCallsign);
 	CDPlusHandler::setDPlusLogin(m_dplusLogin);
@@ -359,8 +366,8 @@ void CIRCDDBGatewayThread::run()
 				process = true;
 		}
 
-		if (m_dplusEnabled) {
-			f = processDPlus();
+		if (m_dplusEnabled || m_dextraEnabled) {
+			f = processDongles();
 			if (f)
 				process = true;
 		}
@@ -395,8 +402,10 @@ void CIRCDDBGatewayThread::run()
 		CRepeaterHandler::clock(ms);
 		CG2Handler::clock(ms);
 
-		if (m_dextraEnabled)
+		if (m_dextraEnabled) {
 			CDExtraHandler::clock(ms);
+			CDongleHandler::clock(ms);
+		}
 
 		if (m_dplusEnabled)
 			CDPlusHandler::clock(ms);
@@ -422,7 +431,7 @@ void CIRCDDBGatewayThread::run()
 		if (m_logEnabled) {
 			m_statusTimer1.clock(ms);
 			if (m_statusTimer1.hasExpired()) {
-				if (CDExtraHandler::stateChange() || CDPlusHandler::stateChange() || CDCSHandler::stateChange())
+				if (CDExtraHandler::stateChange() || CDongleHandler::stateChange() || CDPlusHandler::stateChange() || CDCSHandler::stateChange())
 					writeStatus();
 	
 				m_statusTimer1.reset();
@@ -453,8 +462,8 @@ void CIRCDDBGatewayThread::run()
 	m_dextraHandler->close();
 	delete m_dextraHandler;
 
-	m_dplusPool->close();
-	delete m_dplusPool;
+	m_donglePool->close();
+	delete m_donglePool;
 
 	m_dcsPool->close();
 	delete m_dcsPool;
@@ -911,13 +920,14 @@ bool CIRCDDBGatewayThread::processDExtra()
 	return true;
 }
 
-bool CIRCDDBGatewayThread::processDPlus()
+bool CIRCDDBGatewayThread::processDongles()
 {
-	DPLUS_TYPE type = m_dplusPool->read();
+	DONGLE_TYPE type = m_donglePool->read();
 
 	switch (type) {
-		case DP_POLL: {
-				CPollData* poll = m_dplusPool->readPoll();
+		case DP_DPLUS_POLL: 
+			if (m_dplusEnabled) {
+				CPollData* poll = m_donglePool->readDPlusPoll();
 				if (poll != NULL) {
 					CDPlusHandler::process(*poll);
 					delete poll;
@@ -925,8 +935,19 @@ bool CIRCDDBGatewayThread::processDPlus()
 			}
 			break;
 
-		case DP_CONNECT: {
-				CConnectData* connect = m_dplusPool->readConnect();
+		case DP_DEXTRA_POLL:
+			if (m_dextraEnabled) {
+				CPollData* poll = m_donglePool->readDExtraPoll();
+				if (poll != NULL) {
+					CDongleHandler::process(*poll);
+					delete poll;
+				}
+			}
+			break;
+
+		case DP_DPLUS_CONNECT:
+			if (m_dplusEnabled) {
+				CConnectData* connect = m_donglePool->readDPlusConnect();
 
 				if (connect != NULL) {
 					CDPlusHandler::process(*connect);
@@ -935,8 +956,9 @@ bool CIRCDDBGatewayThread::processDPlus()
 			}
 			break;
 
-		case DP_HEADER: {
-				CHeaderData* header = m_dplusPool->readHeader();
+		case DP_DPLUS_HEADER:
+			if (m_dplusEnabled) {
+				CHeaderData* header = m_donglePool->readDPlusHeader();
 				if (header != NULL) {
 					// wxLogMessage(wxT("D-Plus header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 					CDPlusHandler::process(*header);
@@ -945,10 +967,32 @@ bool CIRCDDBGatewayThread::processDPlus()
 			}
 			break;
 
-		case DP_AMBE: {
-				CAMBEData* data = m_dplusPool->readAMBE();
+		case DP_DEXTRA_HEADER:
+			if (m_dextraEnabled) {
+				CHeaderData* header = m_donglePool->readDExtraHeader();
+				if (header != NULL) {
+					// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
+					CDongleHandler::process(*header);
+					delete header;
+				}
+			}
+			break;
+
+		case DP_DPLUS_AMBE:
+			if (m_dplusEnabled) {
+				CAMBEData* data = m_donglePool->readDPlusAMBE();
 				if (data != NULL) {
 					CDPlusHandler::process(*data);
+					delete data;
+				}
+			}
+			break;
+
+		case DP_DEXTRA_AMBE:
+			if (m_dextraEnabled) {
+				CAMBEData* data = m_donglePool->readDExtraAMBE();
+				if (data != NULL) {
+					CDongleHandler::process(*data);
 					delete data;
 				}
 			}
@@ -1248,6 +1292,7 @@ void CIRCDDBGatewayThread::writeStatus()
 	}
 
 	CDExtraHandler::writeStatus(file);
+	CDongleHandler::writeStatus(file);
 	CDPlusHandler::writeStatus(file);
 	CDCSHandler::writeStatus(file);
 
@@ -1285,7 +1330,7 @@ CIRCDDBGatewayStatusData* CIRCDDBGatewayThread::getStatus() const
 	}
 
 	wxString dongles;
-	dongles.Append(CDExtraHandler::getDongles());
+	dongles.Append(CDongleHandler::getDongles());
 	dongles.Append(CDPlusHandler::getDongles());
 	status->setDongles(dongles);
 

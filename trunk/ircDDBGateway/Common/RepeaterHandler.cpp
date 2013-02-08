@@ -18,6 +18,7 @@
 
 #include "RepeaterHandler.h"
 #include "DExtraHandler.h"
+#include "DongleHandler.h"
 #include "DPlusHandler.h"
 #include "DStarDefines.h"
 #include "DCSHandler.h"
@@ -2160,6 +2161,7 @@ void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
 
 	// Incoming DExtra links have RPT1 and RPT2 swapped
 	temp.setRepeaters(m_gwyCallsign, m_rptCallsign);
+	CDongleHandler::writeHeader(this, temp);
 	CDExtraHandler::writeHeader(this, temp, DIR_INCOMING);
 
 	// Incoming DCS links have RPT1 and RPT2 swapped
@@ -2172,6 +2174,7 @@ void CRepeaterHandler::sendToIncoming(const CAMBEData& data)
 	CAMBEData temp(data);
 
 	CDExtraHandler::writeAMBE(this, temp, DIR_INCOMING);
+	CDongleHandler::writeAMBE(this, temp);
 
 	CDPlusHandler::writeAMBE(this, temp, DIR_INCOMING);
 
