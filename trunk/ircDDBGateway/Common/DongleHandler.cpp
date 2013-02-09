@@ -101,10 +101,8 @@ void CDongleHandler::getInfo(IReflectorCallback* handler, CRemoteRepeaterData& d
 
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CDongleHandler* reflector = m_reflectors[i];
-		if (reflector != NULL) {
-			if (reflector->m_destination == handler)
-				data.addLink(reflector->m_reflector, PROTO_DEXTRA, true, DIR_INCOMING, true);
-		}
+		if (reflector != NULL)
+			data.addLink(reflector->m_reflector, PROTO_DEXTRA, true, DIR_INCOMING, true);
 	}
 }
 

@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCSData.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCSHandler.cpp"
 				>
 			</File>
@@ -484,6 +488,10 @@
 			</File>
 			<File
 				RelativePath=".\CCITTChecksum.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CCSData.h"
 				>
 			</File>
 			<File

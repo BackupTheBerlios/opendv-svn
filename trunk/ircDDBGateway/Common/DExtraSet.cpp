@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ const unsigned int CONTROL_WIDTH = 130U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CDExtraSet::CDExtraSet(wxWindow* parent, int id, const wxString& title, bool enabled, unsigned int maxDongles) :
+CDExtraSet::CDExtraSet(wxWindow* parent, int id, const wxString& title, bool enabled, unsigned int maxDongles, unsigned int maxLinks) :
 wxPanel(parent, id),
 m_title(title),
 m_enabled(NULL),
@@ -43,17 +43,11 @@ m_maxDongles(NULL)
 	sizer->Add(maxDonglesLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	m_maxDongles = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	m_maxDongles->Append(wxT("0"));
-	m_maxDongles->Append(wxT("1"));
-	m_maxDongles->Append(wxT("2"));
-	m_maxDongles->Append(wxT("3"));
-	m_maxDongles->Append(wxT("4"));
-	m_maxDongles->Append(wxT("5"));
-	m_maxDongles->Append(wxT("6"));
-	m_maxDongles->Append(wxT("7"));
-	m_maxDongles->Append(wxT("8"));
-	m_maxDongles->Append(wxT("9"));
-	m_maxDongles->Append(wxT("10"));
+	for (unsigned int i = 0U; i <= maxLinks; i++) {
+		wxString text;
+		text.Printf(wxT("%u"), i);
+		m_maxDongles->Append(text);
+	}
 	sizer->Add(m_maxDongles, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_maxDongles->SetSelection(maxDongles);
 

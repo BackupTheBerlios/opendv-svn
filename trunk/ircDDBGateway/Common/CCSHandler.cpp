@@ -145,11 +145,37 @@ void CCCSHandler::process(CAMBEData& data)
 
 			m_incoming[i] = new CCCSAudioIncoming(id, handler, busy);
 
+			CCCSData response(header.getYourCall(), header.getMyCall1(), CT_QUERY);
+			response.setDestination(m_address, CCS_PORT);
+			m_handler->writeMisc(response);
 			return;
 		}
 	}
 
 	wxLogWarning(wxT("No space to add new incoming CCS audio"));
+}
+
+// XXX This needs upgrading
+void CCCSHandler::process(CCCSData& data)
+{
+	CC_TYPE type = data.getType();
+
+	switch (type) {
+		case CT_TERMINATE:
+			wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
+			break;
+		case CT_QUERY: {
+				// Just say that we're OK for now
+				CCCSData reply(data.getRemote(), CT_ANSWER);
+				reply.setDestination(m_address, CCS_PORT);
+				m_handler->writeMisc(reply);
+			}
+			break;
+		case CT_ANSWER:
+			break;
+		default:
+			break;
+	}
 }
 
 void CCCSHandler::process(CPollData& poll)
@@ -219,7 +245,10 @@ void CCCSHandler::writeEnd(const wxString& local, const wxString& remote)
 	if (m_state != CS_CONNECTED)
 		return;
 
-	m_handler->writeEnd(local, remote, m_address, CCS_PORT);
+	CCCSData data(local, remote, CT_TERMINATE);
+	data.setDestination(m_address, CCS_PORT);
+
+	m_handler->writeMisc(data);
 }
 
 void CCCSHandler::writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector)
@@ -267,6 +296,12 @@ void CCCSHandler::writeAMBE(IRepeaterCallback* handler, CAMBEData& data)
 				header.setYourCall(m_outgoing[i]->m_yourCall);
 				header.setRptCall1(m_outgoing[i]->m_rptCall1);
 				header.setRptCall2(m_outgoing[i]->m_rptCall2);
+
+				// If we're using DTMF numbers, only send a few times
+				if (m_outgoing[i]->m_yourCall.GetChar(1U) == '*') {
+					if (m_outgoing[i]->m_seqNo >= 6U)
+						header.setYourCall(wxT("CQCQCQ  "));
+				}
 
 				data.setRptSeq(m_outgoing[i]->m_seqNo++);
 				data.setDestination(m_address, CCS_PORT);

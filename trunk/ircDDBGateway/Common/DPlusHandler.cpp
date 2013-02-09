@@ -173,10 +173,8 @@ void CDPlusHandler::getInfo(IReflectorCallback* handler, CRemoteRepeaterData& da
 
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CDPlusHandler* reflector = m_reflectors[i];
-		if (reflector != NULL) {
-			if (reflector->m_destination == handler)
-				data.addLink(reflector->m_reflector, PROTO_DPLUS, reflector->m_linkState == DPLUS_LINKED, reflector->m_direction, true);
-		}
+		if (reflector != NULL)
+			data.addLink(reflector->m_reflector, PROTO_DPLUS, reflector->m_linkState == DPLUS_LINKED, reflector->m_direction, true);
 	}
 }
 

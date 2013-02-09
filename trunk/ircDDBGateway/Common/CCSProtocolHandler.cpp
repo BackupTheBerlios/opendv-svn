@@ -100,6 +100,18 @@ bool CCCSProtocolHandler::writeConnect(const CConnectData& connect)
 	return m_socket.write(buffer, length, connect.getYourAddress(), connect.getYourPort());
 }
 
+bool CCCSProtocolHandler::writeMisc(const CCCSData& data)
+{
+	unsigned char buffer[40U];
+	unsigned int length = data.getCCSData(buffer, 40U);
+
+// #if defined(DUMP_TX)
+	CUtils::dump(wxT("Sending Misc"), buffer, length);
+// #endif
+
+	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
+}
+
 bool CCCSProtocolHandler::writeBusy(const wxString& text, const in_addr& address, unsigned int port)
 {
 	unsigned char buffer[38U];
@@ -110,32 +122,6 @@ bool CCCSProtocolHandler::writeBusy(const wxString& text, const in_addr& address
 
 // #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Busy"), buffer, 38U);
-// #endif
-
-	return m_socket.write(buffer, 38U, address, port);
-}
-
-bool CCCSProtocolHandler::writeEnd(const wxString& local, const wxString& remote, const in_addr& address, unsigned int port)
-{
-	unsigned char buffer[38U];
-
-	::memset(buffer, 0x00U, 38U);
-
-	::memset(buffer + 0U, ' ', LONG_CALLSIGN_LENGTH);
-	for (unsigned int i = 0U; i < remote.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[i + 0U] = remote.GetChar(i);
-
-	buffer[8U]  = '0';
-	buffer[9U]  = '0';
-	buffer[10U] = '0';
-	buffer[11U] = '1';
-
-	::memset(buffer + 12U, ' ', LONG_CALLSIGN_LENGTH);
-	for (unsigned int i = 0U; i < local.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[i + 12U] = local.GetChar(i);
-
-// #if defined(DUMP_TX)
-	CUtils::dump(wxT("Sending End"), buffer, 38U);
 // #endif
 
 	return m_socket.write(buffer, 38U, address, port);
@@ -182,6 +168,7 @@ bool CCCSProtocolHandler::readPackets()
 				m_type = CT_POLL;
 				return false;
 			case 100U:
+				m_type = CT_MISC;
 				CUtils::dump(wxT("Busy data"), m_buffer, m_length);
 				return true;
 			default:
@@ -241,6 +228,22 @@ CPollData* CCCSProtocolHandler::readPoll()
 	}
 
 	return poll;
+}
+
+CCCSData* CCCSProtocolHandler::readMisc()
+{
+	if (m_type != CT_MISC)
+		return NULL;
+
+	CCCSData* data = new CCCSData;
+
+	bool res = data->setCCSData(m_buffer, m_length, m_yourAddress, m_yourPort, m_myPort);
+	if (!res) {
+		delete data;
+		return NULL;
+	}
+
+	return data;
 }
 
 void CCCSProtocolHandler::close()

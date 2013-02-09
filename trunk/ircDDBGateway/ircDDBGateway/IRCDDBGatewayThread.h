@@ -120,14 +120,14 @@ private:
 	double                    m_latitude;
 	double                    m_longitude;
 
-	bool processIrcDDB();
-	bool processRepeater(IRepeaterProtocolHandler* handler);
-	bool processDExtra();
-	bool processDongles();
-	bool processDCS();
-	bool processCCS();
-	bool processG2();
-	bool processDD();
+	void processIrcDDB();
+	void processRepeater(IRepeaterProtocolHandler* handler);
+	void processDExtra();
+	void processDongles();
+	void processDCS();
+	void processCCS();
+	void processG2();
+	void processDD();
 
 	void loadReflectors();
 	void loadDExtraReflectors();

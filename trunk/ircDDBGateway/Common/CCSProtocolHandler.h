@@ -25,6 +25,7 @@
 #include "HeardData.h"
 #include "AMBEData.h"
 #include "PollData.h"
+#include "CCSData.h"
 
 #if defined(__WINDOWS__)
 #include "Inaddr.h"
@@ -38,7 +39,8 @@ enum CCS_TYPE {
 	CT_NONE,
 	CT_DATA,
 	CT_POLL,
-	CT_CONNECT
+	CT_CONNECT,
+	CT_MISC
 };
 
 class CCCSProtocolHandler {
@@ -54,13 +56,14 @@ public:
 	bool writeConnect(const CConnectData& connect);
 	bool writePoll(const CPollData& poll);
 	bool writeHeard(const CHeardData& poll);
-	bool writeEnd(const wxString& local, const wxString& remote, const in_addr& address, unsigned int port);
+	bool writeMisc(const CCCSData& data);
 	bool writeBusy(const wxString& text, const in_addr& address, unsigned int port);
 
 	CCS_TYPE      read();
 	CAMBEData*    readData();
 	CPollData*    readPoll();
 	CConnectData* readConnect();
+	CCCSData*     readMisc();
 
 	void close();
 

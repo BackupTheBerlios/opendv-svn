@@ -1,6 +1,5 @@
-
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,7 +23,7 @@
 
 class CDExtraSet : public wxPanel {
 public:
-	CDExtraSet(wxWindow* parent, int id, const wxString& title, bool enabled, unsigned int maxDongles);
+	CDExtraSet(wxWindow* parent, int id, const wxString& title, bool enabled, unsigned int maxDongles, unsigned int maxLinks);
 	virtual ~CDExtraSet();
 
 	virtual bool Validate();

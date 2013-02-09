@@ -110,6 +110,7 @@ public:
 	static void process(CAMBEData& header);
 	static void process(CPollData& data);
 	static void process(CConnectData& connect);
+	static void process(CCCSData& data);
 
 	static void clock(unsigned int ms);
 

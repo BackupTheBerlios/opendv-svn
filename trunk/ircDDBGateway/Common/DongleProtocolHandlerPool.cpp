@@ -34,7 +34,7 @@ m_index(0U)
 		m_pool[i].m_inUse   = false;
 	}
 
-	wxLogMessage(wxT("Allocated UDP ports %u-%u to Dongles"), port, port + n - 1U);
+	wxLogMessage(wxT("Allocated UDP ports %u-%u to D-Plus"), port, port + n - 1U);
 }
 
 CDongleProtocolHandlerPool::~CDongleProtocolHandlerPool()
@@ -74,7 +74,7 @@ CDongleProtocolHandler* CDongleProtocolHandlerPool::getHandler(unsigned int port
 		}
 	}
 
-	wxLogError(wxT("Cannot find a free Dongle port in the pool"));
+	wxLogError(wxT("Cannot find a free D-Plus port in the pool"));
 
 	return NULL;
 }
@@ -90,7 +90,7 @@ void CDongleProtocolHandlerPool::release(CDongleProtocolHandler* handler)
 		}
 	}
 
-	wxLogError(wxT("Trying to release an unused Dongle port"));
+	wxLogError(wxT("Trying to release an unused D-Plus port"));
 }
 
 DONGLE_TYPE CDongleProtocolHandlerPool::read()
