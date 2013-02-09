@@ -2,6 +2,21 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Fix permissions
+FOUND: 2013-02-08
+REPORTED: DL5DI
+SOLVED: 2013-02-09
+COMMIT: 2013-02-09
+
+- the configuration programs ircddbgw_conf and repeater_conf now fix permissions on exit (option 99)
+- permissions issues are created by running the programs direct from a root shell WHICH IS NOT RECOMMENDED!!
+
+PLEASE check the manuals for a correct way to start the software! 
+A start from "root" may block writing to important status and log files!
+This feature allows to fix the problem manually, not to prevent it.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Debian armhf packages
 FOUND: 2013-01-22
 REPORTED: ON4TOP
