@@ -9,7 +9,7 @@ SOLVED: 2013-02-09
 COMMIT: 2013-02-09
 
 - the configuration programs ircddbgw_conf and repeater_conf now fix permissions on exit (option 99)
-- permissions issues are created by running the programs direct from a root shell WHICH IS NOT RECOMMENDED!!
+- permission issues are created by running the programs direct from a root shell WHICH IS NOT RECOMMENDED!!
 
 PLEASE check the manuals for a correct way to start the software! 
 A start from "root" may block writing to important status and log files!
