@@ -2331,13 +2331,12 @@ function hwsetup(){
 	    ;;
 	1)
 	    print_text "hw_new"
-	    hwtype${HWTYPE}
 	    write_value $CFG hwtype_${MODULE} "$HWTYPE"
 	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_NAME" > /etc/default/repeater_$MODULE
 	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_PATH" >> /etc/default/repeater_$MODULE
 	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_ARGS" | sed "s/\"$/ $MODULE\"/" >> /etc/default/repeater_$MODULE
 	    cat /etc/default/${hwname[$HWTYPE]} | grep "^DAEMON_USER" >> /etc/default/repeater_$MODULE
-	    rm $REPEATERCONFIG
+	    mv $REPEATERCONFIG $REPEATERCONFIG.$Dat
 	    echo "OK ($HWTYPE)"
 	    readconfig2
 	    RET=1
