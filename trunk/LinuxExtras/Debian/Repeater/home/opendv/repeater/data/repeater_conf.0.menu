@@ -121,16 +121,16 @@ hw_module:
 
 hw_reset:
 hw_reset:Do you want to start a new configuration?
-hw_reset:  0: keep old daemon settings for autostart
-hw_reset:  1: reset autostart settings to default values
+hw_reset:  0: start from old configuration and autostart settings
+hw_reset:  1: reset autostart settings and remove configfile
 hw_reset:
 
 hw_new:
-hw_new:Reset any existing autostart configuration for this module.
+hw_new:Autostart configuration resetted and configiration removed.
 hw_new:
 
 hw_keep:
-hw_keep:Keep existing daemon configuration 
+hw_keep:Keep existing configurations
 hw_keep:
 
 sel_module:

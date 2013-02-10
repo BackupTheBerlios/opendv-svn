@@ -92,7 +92,7 @@ do_stop()
 	# Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	# remove watchdog entry from crontab
-	rm -f /etc/cron.d/dcsgateway
+	rm -f /etc/cron.d/$NAME
 	return "$RETVAL"
 }
 

@@ -117,16 +117,16 @@ hw_module:
 
 hw_reset:
 hw_reset:Soll eine neue Konfiguration erzeugt werden?
-hw_reset:  0: behalte die bisherigen Autostart-Einstellungen bei
-hw_reset:  1: setze die Autostart-Einstellungen auf ihre Grundeinstellung zurueck
+hw_reset:  0: behalte die bisherigen Autostart-Einstellungen und Konfigurationsparameter bei
+hw_reset:  1: setze die Autostart-Einstellungen zurueck und loesche das Konfigurationsfile
 hw_reset:
 
 hw_new:
-hw_new:Die Autostart-Einstellungen wurden zurueckgesetzt.
+hw_new:Die Autostart-Einstellungen wurden zurueckgesetzt, das Konfigurationsfile geloescht.
 hw_new:
 
 hw_keep:
-hw_keep:Die bisherigen Autostart-Einstellungen werden uebernommen.
+hw_keep:Die bisherigen Einstellungen werden uebernommen.
 hw_keep:
 
 sel_module:
