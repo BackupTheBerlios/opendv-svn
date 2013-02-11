@@ -2,6 +2,29 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: conversion script added
+FOUND: 2013-02-11
+REPORTED: DL5DI
+SOLVED: 2013-02-10
+COMMIT: 2013-02-10
+
+/usr/bin/convert_defaults.sh
+script added to easily convert /etc/default/repeater_* to correct format
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: fix repeater startup issues
+FOUND: 2013-02-07
+REPORTED: DL5DI
+SOLVED: 2013-02-10
+COMMIT: 2013-02-10
+
+- autostart of repeater modules failed - fixed
+- repeater modules started more than once - fixed
+root cause were failures in /etc/default/repeater_*
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Fix permissions
 FOUND: 2013-02-08
 REPORTED: DL5DI

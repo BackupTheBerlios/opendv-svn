@@ -4,7 +4,7 @@ do
     filename=repeater_${i}
     if [ -f /etc/default/$filename ]; then
         mv /etc/default/$filename /etc/default/$filename.bak
-        cat /etc/default/$filename.bak | grep "^DAEMON_PATH" |  sed "s/DAEMON_PATH=\/usr\/bin/DAEMON_NAME=/" > /etc/default/$filename
+        cat /etc/default/$filename.bak | grep "^DAEMON_PATH" |  sed "s/DAEMON_PATH=\/usr\/bin\//DAEMON_NAME=/" > /etc/default/$filename
 		echo "$filename entry DAEMON_NAME"
         cat /etc/default/$filename.bak | grep "^DAEMON_PATH" >> /etc/default/$filename
 		echo "$filename entry DAEMON_PATH"

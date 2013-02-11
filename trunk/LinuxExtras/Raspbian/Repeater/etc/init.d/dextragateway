@@ -35,7 +35,10 @@ fi
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
 # Exit if configfile is not complete
-[ -z $DAEMON_NAME ] || [ -z $DAEMON_PATH ] || [ -z $DAEMON_USER ] && echo "/etc/default/$NAME not complete!"; exit 2
+if [ -z $DAEMON_NAME ] || [ -z $DAEMON_PATH ] || [ -z $DAEMON_USER ]; then
+    echo "/etc/default/$NAME not complete!"
+    exit 2
+fi
 
 # Exit if the package is not installed
 [ -x $DAEMON_PATH ] || exit 0
