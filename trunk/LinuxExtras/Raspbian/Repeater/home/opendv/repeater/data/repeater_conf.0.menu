@@ -241,7 +241,7 @@ logdir: It is save to keep the default path like it was installed automatically.
 logdir:
 
 audiodir:
-audiodir: Enter the directory where autio output file are stored (.dvtool)
+audiodir: Enter the directory where audio output files are stored (.dvtool)
 audiodir: This directory needs to exist and have write permissions for the daemon.
 audiodir:
 

@@ -30,8 +30,12 @@ fi
 # Read configuration file if it exists
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME || exit 2
 
+# Exit if configfile is not complete
+[ -z $DAEMON_NAME ] || [ -z $DAEMON_PATH ] || [ -z $DAEMON_USER ] && echo "/etc/default/$NAME not complete!"; exit 2
+
 # Exit if the package is not installed
 [ -x $DAEMON_PATH ] || exit 0
+
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
@@ -55,7 +59,6 @@ do_start()
         ntpdate pool.ntp.org
         [ -x /etc/init.d/ntp ] && /etc/init.d/ntp start
         sleep 2
-                                
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH --test > /dev/null \
 		|| return 1
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH -- \

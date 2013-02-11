@@ -225,7 +225,7 @@ nolog: Die Groesse von Logfiles kann sehr schnell anwachsen.
 nolog: Mit dieser Funktion kann das Logbuch abgeschaltet werden.
 nolog:
 nolog: 0  LOGBUCHABSCHALTUNG AUS
-nolog: 1  LOGBUCHABSCHAlTUNG EIN
+nolog: 1  LOGBUCHABSCHALTUNG EIN
 nolog:
 
 logdir:
@@ -237,7 +237,7 @@ logdir: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beib
 logdir:
 
 audiodir:
-audiodir: Gib das Verzeichnis ein wo Logfiles angelegt werden sollen.
+audiodir: Gib das Verzeichnis ein wo Audioaufzeichungen angelegt werden sollen.
 audiodir: Das Verzeichnis muss existieren und die richtigen Zugriffsrechte besitzen!!
 audiodir: Wenn nicht unbedingt anders erforderlich, sollte die Voreinstellung beibehalten werden!
 audiodir:

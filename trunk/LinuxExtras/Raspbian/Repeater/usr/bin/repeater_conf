@@ -42,6 +42,7 @@
 # 2013-02-07 dl5di    bugfixes
 # 2013-02-09 dl5di    fix permissions on exit for those who started the software accidently from root
 # 2013-02-10 dl5di    bugfixes
+# 2013-02-11 dl5di    fix audiodir
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -51,7 +52,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20130210"
+rev="20130211"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1163,7 +1164,7 @@ function hwtype1(){
         read_default $var
     read_value $REPEATERCONFIG $var
     if [ "$?" = 0 ]; then
-    	VALUE="$DEFAULT"
+	VALUE="$DEFAULT"
     fi
     print_text $var 
 
@@ -1246,7 +1247,7 @@ function hwtype1(){
     	VALUE="$DEFAULT"
     fi
 
-    print_text $var 
+    print_text $var
 
     if [ -e /usr/bin/aplay ]; then
 	array1=$(aplay -l | grep "card" | cut -d "[" -f 2 | cut -d "]" -f 1 | tr '\n' ';')
@@ -1520,7 +1521,7 @@ function hwtype1(){
     echo "$VALUE" | grep -q "/dev/ttyUSB" && TYPE=4
     echo "$VALUE" | grep -q "/dev/mem" && TYPE=5
 
-    print_text $var 
+    print_text $var
     select_item $var 5 "$TYPE"
     RET=$?
     case $RET in
@@ -2318,12 +2319,16 @@ function hwsetup(){
     readconfig2
 
     var="hw_reset"
-    print_text $var
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
 
-    request_selection "$var" 1 0
-    INPUT=$?
+    if [ -f /etc/default/repeater_$MODULE ]; then
+	print_text $var
+	request_selection "$var" 1 0
+	INPUT=$?
+    else
+	INPUT=1
+    fi
     case $INPUT in
 	0)
 	    print_text "hw_keep"
@@ -2393,16 +2398,16 @@ function logging(){
     if [ "$?" != 0 ]; then
     	NEW_ARGS="$NEW_ARGS -nolog"
     fi
-    
+
     var="logdir"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
-    print_text $var 
+    print_text $var
     echo $LOGDIR
     request_input $var 3 80 2 "$LOGDIR"
     if [ "$?" = 3 ]; then
         INPUT="/var/log/opendv"
-    fi                
+    fi
     if [ ! -z "$INPUT" ]; then
 	NEW_ARGS="$NEW_ARGS -logdir $INPUT"
     fi
@@ -2410,10 +2415,10 @@ function logging(){
     var="audiodir"
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
-    print_text $var 
+    print_text $var
     echo $AUDIODIR
     request_input $var 3 80 0 "$AUDIODIR"
-    if [ ! -z "$AUDIODIR" ]; then
+    if [ ! -z "$INPUT" ]; then
 	NEW_ARGS="$NEW_ARGS -audiodir $INPUT"
     fi
 
