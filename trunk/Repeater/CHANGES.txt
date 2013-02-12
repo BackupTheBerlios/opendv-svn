@@ -1795,3 +1795,4 @@ Remove DVAP frequency offset setting.
 Updated XRF008s and XRF123s IP addresses.
 Move DExtra Gateway to use the new DExtra dongle UDP port.
 Reset the DVAP into GMSK mode if FM data is received.
+Fix for GMSK modems when using Windods LibUsb.

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -359,15 +359,15 @@ TRISTATE CGMSKModemLibUsb::hasSpace()
 	if (m_broken)
 		return STATE_TRUE;
 
-	char space;
-	int rc = m_usbControlMsg(m_dev, 0xC0, GET_REMAINSPACE, 0, 0, &space, 1, USB_TIMEOUT);
+	unsigned char space;
+	int rc = m_usbControlMsg(m_dev, 0xC0, GET_REMAINSPACE, 0, 0, (char*)&space, 1, USB_TIMEOUT);
 	if (rc != 1) {
 		wxString errorText(m_usbStrerror(), wxConvLocal);
 		wxLogMessage(wxT("GET_REMAINSPACE, ret: %d, err=%s"), rc, errorText.c_str());
 		return STATE_UNKNOWN;
 	}
 
-	if (space > 0)
+	if (space > 0U)
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;
