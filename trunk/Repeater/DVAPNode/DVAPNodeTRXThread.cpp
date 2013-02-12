@@ -81,7 +81,9 @@ m_packetTime(),
 m_packetCount(0U),
 m_packetSilence(0U),
 m_whiteList(NULL),
-m_blackList(NULL)
+m_blackList(NULL),
+m_greyList(NULL),
+m_blocked(false)
 {
 	m_networkQueue = new COutputQueue*[NETWORK_QUEUE_COUNT];
 	for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
@@ -283,6 +285,9 @@ void CDVAPNodeTRXThread::setBlackList(CCallsignList* list)
 
 void CDVAPNodeTRXThread::setGreyList(CCallsignList* list)
 {
+	wxASSERT(list != NULL);
+
+	m_greyList = list;
 }
 
 void CDVAPNodeTRXThread::receiveRadioHeader()
@@ -687,7 +692,7 @@ bool CDVAPNodeTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 
 		case DSRS_TIMEOUT:
 			// Send end of transmission data to the network
-			if (m_protocolHandler != NULL) {
+			if (!m_blocked && m_protocolHandler != NULL) {
 				unsigned char bytes[DV_FRAME_MAX_LENGTH_BYTES];
 				::memcpy(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 				::memcpy(bytes + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES, END_PATTERN_LENGTH_BYTES);
@@ -765,6 +770,15 @@ bool CDVAPNodeTRXThread::processRadioHeader(CHeaderData* header)
 		}
 	}
 
+	m_blocked = false;
+	if (m_greyList != NULL) {
+		bool res = m_greyList->isInList(header->getMyCall1());
+		if (res) {
+			wxLogMessage(wxT("%s blocked from the network due to being in the grey list"), header->getMyCall1().c_str());
+			m_blocked = true;
+		}
+	}
+
 	TRISTATE valid = checkHeader(*header);
 	switch (valid) {
 		case STATE_FALSE: {
@@ -796,8 +810,8 @@ bool CDVAPNodeTRXThread::processRadioHeader(CHeaderData* header)
 		if (m_logging != NULL)
 			m_logging->open(*m_rxHeader);
 
-		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
-		if (m_protocolHandler != NULL && !m_rxHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_rxHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
+		// Only send on the network if they are not blocked and we have one and RPT2 is not blank or the repeater callsign
+		if (!m_blocked && m_protocolHandler != NULL && !m_rxHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_rxHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CHeaderData netHeader(*m_rxHeader);
 			netHeader.setRptCall1(m_rxHeader->getRptCall2());
 			netHeader.setRptCall2(m_rxHeader->getRptCall1());
@@ -866,7 +880,7 @@ void CDVAPNodeTRXThread::processRadioFrame(unsigned char* data, FRAME_TYPE type)
 			m_logging->close();
 
 		// Send null data and the end marker over the network, and the statistics
-		if (m_protocolHandler != NULL) {
+		if (!m_blocked && m_protocolHandler != NULL) {
 			unsigned char bytes[DV_FRAME_MAX_LENGTH_BYTES];
 			::memcpy(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 			::memcpy(bytes + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES, END_PATTERN_LENGTH_BYTES);
@@ -877,7 +891,7 @@ void CDVAPNodeTRXThread::processRadioFrame(unsigned char* data, FRAME_TYPE type)
 			m_logging->write(data, DV_FRAME_LENGTH_BYTES);
 
 		// Send the data to the network
-		if (m_protocolHandler != NULL)
+		if (!m_blocked && m_protocolHandler != NULL)
 			m_protocolHandler->writeData(data, DV_FRAME_LENGTH_BYTES, errors, false);
 	}
 }

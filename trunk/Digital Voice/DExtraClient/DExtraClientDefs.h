@@ -21,7 +21,7 @@
 
 #include <wx/wx.h>
 
-const unsigned int DEXTRA_PORT   = 20001U;
+const unsigned int DEXTRA_PORT   = 30001U;
 
 const wxString APPLICATION_NAME = wxT("DExtra Client");
 

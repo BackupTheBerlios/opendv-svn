@@ -55,6 +55,7 @@ public:
 	virtual void setLogging(bool logging, const wxString& dir);
 	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
+	virtual void setGreyList(CCallsignList* list);
 
 	virtual void shutdown();
 	virtual void startup();
@@ -169,6 +170,8 @@ private:
 	unsigned int               m_packetSilence;
 	CCallsignList*             m_whiteList;
 	CCallsignList*             m_blackList;
+	CCallsignList*             m_greyList;
+	bool                       m_blocked;
 	bool                       m_busyData;
 
 	void receiveHeader(unsigned char* data, unsigned int length);

@@ -161,6 +161,8 @@ private:
 	wxRegEx                    m_regEx;
 	CCallsignList*             m_whiteList;
 	CCallsignList*             m_blackList;
+	CCallsignList*             m_greyList;
+	bool                       m_blocked;
 	bool                       m_busyData;
 	wxStopWatch                m_packetTime;
 	unsigned int               m_totalPackets;

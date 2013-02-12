@@ -347,7 +347,7 @@ TRISTATE CGMSKModemLibUsb::hasSpace()
 		return STATE_UNKNOWN;
 	}
 
-	if (space > 0U)
+	if (space >= DV_FRAME_LENGTH_BYTES)
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;
@@ -737,7 +737,7 @@ TRISTATE CGMSKModemLibUsb::hasSpace()
 		return STATE_UNKNOWN;
 	}
 
-	if (space > 0U)
+	if (space >= DV_FRAME_LENGTH_BYTES)
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;

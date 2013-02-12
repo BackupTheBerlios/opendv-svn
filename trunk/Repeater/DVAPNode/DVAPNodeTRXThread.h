@@ -107,6 +107,8 @@ private:
 	unsigned int               m_packetSilence;
 	CCallsignList*             m_whiteList;
 	CCallsignList*             m_blackList;
+	CCallsignList*             m_greyList;
+	bool                       m_blocked;
 
 	void receiveRadioHeader();
 	void receiveRadioData();

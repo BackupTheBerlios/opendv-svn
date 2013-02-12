@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -292,7 +292,7 @@ TRISTATE CGMSKModemWinUSB::hasSpace()
 		return STATE_UNKNOWN;
 	}
 
-	if (space > 0U)
+	if (space >= DV_FRAME_LENGTH_BYTES)
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;

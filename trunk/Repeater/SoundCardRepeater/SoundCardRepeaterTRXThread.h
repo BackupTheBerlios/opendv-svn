@@ -61,6 +61,7 @@ public:
 	virtual void setReader(CWAVFileReader* reader);
 	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
+	virtual void setGreyList(CCallsignList* list);
 
 	virtual void setRXLevel(wxFloat32 level);
 	virtual void setTXLevel(wxFloat32 level);
@@ -209,6 +210,8 @@ private:
 	unsigned int              m_packetSilence;
 	CCallsignList*            m_whiteList;
 	CCallsignList*            m_blackList;
+	CCallsignList*            m_greyList;
+	bool                      m_blocked;
 	bool                      m_busyData;
 
 	void receiveRadio();

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -119,6 +119,8 @@ m_status5Text(),
 m_regEx(wxT("^[A-Z0-9]{1}[A-Z0-9]{0,1}[0-9]{1}[A-Z]{1,4} {0,4}[ A-RT-Z]{1}$")),
 m_whiteList(NULL),
 m_blackList(NULL),
+m_greyList(NULL),
+m_blocked(false),
 m_busyData(false),
 m_packetTime(),
 m_totalPackets(0U),
@@ -445,6 +447,13 @@ void CSplitRepeaterThread::setBlackList(CCallsignList* list)
 	wxASSERT(list != NULL);
 
 	m_blackList = list;
+}
+
+void CSplitRepeaterThread::setGreyList(CCallsignList* list)
+{
+	wxASSERT(list != NULL);
+
+	m_greyList = list;
 }
 
 void CSplitRepeaterThread::processReceiver1Header(CSplitRepeaterHeaderData* header)
@@ -1076,6 +1085,15 @@ bool CSplitRepeaterThread::processRadioHeader(CSplitRepeaterHeaderData* header)
 		}
 	}
 
+	m_blocked = false;
+	if (m_greyList != NULL) {
+		bool res = m_greyList->isInList(header->getMyCall1());
+		if (res) {
+			wxLogMessage(wxT("%s blocked from the network due to being in the grey list"), header->getMyCall1().c_str());
+			m_blocked = true;
+		}
+	}
+
 	// We don't handle DD data packets
 	if (header->isDataPacket()) {
 		wxLogMessage(wxT("Received a DD packet, ignoring"));
@@ -1124,8 +1142,8 @@ void CSplitRepeaterThread::processRadioHeader()
 
 	// Send the valid header to the gateway if we are accepted
 	if (m_state == DSRS_VALID) {
-		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
-		if (!m_txHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_txHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
+		// Only send on the network if the user isn't blocked and we have one and RPT2 is not blank or the repeater callsign
+		if (!m_blocked && !m_txHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_txHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CSplitRepeaterHeaderData netHeader(*m_txHeader);
 			netHeader.setFlag1(m_txHeader->getFlag1() & ~REPEATER_MASK);
 			netHeader.setDestination(m_gatewayAddress, m_gatewayPort);
@@ -1151,13 +1169,15 @@ void CSplitRepeaterThread::processRadioHeader()
 	if (m_state == DSRS_NETWORK) {
 		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
 		if (!m_txHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_txHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
-			CSplitRepeaterHeaderData netHeader(*m_txHeader);
-			netHeader.setRptCall1(m_txHeader->getRptCall2());
-			netHeader.setRptCall2(m_txHeader->getRptCall1());
-			netHeader.setFlag1(m_txHeader->getFlag1() & ~REPEATER_MASK);
-			netHeader.setDestination(m_gatewayAddress, m_gatewayPort);
-			netHeader.setId(m_radioId);
-			m_protocolHandler->writeBusyHeader(netHeader);
+			if (!m_blocked) {
+				CSplitRepeaterHeaderData netHeader(*m_txHeader);
+				netHeader.setRptCall1(m_txHeader->getRptCall2());
+				netHeader.setRptCall2(m_txHeader->getRptCall1());
+				netHeader.setFlag1(m_txHeader->getFlag1() & ~REPEATER_MASK);
+				netHeader.setDestination(m_gatewayAddress, m_gatewayPort);
+				netHeader.setId(m_radioId);
+				m_protocolHandler->writeBusyHeader(netHeader);
+			}
 
 			m_busyData = true;
 		}
@@ -1279,10 +1299,12 @@ void CSplitRepeaterThread::processRadioFrame(CSplitRepeaterAMBEData* data)
 		m_ambeSilence++;
 
 	if (m_busyData) {
-		// Pass background AMBE data to the network
-		data->setDestination(m_gatewayAddress, m_gatewayPort);
-		data->setId(m_radioId);
-		m_protocolHandler->writeBusyData(*data);
+		if (!m_blocked) {
+			// Pass background AMBE data to the network if the user isn't blocked
+			data->setDestination(m_gatewayAddress, m_gatewayPort);
+			data->setId(m_radioId);
+			m_protocolHandler->writeBusyData(*data);
+		}
 	} else if (m_state == DSRS_VALID) {
 		// Don't pass through the frame of an invalid transmission
 		data->setId(m_radioId);
@@ -1291,9 +1313,11 @@ void CSplitRepeaterThread::processRadioFrame(CSplitRepeaterAMBEData* data)
 		if (m_mode == MODE_DUPLEX)
 			transmitFrame(data);
 
-		// Send data over the network
-		data->setDestination(m_gatewayAddress, m_gatewayPort);
-		m_protocolHandler->writeData(*data);
+		// Send data over the network if the user is not blocked
+		if (!m_blocked) {
+			data->setDestination(m_gatewayAddress, m_gatewayPort);
+			m_protocolHandler->writeData(*data);
+		}
 	}
 
 	if (end) {

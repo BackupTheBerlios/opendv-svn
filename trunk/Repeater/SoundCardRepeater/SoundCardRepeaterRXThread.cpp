@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -235,6 +235,10 @@ void CSoundCardRepeaterRXThread::setWhiteList(CCallsignList* list)
 }
 
 void CSoundCardRepeaterRXThread::setBlackList(CCallsignList* list)
+{
+}
+
+void CSoundCardRepeaterRXThread::setGreyList(CCallsignList* list)
 {
 }
 

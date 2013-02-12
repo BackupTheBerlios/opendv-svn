@@ -167,6 +167,8 @@ m_packetCount(0U),
 m_packetSilence(0U),
 m_whiteList(NULL),
 m_blackList(NULL),
+m_greyList(NULL),
+m_blocked(false),
 m_busyData(false)
 {
 	m_lastData = new unsigned char[DV_FRAME_MAX_LENGTH_BYTES];
@@ -596,6 +598,13 @@ void CSoundCardRepeaterTRXThread::setBlackList(CCallsignList* list)
 	wxASSERT(list != NULL);
 
 	m_blackList = list;
+}
+
+void CSoundCardRepeaterTRXThread::setGreyList(CCallsignList* list)
+{
+	wxASSERT(list != NULL);
+
+	m_greyList = list;
 }
 
 void CSoundCardRepeaterTRXThread::receiveRadio()
@@ -1536,7 +1545,7 @@ bool CSoundCardRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 				m_radioBuffer.addData(END_PATTERN_BITS, END_PATTERN_LENGTH_BITS);
 			}
 
-			if (m_protocolHandler != NULL) {
+			if (!m_blocked && m_protocolHandler != NULL) {
 				unsigned char bytes[DV_FRAME_MAX_LENGTH_BYTES];
 				::memcpy(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 				::memcpy(bytes + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES, END_PATTERN_LENGTH_BYTES);
@@ -1637,6 +1646,15 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 		}
 	}
 
+	m_blocked = false;
+	if (m_greyList != NULL) {
+		bool res = m_greyList->isInList(header->getMyCall1());
+		if (res) {
+			wxLogMessage(wxT("%s blocked from the network due to being in the grey list"), header->getMyCall1().c_str());
+			m_blocked = true;
+		}
+	}
+
 	// Check for receiving our own gateway data, and ignore it
 	if (m_mode == MODE_GATEWAY) {
 		if (header->getFlag2() == 0x01U) {
@@ -1686,8 +1704,8 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 		if (m_logging != NULL)
 			m_logging->open(*m_header);
 
-		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
-		if (m_protocolHandler != NULL && !m_header->getRptCall2().IsSameAs(wxT("        ")) && !m_header->getRptCall2().IsSameAs(m_rptCallsign)) {
+		// Only send on the network if the user isn't blocked and we have one and RPT2 is not blank or the repeater callsign
+		if (!m_blocked && m_protocolHandler != NULL && !m_header->getRptCall2().IsSameAs(wxT("        ")) && !m_header->getRptCall2().IsSameAs(m_rptCallsign)) {
 			CHeaderData netHeader(*m_header);
 			netHeader.setRptCall1(m_header->getRptCall2());
 			netHeader.setRptCall2(m_header->getRptCall1());
@@ -1708,13 +1726,15 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 	// If we're in network mode, send the header as a busy header to the gateway in case it's an unlink
 	// command
 	if (m_rptState == DSRS_NETWORK) {
-		// Only send on the network if we have one and RPT2 is not blank or the repeater callsign
-		if (m_protocolHandler != NULL && !header->getRptCall2().IsSameAs(wxT("        ")) && !header->getRptCall2().IsSameAs(m_rptCallsign)) {
-			CHeaderData netHeader(*header);
-			netHeader.setRptCall1(header->getRptCall2());
-			netHeader.setRptCall2(header->getRptCall1());
-			netHeader.setFlag1(header->getFlag1() & ~REPEATER_MASK);
-			m_protocolHandler->writeBusyHeader(netHeader);
+		// Only send on the network if the user isn't blocked and we have one and RPT2 is not blank or the repeater callsign
+		if (!header->getRptCall2().IsSameAs(wxT("        ")) && !header->getRptCall2().IsSameAs(m_rptCallsign)) {
+			if (!m_blocked && m_protocolHandler != NULL) {
+				CHeaderData netHeader(*header);
+				netHeader.setRptCall1(header->getRptCall2());
+				netHeader.setRptCall2(header->getRptCall1());
+				netHeader.setFlag1(header->getFlag1() & ~REPEATER_MASK);
+				m_protocolHandler->writeBusyHeader(netHeader);
+			}
 
 			m_busyData = true;
 		}
@@ -1793,18 +1813,23 @@ void CSoundCardRepeaterTRXThread::processRadioFrame(FRAME_TYPE type)
 	// Pass background AMBE data to the network
 	if (m_busyData) {
 		if (type == FRAME_END) {
-			unsigned char bytes[DV_FRAME_MAX_LENGTH_BYTES];
-			::memcpy(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
-			::memcpy(bytes + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES, END_PATTERN_LENGTH_BYTES);
-			m_protocolHandler->writeBusyData(bytes, DV_FRAME_MAX_LENGTH_BYTES, 0U, true);
+			if (!m_blocked && m_protocolHandler != NULL) {
+				unsigned char bytes[DV_FRAME_MAX_LENGTH_BYTES];
+				::memcpy(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
+				::memcpy(bytes + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES, END_PATTERN_LENGTH_BYTES);
+				m_protocolHandler->writeBusyData(bytes, DV_FRAME_MAX_LENGTH_BYTES, 0U, true);
+			}
+
 			m_busyData = false;
 		} else {
-			// Convert the bits to bytes for the network
-			unsigned char bytes[DV_FRAME_LENGTH_BYTES];
-			unsigned int n = 0U;
-			for (unsigned int i = 0U; i < DV_FRAME_LENGTH_BYTES; i++, n += 8U)
-				bytes[i] = CUtils::bitsToByteRev(bits + n);
-			m_protocolHandler->writeBusyData(bytes, DV_FRAME_LENGTH_BYTES, errors, false);
+			if (!m_blocked && m_protocolHandler != NULL) {
+				// Convert the bits to bytes for the network
+				unsigned char bytes[DV_FRAME_LENGTH_BYTES];
+				unsigned int n = 0U;
+				for (unsigned int i = 0U; i < DV_FRAME_LENGTH_BYTES; i++, n += 8U)
+					bytes[i] = CUtils::bitsToByteRev(bits + n);
+				m_protocolHandler->writeBusyData(bytes, DV_FRAME_LENGTH_BYTES, errors, false);
+			}
 		}
 
 		return;
@@ -1827,7 +1852,7 @@ void CSoundCardRepeaterTRXThread::processRadioFrame(FRAME_TYPE type)
 		}
 
 		// Send null data and the end marker over the network
-		if (m_protocolHandler != NULL) {
+		if (!m_blocked && m_protocolHandler != NULL) {
 			unsigned char bytes[DV_FRAME_MAX_LENGTH_BYTES];
 			::memcpy(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 			::memcpy(bytes + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES, END_PATTERN_LENGTH_BYTES);
@@ -1841,7 +1866,7 @@ void CSoundCardRepeaterTRXThread::processRadioFrame(FRAME_TYPE type)
 			bytes[i] = CUtils::bitsToByteRev(bits + n);
 
 		// Send the data to the network
-		if (m_protocolHandler != NULL)
+		if (!m_blocked && m_protocolHandler != NULL)
 			m_protocolHandler->writeData(bytes, DV_FRAME_LENGTH_BYTES, errors, false);
 
 		if (m_logging != NULL)

@@ -135,7 +135,7 @@ const unsigned int  DSTAR_FRAMES_PER_SEC = 50U;
 
 const unsigned int  DSTAR_TICKS_PER_SEC = DSTAR_RADIO_SAMPLE_RATE / DSTAR_RADIO_BLOCK_SIZE;
 
-const unsigned int  DEXTRA_PORT = 20001U;
+const unsigned int  DEXTRA_PORT = 30001U;
 const unsigned int  DCS_PORT    = 30051U;
 
 const unsigned int  GMSK_MODEM_DATA_LENGTH = 8U;
