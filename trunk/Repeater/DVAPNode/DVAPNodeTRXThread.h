@@ -46,6 +46,7 @@ public:
 	virtual void setLogging(bool logging, const wxString& dir);
 	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
+	virtual void setGreyList(CCallsignList* list);
 
 	virtual CDVAPNodeStatusData* getStatus();
 

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ public:
 	virtual void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line);
 	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
+	virtual void setGreyList(CCallsignList* list);
 
 	virtual void shutdown();
 	virtual void startup();

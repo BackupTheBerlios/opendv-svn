@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ public:
 	virtual void setLogging(bool logging, const wxString& dir) = 0;
 	virtual void setWhiteList(CCallsignList* list) = 0;
 	virtual void setBlackList(CCallsignList* list) = 0;
+	virtual void setGreyList(CCallsignList* list) = 0;
 
 	virtual void shutdown() = 0;
 	virtual void startup() = 0;

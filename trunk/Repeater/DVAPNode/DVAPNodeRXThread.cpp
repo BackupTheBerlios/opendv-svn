@@ -157,6 +157,10 @@ void CDVAPNodeRXThread::setBlackList(CCallsignList* list)
 {
 }
 
+void CDVAPNodeRXThread::setGreyList(CCallsignList* list)
+{
+}
+
 void CDVAPNodeRXThread::receiveRadioHeader()
 {
 	CHeaderData* header = m_dvap->readHeader();

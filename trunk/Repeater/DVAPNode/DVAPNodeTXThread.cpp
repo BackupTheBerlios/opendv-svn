@@ -188,6 +188,10 @@ void CDVAPNodeTXThread::setBlackList(CCallsignList* list)
 {
 }
 
+void CDVAPNodeTXThread::setGreyList(CCallsignList* list)
+{
+}
+
 void CDVAPNodeTXThread::receiveNetwork()
 {
 	NETWORK_TYPE type;

@@ -275,5 +275,19 @@ bool CDVAPNodeD::createThread()
 		}
 	}
 
+	wxFileName glFilename(wxFileName::GetHomeDir(), GREYLIST_FILE_NAME);
+	exists = glFilename.FileExists();
+	if (exists) {
+		CCallsignList* list = new CCallsignList(glFilename.GetFullPath());
+		bool res = list->load();
+		if (!res) {
+			wxLogError(wxT("Unable to open grey list file - %s"), glFilename.GetFullPath().c_str());
+			delete list;
+		} else {
+			wxLogInfo(wxT("%u callsigns loaded into the grey list"), list->getCount());
+			m_thread->setGreyList(list);
+		}
+	}
+
 	return true;
 }

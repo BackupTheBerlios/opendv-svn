@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ public:
 	virtual void setReader(CWAVFileReader* reader) = 0;
 	virtual void setWhiteList(CCallsignList* list) = 0;
 	virtual void setBlackList(CCallsignList* list) = 0;
+	virtual void setGreyList(CCallsignList* list) = 0;
 
 	virtual void setRXLevel(wxFloat32 level) = 0;
 	virtual void setTXLevel(wxFloat32 level) = 0;

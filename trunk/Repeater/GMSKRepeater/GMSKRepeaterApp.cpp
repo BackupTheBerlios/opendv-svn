@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -512,6 +512,20 @@ void CGMSKRepeaterApp::createThread()
 		} else {
 			wxLogInfo(wxT("%u callsigns loaded into the black list"), list->getCount());
 			thread->setBlackList(list);
+		}
+	}
+
+	wxFileName glFilename(wxFileName::GetHomeDir(), GREYLIST_FILE_NAME);
+	exists = glFilename.FileExists();
+	if (exists) {
+		CCallsignList* list = new CCallsignList(glFilename.GetFullPath());
+		bool res = list->load();
+		if (!res) {
+			wxLogError(wxT("Unable to open grey list file - %s"), glFilename.GetFullPath().c_str());
+			delete list;
+		} else {
+			wxLogInfo(wxT("%u callsigns loaded into the grey list"), list->getCount());
+			thread->setGreyList(list);
 		}
 	}
 
