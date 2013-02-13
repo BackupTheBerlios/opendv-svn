@@ -27,7 +27,6 @@
 #include "IRCDDBGatewayStatusData.h"
 #include "DCSProtocolHandlerPool.h"
 #include "DExtraProtocolHandler.h"
-#include "CCSProtocolHandler.h"
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -86,7 +85,6 @@ private:
 	CDExtraProtocolHandler*        m_dextraHandler;
 	CDongleProtocolHandlerPool*    m_donglePool;
 	CDCSProtocolHandlerPool*       m_dcsPool;
-	CCCSProtocolHandler*           m_ccsHandler;
 	CG2ProtocolHandler*       m_g2Handler;
 	CAPRSWriter*              m_aprsWriter;
 	CIRCDDB*                  m_irc;
@@ -125,7 +123,6 @@ private:
 	void processDExtra();
 	void processDongles();
 	void processDCS();
-	void processCCS();
 	void processG2();
 	void processDD();
 

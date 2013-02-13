@@ -25,7 +25,7 @@
 
 class CIRCDDBGatewayStatusData {
 public:
-	CIRCDDBGatewayStatusData(IRCDDB_STATUS ircDDBStatus, CCS_STATUS ccsStatus, bool dprsStatus);
+	CIRCDDBGatewayStatusData(IRCDDB_STATUS ircDDBStatus, bool dprsStatus);
 	~CIRCDDBGatewayStatusData();
 
 	void setRepeater(unsigned int n, const wxString& callsign, LINK_STATUS linkStatus, const wxString& linkCallsign, const wxString& incoming);
@@ -33,7 +33,6 @@ public:
 	void setDongles(const wxString& dongles);
 
 	IRCDDB_STATUS getIrcDDBStatus() const;
-	CCS_STATUS    getCCSStatus() const;
 	bool          getDPRSStatus() const;
 
 	wxString      getCallsign(unsigned int n) const;
@@ -45,7 +44,6 @@ public:
 
 private:
 	IRCDDB_STATUS  m_ircDDBStatus;
-	CCS_STATUS     m_ccsStatus;
 	bool           m_dprsStatus;
 	wxString       m_callsign[4];
 	LINK_STATUS    m_linkStatus[4];

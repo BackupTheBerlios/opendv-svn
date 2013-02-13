@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-     
+
 #ifndef	Version_H
 #define	Version_H
 

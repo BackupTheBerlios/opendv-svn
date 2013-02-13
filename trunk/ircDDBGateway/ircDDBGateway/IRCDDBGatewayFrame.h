@@ -42,7 +42,6 @@ public:
 private:
 	wxTimer       m_timer;
 	wxStaticText* m_ircDDBStatus;
-	wxStaticText* m_ccsStatus;
 	wxStaticText* m_dprsStatus;
 	wxStaticText* m_linkStatus[4];
 	wxStaticText* m_incoming[4];

@@ -38,108 +38,75 @@
 #include <wx/wx.h>
 #include <wx/ffile.h>
 
-class CCCSAudioIncoming {
-public:
-	CCCSAudioIncoming(unsigned int id, IRepeaterCallback* handler, bool busy) :
-	m_id(id),
-	m_handler(handler),
-	m_busy(busy),
-	m_timer(1000U, 2U)
-	{
-		wxASSERT(handler != NULL);
-
-		m_timer.start();
-	}
-
-	~CCCSAudioIncoming()
-	{
-	}
-
-	unsigned int       m_id;
-	IRepeaterCallback* m_handler;
-	bool               m_busy;
-	CTimer             m_timer;
-};
-
-class CCCSAudioOutgoing {
-public:
-	CCCSAudioOutgoing(IRepeaterCallback* handler) :
-	m_handler(handler),
-	m_seqNo(0U),
-	m_rptCall1(),
-	m_rptCall2(),
-	m_yourCall(),
-	m_myCall1(),
-	m_myCall2()
-	{
-		wxASSERT(handler != NULL);
-	}
-
-	~CCCSAudioOutgoing()
-	{
-	}
-
-	IRepeaterCallback* m_handler;
-	unsigned int       m_seqNo;
-	wxString           m_rptCall1;
-	wxString           m_rptCall2;
-	wxString           m_yourCall;
-	wxString           m_myCall1;
-	wxString           m_myCall2;
-};
 
 class CCCSHandler {
 public:
-	static void initialise();
+	CCCSHandler(IRepeaterCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort);
+	~CCCSHandler();
 
-	static void setLocation(double latitude, double longitude);
-	static void setCCSProtocolHandler(CCCSProtocolHandler* handler);
-	static void setHeaderLogger(CHeaderLogger* logger);
-	static void setCallsign(const wxString& callsign);
+	bool connect();
 
-	static void addRepeater(IRepeaterCallback* handler);
+	void writeHeard(const CHeaderData& data);
+	void writeEnd();
+	void writeHeader(CHeaderData& header);
+	void writeAMBE(CAMBEData& data, const wxString& dtmf = wxEmptyString);
 
-	static bool connect();
+	void setReflector(const wxString& callsign = wxEmptyString);
+
 	static void disconnect();
 
-	static void writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector = wxEmptyString);
-	static void writeEnd(const wxString& local, const wxString& remote);
-	static void writeHeader(IRepeaterCallback* handler, CHeaderData& header);
-	static void writeAMBE(IRepeaterCallback* handler, CAMBEData& data);
+	static void initialise(unsigned int count);
 
-	static void process(CAMBEData& header);
-	static void process(CPollData& data);
-	static void process(CConnectData& connect);
-	static void process(CCCSData& data);
+	static void process();
 
 	static void clock(unsigned int ms);
 
+	static void setHeaderLogger(CHeaderLogger* logger);
+
+	static void setLocalAddress(const wxString& address);
+
 	static void finalise();
 
-	static CCS_STATUS getState();
+protected:
+	void clockInt(unsigned int ms);
+
+	void processInt();
+
+	void disconnectInt();
 
 private:
-	static CCS_STATUS               m_state;
+	static CCCSHandler**  m_handlers;
+	static unsigned int   m_count;
 
-	static wxString                 m_callsign;
+	static in_addr        m_ccsAddress;
 
-	static CCCSProtocolHandler*     m_handler;
+	static wxString       m_localAddress;
+	static CHeaderLogger* m_headerLogger;
 
-	static in_addr                  m_address;
+	IRepeaterCallback*  m_handler;
+	wxString            m_callsign;
+	wxString            m_reflector;
+	wxString            m_locator;
+	CCCSProtocolHandler m_protocol;
+	CCS_STATUS          m_state;
+	wxString            m_local;
+	CTimer              m_inactivityTimer;
+	CTimer              m_pollInactivityTimer;
+	CTimer              m_pollTimer;
+	CTimer              m_tryTimer;
+	unsigned int        m_tryCount;
+	unsigned int        m_id;
+	unsigned int        m_seqNo;
+	wxString            m_yourCall;
+	wxString            m_myCall1;
+	wxString            m_myCall2;
 
-	static CHeaderLogger*           m_headerLogger;
+	void process(CAMBEData& header);
+	void process(CPollData& data);
+	void process(CConnectData& connect);
+	void process(CCCSData& data);
 
-	static CTimer                   m_pollInactivityTimer;
-	static CTimer                   m_pollTimer;
-	static CTimer                   m_tryTimer;
-	static unsigned int             m_tryCount;
-
-	static wxString                 m_locator;
-
-	static CCCSAudioIncoming**      m_incoming;
-	static CCCSAudioOutgoing**      m_outgoing;
-
-	static unsigned int calcBackoff();
+	unsigned int calcBackoff();
 };
 
 #endif

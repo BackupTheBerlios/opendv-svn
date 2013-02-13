@@ -18,9 +18,8 @@
 
 #include "IRCDDBGatewayStatusData.h"
 
-CIRCDDBGatewayStatusData::CIRCDDBGatewayStatusData(IRCDDB_STATUS ircDDBStatus, CCS_STATUS ccsStatus, bool dprsStatus) :
+CIRCDDBGatewayStatusData::CIRCDDBGatewayStatusData(IRCDDB_STATUS ircDDBStatus, bool dprsStatus) :
 m_ircDDBStatus(ircDDBStatus),
-m_ccsStatus(ccsStatus),
 m_dprsStatus(dprsStatus)
 {
 }
@@ -47,11 +46,6 @@ void CIRCDDBGatewayStatusData::setDongles(const wxString& dongles)
 IRCDDB_STATUS CIRCDDBGatewayStatusData::getIrcDDBStatus() const
 {
 	return m_ircDDBStatus;
-}
-
-CCS_STATUS CIRCDDBGatewayStatusData::getCCSStatus() const
-{
-	return m_ccsStatus;
 }
 
 bool CIRCDDBGatewayStatusData::getDPRSStatus() const

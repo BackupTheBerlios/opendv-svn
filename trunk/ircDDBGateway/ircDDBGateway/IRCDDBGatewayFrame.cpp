@@ -27,13 +27,13 @@
 const unsigned int BORDER_SIZE = 5U;
 
 #if defined(__WINDOWS__)
-const unsigned int IRCDDB_WIDTH   = 138U;
+const unsigned int IRCDDB_WIDTH   = 230U;
 const unsigned int LINKED_WIDTH   = 160U;
 const unsigned int INCOMING_WIDTH = 320U;
 const unsigned int DONGLES_WIDTH  = 560U;
 const unsigned int LOGTEXT_WIDTH  = 560U;
 #else
-const unsigned int IRCDDB_WIDTH   = 174U;
+const unsigned int IRCDDB_WIDTH   = 288U;
 const unsigned int LINKED_WIDTH   = 220U;
 const unsigned int INCOMING_WIDTH = 385U;
 const unsigned int DONGLES_WIDTH  = 700U;
@@ -67,7 +67,6 @@ CIRCDDBGatewayFrame::CIRCDDBGatewayFrame(const wxString& title, const wxPoint& p
 wxFrame(NULL, -1, title, position),
 m_timer(this),
 m_ircDDBStatus(NULL),
-m_ccsStatus(NULL),
 m_dprsStatus(NULL),
 #if defined(__WXDEBUG__)
 m_updates(true)
@@ -91,12 +90,6 @@ m_updates(gui)
 
 	m_ircDDBStatus = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(IRCDDB_WIDTH, -1));
 	status2Sizer->Add(m_ircDDBStatus, 0, wxALL, BORDER_SIZE);
-
-	wxStaticText* ccsStatusLabel = new wxStaticText(panel, -1, _("CCS:"));
-	status2Sizer->Add(ccsStatusLabel, 0, wxALL, BORDER_SIZE);
-
-	m_ccsStatus = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(IRCDDB_WIDTH, -1));
-	status2Sizer->Add(m_ccsStatus, 0, wxALL, BORDER_SIZE);
 
 	wxStaticText* dprsStatusLabel = new wxStaticText(panel, -1, _("D-PRS:"));
 	status2Sizer->Add(dprsStatusLabel, 0, wxALL, BORDER_SIZE);
@@ -669,19 +662,6 @@ void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
 			break;
 		default:
 			m_ircDDBStatus->SetLabel(_("Connected"));
-			break;
-	}
-
-	CCS_STATUS ccsStatus = status->getCCSStatus();
-	switch (ccsStatus) {
-		case CS_DISABLED:
-			m_ccsStatus->SetLabel(_("Disabled"));
-			break;
-		case CS_CONNECTING:
-			m_ccsStatus->SetLabel(_("Connecting"));
-			break;
-		default:
-			m_ccsStatus->SetLabel(_("Connected"));
 			break;
 	}
 

@@ -118,9 +118,8 @@ m_version(NULL),
 m_drats(NULL),
 m_dtmf(),
 m_pollTimer(1000U, 900U),			// 15 minutes
-m_ccsLocal(),
-m_ccsRemote(),
-m_ccsTimer(1000U, 300U),			// 5 minutes
+m_ccsDTMF(),
+m_ccsHandler(NULL),
 m_heardUser(),
 m_heardRepeater(),
 m_heardTimer(1000U, 0U, 100U)		// 100ms
@@ -205,8 +204,6 @@ m_heardTimer(1000U, 0U, 100U)		// 100ms
 			m_drats = NULL;
 		}
 	}
-
-	CCCSHandler::addRepeater(this);
 }
 
 CRepeaterHandler::~CRepeaterHandler()
@@ -551,10 +548,8 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		m_irc->sendHeard(m_heardUser, wxT("    "), wxT("        "), m_heardRepeater, wxT("        "), 0x00U, 0x00U, 0x00U);
 
 	// Inform CCS
-	if (m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
-		CCCSHandler::writeHeard(header, m_rptCallsign, m_linkRepeater);
-	else
-		CCCSHandler::writeHeard(header, m_rptCallsign);
+	if (m_ccsHandler != NULL)
+		m_ccsHandler->writeHeard(header);
 
 	// The Icom heard timer
 	m_heardTimer.stop();
@@ -587,6 +582,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 
 	// Reset the DTMF decoder
 	m_dtmf.reset();
+	m_ccsDTMF.Clear();
 
 	// Reset the info, echo and version commands if they're running
 	m_audio->cancel();
@@ -671,17 +667,12 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	g2CommandHandler(m_yourCall, m_myCall1, header);
 
 	if (m_g2Status == G2_NONE) {
+		// CCS
+		if (m_ccsHandler != NULL)
+			m_ccsHandler->writeHeader(header);
+
 		reflectorCommandHandler(m_yourCall, m_myCall1, wxT("UR Call"));
 		sendToOutgoing(header);
-
-		// CCS
-		if (m_ccsTimer.isRunning()) {
-			if (m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
-				header.setRepeaters(m_rptCallsign, m_linkRepeater);
-			else
-				header.setRepeaters(m_rptCallsign, wxEmptyString);
-			CCCSHandler::writeHeader(this, header);
-		}
 	}
 }
 
@@ -716,21 +707,10 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 				// Do nothing
 			} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
 				if (command.IsSameAs(wxT("CCSA"))) {
-					if (!m_ccsRemote.IsEmpty())
-						CCCSHandler::writeEnd(m_ccsLocal, m_ccsRemote);
-					m_ccsLocal.Clear();
-					m_ccsRemote.Clear();
-					m_ccsTimer.stop();
+					if (m_ccsHandler != NULL)
+						m_ccsHandler->writeEnd();
 				} else {
-					m_ccsLocal = m_myCall1;
-					m_ccsRemote = command.Mid(3U);
-					m_ccsTimer.start();
-					wxLogMessage(wxT("Looking up DTMF %s with CCS"), m_ccsRemote.Mid(1U).c_str());
-
-					CHeaderData header(m_myCall1, m_myCall2, m_ccsRemote, m_rptCallsign, wxEmptyString, m_flag1, m_flag2, m_flag3);
-					if (m_linkStatus == LS_LINKED_DPLUS || m_linkStatus == LS_LINKED_DEXTRA || m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKED_LOOPBACK)
-						header.setRptCall2(m_linkRepeater);
-					CCCSHandler::writeHeader(this, header);
+					m_ccsDTMF = command.Mid(3U);
 				}
 			} else if (command.IsSameAs(wxT("       I"))) {
 				m_g2Status = G2_INFO;
@@ -863,9 +843,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			break;
 	}
 
-	// Only send AMBE amd hence data packets, if the CCS timer is running
-	if (m_ccsTimer.isRunning())
-		CCCSHandler::writeAMBE(this, data);
+	if (m_ccsHandler != NULL)
+		m_ccsHandler->writeAMBE(data, m_ccsDTMF);
 }
 
 // Incoming headers when relaying network traffic, as detected by the repeater, will be used as a command
@@ -940,11 +919,8 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 				// Do nothing
 			} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
 				if (command.IsSameAs(wxT("CCSA"))) {
-					if (!m_ccsRemote.IsEmpty())
-						CCCSHandler::writeEnd(m_ccsLocal, m_ccsRemote);
-					m_ccsLocal.Clear();
-					m_ccsRemote.Clear();
-					m_ccsTimer.stop();
+					if (m_ccsHandler != NULL)
+						m_ccsHandler->writeEnd();
 				}
 			} else if (command.IsSameAs(wxT("       I"))) {
 				// Do nothing
@@ -1064,19 +1040,6 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (source == AS_DUP)
 		return true;
 
-	// An incoming CCS link
-	if (source == AS_CCS) {
-		if (!m_ccsTimer.isRunning()) {
-			m_ccsLocal  = header.getRptCall1();
-			m_ccsRemote = header.getMyCall1();
-			m_ccsTimer.start();
-
-			wxLogMessage(wxT("Incoming CCS link from %s to %s"), m_ccsRemote.c_str(), m_ccsLocal.c_str());
-		}
-
-		m_ccsTimer.reset();
-	}
-
 	sendToIncoming(header);
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_CCS) {
@@ -1112,9 +1075,6 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 	m_repeaterHandler->writeAMBE(data);
 
 	sendToIncoming(data);
-
-	if (source == AS_CCS)
-		m_ccsTimer.start();
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_CCS)
 		return true;
@@ -1292,7 +1252,6 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 	m_queryTimer.clock(ms);
 	m_heardTimer.clock(ms);
 	m_pollTimer.clock(ms);
-	m_ccsTimer.clock(ms);
 
 	// If the reconnect timer has expired
 	if (m_linkReconnectTimer.isRunning() && m_linkReconnectTimer.hasExpired()) {
@@ -1481,14 +1440,6 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 			m_g2Status = G2_NONE;
 			m_busyId = 0x00U;
 		}
-	}
-
-	// If the CCS inactivity timer has expired
-	if (m_ccsTimer.isRunning() && m_ccsTimer.hasExpired()) {
-		wxLogMessage(wxT("CCS link to %s has expired"), m_ccsRemote.c_str());
-		m_ccsLocal.Clear();
-		m_ccsRemote.Clear();
-		m_ccsTimer.stop();
 	}
 }
 
@@ -2277,6 +2228,10 @@ void CRepeaterHandler::startupInt()
 		writeNotLinked();
 		triggerInfo();
 	}
+
+	// Start up our CCS link
+	m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_latitude, m_longitude, CCS_PORT + m_index);
+	m_ccsHandler->connect();
 }
 
 void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
@@ -2321,6 +2276,9 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+
+	if (m_ccsHandler != NULL)
+		m_ccsHandler->setReflector();
 }
 
 void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
@@ -2365,6 +2323,9 @@ void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+
+	if (m_ccsHandler != NULL)
+		m_ccsHandler->setReflector(callsign);
 }
 
 void CRepeaterHandler::writeNotLinked()
@@ -2409,6 +2370,9 @@ void CRepeaterHandler::writeNotLinked()
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+
+	if (m_ccsHandler != NULL)
+		m_ccsHandler->setReflector();
 }
 
 void CRepeaterHandler::writeIsBusy(const wxString& callsign)
@@ -2465,6 +2429,9 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 	m_audio->setTempText(tempText);
+
+	if (m_ccsHandler != NULL)
+		m_ccsHandler->setReflector();
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)

@@ -32,6 +32,7 @@
 #include "HeaderLogger.h"
 #include "DRATSServer.h"
 #include "VersionUnit.h"
+#include "CCSHandler.h"
 #include "StatusData.h"
 #include "APRSWriter.h"
 #include "HeardData.h"
@@ -243,10 +244,9 @@ private:
 	// Poll timer
 	CTimer                    m_pollTimer;
 
-	// CCS info
-	wxString                  m_ccsLocal;
-	wxString                  m_ccsRemote;
-	CTimer                    m_ccsTimer;
+	// CCS
+	wxString                  m_ccsDTMF;
+	CCCSHandler*              m_ccsHandler;
 
 	// Icom heard data
 	wxString                  m_heardUser;

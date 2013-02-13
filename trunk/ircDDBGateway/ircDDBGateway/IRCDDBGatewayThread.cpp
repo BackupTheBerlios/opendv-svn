@@ -62,7 +62,6 @@ m_dummyRepeaterHandler(NULL),
 m_dextraHandler(NULL),
 m_donglePool(NULL),
 m_dcsPool(NULL),
-m_ccsHandler(NULL),
 m_g2Handler(NULL),
 m_aprsWriter(NULL),
 m_irc(NULL),
@@ -105,7 +104,7 @@ m_longitude(0.0)
 	CDCSHandler::initialise(MAX_DCS_LINKS);
 	CRepeaterHandler::initialise(MAX_REPEATERS);
 	CStarNetHandler::initialise(MAX_STARNETS, m_name);
-	CCCSHandler::initialise();
+	CCCSHandler::initialise(MAX_REPEATERS);
 	CAudioUnit::initialise();
 }
 
@@ -203,17 +202,8 @@ void CIRCDDBGatewayThread::run()
 		m_g2Handler = NULL;
 	}
 
-	wxString ccsAddress = m_ccsEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
-	m_ccsHandler = new CCCSProtocolHandler(CCS_PORT, ccsAddress);
-	ret = m_ccsHandler->open();
-	if (!ret) {
-		wxLogError(wxT("Could not open the CCS protocol handler"));
-		delete m_ccsHandler;
-		m_ccsHandler = NULL;
-	}
-
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_donglePool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || m_ccsHandler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraHandler == NULL || m_donglePool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -298,13 +288,9 @@ void CIRCDDBGatewayThread::run()
 			CDDHandler::setIRC(m_irc);
 	}
 
-	if (m_ccsEnabled) {
-		CCCSHandler::setLocation(m_latitude, m_longitude);
-		CCCSHandler::setCCSProtocolHandler(m_ccsHandler);
-		CCCSHandler::setHeaderLogger(headerLogger);
-		CCCSHandler::setCallsign(m_gatewayCallsign);
-		CCCSHandler::connect();
-	}
+	wxString ccsAddress = m_ccsEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
+	CCCSHandler::setLocalAddress(ccsAddress);
+	CCCSHandler::setHeaderLogger(headerLogger);
 
 	// If no ircDDB then APRS is started immediately
 	if (m_aprsWriter != NULL && m_irc == NULL)
@@ -351,7 +337,7 @@ void CIRCDDBGatewayThread::run()
 		processDongles();
 		processDCS();
 		processG2();
-		processCCS();
+		CCCSHandler::process();
 
 		if (m_ddModeEnabled)
 			processDD();
@@ -402,8 +388,6 @@ void CIRCDDBGatewayThread::run()
 	CDExtraHandler::unlink();
 	CDPlusHandler::unlink();
 	CDCSHandler::unlink();
-
-	// Disconnect from CCS
 	CCCSHandler::disconnect();
 
 	if (m_ddModeEnabled)
@@ -423,9 +407,6 @@ void CIRCDDBGatewayThread::run()
 
 	m_g2Handler->close();
 	delete m_g2Handler;
-
-	m_ccsHandler->close();
-	delete m_ccsHandler;
 
 	if (m_irc != NULL) {
 		m_irc->close();
@@ -990,55 +971,6 @@ void CIRCDDBGatewayThread::processDCS()
 	}
 }
 
-void CIRCDDBGatewayThread::processCCS()
-{
-	for (;;) {
-		CCS_TYPE type = m_ccsHandler->read();
-
-		switch (type) {
-			case CT_POLL: {
-					CPollData* poll = m_ccsHandler->readPoll();
-					if (poll != NULL) {
-						CCCSHandler::process(*poll);
-						delete poll;
-					}
-				}
-				break;
-
-			case CT_CONNECT: {
-					CConnectData* connect = m_ccsHandler->readConnect();
-					if (connect != NULL) {
-						CCCSHandler::process(*connect);
-						delete connect;
-					}
-				}
-				break;
-
-			case CT_DATA: {
-					CAMBEData* data = m_ccsHandler->readData();
-					if (data != NULL) {
-						// wxLogMessage(wxT("CCS header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
-						CCCSHandler::process(*data);
-						delete data;
-					}
-				}
-				break;
-
-			case CT_MISC: {
-					CCCSData* data = m_ccsHandler->readMisc();
-					if (data != NULL) {
-						CCCSHandler::process(*data);
-						delete data;
-					}
-				}
-				break;
-
-			default:
-				return;
-		}
-	}
-}
-
 void CIRCDDBGatewayThread::processG2()
 {
 	for (;;) {
@@ -1259,9 +1191,7 @@ CIRCDDBGatewayStatusData* CIRCDDBGatewayThread::getStatus() const
 	if (m_aprsWriter != NULL)
 		aprsStatus = m_aprsWriter->isConnected();
 
-	CCS_STATUS ccsStatus = CCCSHandler::getState();
-
-	CIRCDDBGatewayStatusData* status = new CIRCDDBGatewayStatusData(m_lastStatus, ccsStatus, aprsStatus);
+	CIRCDDBGatewayStatusData* status = new CIRCDDBGatewayStatusData(m_lastStatus, aprsStatus);
 
 	for (unsigned int i = 0U; i < 4U; i++) {
 		wxString callsign, linkCallsign;

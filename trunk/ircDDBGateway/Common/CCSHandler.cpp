@@ -21,46 +21,34 @@
 #include "CCSHandler.h"
 #include "Utils.h"
 
-const unsigned int MAX_CCS_INCOMING = 5U;
-const unsigned int MAX_CCS_OUTGOING = 5U;
 
-CCS_STATUS               CCCSHandler::m_state = CS_DISABLED;
+CCCSHandler**            CCCSHandler::m_handlers = NULL;
 
-wxString                 CCCSHandler::m_callsign = wxEmptyString;
+unsigned int             CCCSHandler::m_count = 0U;
 
-CCCSProtocolHandler*     CCCSHandler::m_handler = NULL;
+in_addr                  CCCSHandler::m_ccsAddress;
 
-in_addr                  CCCSHandler::m_address;
-
+wxString                 CCCSHandler::m_localAddress;
 CHeaderLogger*           CCCSHandler::m_headerLogger = NULL;
 
-CTimer                   CCCSHandler::m_pollInactivityTimer(1000U, 60U);
-CTimer                   CCCSHandler::m_pollTimer(1000U, 10U);
-CTimer                   CCCSHandler::m_tryTimer(1000U, 1U);
-unsigned int             CCCSHandler::m_tryCount = 0U;
-
-wxString                 CCCSHandler::m_locator = wxEmptyString;
-
-CCCSAudioIncoming**      CCCSHandler::m_incoming = NULL;
-CCCSAudioOutgoing**      CCCSHandler::m_outgoing = NULL;
-
-void CCCSHandler::initialise()
+void CCCSHandler::initialise(unsigned int count)
 {
-	m_incoming = new CCCSAudioIncoming*[MAX_CCS_INCOMING];
-	m_outgoing = new CCCSAudioOutgoing*[MAX_CCS_OUTGOING];
+	wxASSERT(count > 0U);
 
-	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++)
-		m_incoming[i] = NULL;
+	m_ccsAddress = CUDPReaderWriter::lookup(CCS_HOSTNAME);
+	if (m_ccsAddress.s_addr == INADDR_NONE)
+		wxLogError(wxT("Unable to find the IP address for %s"), CCS_HOSTNAME.c_str());
 
-	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++)
-		m_outgoing[i] = NULL;
+	m_count = count;
+	m_handlers = new CCCSHandler*[m_count];
+
+	for (unsigned int i = 0U; i < m_count; i++)
+		m_handlers[i] = NULL;
 }
 
-void CCCSHandler::setCCSProtocolHandler(CCCSProtocolHandler* handler)
+void CCCSHandler::setLocalAddress(const wxString& address)
 {
-	wxASSERT(handler != NULL);
-
-	m_handler = handler;
+	m_localAddress = address;
 }
 
 void CCCSHandler::setHeaderLogger(CHeaderLogger* logger)
@@ -68,25 +56,130 @@ void CCCSHandler::setHeaderLogger(CHeaderLogger* logger)
 	m_headerLogger = logger;
 }
 
-void CCCSHandler::setCallsign(const wxString& callsign)
+void CCCSHandler::process()
 {
-	m_callsign = callsign;
+	for (unsigned int i = 0U; i < m_count; i++) {
+		if (m_handlers[i] != NULL)
+			m_handlers[i]->processInt();
+	}
 }
 
-void CCCSHandler::setLocation(double latitude, double longitude)
+void CCCSHandler::disconnect()
 {
-	if (latitude != 0.0 && longitude != 0.0)
-		m_locator = CUtils::latLonToLoc(latitude, longitude);
+	for (unsigned int i = 0U; i < m_count; i++) {
+		if (m_handlers[i] != NULL)
+			m_handlers[i]->disconnectInt();
+	}
 }
 
-void CCCSHandler::addRepeater(IRepeaterCallback* handler)
+void CCCSHandler::clock(unsigned int ms)
+{
+	for (unsigned int i = 0U; i < m_count; i++) {
+		if (m_handlers[i] != NULL)
+			m_handlers[i]->clockInt(ms);
+	}
+}
+
+void CCCSHandler::finalise()
+{
+	for (unsigned int i = 0U; i < m_count; i++)
+		delete m_handlers[i];
+
+	delete[] m_handlers;
+}
+
+CCCSHandler::CCCSHandler(IRepeaterCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort) :
+m_handler(handler),
+m_callsign(callsign),
+m_reflector(),
+m_locator(),
+m_protocol(localPort, m_localAddress),
+m_state(CS_DISABLED),
+m_local(),
+m_inactivityTimer(1000U, 300U),			// 5 minutes
+m_pollInactivityTimer(1000U, 60U),		// 60 seconds
+m_pollTimer(1000U, 10U),				// 10 seconds
+m_tryTimer(1000U, 1U),					// 1 second
+m_tryCount(0U),
+m_id(0x00U),
+m_seqNo(0U),
+m_yourCall(),
+m_myCall1(),
+m_myCall2()
 {
 	wxASSERT(handler != NULL);
 
-	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++) {
-		if (m_outgoing[i] == NULL) {
-			m_outgoing[i] = new CCCSAudioOutgoing(handler);
-			return;
+	if (latitude != 0.0 && longitude != 0.0)
+		m_locator = CUtils::latLonToLoc(latitude, longitude);
+
+	// Add to the global list
+	for (unsigned int i = 0U; i < m_count; i++) {
+		if (m_handlers[i] == NULL) {
+			m_handlers[i] = this;
+			break;
+		}
+	}
+}
+
+CCCSHandler::~CCCSHandler()
+{
+}
+
+void CCCSHandler::setReflector(const wxString& callsign)
+{
+	m_reflector = callsign;
+
+	if (m_reflector.IsEmpty())
+		m_reflector = wxT("        ");
+}
+
+void CCCSHandler::processInt()
+{
+	if (m_state == CS_DISABLED)
+		return;
+
+	for (;;) {
+		CCS_TYPE type = m_protocol.read();
+
+		switch (type) {
+			case CT_DATA: {
+					CAMBEData* data = m_protocol.readData();
+					if (data != NULL) {
+						process(*data);
+						delete data;
+					}
+				}
+				break;
+
+			case CT_POLL: {
+					CPollData* poll = m_protocol.readPoll();
+					if (poll != NULL) {
+						process(*poll);
+						delete poll;
+					}
+				}
+				break;
+
+			case CT_CONNECT: {
+					CConnectData* connect = m_protocol.readConnect();
+					if (connect != NULL) {
+						process(*connect);
+						delete connect;
+					}
+				}
+				break;
+
+			case CT_MISC: {
+					CCCSData* data = m_protocol.readMisc();
+					if (data != NULL) {
+						process(*data);
+						delete data;
+					}
+				}
+				break;
+
+			default:
+				return;
 		}
 	}
 }
@@ -94,87 +187,55 @@ void CCCSHandler::addRepeater(IRepeaterCallback* handler)
 void CCCSHandler::process(CAMBEData& data)
 {
 	CHeaderData& header = data.getHeader();
-	wxString yourCall = header.getYourCall();
 	unsigned int seqNo = data.getSeq();
 	unsigned int id = data.getId();
 
-	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++) {
-		if (m_incoming[i] != NULL) {
-			if (m_incoming[i]->m_id == id) {
-				m_incoming[i]->m_timer.reset();
+	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)
+		return;
 
-				if (seqNo == 0U && !m_incoming[i]->m_busy) {
-					if (yourCall.Left(1U).IsSameAs(wxT("*")))
-						header.setCQCQCQ();
-					m_incoming[i]->m_handler->process(header, DIR_INCOMING, AS_DUP);
-				}
+	// This is a resolved DTMF code
+	if (m_state == CS_ACTIVE && m_yourCall.Left(1U).IsSameAs(wxT("*")))
+		m_yourCall = header.getMyCall1();
 
-				if (!m_incoming[i]->m_busy)
-					m_incoming[i]->m_handler->process(data, DIR_INCOMING, AS_CCS);
-
-				if (data.isEnd()) {
-					delete m_incoming[i];
-					m_incoming[i] = NULL;
-				}
-
-				return;
-			}
-		}
+	// This is a new incoming CCS call
+	if (m_state == CS_CONNECTED) {
+		m_yourCall = header.getMyCall1();
+		m_local    = header.getYourCall();
+		m_state = CS_ACTIVE;
+		m_inactivityTimer.start();
 	}
 
-	// A new incoming CCS transmission
-	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++) {
-		if (m_incoming[i] == NULL) {
-			IRepeaterCallback* handler = CRepeaterHandler::findDVRepeater(header.getRptCall1());
-			if (handler == NULL)
-				return;
+	m_inactivityTimer.reset();
 
-			// Write to Header.log if it's enabled
-			if (m_headerLogger != NULL)
-				m_headerLogger->write(wxT("CCS"), header);
+	if (m_id != id) {
+		// Write to Header.log if it's enabled
+		if (m_headerLogger != NULL)
+			m_headerLogger->write(wxT("CCS"), header);
 
-			if (yourCall.Left(1U).IsSameAs(wxT("*")))
-				header.setCQCQCQ();
+		bool busy = !m_handler->process(header, DIR_INCOMING, AS_CCS);
+		if (busy)
+			m_protocol.writeBusy(wxT("We're busy!"), m_ccsAddress, CCS_PORT);
 
-			bool busy = !handler->process(header, DIR_INCOMING, AS_CCS);
-
-			if (busy)
-				m_handler->writeBusy(wxT("We're busy!"), m_address, CCS_PORT);
-			else
-				handler->process(data, DIR_INCOMING, AS_CCS);
-
-			m_incoming[i] = new CCCSAudioIncoming(id, handler, busy);
-
-			CCCSData response(header.getYourCall(), header.getMyCall1(), CT_QUERY);
-			response.setDestination(m_address, CCS_PORT);
-			m_handler->writeMisc(response);
-			return;
-		}
+		m_id = id;
+	} else if (seqNo == 0U) {
+		bool busy = !m_handler->process(header, DIR_INCOMING, AS_DUP);
+		if (busy)
+			m_protocol.writeBusy(wxT("We're busy!"), m_ccsAddress, CCS_PORT);
 	}
 
-	wxLogWarning(wxT("No space to add new incoming CCS audio"));
+	bool busy = !m_handler->process(data, DIR_INCOMING, AS_CCS);
+	if (busy)
+		m_protocol.writeBusy(wxT("We're busy!"), m_ccsAddress, CCS_PORT);
 }
 
-// XXX This needs upgrading
 void CCCSHandler::process(CCCSData& data)
 {
 	CC_TYPE type = data.getType();
 
-	switch (type) {
-		case CT_TERMINATE:
-			wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
-			break;
-		case CT_QUERY: {
-				// Just say that we're OK for now
-				CCCSData reply(data.getRemote(), CT_ANSWER);
-				reply.setDestination(m_address, CCS_PORT);
-				m_handler->writeMisc(reply);
-			}
-			break;
-		case CT_ANSWER:
-			break;
-		default:
-			break;
+	if (type == CT_TERMINATE) {
+		wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
+		m_state = CS_CONNECTED;
+		m_inactivityTimer.stop();
 	}
 }
 
@@ -188,7 +249,6 @@ void CCCSHandler::process(CConnectData& connect)
 	CD_TYPE type = connect.getType();
 
 	if (type == CT_ACK && m_state == CS_CONNECTING) {
-		wxLogMessage(wxT("Connected to CCS"));
 		m_pollInactivityTimer.start();
 		m_pollTimer.start();
 		m_tryTimer.stop();
@@ -197,7 +257,7 @@ void CCCSHandler::process(CConnectData& connect)
 	}
 
 	if (type == CT_NAK && m_state == CS_CONNECTING) {
-		wxLogMessage(wxT("Connection refused by CCS"));
+		wxLogMessage(wxT("Connection refused by CCS for %s"), m_callsign.c_str());
 		m_tryTimer.stop();
 		m_state = CS_DISABLED;
 		return;
@@ -206,16 +266,22 @@ void CCCSHandler::process(CConnectData& connect)
 
 bool CCCSHandler::connect()
 {
-	m_address = CUDPReaderWriter::lookup(CCS_HOSTNAME);
+	// Is CCS disabled?
+	if (m_localAddress.IsSameAs(wxT("127.0.0.1")))
+		return false;
 
-	CConnectData connect(m_callsign, CT_LINK1, m_address, CCS_PORT);
+	// Can we resolve the CCS server address?
+	if (m_ccsAddress.s_addr == INADDR_NONE)
+		return false;
 
+	bool res = m_protocol.open();
+	if (!res)
+		return false;
+
+	CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
 	if (!m_locator.IsEmpty())
 		connect.setLocator(m_locator);
-
-	m_handler->writeConnect(connect);
-
-	wxLogMessage(wxT("Connecting to CCS on host %s"), CCS_HOSTNAME.c_str());
+	m_protocol.writeConnect(connect);
 
 	m_tryTimer.setTimeout(1U);
 	m_tryTimer.start();
@@ -227,101 +293,96 @@ bool CCCSHandler::connect()
 	return true;
 }
 
-void CCCSHandler::disconnect()
+void CCCSHandler::disconnectInt()
 {
-	CConnectData connect(m_callsign, CT_UNLINK, m_address, CCS_PORT);
-	m_handler->writeConnect(connect);
+	if (m_state == CS_CONNECTED || m_state == CS_ACTIVE) {
+		CConnectData connect(m_callsign, CT_UNLINK, m_ccsAddress, CCS_PORT);
+		m_protocol.writeConnect(connect);
+	}
 
 	m_pollInactivityTimer.stop();
+	m_inactivityTimer.stop();
 	m_pollTimer.stop();
+	m_tryTimer.stop();
 
 	m_state = CS_DISABLED;
 
-	wxLogMessage(wxT("Disconnecting from CCS"));
+	if (m_state != CS_DISABLED)
+		m_protocol.close();
 }
 
-void CCCSHandler::writeEnd(const wxString& local, const wxString& remote)
+void CCCSHandler::writeEnd()
 {
-	if (m_state != CS_CONNECTED)
+	if (m_state != CS_ACTIVE)
 		return;
 
-	CCCSData data(local, remote, CT_TERMINATE);
-	data.setDestination(m_address, CCS_PORT);
+	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
+	data.setDestination(m_ccsAddress, CCS_PORT);
+	m_protocol.writeMisc(data);
 
-	m_handler->writeMisc(data);
+	m_state = CS_CONNECTED;
+	m_inactivityTimer.stop();
 }
 
-void CCCSHandler::writeHeard(const CHeaderData& data, const wxString& repeater, const wxString& reflector)
+void CCCSHandler::writeHeard(const CHeaderData& data)
 {
-	if (m_state != CS_CONNECTED)
+	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)
 		return;
 
-	CHeardData heard(data, repeater, reflector);
-	heard.setDestination(m_address, CCS_PORT);
-
-	m_handler->writeHeard(heard);
+	CHeardData heard(data, m_callsign, m_reflector);
+	heard.setDestination(m_ccsAddress, CCS_PORT);
+	m_protocol.writeHeard(heard);
 }
 
-void CCCSHandler::writeHeader(IRepeaterCallback* handler, CHeaderData& header)
+void CCCSHandler::writeHeader(CHeaderData& header)
 {
-	if (m_state != CS_CONNECTED)
+	m_myCall1 = header.getMyCall1();
+	m_myCall2 = header.getMyCall2();
+
+	m_seqNo = 0U;
+}
+
+void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
+{
+	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)
 		return;
 
-	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++) {
-		if (m_outgoing[i] != NULL) {
-			if (m_outgoing[i]->m_handler == handler) {
-				m_outgoing[i]->m_rptCall1 = header.getRptCall1();
-				m_outgoing[i]->m_rptCall2 = header.getRptCall2();
-				m_outgoing[i]->m_yourCall = header.getYourCall();
-				m_outgoing[i]->m_myCall1  = header.getMyCall1();
-				m_outgoing[i]->m_myCall2  = header.getMyCall2();
-				m_outgoing[i]->m_seqNo = 0U;
-				return;
-			}
-		}
+	if (m_state == CS_CONNECTED) {
+		if (!dtmf.Left(1U).IsSameAs(wxT("*")))
+			return;
+
+		m_local    = m_myCall1;
+		m_yourCall = dtmf;
+		m_seqNo = 0U;
+
+		m_state = CS_ACTIVE;
+		m_inactivityTimer.start();
 	}
+
+	CHeaderData& header = data.getHeader();
+	header.setMyCall1(m_myCall1);
+	header.setMyCall2(m_myCall2);
+	header.setYourCall(m_yourCall);
+	header.setRptCall1(m_callsign);
+	header.setRptCall2(m_reflector);
+
+	data.setRptSeq(m_seqNo++);
+	data.setDestination(m_ccsAddress, CCS_PORT);
+	m_protocol.writeData(data);
 }
 
-void CCCSHandler::writeAMBE(IRepeaterCallback* handler, CAMBEData& data)
-{
-	if (m_state != CS_CONNECTED)
-		return;
-
-	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++) {
-		if (m_outgoing[i] != NULL) {
-			if (m_outgoing[i]->m_handler == handler) {
-				CHeaderData& header = data.getHeader();
-				header.setMyCall1(m_outgoing[i]->m_myCall1);
-				header.setMyCall2(m_outgoing[i]->m_myCall2);
-				header.setYourCall(m_outgoing[i]->m_yourCall);
-				header.setRptCall1(m_outgoing[i]->m_rptCall1);
-				header.setRptCall2(m_outgoing[i]->m_rptCall2);
-
-				// If we're using DTMF numbers, only send a few times
-				if (m_outgoing[i]->m_yourCall.GetChar(1U) == '*') {
-					if (m_outgoing[i]->m_seqNo >= 6U)
-						header.setYourCall(wxT("CQCQCQ  "));
-				}
-
-				data.setRptSeq(m_outgoing[i]->m_seqNo++);
-				data.setDestination(m_address, CCS_PORT);
-				m_handler->writeData(data);
-				return;
-			}
-		}
-	}
-}
-
-void CCCSHandler::clock(unsigned int ms)
+void CCCSHandler::clockInt(unsigned int ms)
 {
 	m_pollInactivityTimer.clock(ms);
+	m_inactivityTimer.clock(ms);
 	m_pollTimer.clock(ms);
 	m_tryTimer.clock(ms);
 
 	if (m_pollInactivityTimer.isRunning() && m_pollInactivityTimer.hasExpired()) {
-		wxLogMessage(wxT("CCS connection has failed (poll inactivity), reconnecting"));
+		wxLogMessage(wxT("CCS connection has failed (poll inactivity) for %s, reconnecting"), m_callsign.c_str());
 
 		m_pollInactivityTimer.stop();
+		m_inactivityTimer.stop();
 		m_pollTimer.stop();
 
 		m_tryTimer.setTimeout(1U);
@@ -334,8 +395,8 @@ void CCCSHandler::clock(unsigned int ms)
 	}
 
 	if (m_tryTimer.isRunning() && m_tryTimer.hasExpired()) {
-		CConnectData connect(m_callsign, CT_LINK1, m_address, CCS_PORT);
-		m_handler->writeConnect(connect);
+		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
+		m_protocol.writeConnect(connect);
 
 		unsigned int t = calcBackoff();
 		m_tryTimer.setTimeout(t);
@@ -343,39 +404,17 @@ void CCCSHandler::clock(unsigned int ms)
 	}
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
-		CPollData poll(m_callsign, m_address, CCS_PORT);
-		m_handler->writePoll(poll);
+		CPollData poll(m_callsign, m_ccsAddress, CCS_PORT);
+		m_protocol.writePoll(poll);
 
 		m_pollTimer.reset();
 	}
 
-	// Handle inactivity on incoming audio
-	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++) {
-		if (m_incoming[i] != NULL) {
-			m_incoming[i]->m_timer.clock(ms);
-			if (m_incoming[i]->m_timer.isRunning() && m_incoming[i]->m_timer.hasExpired()) {
-				delete m_incoming[i];
-				m_incoming[i] = NULL;
-			}
-		}
+	if (m_inactivityTimer.isRunning() && m_inactivityTimer.hasExpired()) {
+		wxLogMessage(wxT("Activity timeout on CCS link for %s"), m_callsign.c_str());
+		m_state = CS_CONNECTED;
+		m_inactivityTimer.stop();
 	}
-}
-
-void CCCSHandler::finalise()
-{
-	for (unsigned int i = 0U; i < MAX_CCS_INCOMING; i++)
-		delete m_incoming[i];
-
-	for (unsigned int i = 0U; i < MAX_CCS_OUTGOING; i++)
-		delete m_outgoing[i];
-
-	delete[] m_incoming;
-	delete[] m_outgoing;
-}
-
-CCS_STATUS CCCSHandler::getState()
-{
-	return m_state;
 }
 
 unsigned int CCCSHandler::calcBackoff()

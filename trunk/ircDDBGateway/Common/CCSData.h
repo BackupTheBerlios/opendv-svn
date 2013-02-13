@@ -28,15 +28,12 @@
 #endif
 
 enum CC_TYPE {
-	CT_TERMINATE,
-	CT_QUERY,
-	CT_ANSWER
+	CT_TERMINATE
 };
 
 class CCCSData {
 public:
 	CCCSData(const wxString& local, const wxString& remote, CC_TYPE type);
-	CCCSData(const wxString& remote, CC_TYPE type);
 	CCCSData();
 	~CCCSData();
 
@@ -46,17 +43,9 @@ public:
 
 	void setDestination(const in_addr& address, unsigned int port);
 
-	void         setLocal(const wxString& callsign);
-	void         setReflector(const wxString& callsign);
-	void         setTime(unsigned int seconds);
-
 	wxString     getLocal() const;
 	wxString     getRemote() const;
 	CC_TYPE      getType() const;
-
-	wxString     getReflector() const;
-	wxString     getTime() const;
-	bool         isBusy() const;
 
 	in_addr      getYourAddress() const;
 	unsigned int getYourPort() const;
@@ -66,9 +55,6 @@ private:
 	wxString     m_local;
 	wxString     m_remote;
 	CC_TYPE      m_type;
-	bool         m_busy;
-	wxString     m_reflector;
-	wxString     m_time;
 	in_addr      m_yourAddress;
 	unsigned int m_yourPort;
 	unsigned int m_myPort;
