@@ -388,48 +388,45 @@ int CGMSKModemLibUsb::writeData(unsigned char* data, unsigned int length)
 	wxASSERT(length > 0U && length <= DV_FRAME_LENGTH_BYTES);
 
 	if (length > GMSK_MODEM_DATA_LENGTH) {
-		int len1 = io(0x40, PUT_DATA, 0, 0, (char*)data, GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
-		if (len1 < 0) {
-			if (len1 == -19) {		// -ENODEV
+		int ret = io(0x40, PUT_DATA, 0, 0, (char*)data, GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
+		if (ret < 0) {
+			if (ret == -19) {		// -ENODEV
 				wxString errorText(m_usbStrerror(), wxConvLocal);
-				wxLogMessage(wxT("PUT_DATA, ret: %d, err=%s"), len1, errorText.c_str());
-				return len1;
+				wxLogMessage(wxT("PUT_DATA 1, ret: %d, err=%s"), ret, errorText.c_str());
+				return ret;
 			}
 
 			return 0;
 		}
 
-		if (len1 < int(GMSK_MODEM_DATA_LENGTH))
-			return len1;
-
 		// Give libUSB some recovery time
 		::wxMilliSleep(3UL);
 
-		int len2 = io(0x40, PUT_DATA, 0, 0, (char*)(data + GMSK_MODEM_DATA_LENGTH), length - GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
-		if (len2 < 0) {
-			if (len2 == -19) {		// -ENODEV
+		ret = io(0x40, PUT_DATA, 0, 0, (char*)(data + GMSK_MODEM_DATA_LENGTH), length - GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
+		if (ret < 0) {
+			if (ret == -19) {		// -ENODEV
 				wxString errorText(m_usbStrerror(), wxConvLocal);
-				wxLogMessage(wxT("PUT_DATA, ret: %d, err=%s"), len2, errorText.c_str());
-				return len2;
+				wxLogMessage(wxT("PUT_DATA 2, ret: %d, err=%s"), ret, errorText.c_str());
+				return ret;
 			}
 
 			return int(GMSK_MODEM_DATA_LENGTH);
 		}
 	
-		return len2 + int(GMSK_MODEM_DATA_LENGTH);
+		return length;
 	} else {
-		int len = io(0x40, PUT_DATA, 0, 0, (char*)data, length, USB_TIMEOUT);
-		if (len < 0) {
-			if (len == -19) {			// -ENODEV
+		int ret = io(0x40, PUT_DATA, 0, 0, (char*)data, length, USB_TIMEOUT);
+		if (ret < 0) {
+			if (ret == -19) {			// -ENODEV
 				wxString errorText(m_usbStrerror(), wxConvLocal);
-				wxLogMessage(wxT("PUT_DATA, ret: %d, err=%s"), len, errorText.c_str());
-				return len;
+				wxLogMessage(wxT("PUT_DATA, ret: %d, err=%s"), ret, errorText.c_str());
+				return ret;
 			}
 
 			return 0;
 		}
 
-		return len;
+		return length;
 	}
 }
 
@@ -776,45 +773,42 @@ int CGMSKModemLibUsb::writeData(unsigned char* data, unsigned int length)
 	wxASSERT(length > 0U && length <= DV_FRAME_LENGTH_BYTES);
 
 	if (length > GMSK_MODEM_DATA_LENGTH) {
-		int len1 = io(0x40, PUT_DATA, 0, 0, data, GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
-		if (len1 < 0) {
-			if (len1 == LIBUSB_ERROR_NO_DEVICE) {
-				wxLogMessage(wxT("PUT_DATA 1, err=%d"), len1);
-				return len1;
+		int ret = io(0x40, PUT_DATA, 0, 0, data, GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
+		if (ret < 0) {
+			if (ret == LIBUSB_ERROR_NO_DEVICE) {
+				wxLogMessage(wxT("PUT_DATA 1, err=%d"), ret);
+				return ret;
 			}
 
 			return 0;
 		}
 
-		if (len1 < int(GMSK_MODEM_DATA_LENGTH))
-			return len1;
-
 		// Give libUSB some recovery time
 		::wxMilliSleep(3UL);
 
-		int len2 = io(0x40, PUT_DATA, 0, 0, data + GMSK_MODEM_DATA_LENGTH, length - GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
-		if (len2 < 0) {
-			if (len2 == LIBUSB_ERROR_NO_DEVICE) {
-				wxLogMessage(wxT("PUT_DATA 2, err=%d"), len2);
-				return len2;
+		ret = io(0x40, PUT_DATA, 0, 0, data + GMSK_MODEM_DATA_LENGTH, length - GMSK_MODEM_DATA_LENGTH, USB_TIMEOUT);
+		if (ret < 0) {
+			if (ret == LIBUSB_ERROR_NO_DEVICE) {
+				wxLogMessage(wxT("PUT_DATA 2, err=%d"), ret);
+				return ret;
 			}
 
 			return int(GMSK_MODEM_DATA_LENGTH);
 		}
 	
-		return len2 + int(GMSK_MODEM_DATA_LENGTH);
+		return length;
 	} else {
-		int len = io(0x40, PUT_DATA, 0, 0, data, length, USB_TIMEOUT);
-		if (len < 0) {
-			if (len == LIBUSB_ERROR_NO_DEVICE) {
-				wxLogMessage(wxT("PUT_DATA, err=%d"), len);
-				return len;
+		int ret = io(0x40, PUT_DATA, 0, 0, data, length, USB_TIMEOUT);
+		if (ret < 0) {
+			if (ret == LIBUSB_ERROR_NO_DEVICE) {
+				wxLogMessage(wxT("PUT_DATA, err=%d"), ret);
+				return ret;
 			}
 
 			return 0;
 		}
 
-		return len;
+		return length;
 	}
 }
 

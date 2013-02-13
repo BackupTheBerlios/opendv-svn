@@ -290,42 +290,39 @@ int CGMSKModemWinUSB::writeData(unsigned char* data, unsigned int length)
 	wxASSERT(length > 0U && length <= DV_FRAME_LENGTH_BYTES);
 
 	if (length > GMSK_MODEM_DATA_LENGTH) {
-		int len1 = io(PUT_DATA, 0x40U, 0U, data, GMSK_MODEM_DATA_LENGTH);
-		if (len1 < 0) {
-			if (len1 == -22) {
-				wxLogError(wxT("PUT_DATA 1, returned %d"), -len1);
-				return len1;
+		int ret = io(PUT_DATA, 0x40U, 0U, data, GMSK_MODEM_DATA_LENGTH);
+		if (ret < 0) {
+			if (ret == -22) {
+				wxLogError(wxT("PUT_DATA 1, returned %d"), -ret);
+				return ret;
 			}
 
 			return 0;
 		}
 		
-		if (len1 < int(GMSK_MODEM_DATA_LENGTH))
-			return len1;
-
-		int len2 = io(PUT_DATA, 0x40U, 0U, data + GMSK_MODEM_DATA_LENGTH, length - GMSK_MODEM_DATA_LENGTH);
-		if (len2 < 0) {
-			if (len2 == -22) {
-				wxLogError(wxT("PUT_DATA 2, returned %d"), -len2);
-				return len2;
+		ret = io(PUT_DATA, 0x40U, 0U, data + GMSK_MODEM_DATA_LENGTH, length - GMSK_MODEM_DATA_LENGTH);
+		if (ret < 0) {
+			if (ret == -22) {
+				wxLogError(wxT("PUT_DATA 2, returned %d"), -ret);
+				return ret;
 			}
 
 			return int(GMSK_MODEM_DATA_LENGTH);
 		}
 	
-		return len2 + int(GMSK_MODEM_DATA_LENGTH);
+		return length;
 	} else {
-		int len = io(PUT_DATA, 0x40U, 0U, data, length);
-		if (len < 0) {
-			if (len == -22) {
-				wxLogError(wxT("PUT_DATA returned %d"), -len);
-				return len;
+		int ret = io(PUT_DATA, 0x40U, 0U, data, length);
+		if (ret < 0) {
+			if (ret == -22) {
+				wxLogError(wxT("PUT_DATA returned %d"), -ret);
+				return ret;
 			}
 
 			return 0;
 		}
 
-		return len;
+		return length;
 	}
 }
 

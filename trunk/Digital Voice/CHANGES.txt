@@ -307,3 +307,4 @@ Remove the Offset parameter in the DVAP Client.
 Updated XRF008s and XRF123s IP addresses.
 Fixed GMSK modem space reporting.
 Added DCS021.
+Added XRF333.

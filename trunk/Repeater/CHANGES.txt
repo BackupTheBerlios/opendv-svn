@@ -1796,3 +1796,4 @@ Updated XRF008s and XRF123s IP addresses.
 Reset the DVAP into GMSK mode if FM data is received.
 Fix for GMSK modems request for space.
 Added DCS021.
+Added XRF333.
