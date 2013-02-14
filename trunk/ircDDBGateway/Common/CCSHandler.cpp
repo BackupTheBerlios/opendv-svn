@@ -26,18 +26,12 @@ CCCSHandler**            CCCSHandler::m_handlers = NULL;
 
 unsigned int             CCCSHandler::m_count = 0U;
 
-in_addr                  CCCSHandler::m_ccsAddress;
-
 wxString                 CCCSHandler::m_localAddress;
 CHeaderLogger*           CCCSHandler::m_headerLogger = NULL;
 
 void CCCSHandler::initialise(unsigned int count)
 {
 	wxASSERT(count > 0U);
-
-	m_ccsAddress = CUDPReaderWriter::lookup(CCS_HOSTNAME);
-	if (m_ccsAddress.s_addr == INADDR_NONE)
-		wxLogError(wxT("Unable to find the IP address for %s"), CCS_HOSTNAME.c_str());
 
 	m_count = count;
 	m_handlers = new CCCSHandler*[m_count];
@@ -93,6 +87,7 @@ m_handler(handler),
 m_callsign(callsign),
 m_reflector(),
 m_locator(),
+m_ccsAddress(),
 m_protocol(localPort, m_localAddress),
 m_state(CS_DISABLED),
 m_local(),
@@ -193,10 +188,6 @@ void CCCSHandler::process(CAMBEData& data)
 	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)
 		return;
 
-	// This is a resolved DTMF code
-	if (m_state == CS_ACTIVE && m_yourCall.Left(1U).IsSameAs(wxT("*")))
-		m_yourCall = header.getMyCall1();
-
 	// This is a new incoming CCS call
 	if (m_state == CS_CONNECTED) {
 		m_yourCall = header.getMyCall1();
@@ -232,10 +223,26 @@ void CCCSHandler::process(CCCSData& data)
 {
 	CC_TYPE type = data.getType();
 
-	if (type == CT_TERMINATE) {
-		wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
-		m_state = CS_CONNECTED;
-		m_inactivityTimer.stop();
+	switch (type) {
+		case CT_TERMINATE:
+			wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
+			m_state = CS_CONNECTED;
+			m_inactivityTimer.stop();
+			break;
+
+		case CT_DTMFNOTFOUND:
+			wxLogMessage(wxT("CCS cannot map %s to a callsign"), m_yourCall.Mid(1U, 4U).c_str());
+			m_state = CS_CONNECTED;
+			m_inactivityTimer.stop();
+			break;
+
+		case CT_DTMFFOUND:
+			wxLogMessage(wxT("CCS mapped %s to %s"), m_yourCall.Mid(1U, 4U).c_str(), data.getRemote().c_str());
+			m_yourCall = data.getRemote();
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -271,8 +278,11 @@ bool CCCSHandler::connect()
 		return false;
 
 	// Can we resolve the CCS server address?
-	if (m_ccsAddress.s_addr == INADDR_NONE)
+	m_ccsAddress = CUDPReaderWriter::lookup(CCS_HOSTNAME);
+	if (m_ccsAddress.s_addr == INADDR_NONE) {
+		wxLogError(wxT("Unable to find the IP address for %s"), CCS_HOSTNAME.c_str());
 		return false;
+	}
 
 	bool res = m_protocol.open();
 	if (!res)
@@ -359,16 +369,18 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		m_inactivityTimer.start();
 	}
 
-	CHeaderData& header = data.getHeader();
+	CAMBEData temp(data);
+
+	CHeaderData& header = temp.getHeader();
 	header.setMyCall1(m_myCall1);
 	header.setMyCall2(m_myCall2);
 	header.setYourCall(m_yourCall);
 	header.setRptCall1(m_callsign);
 	header.setRptCall2(m_reflector);
 
-	data.setRptSeq(m_seqNo++);
-	data.setDestination(m_ccsAddress, CCS_PORT);
-	m_protocol.writeData(data);
+	temp.setRptSeq(m_seqNo++);
+	temp.setDestination(m_ccsAddress, CCS_PORT);
+	m_protocol.writeData(temp);
 }
 
 void CCCSHandler::clockInt(unsigned int ms)

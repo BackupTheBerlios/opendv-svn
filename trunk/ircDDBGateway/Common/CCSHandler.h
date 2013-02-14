@@ -78,8 +78,6 @@ private:
 	static CCCSHandler**  m_handlers;
 	static unsigned int   m_count;
 
-	static in_addr        m_ccsAddress;
-
 	static wxString       m_localAddress;
 	static CHeaderLogger* m_headerLogger;
 
@@ -87,6 +85,7 @@ private:
 	wxString            m_callsign;
 	wxString            m_reflector;
 	wxString            m_locator;
+	in_addr             m_ccsAddress;
 	CCCSProtocolHandler m_protocol;
 	CCS_STATUS          m_state;
 	wxString            m_local;

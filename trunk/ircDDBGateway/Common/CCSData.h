@@ -28,7 +28,9 @@
 #endif
 
 enum CC_TYPE {
-	CT_TERMINATE
+	CT_TERMINATE,
+	CT_DTMFNOTFOUND,
+	CT_DTMFFOUND
 };
 
 class CCCSData {

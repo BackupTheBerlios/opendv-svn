@@ -57,9 +57,9 @@ bool CCCSProtocolHandler::writeData(const CAMBEData& data)
 	unsigned char buffer[100U];
 	unsigned int length = data.getCCSData(buffer, 100U);
 
-// #if defined(DUMP_TX)
+#if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Data"), buffer, length);
-// #endif
+#endif
 
 	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 }
@@ -105,9 +105,9 @@ bool CCCSProtocolHandler::writeMisc(const CCCSData& data)
 	unsigned char buffer[40U];
 	unsigned int length = data.getCCSData(buffer, 40U);
 
-// #if defined(DUMP_TX)
+#if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Misc"), buffer, length);
-// #endif
+#endif
 
 	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
 }
@@ -120,9 +120,9 @@ bool CCCSProtocolHandler::writeBusy(const wxString& text, const in_addr& address
 	for (unsigned int i = 0U; i < text.Len() && i < 38U; i++)
 		buffer[i] = text.GetChar(i);
 
-// #if defined(DUMP_TX)
+#if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Busy"), buffer, 38U);
-// #endif
+#endif
 
 	return m_socket.write(buffer, 38U, address, port);
 }
@@ -150,7 +150,6 @@ bool CCCSProtocolHandler::readPackets()
 	m_length = length;
 
 	if (m_buffer[0] == '0' && m_buffer[1] == '0' && m_buffer[2] == '0' && m_buffer[3] == '1') {
-		CUtils::dump(wxT("Receiving data"), m_buffer, m_length);
 		m_type = CT_DATA;
 		return false;
 	} else if (m_buffer[0] == 'L' && m_buffer[1] == 'L' && m_buffer[2] == 'L') {
@@ -168,9 +167,10 @@ bool CCCSProtocolHandler::readPackets()
 				m_type = CT_POLL;
 				return false;
 			case 100U:
+			case 20U:
+			case 17U:
 				m_type = CT_MISC;
-				CUtils::dump(wxT("Busy data"), m_buffer, m_length);
-				return true;
+				return false;
 			default:
 				break;
 		}

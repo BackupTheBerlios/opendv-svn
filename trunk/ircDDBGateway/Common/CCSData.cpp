@@ -47,18 +47,45 @@ CCCSData::~CCCSData()
 bool CCCSData::setCCSData(const unsigned char *data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort)
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 100U);
 
-	m_remote = wxString((char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+	switch (length) {
+		case 100U:
+			m_remote = wxString((char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
 
-	if (::memcmp(data + 8U, "0001", 4U) == 0) {
-		m_type = CT_TERMINATE;
-	} else {
-		CUtils::dump(wxT("Invalid CCS packet"), data, length);
-		return false;
+			if (::memcmp(data + 8U, "0001", 4U) == 0) {
+				m_type = CT_TERMINATE;
+			} else {
+				CUtils::dump(wxT("Invalid CCS packet"), data, length);
+				return false;
+			}
+
+			m_local = wxString((char*)(data + 12U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			break;
+
+		case 20U:
+			if (::memcmp(data + 0U, "DTMF_CALL:", 10U) == 0) {
+				m_type = CT_DTMFFOUND;
+			} else {
+				CUtils::dump(wxT("Invalid CCS packet"), data, length);
+				return false;
+			}
+
+			m_remote = wxString((char*)(data + 10U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			break;
+
+		case 17U:
+			if (::memcmp(data + 0U, "NODTMFCALL", 10U) == 0) {
+				m_type = CT_DTMFNOTFOUND;
+			} else {
+				CUtils::dump(wxT("Invalid CCS packet"), data, length);
+				return false;
+			}
+			break;
+
+		default:
+			CUtils::dump(wxT("Invalid CCS packet"), data, length);
+			return false;
 	}
-
-	m_local = wxString((char*)(data + 12U), wxConvLocal, LONG_CALLSIGN_LENGTH);
 
 	m_yourAddress = yourAddress;
 	m_yourPort    = yourPort;
