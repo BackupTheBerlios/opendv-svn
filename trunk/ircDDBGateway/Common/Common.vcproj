@@ -487,6 +487,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCSCallback.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CCSData.h"
 				>
 			</File>

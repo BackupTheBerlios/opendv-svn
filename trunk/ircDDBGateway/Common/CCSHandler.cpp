@@ -82,7 +82,7 @@ void CCCSHandler::finalise()
 	delete[] m_handlers;
 }
 
-CCCSHandler::CCCSHandler(IRepeaterCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort) :
+CCCSHandler::CCCSHandler(ICCSCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort) :
 m_handler(handler),
 m_callsign(callsign),
 m_reflector(),
@@ -194,6 +194,8 @@ void CCCSHandler::process(CAMBEData& data)
 		m_local    = header.getYourCall();
 		m_state = CS_ACTIVE;
 		m_inactivityTimer.start();
+
+		m_handler->ccsLinkMade(m_yourCall);
 	}
 
 	m_inactivityTimer.reset();
@@ -228,17 +230,20 @@ void CCCSHandler::process(CCCSData& data)
 			wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
 			m_state = CS_CONNECTED;
 			m_inactivityTimer.stop();
+			m_handler->ccsLinkEnded(data.getRemote());
 			break;
 
 		case CT_DTMFNOTFOUND:
 			wxLogMessage(wxT("CCS cannot map %s to a callsign"), m_yourCall.Mid(1U, 4U).c_str());
 			m_state = CS_CONNECTED;
 			m_inactivityTimer.stop();
+			m_handler->ccsLinkFailed(m_yourCall.Mid(1U, 4U));
 			break;
 
 		case CT_DTMFFOUND:
 			wxLogMessage(wxT("CCS mapped %s to %s"), m_yourCall.Mid(1U, 4U).c_str(), data.getRemote().c_str());
 			m_yourCall = data.getRemote();
+			m_handler->ccsLinkMade(m_yourCall);
 			break;
 
 		default:
@@ -332,6 +337,8 @@ void CCCSHandler::writeEnd()
 
 	m_state = CS_CONNECTED;
 	m_inactivityTimer.stop();
+
+	m_handler->ccsLinkEnded(m_yourCall);
 }
 
 void CCCSHandler::writeHeard(CHeaderData& header)
@@ -407,7 +414,11 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 		m_tryCount = 1U;
 
+		if (m_state == CS_ACTIVE)
+			m_handler->ccsLinkEnded(m_yourCall);
+
 		m_state = CS_CONNECTING;
+
 		return;
 	}
 
@@ -431,6 +442,8 @@ void CCCSHandler::clockInt(unsigned int ms)
 		wxLogMessage(wxT("Activity timeout on CCS link for %s"), m_callsign.c_str());
 		m_state = CS_CONNECTED;
 		m_inactivityTimer.stop();
+
+		m_handler->ccsLinkEnded(m_yourCall);
 	}
 }
 

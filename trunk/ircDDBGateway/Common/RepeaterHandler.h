@@ -31,6 +31,7 @@
 #include "CacheManager.h"
 #include "HeaderLogger.h"
 #include "DRATSServer.h"
+#include "CCSCallback.h"
 #include "VersionUnit.h"
 #include "CCSHandler.h"
 #include "StatusData.h"
@@ -53,7 +54,7 @@
 
 #include <wx/wx.h>
 
-class CRepeaterHandler : public IRepeaterCallback, public IReflectorCallback {
+class CRepeaterHandler : public IRepeaterCallback, public IReflectorCallback, public ICCSCallback {
 public:
 	static void initialise(unsigned int maxRepeaters);
 
@@ -120,6 +121,10 @@ public:
 	virtual void linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign);
 	virtual void linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign);
 	virtual bool linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable);
+
+	virtual void ccsLinkMade(const wxString& callsign);
+	virtual void ccsLinkFailed(const wxString& dtmf);
+	virtual void ccsLinkEnded(const wxString& callsign);
 
 protected:
 	CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);

@@ -666,9 +666,6 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	g2CommandHandler(m_yourCall, m_myCall1, header);
 
 	if (m_g2Status == G2_NONE) {
-		// CCS
-		m_ccsHandler->writeHeader(header);
-
 		reflectorCommandHandler(m_yourCall, m_myCall1, wxT("UR Call"));
 		sendToOutgoing(header);
 	}
@@ -1044,18 +1041,12 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		m_ccsHandler->writeHeader(header);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_CCS) {
-		// wxLogMessage(wxT("Not passing UR:%s MY:%s/%s src: %d, to outgoing links"), header.getYourCall().c_str(), header.getMyCall1().c_str(), header.getMyCall2().c_str(), int(source));
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_CCS)
 		return true;
-	}
 
 	// Reset the slow data text collector, used for DCS text passing
 	m_textCollector.reset();
 	m_text.Clear();
-
-	// If CCS is active, don't send audio to outgoing reflector links
-	if (ccsStatus == CS_ACTIVE)
-		return true;
 
 	sendToOutgoing(header);
 
@@ -1103,10 +1094,6 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 	}
 
 	data.setText(m_text);
-
-	// If CCS is active, don't send audio to outgoing reflector links
-	if (ccsStatus == CS_ACTIVE)
-		return true;
 
 	sendToOutgoing(data);
 
@@ -2087,6 +2074,10 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 
 void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 {
+	CCS_STATUS status = m_ccsHandler->getStatus();
+	if (status == CS_ACTIVE)
+		return;
+
 	CHeaderData temp(header);
 
 	temp.setCQCQCQ();
@@ -2108,6 +2099,10 @@ void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 
 void CRepeaterHandler::sendToOutgoing(const CAMBEData& data)
 {
+	CCS_STATUS status = m_ccsHandler->getStatus();
+	if (status == CS_ACTIVE)
+		return;
+
 	CAMBEData temp(data);
 
 	CDExtraHandler::writeAMBE(this, temp, DIR_OUTGOING);
@@ -2446,6 +2441,33 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 	m_audio->setTempText(tempText);
 
 	m_ccsHandler->setReflector();
+}
+
+void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
+{
+	wxString text;
+	text.Printf(wxT("CCS -> %s"), callsign.c_str());
+
+	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
+	m_repeaterHandler->writeText(textData);
+}
+
+void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
+{
+	wxString text;
+	text.Printf(wxT("CCS has ended"), callsign.c_str());
+
+	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
+	m_repeaterHandler->writeText(textData);
+}
+
+void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
+{
+	wxString text;
+	text.Printf(wxT("DTMF %s unknown"), dtmf.c_str());
+
+	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
+	m_repeaterHandler->writeText(textData);
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)

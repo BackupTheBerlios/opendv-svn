@@ -20,10 +20,10 @@
 #define	CCSHandler_H
 
 #include "CCSProtocolHandler.h"
-#include "RepeaterCallback.h"
 #include "DStarDefines.h"
 #include "HeaderLogger.h"
 #include "ConnectData.h"
+#include "CCSCallback.h"
 #include "AMBEData.h"
 #include "PollData.h"
 #include "Timer.h"
@@ -47,7 +47,7 @@ enum CCS_STATUS {
 
 class CCCSHandler {
 public:
-	CCCSHandler(IRepeaterCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort);
+	CCCSHandler(ICCSCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort);
 	~CCCSHandler();
 
 	bool connect();
@@ -89,7 +89,7 @@ private:
 	static wxString       m_localAddress;
 	static CHeaderLogger* m_headerLogger;
 
-	IRepeaterCallback*  m_handler;
+	ICCSCallback*       m_handler;
 	wxString            m_callsign;
 	wxString            m_reflector;
 	wxString            m_locator;
