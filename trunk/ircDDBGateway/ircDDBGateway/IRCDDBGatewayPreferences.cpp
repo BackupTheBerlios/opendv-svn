@@ -103,7 +103,7 @@ m_miscellaneous(NULL)
 	m_dprs = new CDPRSSet(noteBook, -1, APPLICATION_NAME, aprsEnabled, aprsHostname, aprsPort);
 	noteBook->AddPage(m_dprs, wxT("D-PRS"), false);
 
-	m_dextra = new CDExtraSet(noteBook, -1, APPLICATION_NAME, dextraEnabled, maxDExtraDongles, MAX_DEXTRA_DONGLES);
+	m_dextra = new CDExtraSet(noteBook, -1, APPLICATION_NAME, dextraEnabled, maxDExtraDongles, MAX_DEXTRA_LINKS);
 	noteBook->AddPage(m_dextra, wxT("DExtra"), false);
 
 	m_dplus = new CDPlusSet(noteBook, -1, APPLICATION_NAME, dplusEnabled, maxDPlusDongles, MAX_DPLUS_LINKS, dplusLogin);

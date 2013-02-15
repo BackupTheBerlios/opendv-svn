@@ -40,7 +40,6 @@ const wxString STATUS5_FILE_NAME = wxT("status5.txt");
 const unsigned int MAX_OUTGOING       = 6U;
 const unsigned int MAX_REPEATERS      = 4U;
 const unsigned int MAX_DEXTRA_LINKS   = 5U;
-const unsigned int MAX_DEXTRA_DONGLES = 5U;
 const unsigned int MAX_DPLUS_LINKS    = 5U;
 const unsigned int MAX_DCS_LINKS      = 5U;
 const unsigned int MAX_STARNETS       = 5U;

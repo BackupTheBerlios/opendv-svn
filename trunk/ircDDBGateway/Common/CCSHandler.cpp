@@ -334,12 +334,12 @@ void CCCSHandler::writeEnd()
 	m_inactivityTimer.stop();
 }
 
-void CCCSHandler::writeHeard(const CHeaderData& data)
+void CCCSHandler::writeHeard(CHeaderData& header)
 {
 	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)
 		return;
 
-	CHeardData heard(data, m_callsign, m_reflector);
+	CHeardData heard(header, m_callsign, m_reflector);
 	heard.setDestination(m_ccsAddress, CCS_PORT);
 	m_protocol.writeHeard(heard);
 }
@@ -381,6 +381,11 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 	temp.setRptSeq(m_seqNo++);
 	temp.setDestination(m_ccsAddress, CCS_PORT);
 	m_protocol.writeData(temp);
+}
+
+CCS_STATUS CCCSHandler::getStatus() const
+{
+	return m_state;
 }
 
 void CCCSHandler::clockInt(unsigned int ms)

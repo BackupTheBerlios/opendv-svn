@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DExtraHandler_H
-#define	DExtraHandler_H
+#ifndef	DExtraHander_H
+#define	DExtraHander_H
 
 #include "DExtraProtocolHandler.h"
 #include "ReflectorCallback.h"
@@ -47,11 +47,12 @@ enum DEXTRA_STATE {
 
 class CDExtraHandler {
 public:
-	static void initialise(unsigned int maxLinks);
+	static void initialise(unsigned int maxReflectors);
 
 	static void setCallsign(const wxString& callsign);
 	static void setDExtraProtocolHandler(CDExtraProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
+	static void setMaxDongles(unsigned int maxDongles);
 
 	static void link(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, const in_addr& address);
 	static void unlink(IReflectorCallback* handler, const wxString& exclude = wxEmptyString);
@@ -76,9 +77,11 @@ public:
 	static void getInfo(IReflectorCallback* handler, CRemoteRepeaterData& data);
 
 	static wxString getIncoming(const wxString& callsign);
+	static wxString getDongles();
 
 protected:
 	CDExtraHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, const in_addr& address, unsigned int port, DIRECTION direction);
+	CDExtraHandler(const wxString& reflector, const in_addr& address, unsigned int port, DIRECTION direction);
 	~CDExtraHandler();
 
 	void processInt(CHeaderData& header);
@@ -92,6 +95,7 @@ protected:
 
 private:
 	static unsigned int            m_maxReflectors;
+	static unsigned int            m_maxDongles;
 	static CDExtraHandler**        m_reflectors;
 
 	static wxString                m_callsign;

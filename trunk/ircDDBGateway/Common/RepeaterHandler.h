@@ -21,7 +21,7 @@
 
 #include "RepeaterProtocolHandler.h"
 #include "DExtraProtocolHandler.h"
-#include "DongleProtocolHandler.h"
+#include "DPlusProtocolHandler.h"
 #include "RemoteRepeaterData.h"
 #include "G2ProtocolHandler.h"
 #include "ReflectorCallback.h"

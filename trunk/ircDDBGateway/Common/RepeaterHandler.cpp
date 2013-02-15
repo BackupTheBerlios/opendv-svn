@@ -18,7 +18,6 @@
 
 #include "RepeaterHandler.h"
 #include "DExtraHandler.h"
-#include "DongleHandler.h"
 #include "DPlusHandler.h"
 #include "DStarDefines.h"
 #include "DCSHandler.h"
@@ -1015,6 +1014,11 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (m_repeaterId != 0x00U)
 		return false;
 
+	// If CCS is active then incoming audio from outgoing reflector links is dropped
+	CCS_STATUS ccsStatus = m_ccsHandler->getStatus();
+	if (direction == DIR_OUTGOING && ccsStatus == CS_ACTIVE && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
+		return false;
+
 	// Rewrite the ID if we're using Icom hardware
 	if (m_hwType == HW_ICOM) {
 		unsigned int id1 = header.getId();
@@ -1037,14 +1041,21 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 
 	sendToIncoming(header);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_CCS) {
-		wxLogMessage(wxT("Not passing UR:%s MY:%s/%s src: %d, to outgoing links"), header.getYourCall().c_str(), header.getMyCall1().c_str(), header.getMyCall2().c_str(), int(source));
+	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
+		m_ccsHandler->writeHeader(header);
+
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_CCS) {
+		// wxLogMessage(wxT("Not passing UR:%s MY:%s/%s src: %d, to outgoing links"), header.getYourCall().c_str(), header.getMyCall1().c_str(), header.getMyCall2().c_str(), int(source));
 		return true;
 	}
 
 	// Reset the slow data text collector, used for DCS text passing
 	m_textCollector.reset();
 	m_text.Clear();
+
+	// If CCS is active, don't send audio to outgoing reflector links
+	if (ccsStatus == CS_ACTIVE)
+		return true;
 
 	sendToOutgoing(header);
 
@@ -1055,6 +1066,11 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 {
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
+		return false;
+
+	// If CCS is active then incoming audio from outgoing reflector links is dropped
+	CCS_STATUS ccsStatus = m_ccsHandler->getStatus();
+	if (direction == DIR_OUTGOING && ccsStatus == CS_ACTIVE && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		return false;
 
 	// Rewrite the ID if we're using Icom hardware
@@ -1071,7 +1087,10 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 
 	sendToIncoming(data);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_DRATS || source == AS_CCS)
+	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
+		m_ccsHandler->writeAMBE(data);
+
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_CCS)
 		return true;
 
 	// Collect the text from the slow data for DCS
@@ -1084,6 +1103,10 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 	}
 
 	data.setText(m_text);
+
+	// If CCS is active, don't send audio to outgoing reflector links
+	if (ccsStatus == CS_ACTIVE)
+		return true;
 
 	sendToOutgoing(data);
 
@@ -2107,7 +2130,6 @@ void CRepeaterHandler::sendToIncoming(const CHeaderData& header)
 
 	// Incoming DExtra links have RPT1 and RPT2 swapped
 	temp.setRepeaters(m_gwyCallsign, m_rptCallsign);
-	CDongleHandler::writeHeader(this, temp);
 	CDExtraHandler::writeHeader(this, temp, DIR_INCOMING);
 
 	// Incoming DCS links have RPT1 and RPT2 swapped
@@ -2120,7 +2142,6 @@ void CRepeaterHandler::sendToIncoming(const CAMBEData& data)
 	CAMBEData temp(data);
 
 	CDExtraHandler::writeAMBE(this, temp, DIR_INCOMING);
-	CDongleHandler::writeAMBE(this, temp);
 
 	CDPlusHandler::writeAMBE(this, temp, DIR_INCOMING);
 

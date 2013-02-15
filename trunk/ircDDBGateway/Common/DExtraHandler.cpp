@@ -22,6 +22,7 @@
 #include "Utils.h"
 
 unsigned int            CDExtraHandler::m_maxReflectors = 0U;
+unsigned int            CDExtraHandler::m_maxDongles = 0U;
 CDExtraHandler**        CDExtraHandler::m_reflectors = NULL;
 
 wxString                CDExtraHandler::m_callsign;
@@ -51,6 +52,40 @@ m_inactivityTimer(1000U, 2U),
 m_header(NULL)
 {
 	wxASSERT(handler != NULL);
+	wxASSERT(port > 0U);
+
+	m_pollInactivityTimer.start();
+
+	m_time = ::time(NULL);
+
+	if (direction == DIR_INCOMING) {
+		m_pollTimer.start();
+		m_stateChange = true;
+		m_linkState = DEXTRA_LINKED;
+	} else {
+		m_linkState = DEXTRA_LINKING;
+		m_tryTimer.start();
+	}
+}
+
+CDExtraHandler::CDExtraHandler(const wxString& reflector, const in_addr& address, unsigned int port, DIRECTION direction) :
+m_reflector(reflector),
+m_repeater(),
+m_yourAddress(address),
+m_yourPort(port),
+m_direction(direction),
+m_linkState(DEXTRA_LINKING),
+m_destination(NULL),
+m_time(),
+m_pollTimer(1000U, 10U),
+m_pollInactivityTimer(1000U, 60U),
+m_tryTimer(1000U, 1U),
+m_tryCount(0U),
+m_dExtraId(0x00U),
+m_dExtraSeq(0x00U),
+m_inactivityTimer(1000U, 2U),
+m_header(NULL)
+{
 	wxASSERT(port > 0U);
 
 	m_pollInactivityTimer.start();
@@ -101,6 +136,11 @@ void CDExtraHandler::setHeaderLogger(CHeaderLogger* logger)
 	m_headerLogger = logger;
 }
 
+void CDExtraHandler::setMaxDongles(unsigned int maxDongles)
+{
+	m_maxDongles = maxDongles;
+}
+
 wxString CDExtraHandler::getIncoming(const wxString& callsign)
 {
 	wxString incoming;
@@ -123,10 +163,30 @@ void CDExtraHandler::getInfo(IReflectorCallback* handler, CRemoteRepeaterData& d
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CDExtraHandler* reflector = m_reflectors[i];
 		if (reflector != NULL) {
-			if (reflector->m_destination == handler)
-				data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, reflector->m_direction, false);
+			if (reflector->m_destination == handler) {
+				if (reflector->m_direction == DIR_INCOMING && reflector->m_repeater.IsEmpty())
+					data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, DIR_INCOMING, true);
+				else
+					data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, reflector->m_direction, false);
+			}
 		}
 	}
+}
+
+wxString CDExtraHandler::getDongles()
+{
+	wxString dongles;
+
+	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
+		CDExtraHandler* reflector = m_reflectors[i];
+		if (reflector != NULL && reflector->m_direction == DIR_INCOMING && reflector->m_repeater.IsEmpty()) {
+			dongles.Append(wxT("X:"));
+			dongles.Append(reflector->m_reflector);
+			dongles.Append(wxT("  "));
+		}
+	}
+
+	return dongles;
 }
 
 void CDExtraHandler::process(CHeaderData& header)
@@ -161,6 +221,8 @@ void CDExtraHandler::process(CAMBEData& data)
 
 void CDExtraHandler::process(const CPollData& poll)
 {
+	bool found = false;
+
 	wxString    reflector = poll.getData1();
 	in_addr   yourAddress = poll.getYourAddress();
 	unsigned int yourPort = poll.getYourPort();
@@ -173,9 +235,53 @@ void CDExtraHandler::process(const CPollData& poll)
 				m_reflectors[i]->m_yourPort           == yourPort &&
 				m_reflectors[i]->m_linkState          == DEXTRA_LINKED) {
 				m_reflectors[i]->m_pollInactivityTimer.reset();
+				found = true;
 			}
 		}
 	}	
+
+	if (found)
+		return;
+
+	// A repeater poll arriving here is an error
+	if (!poll.isDongle())
+		return;
+
+	// Check to see if we are allowed to accept it
+	unsigned int count = 0U;
+	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
+		if (m_reflectors[i] != NULL &&
+			m_reflectors[i]->m_direction == DIR_INCOMING &&
+			m_reflectors[i]->m_repeater.IsEmpty())
+			count++;
+	}
+
+	if (count >= m_maxDongles)
+		return;
+
+	// An unmatched poll indicates the need for a new entry
+	wxLogMessage(wxT("New incoming DExtra Dongle from %s"), reflector.c_str());
+
+	CDExtraHandler* handler = new CDExtraHandler(reflector, yourAddress, yourPort, DIR_INCOMING);
+
+	found = false;
+
+	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
+		if (m_reflectors[i] == NULL) {
+			m_reflectors[i] = handler;
+			found = true;
+			break;
+		}
+	}
+
+	if (found) {
+		// Return the poll
+		CPollData poll(m_callsign, yourAddress, yourPort);
+		m_handler->writePoll(poll);
+	} else {
+		wxLogError(wxT("No space to add new DExtra Dongle, ignoring"));
+		delete handler;
+	}
 }
 
 void CDExtraHandler::process(CConnectData& connect)
@@ -337,12 +443,14 @@ void CDExtraHandler::unlink()
 		CDExtraHandler* reflector = m_reflectors[i];
 
 		if (reflector != NULL) {
-			wxLogMessage(wxT("Unlinking from DExtra reflector %s"), reflector->m_reflector.c_str());
+			if (!reflector->m_repeater.IsEmpty()) {
+				wxLogMessage(wxT("Unlinking from DExtra reflector %s"), reflector->m_reflector.c_str());
 
-			CConnectData connect(reflector->m_repeater, reflector->m_yourAddress, reflector->m_yourPort);
-			m_handler->writeConnect(connect);
+				CConnectData connect(reflector->m_repeater, reflector->m_yourAddress, reflector->m_yourPort);
+				m_handler->writeConnect(connect);
 
-			reflector->m_linkState = DEXTRA_UNLINKING;
+				reflector->m_linkState = DEXTRA_UNLINKING;
+			}
 		}
 	}	
 }
@@ -452,29 +560,60 @@ void CDExtraHandler::processInt(CHeaderData& header)
 			break;
 
 		case DIR_INCOMING:
-			// A repeater connection
-			if (!m_repeater.IsSameAs(rpt2) && !m_repeater.IsSameAs(rpt1))
-				return;
+			if (!m_repeater.IsEmpty()) {
+				// A repeater connection
+				if (!m_repeater.IsSameAs(rpt2) && !m_repeater.IsSameAs(rpt1))
+					return;
 
-			// If we're already processing, ignore the new header
-			if (m_dExtraId != 0x00U)
-				return;
+				// If we're already processing, ignore the new header
+				if (m_dExtraId != 0x00U)
+					return;
 
-			// Write to Header.log if it's enabled
-			if (m_headerLogger != NULL)
-				m_headerLogger->write(wxT("DExtra"), header);
+				// Write to Header.log if it's enabled
+				if (m_headerLogger != NULL)
+					m_headerLogger->write(wxT("DExtra"), header);
 
-			m_dExtraId  = id;
-			m_dExtraSeq = 0x00U;
-			m_inactivityTimer.start();
+				m_dExtraId  = id;
+				m_dExtraSeq = 0x00U;
+				m_inactivityTimer.start();
 
-			delete m_header;
+				delete m_header;
 
-			m_header = new CHeaderData(header);
-			m_header->setCQCQCQ();
-			m_header->setFlags(0x00U, 0x00U, 0x00U);
+				m_header = new CHeaderData(header);
+				m_header->setCQCQCQ();
+				m_header->setFlags(0x00U, 0x00U, 0x00U);
 
-			m_destination->process(*m_header, m_direction, AS_DEXTRA);
+				m_destination->process(*m_header, m_direction, AS_DEXTRA);
+			} else {
+				// A Dongle connection
+				// Check the destination callsign
+				m_destination = CRepeaterHandler::findDVRepeater(rpt2);
+				if (m_destination == NULL) {
+					m_destination = CRepeaterHandler::findDVRepeater(rpt1);
+					if (m_destination == NULL)
+						return;
+				}
+
+				// If we're already processing, ignore the new header
+				if (m_dExtraId != 0x00U)
+					return;
+
+				// Write to Header.log if it's enabled
+				if (m_headerLogger != NULL)
+					m_headerLogger->write(wxT("DExtra"), header);
+
+				m_dExtraId  = id;
+				m_dExtraSeq = 0x00U;
+				m_inactivityTimer.start();
+
+				delete m_header;
+
+				m_header = new CHeaderData(header);
+				m_header->setCQCQCQ();
+				m_header->setFlags(0x00U, 0x00U, 0x00U);
+
+				m_destination->process(*m_header, m_direction, AS_DEXTRA);
+			}
 			break;
 	}
 }
@@ -623,10 +762,15 @@ bool CDExtraHandler::clockInt(unsigned int ms)
 
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		if (m_linkState == DEXTRA_LINKED) {
-			wxString callsign = m_repeater;
-			callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-			CPollData poll(callsign, m_yourAddress, m_yourPort);
-			m_handler->writePoll(poll);
+			if (!m_repeater.IsEmpty()) {
+				wxString callsign = m_repeater;
+				callsign.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+				CPollData poll(callsign, m_yourAddress, m_yourPort);
+				m_handler->writePoll(poll);
+			} else {
+				CPollData poll(m_callsign, m_yourAddress, m_yourPort);
+				m_handler->writePoll(poll);
+			}
 		}
 
 		m_pollTimer.reset();
@@ -669,9 +813,20 @@ void CDExtraHandler::writeHeaderInt(IReflectorCallback* handler, CHeaderData& he
 	if (m_dExtraId != 0x00)
 		return;
 
-	if (m_destination == handler) {
-		header.setDestination(m_yourAddress, m_yourPort);
-		m_handler->writeHeader(header);
+	switch (m_direction) {
+		case DIR_OUTGOING:
+			if (m_destination == handler) {
+				header.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeHeader(header);
+			}
+			break;
+
+		case DIR_INCOMING:
+			if (m_repeater.IsEmpty() || m_destination == handler) {
+				header.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeHeader(header);
+			}
+			break;
 	}
 }
 
@@ -688,9 +843,20 @@ void CDExtraHandler::writeAMBEInt(IReflectorCallback* handler, CAMBEData& data, 
 	if (m_dExtraId != 0x00)
 		return;
 
-	if (m_destination == handler) {
-		data.setDestination(m_yourAddress, m_yourPort);
-		m_handler->writeAMBE(data);
+	switch (m_direction) {
+		case DIR_OUTGOING:
+			if (m_destination == handler) {
+				data.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeAMBE(data);
+			}
+			break;
+
+		case DIR_INCOMING:
+			if (m_repeater.IsEmpty() || m_destination == handler) {
+				data.setDestination(m_yourAddress, m_yourPort);
+				m_handler->writeAMBE(data);
+			}
+			break;
 	}
 }
 
@@ -725,9 +891,14 @@ void CDExtraHandler::writeStatus(wxFFile& file)
 
 				case DIR_INCOMING:
 					if (reflector->m_linkState == DEXTRA_LINKED) {
-						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: DExtra link - Type: Repeater Rptr: %s Refl: %s Dir: Incoming\n"),
-							tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
-							reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
+						if (reflector->m_repeater.IsEmpty())
+							text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: DExtra link - Type: Dongle User: %s Dir: Incoming\n"),
+								tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
+								reflector->m_reflector.c_str());
+						else
+							text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: DExtra link - Type: Repeater Rptr: %s Refl: %s Dir: Incoming\n"),
+								tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
+								reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
 
 						file.Write(text);
 					}

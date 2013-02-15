@@ -38,6 +38,12 @@
 #include <wx/wx.h>
 #include <wx/ffile.h>
 
+enum CCS_STATUS {
+	CS_DISABLED,
+	CS_CONNECTING,
+	CS_CONNECTED,
+	CS_ACTIVE
+};
 
 class CCCSHandler {
 public:
@@ -46,12 +52,14 @@ public:
 
 	bool connect();
 
-	void writeHeard(const CHeaderData& data);
-	void writeEnd();
+	void writeHeard(CHeaderData& header);
 	void writeHeader(CHeaderData& header);
 	void writeAMBE(CAMBEData& data, const wxString& dtmf = wxEmptyString);
+	void writeEnd();
 
 	void setReflector(const wxString& callsign = wxEmptyString);
+
+	CCS_STATUS getStatus() const;
 
 	static void disconnect();
 
