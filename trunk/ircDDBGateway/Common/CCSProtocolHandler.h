@@ -57,7 +57,6 @@ public:
 	bool writePoll(const CPollData& poll);
 	bool writeHeard(const CHeardData& poll);
 	bool writeMisc(const CCCSData& data);
-	bool writeBusy(const wxString& text, const in_addr& address, unsigned int port);
 
 	CCS_TYPE      read();
 	CAMBEData*    readData();

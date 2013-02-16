@@ -265,16 +265,23 @@ wxString CDTMF::processCCS(const wxString& command) const
 {
 	unsigned int len = command.Len();
 
-	if (len != 4U)
-		return wxEmptyString;
-
 	unsigned long n;
 	command.ToULong(&n);
 	if (n == 0UL)
 		return wxEmptyString;
 
-	wxString out;
-	out.Printf(wxT("CCS*%04lu"), n);
+	wxString out = wxEmptyString;
+
+	switch (len) {
+		case 4U:
+			out.Printf(wxT("CCS*%04lu"), n);
+			break;
+		case 5U:
+			out.Printf(wxT("CCS*%05lu"), n);
+			break;
+		default:
+			break;
+	}
 
 	return out;
 }

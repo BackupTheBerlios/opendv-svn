@@ -207,20 +207,14 @@ void CCCSHandler::process(CAMBEData& data)
 		if (m_headerLogger != NULL)
 			m_headerLogger->write(wxT("CCS"), header);
 
-		bool busy = !m_handler->process(header, DIR_INCOMING, AS_CCS);
-		if (busy)
-			m_protocol.writeBusy(wxT("We're busy!"), m_ccsAddress, CCS_PORT);
+		m_handler->process(header, DIR_INCOMING, AS_CCS);
 
 		m_id = id;
 	} else if (seqNo == 0U) {
-		bool busy = !m_handler->process(header, DIR_INCOMING, AS_DUP);
-		if (busy)
-			m_protocol.writeBusy(wxT("We're busy!"), m_ccsAddress, CCS_PORT);
+		m_handler->process(header, DIR_INCOMING, AS_DUP);
 	}
 
-	bool busy = !m_handler->process(data, DIR_INCOMING, AS_CCS);
-	if (busy)
-		m_protocol.writeBusy(wxT("We're busy!"), m_ccsAddress, CCS_PORT);
+	m_handler->process(data, DIR_INCOMING, AS_CCS);
 }
 
 void CCCSHandler::process(CCCSData& data)
@@ -236,14 +230,14 @@ void CCCSHandler::process(CCCSData& data)
 			break;
 
 		case CT_DTMFNOTFOUND:
-			wxLogMessage(wxT("CCS cannot map %s to a callsign"), m_yourCall.Mid(1U, 4U).c_str());
+			wxLogMessage(wxT("CCS cannot map %s to a callsign"), m_yourCall.Mid(1U).c_str());
 			m_state = CS_CONNECTED;
 			m_inactivityTimer.stop();
-			m_handler->ccsLinkFailed(m_yourCall.Mid(1U, 4U));
+			m_handler->ccsLinkFailed(m_yourCall.Mid(1U));
 			break;
 
 		case CT_DTMFFOUND:
-			wxLogMessage(wxT("CCS mapped %s to %s"), m_yourCall.Mid(1U, 4U).c_str(), data.getRemote().c_str());
+			wxLogMessage(wxT("CCS mapped %s to %s"), m_yourCall.Mid(1U).c_str(), data.getRemote().c_str());
 			m_yourCall = data.getRemote();
 			m_handler->ccsLinkMade(m_yourCall);
 			break;
@@ -379,7 +373,7 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		m_state = CS_ACTIVE;
 		m_inactivityTimer.start();
 
-		wxLogMessage(wxT("New outgoing CCS link to %s from %s"), m_yourCall.Mid(1U, 4U).c_str(), m_local.c_str());
+		wxLogMessage(wxT("New outgoing CCS link to %s from %s"), m_yourCall.Mid(1U).c_str(), m_local.c_str());
 	}
 
 	CAMBEData temp(data);
