@@ -250,7 +250,6 @@ private:
 	CTimer                    m_pollTimer;
 
 	// CCS
-	wxString                  m_ccsDTMF;
 	CCCSHandler*              m_ccsHandler;
 
 	// Icom heard data

@@ -192,10 +192,12 @@ void CCCSHandler::process(CAMBEData& data)
 	if (m_state == CS_CONNECTED) {
 		m_yourCall = header.getMyCall1();
 		m_local    = header.getYourCall();
-		m_state = CS_ACTIVE;
+		m_state    = CS_ACTIVE;
 		m_inactivityTimer.start();
 
 		m_handler->ccsLinkMade(m_yourCall);
+
+		wxLogMessage(wxT("New incoming CCS link to %s from %s"), m_local.c_str(), m_yourCall.c_str());
 	}
 
 	m_inactivityTimer.reset();
@@ -320,16 +322,18 @@ void CCCSHandler::disconnectInt()
 	m_pollTimer.stop();
 	m_tryTimer.stop();
 
-	m_state = CS_DISABLED;
-
 	if (m_state != CS_DISABLED)
 		m_protocol.close();
+
+	m_state = CS_DISABLED;
 }
 
 void CCCSHandler::writeEnd()
 {
 	if (m_state != CS_ACTIVE)
 		return;
+
+	wxLogMessage(wxT("CCS link to %s from %s has been terminated locally"), m_yourCall.c_str(), m_local.c_str());
 
 	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
 	data.setDestination(m_ccsAddress, CCS_PORT);
@@ -370,10 +374,12 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 
 		m_local    = m_myCall1;
 		m_yourCall = dtmf;
-		m_seqNo = 0U;
+		m_seqNo    = 0U;
 
 		m_state = CS_ACTIVE;
 		m_inactivityTimer.start();
+
+		wxLogMessage(wxT("New outgoing CCS link to %s from %s"), m_yourCall.Mid(1U, 4U).c_str(), m_local.c_str());
 	}
 
 	CAMBEData temp(data);

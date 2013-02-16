@@ -117,7 +117,6 @@ m_version(NULL),
 m_drats(NULL),
 m_dtmf(),
 m_pollTimer(1000U, 900U),			// 15 minutes
-m_ccsDTMF(),
 m_ccsHandler(NULL),
 m_heardUser(),
 m_heardRepeater(),
@@ -581,7 +580,6 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 
 	// Reset the DTMF decoder
 	m_dtmf.reset();
-	m_ccsDTMF.Clear();
 
 	// Reset the info, echo and version commands if they're running
 	m_audio->cancel();
@@ -677,6 +675,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 	m_linkReconnectTimer.reset();
 	m_watchdogTimer.reset();
 
+	wxString ccsDTMF = wxEmptyString;
+
 	m_frames++;
 	m_errors += data.getErrors();
 
@@ -698,18 +698,22 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 		bool dtmfDone = m_dtmf.hasCommand();
 		if (dtmfDone) {
 			wxString command = m_dtmf.translate();
-			if (command.IsEmpty()) {
-				// Do nothing
-			} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-				if (command.IsSameAs(wxT("CCSA"))) {
-					m_ccsHandler->writeEnd();
+
+			// Only process the DTMF command if the your call is CQCQCQ
+			if (m_yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
+				if (command.IsEmpty()) {
+					// Do nothing
+				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
+					if (command.IsSameAs(wxT("CCSA"))) {
+						m_ccsHandler->writeEnd();
+					} else {
+						ccsDTMF = command.Mid(3U);
+					}
+				} else if (command.IsSameAs(wxT("       I"))) {
+					m_g2Status = G2_INFO;
 				} else {
-					m_ccsDTMF = command.Mid(3U);
+					reflectorCommandHandler(command, m_myCall1, wxT("DTMF"));
 				}
-			} else if (command.IsSameAs(wxT("       I"))) {
-				m_g2Status = G2_INFO;
-			} else {
-				reflectorCommandHandler(command, m_myCall1, wxT("DTMF"));
 			}
 		}
 	}
@@ -781,6 +785,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			if (data.isEnd())
 				m_repeaterId = 0x00U;
 
+			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 			break;
 
@@ -836,8 +841,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			}
 			break;
 	}
-
-	m_ccsHandler->writeAMBE(data, m_ccsDTMF);
 }
 
 // Incoming headers when relaying network traffic, as detected by the repeater, will be used as a command
@@ -908,15 +911,19 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 		bool dtmfDone = m_dtmf.hasCommand();
 		if (dtmfDone) {
 			wxString command = m_dtmf.translate();
-			if (command.IsEmpty()) {
-				// Do nothing
-			} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-				if (command.IsSameAs(wxT("CCSA")))
-					m_ccsHandler->writeEnd();
-			} else if (command.IsSameAs(wxT("       I"))) {
-				// Do nothing
-			} else {
-				reflectorCommandHandler(command, m_myCall1, wxT("background DTMF"));
+
+			// Only process the DTMF command if the your call is CQCQCQ
+			if (m_yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
+				if (command.IsEmpty()) {
+					// Do nothing
+				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
+					if (command.IsSameAs(wxT("CCSA")))
+						m_ccsHandler->writeEnd();
+				} else if (command.IsSameAs(wxT("       I"))) {
+					// Do nothing
+				} else {
+					reflectorCommandHandler(command, m_myCall1, wxT("background DTMF"));
+				}
 			}
 		}
 	}
@@ -2280,6 +2287,8 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 		case TL_NORSK:
 			text.Printf(wxT("Kobler til %s"), callsign.c_str());
 			break;
+		case TL_PORTUGUES:
+			break;
 		default:
 			text.Printf(wxT("Linking to %s"), callsign.c_str());
 			break;
@@ -2326,6 +2335,9 @@ void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
 		case TL_NORSK:
 			text.Printf(wxT("Tilkoblet %s"), callsign.c_str());
 			break;
+		case TL_PORTUGUES:
+			text.Printf(wxT("Ligada ao %s"), callsign.c_str());
+			break;
 		default:
 			text.Printf(wxT("Linked to %s"), callsign.c_str());
 			break;
@@ -2371,6 +2383,9 @@ void CRepeaterHandler::writeNotLinked()
 			break;
 		case TL_NORSK:
 			text = wxT("Ikke linket");
+			break;
+		case TL_PORTUGUES:
+			text = wxT("Nao vinculado");
 			break;
 		default:
 			text = wxT("Not linked");
@@ -2427,6 +2442,10 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 		case TL_NORSK:
 			text = wxT("Ikke linket");
 			tempText.Printf(wxT("%s er opptatt"), callsign.c_str());
+			break;
+		case TL_PORTUGUES:
+			text = wxT("Nao vinculado");
+			tempText.Printf(wxT("%s is busy"), callsign.c_str());
 			break;
 		default:
 			text = wxT("Not linked");
