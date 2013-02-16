@@ -2465,7 +2465,43 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 {
 	wxString text;
-	text.Printf(wxT("CCS -> %s"), callsign.c_str());
+
+	switch (m_language) {
+		case TL_DEUTSCH:
+			text.Printf(wxT("Verlinkt zu %s"), callsign.c_str());
+			break;
+		case TL_DANSK:
+			text.Printf(wxT("Linket til %s"), callsign.c_str());
+			break;
+		case TL_FRANCAIS:
+			text.Printf(wxT("Connecte a %s"), callsign.c_str());
+			break;
+		case TL_ITALIANO:
+			text.Printf(wxT("Connesso a %s"), callsign.c_str());
+			break;
+		case TL_POLSKI:
+			text.Printf(wxT("Polaczony z %s"), callsign.c_str());
+			break;
+		case TL_ESPANOL:
+			text.Printf(wxT("Enlazado %s"), callsign.c_str());
+			break;
+		case TL_SVENSKA:
+			text.Printf(wxT("Lankar till %s"), callsign.c_str());
+			break;
+		case TL_NEDERLANDS_NL:
+		case TL_NEDERLANDS_BE:
+			text.Printf(wxT("Gelinkt met %s"), callsign.c_str());
+			break;
+		case TL_NORSK:
+			text.Printf(wxT("Tilkoblet %s"), callsign.c_str());
+			break;
+		case TL_PORTUGUES:
+			text.Printf(wxT("Ligada ao %s"), callsign.c_str());
+			break;
+		default:
+			text.Printf(wxT("Linked to %s"), callsign.c_str());
+			break;
+	}
 
 	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
 	m_repeaterHandler->writeText(textData);
@@ -2474,7 +2510,43 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 {
 	wxString text;
-	text.Printf(wxT("CCS has ended"), callsign.c_str());
+
+	switch (m_language) {
+		case TL_DEUTSCH:
+			text = wxT("CCS ist beendet");
+			break;
+		case TL_DANSK:
+			text = wxT("CCS er afsluttet");
+			break;
+		case TL_FRANCAIS:
+			text = wxT("CCS a pris fin");
+			break;
+		case TL_ITALIANO:
+			text = wxT("CCS e finita");
+			break;
+		case TL_POLSKI:
+			text = wxT("CCS zakonczyl");
+			break;
+		case TL_ESPANOL:
+			text = wxT("CCS ha terminado");
+			break;
+		case TL_SVENSKA:
+			text = wxT("CCS har upphort");
+			break;
+		case TL_NEDERLANDS_NL:
+		case TL_NEDERLANDS_BE:
+			text = wxT("CCS is afgelopen");
+			break;
+		case TL_NORSK:
+			text = wxT("CCS er avsluttet");
+			break;
+		case TL_PORTUGUES:
+			text = wxT("CCS terminou");
+			break;
+		default:
+			text = wxT("CCS has ended");
+			break;
+	}
 
 	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
 	m_repeaterHandler->writeText(textData);
@@ -2483,7 +2555,43 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
 {
 	wxString text;
-	text.Printf(wxT("DTMF %s unknown"), dtmf.c_str());
+
+	switch (m_language) {
+		case TL_DEUTSCH:
+			text.Printf(wxT("%s unbekannt"), dtmf.c_str());
+			break;
+		case TL_DANSK:
+			text.Printf(wxT("%s unknown"), dtmf.c_str());
+			break;
+		case TL_FRANCAIS:
+			text.Printf(wxT("%s inconnu"), dtmf.c_str());
+			break;
+		case TL_ITALIANO:
+			text.Printf(wxT("Sconosciuto %s"), dtmf.c_str());
+			break;
+		case TL_POLSKI:
+			text.Printf(wxT("%s nieznany"), dtmf.c_str());
+			break;
+		case TL_ESPANOL:
+			text.Printf(wxT("Desconocido %s"), dtmf.c_str());
+			break;
+		case TL_SVENSKA:
+			text.Printf(wxT("%s okand"), dtmf.c_str());
+			break;
+		case TL_NEDERLANDS_NL:
+		case TL_NEDERLANDS_BE:
+			text.Printf(wxT("%s bekend"), dtmf.c_str());
+			break;
+		case TL_NORSK:
+			text.Printf(wxT("%s ukjent"), dtmf.c_str());
+			break;
+		case TL_PORTUGUES:
+			text.Printf(wxT("%s desconhecido"), dtmf.c_str());
+			break;
+		default:
+			text.Printf(wxT("%s unknown"), dtmf.c_str());
+			break;
+	}
 
 	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
 	m_repeaterHandler->writeText(textData);
