@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130131
+ircDDB Gateway - 20130219
 =========================
 
 20101010
@@ -1202,14 +1202,15 @@ Removed some log messages (stream ID rewriting and link pools).
 Fix loopback mode.
 Handle APRS failures a little better.
 
-201302xx
+20130219
 --------
 
+Self translated Portugses system messages added.
 Only allow DTMF commands when the your call is CQCQCQ.
 Modify DExtra DTMF to start with an 'B'.
 Updated XRF008s and XRF123s IP addresses.
 Allow D-RATS to go over outgoing links.
-Added CCS.
 Removed XReflector.
 Added DCS021.
 Added XRF333.
+Added CCS.

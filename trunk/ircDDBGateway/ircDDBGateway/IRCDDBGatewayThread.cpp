@@ -229,6 +229,7 @@ void CIRCDDBGatewayThread::run()
 	CDExtraHandler::setCallsign(m_gatewayCallsign);
 	CDExtraHandler::setDExtraProtocolHandler(m_dextraHandler);
 	CDExtraHandler::setHeaderLogger(headerLogger);
+	CDExtraHandler::setMaxDongles(m_dextraMaxDongles);
 
 	CDPlusHandler::setCallsign(m_gatewayCallsign);
 	CDPlusHandler::setDPlusLogin(m_dplusLogin);

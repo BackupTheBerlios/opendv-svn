@@ -1,4 +1,4 @@
-Digital Voice - 20130203
+Digital Voice - 20130219
 ========================
 
 20090319
@@ -301,7 +301,7 @@ Upgrade the DCS protocol to the latest version.
 
 Remove the Offset parameter in the DVAP Client.
 
-201302xx
+20130219
 --------
 
 Updated XRF008s and XRF123s IP addresses.

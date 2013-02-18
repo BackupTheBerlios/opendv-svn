@@ -200,6 +200,7 @@ void CCCSHandler::process(CAMBEData& data)
 		wxLogMessage(wxT("New incoming CCS link to %s from %s"), m_local.c_str(), m_yourCall.c_str());
 	}
 
+	m_pollInactivityTimer.reset();
 	m_inactivityTimer.reset();
 
 	if (m_id != id) {

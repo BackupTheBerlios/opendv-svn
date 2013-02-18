@@ -1,4 +1,4 @@
-Repeater - 20130203
+Repeater - 20130219
 ===================
 
 20090530
@@ -1789,7 +1789,7 @@ Revert DVAP polling change.
 
 Remove DVAP frequency offset setting.
 
-201302xx
+20130219
 --------
 
 Updated XRF008s and XRF123s IP addresses.
