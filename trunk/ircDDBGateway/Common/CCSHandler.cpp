@@ -207,10 +207,12 @@ void CCCSHandler::process(CAMBEData& data)
 		if (m_headerLogger != NULL)
 			m_headerLogger->write(wxT("CCS"), header);
 
+		header.setCQCQCQ();
 		m_handler->process(header, DIR_INCOMING, AS_CCS);
 
 		m_id = id;
 	} else if (seqNo == 0U) {
+		header.setCQCQCQ();
 		m_handler->process(header, DIR_INCOMING, AS_DUP);
 	}
 
