@@ -197,7 +197,7 @@ unsigned int CPollData::getCCSData(unsigned char *data, unsigned int length) con
 
 	::memset(data, ' ', 25U);
 
-	for (unsigned int i = 0U; i < m_data1.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
+	for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
 		data[i + 0U] = m_data1.GetChar(i);
 
 	if (!m_data2.IsEmpty()) {
