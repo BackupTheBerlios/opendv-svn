@@ -2,6 +2,17 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: xreflector branch added
+FOUND: 2013-02-15
+REPORTED: DL5DI
+SOLVED: 2013-02-15
+COMMIT: 2013-02-15
+
+- scripts and settings need to be adjusted
+- configuraiton program needs to be developed
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: conversion script added
 FOUND: 2013-02-11
 REPORTED: DL5DI

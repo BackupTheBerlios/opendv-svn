@@ -18,7 +18,7 @@ VERIFIED: 2013-02-02
 PRIORITY: high
 SOLVED: open
 
-Check report server uploads.
+Check repository server uploads.
 Upload process seems to break when one server times out.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
