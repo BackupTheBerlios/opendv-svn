@@ -1,0 +1,6 @@
+XReflector 20130213
+=========================
+
+2013-02-13
+Added XReflector back as an independent project.
+Added Separate Remote Control program for use with XReflector.
