@@ -92,7 +92,8 @@ m_status3(),
 m_status4(),
 m_status5(),
 m_latitude(0.0),
-m_longitude(0.0)
+m_longitude(0.0),
+m_restrictList(NULL)
 {
 	CHeaderData::initialise();
 	CConnectData::initialise();
@@ -257,6 +258,8 @@ void CIRCDDBGatewayThread::run()
 	CRepeaterHandler::setInfoEnabled(m_infoEnabled);
 	CRepeaterHandler::setEchoEnabled(m_echoEnabled);
 	CRepeaterHandler::setDTMFEnabled(m_dtmfEnabled);
+	if (m_restrictList != NULL)
+		CRepeaterHandler::setRestrictList(m_restrictList);
 
 	CAudioUnit::setLanguage(m_language);
 
@@ -581,6 +584,13 @@ void CIRCDDBGatewayThread::setRemote(bool enabled, const wxString& password, uns
 		m_remotePassword = password;
 		m_remotePort     = REMOTE_DUMMY_PORT;
 	}
+}
+
+void CIRCDDBGatewayThread::setRestrictList(CCallsignList* list)
+{
+	wxASSERT(list != NULL);
+
+	m_restrictList = list;
 }
 
 void CIRCDDBGatewayThread::processIrcDDB()

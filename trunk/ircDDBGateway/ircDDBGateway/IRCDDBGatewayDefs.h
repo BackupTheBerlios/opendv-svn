@@ -37,6 +37,8 @@ const wxString STATUS3_FILE_NAME = wxT("status3.txt");
 const wxString STATUS4_FILE_NAME = wxT("status4.txt");
 const wxString STATUS5_FILE_NAME = wxT("status5.txt");
 
+const wxString RESTRICT_FILE_NAME = wxT("restrict.txt");
+
 const unsigned int MAX_OUTGOING       = 6U;
 const unsigned int MAX_REPEATERS      = 4U;
 const unsigned int MAX_DEXTRA_LINKS   = 5U;

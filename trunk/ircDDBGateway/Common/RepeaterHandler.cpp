@@ -55,6 +55,8 @@ CHeaderLogger*            CRepeaterHandler::m_headerLogger = NULL;
 
 CAPRSWriter*              CRepeaterHandler::m_aprsWriter  = NULL;
 
+CCallsignList*            CRepeaterHandler::m_restrictList = NULL;
+
 CRepeaterHandler::CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3) :
 m_index(0x00U),
 m_rptCallsign(),
@@ -90,6 +92,7 @@ m_rptCall2(),
 m_flag1(0x00U),
 m_flag2(0x00U),
 m_flag3(0x00U),
+m_restricted(false),
 m_frames(0U),
 m_silence(0U),
 m_errors(0U),
@@ -325,6 +328,13 @@ void CRepeaterHandler::setAPRSWriter(CAPRSWriter* writer)
 void CRepeaterHandler::setLocalAddress(const wxString& address)
 {
 	m_localAddress = address;
+}
+
+void CRepeaterHandler::setRestrictList(CCallsignList* list)
+{
+	wxASSERT(list != NULL);
+
+	m_restrictList = list;
 }
 
 bool CRepeaterHandler::getRepeater(unsigned int n, wxString& callsign, LINK_STATUS& linkStatus, wxString& linkCallsign)
@@ -661,6 +671,17 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		return;
 	}
 
+	// If restricted then don't send to the command handlers
+	m_restricted = false;
+	if (m_restrictList != NULL) {
+		bool res = m_restrictList->isInList(m_myCall1);
+		if (res) {
+			sendToOutgoing(header);
+			m_restricted = true;
+			return;
+		}
+	}
+
 	g2CommandHandler(m_yourCall, m_myCall1, header);
 
 	if (m_g2Status == G2_NONE) {
@@ -699,8 +720,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 		if (dtmfDone) {
 			wxString command = m_dtmf.translate();
 
-			// Only process the DTMF command if the your call is CQCQCQ
-			if (m_yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
+			// Only process the DTMF command if the your call is CQCQCQ and not a restricted user
+			if (!m_restricted && m_yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
@@ -894,6 +915,16 @@ void CRepeaterHandler::processBusy(CHeaderData& header)
 	    m_yourCall.IsSameAs(wxT("       E"))     || m_yourCall.IsSameAs(wxT("       I")))
 		return;
 
+	// If restricted then don't send to the command handler
+	m_restricted = false;
+	if (m_restrictList != NULL) {
+		bool res = m_restrictList->isInList(m_myCall1);
+		if (res) {
+			m_restricted = true;
+			return;
+		}
+	}
+
 	reflectorCommandHandler(m_yourCall, m_myCall1, wxT("background UR Call"));
 }
 
@@ -912,8 +943,8 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 		if (dtmfDone) {
 			wxString command = m_dtmf.translate();
 
-			// Only process the DTMF command if the your call is CQCQCQ
-			if (m_yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
+			// Only process the DTMF command if the your call is CQCQCQ and the user isn't restricted
+			if (!m_restricted && m_yourCall.Left(4U).IsSameAs(wxT("CQCQ"))) {
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {

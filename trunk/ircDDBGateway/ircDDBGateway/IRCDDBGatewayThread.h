@@ -30,6 +30,7 @@
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
+#include "CallsignList.h"
 #include "APRSWriter.h"
 #include "IRCDDB.h"
 #include "Timer.h"
@@ -66,6 +67,7 @@ public:
 	virtual void setDDModeEnabled(bool enabled);
 	virtual void setRemote(bool enabled, const wxString& password, unsigned int port);
 	virtual void setLocation(double latitude, double longitude);
+	virtual void setRestrictList(CCallsignList* list);
 
 	virtual CIRCDDBGatewayStatusData* getStatus() const;
 
@@ -117,6 +119,7 @@ private:
 	wxString                  m_status5;
 	double                    m_latitude;
 	double                    m_longitude;
+	CCallsignList*            m_restrictList;
 
 	void processIrcDDB();
 	void processRepeater(IRepeaterProtocolHandler* handler);

@@ -30,6 +30,7 @@
 #include "TextCollector.h"
 #include "CacheManager.h"
 #include "HeaderLogger.h"
+#include "CallsignList.h"
 #include "DRATSServer.h"
 #include "CCSCallback.h"
 #include "VersionUnit.h"
@@ -74,6 +75,7 @@ public:
 	static void setInfoEnabled(bool enabled);
 	static void setEchoEnabled(bool enabled);
 	static void setDTMFEnabled(bool enabled);
+	static void setRestrictList(CCallsignList* list);
 
 	static void startup();
 
@@ -160,6 +162,8 @@ private:
 
 	static CAPRSWriter*     m_aprsWriter;
 
+	static CCallsignList*   m_restrictList;
+
 	// Repeater info
 	unsigned int              m_index;
 	wxString                  m_rptCallsign;
@@ -197,6 +201,7 @@ private:
 	unsigned char             m_flag1;
 	unsigned char             m_flag2;
 	unsigned char             m_flag3;
+	bool                      m_restricted;
 
 	// Statistics
 	unsigned int              m_frames;

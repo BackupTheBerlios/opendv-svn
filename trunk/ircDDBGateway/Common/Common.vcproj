@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CallsignList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CallsignServer.cpp"
 				>
 			</File>
@@ -472,6 +476,10 @@
 			</File>
 			<File
 				RelativePath=".\CacheManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CallsignList.h"
 				>
 			</File>
 			<File

@@ -1214,3 +1214,9 @@ Removed XReflector.
 Added DCS021.
 Added XRF333.
 Added CCS.
+
+201302xx
+--------
+
+Correct Portugese translations now used.
+CCS changes.

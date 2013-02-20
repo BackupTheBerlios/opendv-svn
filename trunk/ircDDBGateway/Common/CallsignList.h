@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,25 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	CallsignList_H
+#define	CallsignList_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CCallsignList {
+public:
+	CCallsignList(const wxString& filename);
+	virtual ~CCallsignList();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	bool load();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130219 - DEBUG");
-#else
-const wxString VERSION = wxT("20130219");
-#endif
+	unsigned int getCount() const;
+
+	bool isInList(const wxString& callsign) const;
+
+private:
+	wxString      m_filename;
+	wxArrayString m_callsigns;
+};
 
 #endif

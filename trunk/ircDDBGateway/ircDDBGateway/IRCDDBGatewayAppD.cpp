@@ -22,6 +22,7 @@
 #include "IRCDDBGatewayConfig.h"
 #include "IRCDDBGatewayAppD.h"
 #include "IRCDDBGatewayDefs.h"
+#include "CallsignList.h"
 #include "APRSWriter.h"
 #include "Version.h"
 #include "Logger.h"
@@ -697,6 +698,20 @@ bool CIRCDDBGatewayAppD::createThread()
 		repeaterBand3.Len() > 1U || repeaterBand4.Len() > 1U) {
 		wxLogInfo(wxT("DD mode enabled"));
 		m_thread->setDDModeEnabled(true);
+	}
+
+	wxFileName filename(wxFileName::GetHomeDir(), RESTRICT_FILE_NAME);
+	bool exists = filename.FileExists();
+	if (exists) {
+		CCallsignList* list = new CCallsignList(filename.GetFullPath());
+		bool res = list->load();
+		if (!res) {
+			wxLogError(wxT("Unable to open the restrict list file - %s"), filename.GetFullPath().c_str());
+			delete list;
+		} else {
+			wxLogInfo(wxT("%u callsigns loaded into the restrict list"), list->getCount());
+			m_thread->setRestrictList(list);
+		}
 	}
 
 	m_thread->setIcomRepeaterHandler(icomRepeaterHandler);
