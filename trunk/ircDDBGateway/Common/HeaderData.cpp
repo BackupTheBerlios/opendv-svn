@@ -61,6 +61,12 @@ m_errors(0U)
 	m_yourCall = new unsigned char[LONG_CALLSIGN_LENGTH];
 	m_rptCall1 = new unsigned char[LONG_CALLSIGN_LENGTH];
 	m_rptCall2 = new unsigned char[LONG_CALLSIGN_LENGTH];
+
+	::memset(m_rptCall1, ' ', LONG_CALLSIGN_LENGTH);
+	::memset(m_rptCall2, ' ', LONG_CALLSIGN_LENGTH);
+	::memset(m_yourCall, ' ', LONG_CALLSIGN_LENGTH);
+	::memset(m_myCall1,  ' ', LONG_CALLSIGN_LENGTH);
+	::memset(m_myCall2,  ' ', SHORT_CALLSIGN_LENGTH);
 }
 
 CHeaderData::CHeaderData(const CHeaderData& header) :

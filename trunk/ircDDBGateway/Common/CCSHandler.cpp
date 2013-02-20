@@ -82,7 +82,7 @@ void CCCSHandler::finalise()
 	delete[] m_handlers;
 }
 
-CCCSHandler::CCCSHandler(ICCSCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort) :
+CCCSHandler::CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, unsigned int localPort) :
 m_handler(handler),
 m_callsign(callsign),
 m_reflector(),
@@ -94,6 +94,7 @@ m_local(),
 m_inactivityTimer(1000U, 300U),			// 5 minutes
 m_pollInactivityTimer(1000U, 60U),		// 60 seconds
 m_pollTimer(1000U, 10U),				// 10 seconds
+m_waitTimer(1000U, delay),
 m_tryTimer(1000U, 1U),					// 1 second
 m_tryCount(0U),
 m_id(0x00U),
@@ -106,6 +107,8 @@ m_myCall2()
 
 	if (latitude != 0.0 && longitude != 0.0)
 		m_locator = CUtils::latLonToLoc(latitude, longitude);
+
+	wxLogMessage(wxT("Opening UDP port %u for CCS for %s"), localPort, callsign.c_str());
 
 	// Add to the global list
 	for (unsigned int i = 0U; i < m_count; i++) {
@@ -263,7 +266,13 @@ void CCCSHandler::process(CConnectData& connect)
 		m_pollInactivityTimer.start();
 		m_pollTimer.start();
 		m_tryTimer.stop();
+
 		m_state = CS_CONNECTED;
+
+		CHeaderData header;
+		header.setMyCall1(m_callsign.Left(LONG_CALLSIGN_LENGTH - 1U));
+		CHeardData heard(header, m_callsign, wxEmptyString);
+		m_protocol.writeHeard(heard);
 		return;
 	}
 
@@ -292,15 +301,7 @@ bool CCCSHandler::connect()
 	if (!res)
 		return false;
 
-	CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
-	if (!m_locator.IsEmpty())
-		connect.setLocator(m_locator);
-	m_protocol.writeConnect(connect);
-
-	m_tryTimer.setTimeout(1U);
-	m_tryTimer.start();
-
-	m_tryCount = 1U;
+	m_waitTimer.start();
 
 	m_state = CS_CONNECTING;
 
@@ -403,6 +404,7 @@ void CCCSHandler::clockInt(unsigned int ms)
 	m_pollInactivityTimer.clock(ms);
 	m_inactivityTimer.clock(ms);
 	m_pollTimer.clock(ms);
+	m_waitTimer.clock(ms);
 	m_tryTimer.clock(ms);
 
 	if (m_pollInactivityTimer.isRunning() && m_pollInactivityTimer.hasExpired()) {
@@ -412,13 +414,10 @@ void CCCSHandler::clockInt(unsigned int ms)
 		m_inactivityTimer.stop();
 		m_pollTimer.stop();
 
-		m_tryTimer.setTimeout(1U);
-		m_tryTimer.start();
-
-		m_tryCount = 1U;
-
 		if (m_state == CS_ACTIVE)
 			m_handler->ccsLinkEnded(m_yourCall);
+
+		m_waitTimer.start();
 
 		m_state = CS_CONNECTING;
 
@@ -447,6 +446,20 @@ void CCCSHandler::clockInt(unsigned int ms)
 		m_inactivityTimer.stop();
 
 		m_handler->ccsLinkEnded(m_yourCall);
+	}
+
+	if (m_waitTimer.isRunning() && m_waitTimer.hasExpired()) {
+		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
+		if (!m_locator.IsEmpty())
+			connect.setLocator(m_locator);
+		m_protocol.writeConnect(connect);
+
+		m_tryTimer.setTimeout(1U);
+		m_tryTimer.start();
+
+		m_tryCount = 1U;
+
+		m_waitTimer.stop();
 	}
 }
 

@@ -2167,7 +2167,7 @@ void CRepeaterHandler::startupInt()
 
 
 	// Start up our CCS link
-	m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_latitude, m_longitude, CCS_PORT + m_index);
+	m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_index + 1U, m_latitude, m_longitude, CCS_PORT + m_index);
 	m_ccsHandler->connect();
 
 	// Link to a startup reflector/repeater
@@ -2288,7 +2288,7 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 			text.Printf(wxT("Kobler til %s"), callsign.c_str());
 			break;
 		case TL_PORTUGUES:
-			text.Printf(wxT("Ligando para %s"), callsign.c_str());
+			text.Printf(wxT("Ligando a %s"), callsign.c_str());
 			break;
 		default:
 			text.Printf(wxT("Linking to %s"), callsign.c_str());
@@ -2386,7 +2386,7 @@ void CRepeaterHandler::writeNotLinked()
 			text = wxT("Ikke linket");
 			break;
 		case TL_PORTUGUES:
-			text = wxT("Nao vinculado");
+			text = wxT("Nao ligado");
 			break;
 		default:
 			text = wxT("Not linked");
@@ -2445,8 +2445,8 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 			tempText.Printf(wxT("%s er opptatt"), callsign.c_str());
 			break;
 		case TL_PORTUGUES:
-			text = wxT("Nao vinculado");
-			tempText.Printf(wxT("%s esta ocupado"), callsign.c_str());
+			text = wxT("Nao ligado");
+			tempText.Printf(wxT("%s ocupado"), callsign.c_str());
 			break;
 		default:
 			text = wxT("Not linked");

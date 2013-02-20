@@ -480,6 +480,7 @@ void CDCSHandler::processInt(CAMBEData& data)
 			}
 			
 			if (id == m_dcsId) {
+				m_pollInactivityTimer.reset();
 				m_inactivityTimer.reset();
 
 				m_dcsSeq = seqNo;
@@ -525,6 +526,7 @@ void CDCSHandler::processInt(CAMBEData& data)
 			}
 
 			if (id == m_dcsId) {
+				m_pollInactivityTimer.reset();
 				m_inactivityTimer.reset();
 
 				m_dcsSeq = seqNo;

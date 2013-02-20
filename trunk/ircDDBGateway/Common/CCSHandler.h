@@ -47,7 +47,7 @@ enum CCS_STATUS {
 
 class CCCSHandler {
 public:
-	CCCSHandler(ICCSCallback* handler, const wxString& callsign, double latitude, double longitude, unsigned int localPort);
+	CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, unsigned int localPort);
 	~CCCSHandler();
 
 	bool connect();
@@ -100,6 +100,7 @@ private:
 	CTimer              m_inactivityTimer;
 	CTimer              m_pollInactivityTimer;
 	CTimer              m_pollTimer;
+	CTimer              m_waitTimer;
 	CTimer              m_tryTimer;
 	unsigned int        m_tryCount;
 	unsigned int        m_id;

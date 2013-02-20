@@ -626,6 +626,7 @@ void CDExtraHandler::processInt(CAMBEData& data)
 	if (m_dExtraId != data.getId())
 		return;
 
+	m_pollInactivityTimer.reset();
 	m_inactivityTimer.reset();
 
 	m_dExtraSeq = data.getSeq();

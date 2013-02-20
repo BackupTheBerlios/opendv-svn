@@ -55,7 +55,7 @@ public:
 	bool writeData(const CAMBEData& data);
 	bool writeConnect(const CConnectData& connect);
 	bool writePoll(const CPollData& poll);
-	bool writeHeard(const CHeardData& poll);
+	bool writeHeard(const CHeardData& heard);
 	bool writeMisc(const CCCSData& data);
 
 	CCS_TYPE      read();
