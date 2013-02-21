@@ -97,6 +97,7 @@ private:
 	CCCSProtocolHandler m_protocol;
 	CCS_STATUS          m_state;
 	wxString            m_local;
+	CTimer              m_announceTimer;
 	CTimer              m_inactivityTimer;
 	CTimer              m_pollInactivityTimer;
 	CTimer              m_pollTimer;

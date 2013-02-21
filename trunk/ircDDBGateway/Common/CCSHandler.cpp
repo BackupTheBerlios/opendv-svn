@@ -91,6 +91,7 @@ m_ccsAddress(),
 m_protocol(localPort, m_localAddress),
 m_state(CS_DISABLED),
 m_local(),
+m_announceTimer(1000U, 20U),			// 20 seconds
 m_inactivityTimer(1000U, 300U),			// 5 minutes
 m_pollInactivityTimer(1000U, 60U),		// 60 seconds
 m_pollTimer(1000U, 10U),				// 10 seconds
@@ -108,7 +109,7 @@ m_myCall2()
 	if (latitude != 0.0 && longitude != 0.0)
 		m_locator = CUtils::latLonToLoc(latitude, longitude);
 
-	wxLogMessage(wxT("Opening UDP port %u for CCS for %s"), localPort, callsign.c_str());
+	wxLogMessage(wxT("CCS: Opening UDP port %u for %s"), localPort, callsign.c_str());
 
 	// Add to the global list
 	for (unsigned int i = 0U; i < m_count; i++) {
@@ -200,7 +201,7 @@ void CCCSHandler::process(CAMBEData& data)
 
 		m_handler->ccsLinkMade(m_yourCall);
 
-		wxLogMessage(wxT("New incoming CCS link to %s from %s"), m_local.c_str(), m_yourCall.c_str());
+		wxLogMessage(wxT("CCS: New incoming link to %s from %s"), m_local.c_str(), m_yourCall.c_str());
 	}
 
 	m_pollInactivityTimer.reset();
@@ -229,21 +230,21 @@ void CCCSHandler::process(CCCSData& data)
 
 	switch (type) {
 		case CT_TERMINATE:
-			wxLogMessage(wxT("CCS link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
+			wxLogMessage(wxT("CCS: Link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
 			m_state = CS_CONNECTED;
 			m_inactivityTimer.stop();
 			m_handler->ccsLinkEnded(data.getRemote());
 			break;
 
 		case CT_DTMFNOTFOUND:
-			wxLogMessage(wxT("CCS cannot map %s to a callsign"), m_yourCall.Mid(1U).c_str());
+			wxLogMessage(wxT("CCS: Cannot map %s to a callsign"), m_yourCall.Mid(1U).c_str());
 			m_state = CS_CONNECTED;
 			m_inactivityTimer.stop();
 			m_handler->ccsLinkFailed(m_yourCall.Mid(1U));
 			break;
 
 		case CT_DTMFFOUND:
-			wxLogMessage(wxT("CCS mapped %s to %s"), m_yourCall.Mid(1U).c_str(), data.getRemote().c_str());
+			wxLogMessage(wxT("CCS: Mapped %s to %s"), m_yourCall.Mid(1U).c_str(), data.getRemote().c_str());
 			m_yourCall = data.getRemote();
 			m_handler->ccsLinkMade(m_yourCall);
 			break;
@@ -263,21 +264,20 @@ void CCCSHandler::process(CConnectData& connect)
 	CD_TYPE type = connect.getType();
 
 	if (type == CT_ACK && m_state == CS_CONNECTING) {
+		wxLogMessage(wxT("CCS: %s connected to server %s"), m_callsign.c_str(), CCS_HOSTNAME.c_str());
+
+		m_announceTimer.start();
 		m_pollInactivityTimer.start();
 		m_pollTimer.start();
 		m_tryTimer.stop();
 
 		m_state = CS_CONNECTED;
 
-		CHeaderData header;
-		header.setMyCall1(m_callsign.Left(LONG_CALLSIGN_LENGTH - 1U));
-		CHeardData heard(header, m_callsign, wxEmptyString);
-		m_protocol.writeHeard(heard);
 		return;
 	}
 
 	if (type == CT_NAK && m_state == CS_CONNECTING) {
-		wxLogMessage(wxT("Connection refused by CCS for %s"), m_callsign.c_str());
+		wxLogMessage(wxT("CCS: Connection refused for %s"), m_callsign.c_str());
 		m_tryTimer.stop();
 		m_state = CS_DISABLED;
 		return;
@@ -293,7 +293,7 @@ bool CCCSHandler::connect()
 	// Can we resolve the CCS server address?
 	m_ccsAddress = CUDPReaderWriter::lookup(CCS_HOSTNAME);
 	if (m_ccsAddress.s_addr == INADDR_NONE) {
-		wxLogError(wxT("Unable to find the IP address for %s"), CCS_HOSTNAME.c_str());
+		wxLogError(wxT("CCS: Unable to find the IP address for %s"), CCS_HOSTNAME.c_str());
 		return false;
 	}
 
@@ -315,6 +315,7 @@ void CCCSHandler::disconnectInt()
 		m_protocol.writeConnect(connect);
 	}
 
+	m_announceTimer.stop();
 	m_pollInactivityTimer.stop();
 	m_inactivityTimer.stop();
 	m_pollTimer.stop();
@@ -331,7 +332,7 @@ void CCCSHandler::writeEnd()
 	if (m_state != CS_ACTIVE)
 		return;
 
-	wxLogMessage(wxT("CCS link to %s from %s has been terminated locally"), m_yourCall.c_str(), m_local.c_str());
+	wxLogMessage(wxT("CCS: Link to %s from %s has been terminated locally"), m_yourCall.c_str(), m_local.c_str());
 
 	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
 	data.setDestination(m_ccsAddress, CCS_PORT);
@@ -377,7 +378,7 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		m_state = CS_ACTIVE;
 		m_inactivityTimer.start();
 
-		wxLogMessage(wxT("New outgoing CCS link to %s from %s"), m_yourCall.Mid(1U).c_str(), m_local.c_str());
+		wxLogMessage(wxT("CCS: New outgoing link to %s from %s"), m_yourCall.Mid(1U).c_str(), m_local.c_str());
 	}
 
 	CAMBEData temp(data);
@@ -401,6 +402,7 @@ CCS_STATUS CCCSHandler::getStatus() const
 
 void CCCSHandler::clockInt(unsigned int ms)
 {
+	m_announceTimer.clock(ms);
 	m_pollInactivityTimer.clock(ms);
 	m_inactivityTimer.clock(ms);
 	m_pollTimer.clock(ms);
@@ -408,8 +410,9 @@ void CCCSHandler::clockInt(unsigned int ms)
 	m_tryTimer.clock(ms);
 
 	if (m_pollInactivityTimer.isRunning() && m_pollInactivityTimer.hasExpired()) {
-		wxLogMessage(wxT("CCS connection has failed (poll inactivity) for %s, reconnecting"), m_callsign.c_str());
+		wxLogMessage(wxT("CCS: Connection has failed (poll inactivity) for %s, reconnecting"), m_callsign.c_str());
 
+		m_announceTimer.stop();
 		m_pollInactivityTimer.stop();
 		m_inactivityTimer.stop();
 		m_pollTimer.stop();
@@ -441,7 +444,7 @@ void CCCSHandler::clockInt(unsigned int ms)
 	}
 
 	if (m_inactivityTimer.isRunning() && m_inactivityTimer.hasExpired()) {
-		wxLogMessage(wxT("Activity timeout on CCS link for %s"), m_callsign.c_str());
+		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str());
 		m_state = CS_CONNECTED;
 		m_inactivityTimer.stop();
 
@@ -460,6 +463,17 @@ void CCCSHandler::clockInt(unsigned int ms)
 		m_tryCount = 1U;
 
 		m_waitTimer.stop();
+	}
+
+	if (m_announceTimer.isRunning() && m_announceTimer.hasExpired()) {
+		CHeaderData header;
+		header.setMyCall1(m_callsign.Left(LONG_CALLSIGN_LENGTH - 1U));
+		CHeardData heard(header, m_callsign, wxEmptyString);
+		heard.setDestination(m_ccsAddress, CCS_PORT);
+		m_protocol.writeHeard(heard);
+
+		m_announceTimer.setTimeout(3600U);
+		m_announceTimer.reset();
 	}
 }
 
