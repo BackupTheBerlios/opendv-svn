@@ -2467,7 +2467,7 @@ function timeserver_setup(){
         RET=0
         while [ $RET -eq 0 ]; do
 	    print_text "tsrv_language"
-    	    select_item $var 8 "$VALUE"
+    	    select_item $var 11 "$VALUE"
 	    RET=$?
 	    case $RET in
 		1)

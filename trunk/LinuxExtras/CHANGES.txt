@@ -10,6 +10,8 @@ COMMIT: 2013-02-21
 
 - names of config files changes
 - dummy files for 1st package test added
+- CCS enable/disable added to configuration programs
+- more languages added (Espanal, Norsk, Portugues)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 

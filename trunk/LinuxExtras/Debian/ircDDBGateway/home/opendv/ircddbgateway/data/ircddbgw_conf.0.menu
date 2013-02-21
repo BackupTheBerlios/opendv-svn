@@ -917,6 +917,9 @@ tsrv_language: 5   Deutsch 2
 tsrv_language: 6   Francais
 tsrv_language: 7   Nederlands
 tsrv_language: 8   Svenska
+tsrv_language: 9   Espanol
+tsrv_language: 10  Norsk
+tsrv_language: 11  Portugues
 tsrv_language:
 
 interval:
