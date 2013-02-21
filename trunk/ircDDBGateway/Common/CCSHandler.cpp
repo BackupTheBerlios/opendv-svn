@@ -238,10 +238,12 @@ void CCCSHandler::process(CCCSData& data)
 
 	switch (type) {
 		case CT_TERMINATE:
-			wxLogMessage(wxT("CCS: Link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
-			m_state = CS_CONNECTED;
-			m_inactivityTimer.stop();
-			m_handler->ccsLinkEnded(data.getRemote());
+			if (m_state == CS_ACTIVE) {
+				wxLogMessage(wxT("CCS: Link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
+				m_state = CS_CONNECTED;
+				m_inactivityTimer.stop();
+				m_handler->ccsLinkEnded(data.getRemote());
+			}
 			break;
 
 		case CT_DTMFNOTFOUND:
@@ -344,6 +346,11 @@ void CCCSHandler::writeEnd()
 
 	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
 	data.setDestination(m_ccsAddress, CCS_PORT);
+
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
 	m_protocol.writeMisc(data);
 
 	m_state = CS_CONNECTED;

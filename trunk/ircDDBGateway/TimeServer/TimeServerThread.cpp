@@ -210,6 +210,15 @@ void CTimeServerThread::sendTime(unsigned int hour, unsigned int min)
 		case LANG_SVENSKA:
 			words = sendTimeSeSE(hour, min);
 			break;
+		case LANG_ESPANOL:
+			words = sendTimeEsES(hour, min);
+			break;
+		case LANG_NORSK:
+			words = sendTimeNoNO(hour, min);
+			break;
+		case LANG_PORTUGUES:
+			words = sendTimePtPT(hour, min);
+			break;
 		default:
 			break;
 	}
@@ -765,6 +774,181 @@ wxArrayString CTimeServerThread::sendTimeSeSE(unsigned int hour, unsigned int mi
 	return words;
 }
 
+wxArrayString CTimeServerThread::sendTimeEsES(unsigned int hour, unsigned int min)
+{
+	wxArrayString words;
+
+	if (min == 45U) {
+		hour++;
+		if (hour == 24U)
+			hour = 0U;
+	}
+
+	if (hour == 1U)
+		words.Add(wxT("Es_la"));
+	else if (hour == 0U || hour == 12U)
+		words.Add(wxT("Es"));
+	else
+		words.Add(wxT("Son_las"));
+
+	if (hour == 0U) {
+		words.Add(wxT("medianoche"));
+	} else if (hour == 1U || hour == 13U) {
+		words.Add(wxT("una"));
+	} else if (hour == 2U || hour == 14U) {
+		words.Add(wxT("dos"));
+	} else if (hour == 3U || hour == 15U) {
+		words.Add(wxT("tres"));
+	} else if (hour == 4U || hour == 16U) {
+		words.Add(wxT("cuarto"));
+	} else if (hour == 5U || hour == 17U) {
+		words.Add(wxT("cinco"));
+	} else if (hour == 6U || hour == 18U) {
+		words.Add(wxT("seis"));
+	} else if (hour == 7U || hour == 19U) {
+		words.Add(wxT("siete"));
+	} else if (hour == 8U || hour == 20U) {
+		words.Add(wxT("ocho"));
+	} else if (hour == 9U || hour == 21U) {
+		words.Add(wxT("nueve"));
+	} else if (hour == 10U || hour == 22U) {
+		words.Add(wxT("diez"));
+	} else if (hour == 11U || hour == 23U) {
+		words.Add(wxT("once"));
+	} else {
+		words.Add(wxT("mediodia"));
+	}
+
+	if (min == 15U)
+		words.Add(wxT("y_cuarto"));
+	else if (min == 30U)
+		words.Add(wxT("y_media"));
+	else if (min == 45U)
+		words.Add(wxT("menos_cuarto"));
+
+	if (hour > 0U && hour < 12U)
+		words.Add(wxT("de_la_manana"));
+	else if (hour > 12U && hour < 19U)
+		words.Add(wxT("de_la_tarde"));
+	else if (hour >= 19U && hour <= 23U)
+		words.Add(wxT("de_la_noche"));
+
+	return words;
+}
+
+wxArrayString CTimeServerThread::sendTimeNoNO(unsigned int hour, unsigned int min)
+{
+	wxArrayString words;
+
+	words.Add(wxT("Klokken_er"));
+
+	if (min == 15U) {
+		words.Add(wxT("kvart_over"));
+	} else if (min == 30U) {
+		words.Add(wxT("halv"));
+		if (hour == 23U)
+			hour = 0U;
+		else
+			hour++;
+	} else if (min == 45U) {
+		words.Add(wxT("kvart_pa"));
+		if (hour == 23U)
+			hour = 0U;
+		else
+			hour++;
+	}
+
+	if (hour == 0U || hour == 12U) {
+		words.Add(wxT("tolv"));
+	} else if (hour == 1U || hour == 13U) {
+		words.Add(wxT("ett"));
+	} else if (hour == 2U || hour == 14U) {
+		words.Add(wxT("to"));
+	} else if (hour == 3U || hour == 15U) {
+		words.Add(wxT("tre"));
+	} else if (hour == 4U || hour == 16U) {
+		words.Add(wxT("fire"));
+	} else if (hour == 5U || hour == 17U) {
+		words.Add(wxT("fem"));
+	} else if (hour == 6U || hour == 18U) {
+		words.Add(wxT("seks"));
+	} else if (hour == 7U || hour == 19U) {
+		words.Add(wxT("sju"));
+	} else if (hour == 8U || hour == 20U) {
+		words.Add(wxT("atte"));
+	} else if (hour == 9U || hour == 21U) {
+		words.Add(wxT("ni"));
+	} else if (hour == 10U || hour == 22U) {
+		words.Add(wxT("ti"));
+	} else if (hour == 11U || hour == 23U) {
+		words.Add(wxT("elleve"));
+	}
+
+	return words;
+}
+
+wxArrayString CTimeServerThread::sendTimePtPT(unsigned int hour, unsigned int min)
+{
+	wxArrayString words;
+
+	if (min == 45U) {
+		hour++;
+		if (hour == 24U)
+			hour = 0U;
+	}
+
+	if (hour == 1U || hour == 13U)
+		words.Add(wxT("E"));
+	else if (hour == 0U || hour == 12U)
+		words.Add(wxT("Es"));
+	else
+		words.Add(wxT("Sao"));
+
+	if (min == 45U) {
+		if (hour == 0U || hour == 12U || hour == 1U || hour == 13U)
+			words.Add(wxT("quinze_para"));
+		else
+			words.Add(wxT("quinze_para_as"));
+	}
+
+	if (hour == 0U) {
+		words.Add(wxT("meia-noite"));
+	} else if (hour == 1U || hour == 13U) {
+		words.Add(wxT("uma"));
+	} else if (hour == 2U || hour == 14U) {
+		words.Add(wxT("duas"));
+	} else if (hour == 3U || hour == 15U) {
+		words.Add(wxT("tres"));
+	} else if (hour == 4U || hour == 16U) {
+		words.Add(wxT("quatro"));
+	} else if (hour == 5U || hour == 17U) {
+		words.Add(wxT("cinco"));
+	} else if (hour == 6U || hour == 18U) {
+		words.Add(wxT("seis"));
+	} else if (hour == 7U || hour == 19U) {
+		words.Add(wxT("sete"));
+	} else if (hour == 8U || hour == 20U) {
+		words.Add(wxT("oito"));
+	} else if (hour == 9U || hour == 21U) {
+		words.Add(wxT("nove"));
+	} else if (hour == 10U || hour == 22U) {
+		words.Add(wxT("dez"));
+	} else if (hour == 11U || hour == 23U) {
+		words.Add(wxT("onze"));
+	} else {
+		words.Add(wxT("meio-dia"));
+	}
+
+	if (min == 0U)
+		words.Add(wxT("hora"));
+	else if (min == 15U)
+		words.Add(wxT("e_quinze"));
+	else if (min == 30U)
+		words.Add(wxT("e_meia"));
+
+	return words;
+}
+
 bool CTimeServerThread::loadAMBE()
 {
 	wxString ambeFileName;
@@ -792,6 +976,18 @@ bool CTimeServerThread::loadAMBE()
 		case LANG_SVENSKA:
 			ambeFileName = wxT("TIME_se_SE.ambe");
 			indxFileName = wxT("TIME_se_SE.indx");
+			break;
+		case LANG_ESPANOL:
+			ambeFileName = wxT("TIME_es_ES.ambe");
+			indxFileName = wxT("TIME_es_ES.indx");
+			break;
+		case LANG_NORSK:
+			ambeFileName = wxT("TIME_no_NO.ambe");
+			indxFileName = wxT("TIME_no_NO.indx");
+			break;
+		case LANG_PORTUGUES:
+			ambeFileName = wxT("TIME_pt_PT.ambe");
+			indxFileName = wxT("TIME_pt_PT.indx");
 			break;
 		default:
 			ambeFileName = wxT("TIME_en_GB.ambe");
@@ -1062,6 +1258,24 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 				slowData.Printf(wxT("It is %02u:%02u PM"), hour - 12U, min);
 			else
 				slowData.Printf(wxT("It is %02u:%02u AM"), hour, min);
+			break;
+		case LANG_ESPANOL:
+			header.setMyCall2(wxT("HORA"));
+			if (hour == 1U)
+				slowData.Printf(wxT("Es la %02u:%02u"), hour, min);
+			else
+				slowData.Printf(wxT("Son las %02u:%02u"), hour, min);
+			break;
+		case LANG_NORSK:
+			header.setMyCall2(wxT("KLOK"));
+			slowData.Printf(wxT("Klokken er %02u:%02u"), hour, min);
+			break;
+		case LANG_PORTUGUES:
+			header.setMyCall2(wxT("HORA"));
+			if (hour == 1U)
+				slowData.Printf(wxT("E %02u:%02u"), hour, min);
+			else
+				slowData.Printf(wxT("Sao %02u:%02u"), hour, min);
 			break;
 		default:
 			header.setMyCall2(wxT("TIME"));

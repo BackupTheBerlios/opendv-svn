@@ -1219,6 +1219,7 @@ Added CCS.
 --------
 
 Fixed Swedish messages for "Linking to..." and "Linked to...".
-Allow selection of CCS server names.
+Added Spanish, Portuguese, and Norwegian text time messages.
 Correct Portugese translations now used.
+Allow selection of CCS server names.
 Internal CCS changes.

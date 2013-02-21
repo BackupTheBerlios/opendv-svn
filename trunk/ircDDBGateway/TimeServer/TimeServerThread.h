@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -103,6 +103,9 @@ private:
 	wxArrayString sendTimeFrFR(unsigned int hour, unsigned int min);
 	wxArrayString sendTimeNlNL(unsigned int hour, unsigned int min);
 	wxArrayString sendTimeSeSE(unsigned int hour, unsigned int min);
+	wxArrayString sendTimeEsES(unsigned int hour, unsigned int min);
+	wxArrayString sendTimeNoNO(unsigned int hour, unsigned int min);
+	wxArrayString sendTimePtPT(unsigned int hour, unsigned int min);
 
 	bool send(const wxArrayString& words, unsigned int hour, unsigned int min);
 	bool sendHeader(const CHeaderData& header);

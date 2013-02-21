@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,10 @@ enum LANGUAGE {
 	LANG_DEUTSCH_2,
 	LANG_FRANCAIS,
 	LANG_NEDERLANDS,
-	LANG_SVENSKA
+	LANG_SVENSKA,
+	LANG_ESPANOL,
+	LANG_NORSK,
+	LANG_PORTUGUES
 };
 
 enum INTERVAL {

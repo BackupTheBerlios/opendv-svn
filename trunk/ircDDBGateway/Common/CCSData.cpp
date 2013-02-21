@@ -55,7 +55,7 @@ bool CCCSData::setCCSData(const unsigned char *data, unsigned int length, const 
 			if (::memcmp(data + 8U, "0001", 4U) == 0) {
 				m_type = CT_TERMINATE;
 			} else {
-				CUtils::dump(wxT("Invalid CCS packet"), data, length);
+				// CUtils::dump(wxT("Invalid CCS packet"), data, length);
 				return false;
 			}
 
