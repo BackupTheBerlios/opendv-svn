@@ -661,6 +661,26 @@ aprsHostname:APRS-Hostname (mehr Informationen hier http://www.aprs2.net)
 aprsPort: 
 aprsPort:Enter APRS-Port (mehr Information hhier http://www.aprs2.net)  
 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup:********************************************************************************
+ccs_setup: 
+ccs_setup:*** CCS Netzwerk  Einstellungen
+ccs_setup: 
+ccs_setup:********************************************************************************
+
+ccsEnabled: 
+ccsEnabled:      0  CCS-Service AUSschalten  
+ccsEnabled:      1  CCS-Service EINschalten  
+ccsEnabled: 
+ccsEnabled: -       Zuruecksetzen der Einstellung
+ccsEnabled: <ENTER> Den alten Wert beibehalten (Wert in [])
+ccsEnabled: 
+
 dextra_setup: 
 dextra_setup: 
 dextra_setup: 
@@ -726,7 +746,7 @@ dcs_setup:
 dcs_setup: 
 dcs_setup:********************************************************************************
 dcs_setup: 
-dcs_setup:*** DCS Reflektor-Netwerk  Einstellungen
+dcs_setup:*** DCS Reflektor-Netzwerk  Einstellungen
 dcs_setup: 
 dcs_setup:********************************************************************************
 
@@ -1057,7 +1077,7 @@ mainmenu: 7    ircDDB                     (ircDDB Routing-Nezwerk Einstellungen)
 mainmenu: 8    APRS                       (APRS-Netzwerk Einstellungen) 
 mainmenu: 9    DExtra                     (DExtra-Reflektornetz) 
 mainmenu:10    DPlus                      (DPlus-Reflektornetzwerk) 
-mainmenu:11    DCS                        (DCS-Reflektornetzwerk) 
+mainmenu:11    CCS/DCS                    (CCS/DCS-Netzwerke) 
 mainmenu:12    STARnet                    (STARnet-Server) 
 mainmenu:13    Timeserver/Zeitansage      (Zeitansagen Einstellungen) 
 mainmenu:14    Verschiedenes              (DTMF, Echo, Info etc.) 

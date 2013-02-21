@@ -58,12 +58,13 @@
 # 2013-01-20 dl5di    bugfix
 # 2013-01-22 dl5di    bugfix
 # 2013-01-25 dl5di    ircddbEnabled setting added
+# 2013-02-21 dl5di    CCS enable/disable
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20120125"
+rev="20120223"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2198,6 +2199,43 @@ function dplus_setup(){
     fi
 }
 
+
+##################### CCS setup  ####################
+
+function ccs_setup(){
+
+    print_text "ccs_setup" 
+#
+# ccsEnabled=1
+#
+    var="ccsEnabled"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    print_text $var 
+    request_selection $var $DEFAULT $VALUE
+    INPUT=$?
+    case $INPUT in
+	[0-1])
+    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $IRCDDBGWCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
+
+    if [ "$INPUT" = 0 ]; then
+	return 0
+    fi
+}
+
 ##################### DCS setup  ####################
 
 function dcs_setup(){
@@ -3062,6 +3100,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    repeater_init
 	    ircddb_setup
 	    aprs_setup
+	    ccs_setup
 	    dextra_setup
 	    dplus_setup
 	    dcs_setup
@@ -3096,6 +3135,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    dplus_setup
 	    ;;
 	11)
+	    ccs_setup
 	    dcs_setup
 	    ;;
 	12)

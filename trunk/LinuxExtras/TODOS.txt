@@ -2,6 +2,14 @@
 TODOs
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+2013-02-21
+Reported by: several
+CCS settings to be added to configuraiton programs
+- CCS enable/disable
+- select of CCS host
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 2013-01-31
 Reported by: several
 adjust ntpd parameters for arm Devices (ignore panic threshold on Raspberry Pi))

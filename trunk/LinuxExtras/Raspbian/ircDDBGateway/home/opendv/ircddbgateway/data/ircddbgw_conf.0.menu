@@ -630,7 +630,6 @@ aprs_setup:More information may be be found at http://www.aprs2.net
 aprs_setup: 
 aprs_setup:********************************************************************************
 
-
 aprsEnabled: 
 aprsEnabled: 0    DISABLE APRS service  
 aprsEnabled: 1    ENABLE  APRS service  
@@ -644,6 +643,26 @@ aprsHostname:Enter APRS-hostname (more information at http://www.aprs2.net)
 
 aprsPort: 
 aprsPort:Enter APRS port (more information at http://www.aprs2.net)  
+
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup: 
+ccs_setup:********************************************************************************
+ccs_setup: 
+ccs_setup:*** CCS network setup 
+ccs_setup: 
+ccs_setup:********************************************************************************
+
+ccsEnabled: 
+ccsEnabled: 0    DISABLE CCS service  
+ccsEnabled: 1    ENABLE  CCS service  
+ccsEnabled: 
+ccsEnabled: -    RESET to default
+ccsEnabled: <CR> Keep old value
+ccsEnabled: 
 
 dextra_setup: 
 dextra_setup: 
@@ -1058,7 +1077,7 @@ mainmenu: 7    ircDDB setup     (ircDDB routing network access)
 mainmenu: 8    APRS setup       (APRS reporting) 
 mainmenu: 9    DExtra setup     (DExtra reflector network access) 
 mainmenu:10    DPlus setup      (DPlus reflector network access) 
-mainmenu:11    DCS setup        (DCS reflector network access) 
+mainmenu:11    CCS/DCS setup    (CCS/DCS network access) 
 mainmenu:12    STARnet setup    (STARnet server setup) 
 mainmenu:13    Timeserver setup (Timeserver setup) 
 mainmenu:14    Misc setup       (dtmf, echo, info and other settings) 

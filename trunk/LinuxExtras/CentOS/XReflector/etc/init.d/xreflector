@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# DExtraGateway startup script
+# XReflector startup script
 # John Hays (K7VE) - john@hays.org
 # Hans-J. Barthen (DL5DI) - dl5di@darc.de
 #
 # chkconfig: 345 99 01
-# description: Starts the G4KLX DExtraGateway
-# config: /etc/sysconfig/dextrarepeater
+# description: Starts the G4KLX XReflector
+# config: /etc/sysconfig/xreflector
 #
 
 
@@ -18,7 +18,7 @@ if [ $UID -ne 0 ]; then
 	     exit 1
 fi
 
-me=dextragateway
+me=xreflector
 
 # Source function library.
 if [ -f /etc/init.d/functions ] ; then

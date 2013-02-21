@@ -2,6 +2,17 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: xreflector config files
+FOUND: 2013-02-21
+REPORTED: DL5DI
+SOLVED: 2013-02-21
+COMMIT: 2013-02-21
+
+- names of config files changes
+- dummy files for 1st package test added
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: xreflector branch added
 FOUND: 2013-02-15
 REPORTED: DL5DI
@@ -9,7 +20,7 @@ SOLVED: 2013-02-15
 COMMIT: 2013-02-15
 
 - scripts and settings need to be adjusted
-- configuraiton program needs to be developed
+- configuration program needs to be developed
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 

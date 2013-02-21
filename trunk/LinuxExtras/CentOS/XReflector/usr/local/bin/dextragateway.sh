@@ -5,7 +5,7 @@
 #
 # description: Starts the G4KLX XReflector in GUI mode and sets the LC_NUMERIC LOCALE
 # to en_US.UTF-8 to make the configfile compatible for GUI and daemon modem.
-# config: /etc/sysconfig/ircddbgateway
+# config: /etc/sysconfig/xreflector
 #
 
 if [ $UID -ne 0 ]; then
@@ -17,6 +17,6 @@ if [ $UID -ne 0 ]; then
 fi
 
 xhost -
-# start ircddbgateway
+# start xreflector
 su -c "/usr/bin/xreflector -gui -logdir=/var/log/opendv" opendv
 xhost +

@@ -34,13 +34,16 @@
 # 2012-11-15 dl5di    bugfixes and rework of initial repeater input loop
 # 2012-12-21 dl5di    bugfixes in comparisons of strings
 # 2013-01-20 dl5di    bugfix
+# 2013-01-25 dl5di    ircddbEnabled setting added
 # 2013-01-29 dl5di    bugfix
+# 2013-02-09 dl5di    fix permissions on exit for those who started the software accidently from root
+# 2013-02-21 dl5di    CCS enable/disable
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="Raspbian-20130203"
+rev="Raspbian-20130221"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2031,6 +2034,42 @@ function dplus_setup(){
     fi
 }
 
+##################### CCS setup  ####################
+
+function ccs_setup(){
+
+    print_text "ccs_setup" 
+#
+# ccsEnabled=1
+#
+    var="ccsEnabled"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_default $var
+    read_value $IRCDDBGWCONFIG $var
+    if [ "$?" = 0 ]; then
+	VALUE=$DEFAULT
+    fi
+    print_text $var 
+    request_selection $var $DEFAULT $VALUE
+    INPUT=$?
+    case $INPUT in
+	[0-1])
+    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+	    ;;
+	2)   
+	    write_value $IRCDDBGWCONFIG $var "$VALUE"
+	    ;;
+	*)
+    	    reset_value $var
+	    ;;
+    esac
+
+    if [ "$INPUT" = 0 ]; then
+	return 0
+    fi
+}
+
 ##################### DCS setup  ####################
 
 function dcs_setup(){
@@ -2897,6 +2936,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    repeater_init
 	    ircddb_setup
 	    aprs_setup
+	    ccs_setup
 	    dextra_setup
 	    dplus_setup
 	    dcs_setup
@@ -2931,6 +2971,7 @@ while [ "$SELECT" -ne 99 ]; do
 	    dplus_setup
 	    ;;
 	11)
+	    ccs_setup
 	    dcs_setup
 	    ;;
 	12)

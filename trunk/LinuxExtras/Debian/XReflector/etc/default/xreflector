@@ -1,6 +1,6 @@
-# Defaults for timeserver initscript
-# sourced by /etc/init.d/timeserver
-# installed at /etc/default/timeserver by the maintainer scripts
+# Defaults for xreflector initscript
+# sourced by /etc/init.d/xreflector
+# installed at /etc/default/xreflector by the maintainer scripts
 
 #
 # This is a POSIX shell fragment
