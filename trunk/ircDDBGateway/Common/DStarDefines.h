@@ -116,8 +116,6 @@ const unsigned int  CCS_PORT    = 30061U;
 const unsigned int  G2_DV_PORT  = 40000U;
 const unsigned int  G2_DD_PORT  = 40001U;
 
-const wxString CCS_HOSTNAME = wxT("ccs004.xreflector.net");
-
 enum DSTAR_PROTOCOL {
 	DP_UNKNOWN,
 	DP_LOOPBACK,

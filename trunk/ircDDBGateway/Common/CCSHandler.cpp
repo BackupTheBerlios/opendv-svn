@@ -29,6 +29,9 @@ unsigned int             CCCSHandler::m_count = 0U;
 wxString                 CCCSHandler::m_localAddress;
 CHeaderLogger*           CCCSHandler::m_headerLogger = NULL;
 
+wxString                 CCCSHandler::m_ccsHost;
+
+
 void CCCSHandler::initialise(unsigned int count)
 {
 	wxASSERT(count > 0U);
@@ -48,6 +51,11 @@ void CCCSHandler::setLocalAddress(const wxString& address)
 void CCCSHandler::setHeaderLogger(CHeaderLogger* logger)
 {
 	m_headerLogger = logger;
+}
+
+void CCCSHandler::setHost(const wxString& host)
+{
+	m_ccsHost = host;
 }
 
 void CCCSHandler::process()
@@ -264,7 +272,7 @@ void CCCSHandler::process(CConnectData& connect)
 	CD_TYPE type = connect.getType();
 
 	if (type == CT_ACK && m_state == CS_CONNECTING) {
-		wxLogMessage(wxT("CCS: %s connected to server %s"), m_callsign.c_str(), CCS_HOSTNAME.c_str());
+		wxLogMessage(wxT("CCS: %s connected to server %s"), m_callsign.c_str(), m_ccsHost.c_str());
 
 		m_announceTimer.start();
 		m_pollInactivityTimer.start();
@@ -291,9 +299,9 @@ bool CCCSHandler::connect()
 		return false;
 
 	// Can we resolve the CCS server address?
-	m_ccsAddress = CUDPReaderWriter::lookup(CCS_HOSTNAME);
+	m_ccsAddress = CUDPReaderWriter::lookup(m_ccsHost);
 	if (m_ccsAddress.s_addr == INADDR_NONE) {
-		wxLogError(wxT("CCS: Unable to find the IP address for %s"), CCS_HOSTNAME.c_str());
+		wxLogError(wxT("CCS: Unable to find the IP address for %s"), m_ccsHost.c_str());
 		return false;
 	}
 

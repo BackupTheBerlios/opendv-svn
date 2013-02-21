@@ -691,8 +691,9 @@ bool CIRCDDBGatewayAppD::createThread()
 	wxLogInfo(wxT("D-Plus enabled: %d, max. dongles; %u, login: %s"), int(dplusEnabled), dplusMaxDongles, dplusLogin.c_str());
 
 	bool dcsEnabled, ccsEnabled;
-	config.getDCS(dcsEnabled, ccsEnabled);
-	wxLogInfo(wxT("DCS enabled: %d, CCS enabled: %d"), int(dcsEnabled), int(ccsEnabled));
+	wxString ccsHost;
+	config.getDCS(dcsEnabled, ccsEnabled, ccsHost);
+	wxLogInfo(wxT("DCS enabled: %d, CCS enabled: %d, server: %s"), int(dcsEnabled), int(ccsEnabled), ccsHost.c_str());
 
 	if (repeaterBand1.Len() > 1U || repeaterBand2.Len() > 1U ||
 		repeaterBand3.Len() > 1U || repeaterBand4.Len() > 1U) {
@@ -721,7 +722,7 @@ bool CIRCDDBGatewayAppD::createThread()
 	m_thread->setDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	m_thread->setDExtra(dextraEnabled, dextraMaxDongles);
 	m_thread->setDCS(dcsEnabled);
-	m_thread->setCCS(ccsEnabled);
+	m_thread->setCCS(ccsEnabled, ccsHost);
 	m_thread->setInfoEnabled(infoEnabled);
 	m_thread->setEchoEnabled(echoEnabled);
 	m_thread->setDTMFEnabled(dtmfEnabled);

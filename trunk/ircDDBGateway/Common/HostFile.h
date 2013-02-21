@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ public:
 	unsigned int getCount() const;
 	wxString     getName(unsigned int n) const;
 	wxString     getAddress(unsigned int n) const;
+	wxString     getAddress(const wxString& host) const;
 	bool         getLock(unsigned int n) const;
 
 	wxArrayString getNames() const;

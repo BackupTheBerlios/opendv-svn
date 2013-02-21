@@ -1218,5 +1218,7 @@ Added CCS.
 201302xx
 --------
 
+Fixed Swedish messages for "Linking to..." and "Linked to...".
+Allow selection of CCS server names.
 Correct Portugese translations now used.
-CCS changes.
+Internal CCS changes.

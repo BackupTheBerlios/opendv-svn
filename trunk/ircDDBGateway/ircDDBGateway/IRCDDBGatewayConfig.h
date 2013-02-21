@@ -61,8 +61,8 @@ public:
 	void getDPlus(bool& enabled, unsigned int& maxDongles, wxString& login) const;
 	void setDPlus(bool enabled, unsigned int maxDongles, const wxString& login);
 
-	void getDCS(bool& dcsEnabled, bool& ccsEnabled) const;
-	void setDCS(bool dcsEnabled, bool ccsEnabled);
+	void getDCS(bool& dcsEnabled, bool& ccsEnabled, wxString& ccsHost) const;
+	void setDCS(bool dcsEnabled, bool ccsEnabled, const wxString& ccsHost);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	void getStarNet1(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const;
@@ -219,6 +219,7 @@ private:
 	wxString      m_dplusLogin;
 	bool          m_dcsEnabled;
 	bool          m_ccsEnabled;
+	wxString      m_ccsHost;
 	wxString      m_starNet1Band;
 	wxString      m_starNet1Callsign;
 	wxString      m_starNet1Logoff;

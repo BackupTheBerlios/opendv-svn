@@ -16,17 +16,29 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "HostFile.h"
 #include "DCSSet.h"
+#include "Defs.h"
+
+#include <wx/filename.h>
 
 const unsigned int CONTROL_WIDTH = 130U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CDCSSet::CDCSSet(wxWindow* parent, int id, const wxString& title, bool dcsEnabled, bool ccsEnabled) :
+const int CHOICE_ENABLED = 8787;
+
+BEGIN_EVENT_TABLE(CDCSSet, wxPanel)
+	EVT_CHOICE(CHOICE_ENABLED, CDCSSet::onEnabled)
+END_EVENT_TABLE()
+
+
+CDCSSet::CDCSSet(wxWindow* parent, int id, const wxString& title, bool dcsEnabled, bool ccsEnabled, const wxString& ccsHost) :
 wxPanel(parent, id),
 m_title(title),
 m_dcsEnabled(NULL),
-m_ccsEnabled(NULL)
+m_ccsEnabled(NULL),
+m_ccsHosts(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
@@ -42,11 +54,44 @@ m_ccsEnabled(NULL)
 	wxStaticText* ccsEnabledLabel = new wxStaticText(this, -1, wxT("CCS"));
 	sizer->Add(ccsEnabledLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_ccsEnabled = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_ccsEnabled = new wxChoice(this, CHOICE_ENABLED, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	m_ccsEnabled->Append(_("Disabled"));
 	m_ccsEnabled->Append(_("Enabled"));
 	sizer->Add(m_ccsEnabled, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_ccsEnabled->SetSelection(ccsEnabled ? 1 : 0);
+
+	wxStaticText* ccsHostsLabel = new wxStaticText(this, -1, _("Server"));
+	sizer->Add(ccsHostsLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_ccsHosts = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	sizer->Add(m_ccsHosts, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxFileName fileName(wxFileName::GetHomeDir(), CCS_HOSTS_FILE_NAME);
+	if (!fileName.IsFileReadable()) {
+#if defined(__WINDOWS__)
+		fileName.Assign(::wxGetCwd(), CCS_HOSTS_FILE_NAME);
+#else
+		fileName.Assign(wxT(DATA_DIR), CCS_HOSTS_FILE_NAME);
+#endif
+	}
+
+	CHostFile file(fileName.GetFullPath(), true);
+
+	for (unsigned int i = 0U; i < file.getCount(); i++)
+		m_ccsHosts->Append(file.getName(i));
+
+	if (ccsHost.IsEmpty()) {
+		m_ccsHosts->SetSelection(0);
+	} else {
+		bool res = m_ccsHosts->SetStringSelection(ccsHost);
+		if (!res)
+			m_ccsHosts->SetSelection(0);
+	}
+
+	if (ccsEnabled)
+		m_ccsHosts->Enable();
+	else
+		m_ccsHosts->Disable();
 
 	SetAutoLayout(true);
 
@@ -68,6 +113,9 @@ bool CDCSSet::Validate()
 	if (n == wxNOT_FOUND)
 		return false;
 
+	if (m_ccsHosts->GetCurrentSelection() == wxNOT_FOUND)
+		return false;
+
 	return true;
 }
 
@@ -87,4 +135,22 @@ bool CDCSSet::getCCSEnabled() const
 		return false;
 
 	return c == 1;
+}
+
+wxString CDCSSet::getCCSHost() const
+{
+	int n = m_ccsHosts->GetSelection();
+	if (n == wxNOT_FOUND)
+		return wxEmptyString;
+
+	return m_ccsHosts->GetStringSelection();
+}
+
+void CDCSSet::onEnabled(wxCommandEvent &event)
+{
+	int n = m_ccsEnabled->GetCurrentSelection();
+	if (n != 1)
+		m_ccsHosts->Disable();
+	else
+		m_ccsHosts->Enable();
 }

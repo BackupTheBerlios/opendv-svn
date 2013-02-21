@@ -73,6 +73,7 @@ m_dplusMaxDongles(0U),
 m_dplusLogin(),
 m_dcsEnabled(true),
 m_ccsEnabled(true),
+m_ccsHost(),
 m_infoEnabled(true),
 m_echoEnabled(true),
 m_dtmfEnabled(true),
@@ -287,6 +288,7 @@ void CIRCDDBGatewayThread::run()
 	wxString ccsAddress = m_ccsEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
 	CCCSHandler::setLocalAddress(ccsAddress);
 	CCCSHandler::setHeaderLogger(headerLogger);
+	CCCSHandler::setHost(m_ccsHost);
 
 	// If no ircDDB then APRS is started immediately
 	if (m_aprsWriter != NULL && m_irc == NULL)
@@ -532,9 +534,29 @@ void CIRCDDBGatewayThread::setDCS(bool enabled)
 	m_dcsEnabled = enabled;
 }
 
-void CIRCDDBGatewayThread::setCCS(bool enabled)
+void CIRCDDBGatewayThread::setCCS(bool enabled, const wxString& host)
 {
 	m_ccsEnabled = enabled;
+
+	wxFileName fileName(wxFileName::GetHomeDir(), CCS_HOSTS_FILE_NAME);
+
+	if (!fileName.IsFileReadable()) {
+		wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
+#if defined(__WINDOWS__)
+		fileName.Assign(::wxGetCwd(), CCS_HOSTS_FILE_NAME);
+#else
+		fileName.Assign(wxT(DATA_DIR), CCS_HOSTS_FILE_NAME);
+#endif
+		if (!fileName.IsFileReadable()) {
+			wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
+			m_ccsEnabled = false;
+			return;
+		}
+	}
+
+	CHostFile hostFile(fileName.GetFullPath(), false);
+
+	m_ccsHost = hostFile.getAddress(host);
 }
 
 void CIRCDDBGatewayThread::setLog(bool enabled)

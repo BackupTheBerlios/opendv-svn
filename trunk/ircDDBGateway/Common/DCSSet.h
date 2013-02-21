@@ -23,18 +23,24 @@
 
 class CDCSSet : public wxPanel {
 public:
-	CDCSSet(wxWindow* parent, int id, const wxString& title, bool dcsEnabled, bool ccsEnabled);
+	CDCSSet(wxWindow* parent, int id, const wxString& title, bool dcsEnabled, bool ccsEnabled, const wxString& ccsHost);
 	virtual ~CDCSSet();
 
 	virtual bool Validate();
 
-	virtual bool getDCSEnabled() const;
-	virtual bool getCCSEnabled() const;
+	virtual bool     getDCSEnabled() const;
+	virtual bool     getCCSEnabled() const;
+	virtual wxString getCCSHost() const;
+
+	virtual void onEnabled(wxCommandEvent& event);
 
 private:
 	wxString  m_title;
 	wxChoice* m_dcsEnabled;
 	wxChoice* m_ccsEnabled;
+	wxChoice* m_ccsHosts;
+
+	DECLARE_EVENT_TABLE()
 };
 
 #endif

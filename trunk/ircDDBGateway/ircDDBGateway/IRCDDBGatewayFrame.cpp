@@ -259,7 +259,8 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getDPlus(dplusEnabled, maxDPlusDongles, dplusLogin);
 
 	bool dcsEnabled, ccsEnabled;
-	::wxGetApp().getDCS(dcsEnabled, ccsEnabled);
+	wxString ccsHost;
+	::wxGetApp().getDCS(dcsEnabled, ccsEnabled, ccsHost);
 
 	unsigned int remotePort;
 	wxString remotePassword;
@@ -308,7 +309,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
 		ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
-		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled, ccsEnabled,
+		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled, ccsEnabled, ccsHost,
 		starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1,
 		starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, starNetLink2,
 		starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, starNetLink3,
@@ -353,7 +354,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 		repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4,
 		ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled,
 		aprsEnabled, aprsHostname, aprsPort, dextraEnabled, maxDExtraDongles,
-		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled, ccsEnabled,
+		dplusEnabled, maxDPlusDongles, dplusLogin, dcsEnabled, ccsEnabled, ccsHost,
 		starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1,
 		starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2,
 		starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3,
@@ -474,6 +475,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 
 	dcsEnabled       = dialog1.getDCSEnabled();
 	ccsEnabled       = dialog1.getCCSEnabled();
+	ccsHost          = dialog1.getCCSHost();
 
 	starNetBand1         = dialog1.getStarNetBand1();
 	starNetCallsign1     = dialog1.getStarNetCallsign1();
@@ -562,7 +564,7 @@ void CIRCDDBGatewayFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().setDPRS(aprsEnabled, aprsHostname, aprsPort);
 	::wxGetApp().setDExtra(dextraEnabled, maxDExtraDongles);
 	::wxGetApp().setDPlus(dplusEnabled, maxDPlusDongles, dplusLogin);
-	::wxGetApp().setDCS(dcsEnabled, ccsEnabled);
+	::wxGetApp().setDCS(dcsEnabled, ccsEnabled, ccsHost);
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	::wxGetApp().setStarNet1(starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1, starNetLink1);
 	::wxGetApp().setStarNet2(starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2, starNetLink2);

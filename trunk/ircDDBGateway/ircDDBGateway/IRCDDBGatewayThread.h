@@ -58,7 +58,7 @@ public:
 	virtual void setDExtra(bool enabled, unsigned int maxDongles);
 	virtual void setDPlus(bool enabled, unsigned int maxDongles, const wxString& login);
 	virtual void setDCS(bool enabled);
-	virtual void setCCS(bool enabled);
+	virtual void setCCS(bool enabled, const wxString& host);
 	virtual void setLog(bool enabled);
 	virtual void setAPRSWriter(CAPRSWriter* writer);
 	virtual void setInfoEnabled(bool enabled);
@@ -99,6 +99,7 @@ private:
 	wxString                  m_dplusLogin;
 	bool                      m_dcsEnabled;
 	bool                      m_ccsEnabled;
+	wxString                  m_ccsHost;
 	bool                      m_infoEnabled;
 	bool                      m_echoEnabled;
 	bool                      m_dtmfEnabled;

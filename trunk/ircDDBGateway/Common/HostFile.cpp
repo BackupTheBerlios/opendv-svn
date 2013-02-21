@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -81,6 +81,18 @@ wxString CHostFile::getName(unsigned int n) const
 
 wxString CHostFile::getAddress(unsigned int n) const
 {
+	return m_addresses.Item(n);
+}
+
+wxString CHostFile::getAddress(const wxString& host) const
+{
+	wxString name = host;
+	name.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
+
+	int n = m_names.Index(name);
+	if (n == wxNOT_FOUND)
+		return wxEmptyString;
+
 	return m_addresses.Item(n);
 }
 

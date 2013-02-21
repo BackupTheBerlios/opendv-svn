@@ -78,7 +78,7 @@ DCSProtocolHandler.o:	DCSProtocolHandler.cpp DCSProtocolHandler.h AMBEData.h UDP
 DCSProtocolHandlerPool.o:	DCSProtocolHandlerPool.cpp DCSProtocolHandlerPool.h DCSProtocolHandler.h
 				$(CC) $(CFLAGS) -c DCSProtocolHandlerPool.cpp
 
-DCSSet.o:		DCSSet.cpp DCSSet.h
+DCSSet.o:		DCSSet.cpp DCSSet.h HostFile.h Defs.h
 				$(CC) $(CFLAGS) -c DCSSet.cpp
 
 DDData.o:		DDData.cpp DDData.h DStarDefines.h Utils.h HeaderData.h

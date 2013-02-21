@@ -73,6 +73,8 @@ public:
 
 	static void setLocalAddress(const wxString& address);
 
+	static void setHost(const wxString& host);
+
 	static void finalise();
 
 protected:
@@ -88,6 +90,8 @@ private:
 
 	static wxString       m_localAddress;
 	static CHeaderLogger* m_headerLogger;
+
+	static wxString       m_ccsHost;
 
 	ICCSCallback*       m_handler;
 	wxString            m_callsign;

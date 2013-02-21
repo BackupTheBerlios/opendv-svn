@@ -75,8 +75,8 @@ public:
 	virtual void getDPlus(bool& dplusEnabled, unsigned int& maxDongles, wxString& dplusLogin) const;
 	virtual void setDPlus(bool dplusEnabled, unsigned int maxDongles, const wxString& dplusLogin);
 
-	virtual void getDCS(bool& dcsEnabled, bool& ccsEnabled) const;
-	virtual void setDCS(bool dcsEnabled, bool ccsEnabled);
+	virtual void getDCS(bool& dcsEnabled, bool& ccsEnabled, wxString& ccsHost) const;
+	virtual void setDCS(bool dcsEnabled, bool ccsEnabled, const wxString& ccsHost);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	virtual void getStarNet1(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const;

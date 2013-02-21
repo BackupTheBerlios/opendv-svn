@@ -2309,7 +2309,7 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 			text.Printf(wxT("Enlazando %s"), callsign.c_str());
 			break;
 		case TL_SVENSKA:
-			text.Printf(wxT("Lankad till %s"), callsign.c_str());
+			text.Printf(wxT("Lankar till %s"), callsign.c_str());
 			break;
 		case TL_NEDERLANDS_NL:
 		case TL_NEDERLANDS_BE:
@@ -2358,7 +2358,7 @@ void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
 			text.Printf(wxT("Enlazado %s"), callsign.c_str());
 			break;
 		case TL_SVENSKA:
-			text.Printf(wxT("Lankar till %s"), callsign.c_str());
+			text.Printf(wxT("Lankad till %s"), callsign.c_str());
 			break;
 		case TL_NEDERLANDS_NL:
 		case TL_NEDERLANDS_BE:
@@ -2518,7 +2518,7 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 			text.Printf(wxT("Enlazado %s"), callsign.c_str());
 			break;
 		case TL_SVENSKA:
-			text.Printf(wxT("Lankar till %s"), callsign.c_str());
+			text.Printf(wxT("Lankad till %s"), callsign.c_str());
 			break;
 		case TL_NEDERLANDS_NL:
 		case TL_NEDERLANDS_BE:
