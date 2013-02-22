@@ -32,6 +32,7 @@ Files:
     
 /etc/sysconfig/ircddbgateway	binarypath and commandline options for 
 				ircddbgateway module
+/etc/sysconfig/ircddbgw_conf	configfile for ircddbgw_conf config program 
 
 This last file need to be edited before the configuration if you want to change 
 the logpath or switch logging on/off.

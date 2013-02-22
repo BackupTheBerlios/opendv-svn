@@ -742,6 +742,14 @@ dcsEnabled: -    RESET to default
 dcsEnabled: <CR> Keep old value
 dcsEnabled: 
 
+ccsHostmissing: 
+ccsHostmissing:File CCS_Host.txt is missing! 
+ccsHostmissing: 
+
+ccsHostentries:
+ccsHostentries:Enter CCS-Host from list:
+ccsHostentries:
+
 stn_setup: 
 stn_setup: 
 stn_setup: 

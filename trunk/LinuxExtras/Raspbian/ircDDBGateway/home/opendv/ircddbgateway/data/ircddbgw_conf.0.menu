@@ -664,6 +664,14 @@ ccsEnabled: -    RESET to default
 ccsEnabled: <CR> Keep old value
 ccsEnabled: 
 
+ccsHostmissing: 
+ccsHostmissing:File CCS_Host.txt is missing! 
+ccsHostmissing: 
+
+ccsHostentries:
+ccsHostentries:Enter CCS-Host from list:
+ccsHostentries:
+
 dextra_setup: 
 dextra_setup: 
 dextra_setup: 
