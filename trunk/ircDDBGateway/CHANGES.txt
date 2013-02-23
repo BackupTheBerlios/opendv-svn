@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130219
+ircDDB Gateway - 20130223
 =========================
 
 20101010
@@ -1215,7 +1215,7 @@ Added DCS021.
 Added XRF333.
 Added CCS.
 
-201302xx
+20130223
 --------
 
 Fixed Swedish messages for "Linking to..." and "Linked to...".
