@@ -1267,7 +1267,7 @@ bool CTimeServerThread::send(const wxArrayString &words, unsigned int hour, unsi
 				slowData.Printf(wxT("Son las %02u:%02u"), hour, min);
 			break;
 		case LANG_NORSK:
-			header.setMyCall2(wxT("KLOK"));
+			header.setMyCall2(wxT("TID "));
 			slowData.Printf(wxT("Klokken er %02u:%02u"), hour, min);
 			break;
 		case LANG_PORTUGUES:

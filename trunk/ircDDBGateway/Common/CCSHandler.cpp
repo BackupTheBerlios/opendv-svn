@@ -31,6 +31,9 @@ CHeaderLogger*           CCCSHandler::m_headerLogger = NULL;
 
 wxString                 CCCSHandler::m_ccsHost;
 
+CCCSCache_t              CCCSHandler::m_cache;
+wxMutex                  CCCSHandler::m_mutex;
+
 
 void CCCSHandler::initialise(unsigned int count)
 {
@@ -254,7 +257,8 @@ void CCCSHandler::process(CCCSData& data)
 			break;
 
 		case CT_DTMFFOUND:
-			wxLogMessage(wxT("CCS: Mapped %s to %s"), m_yourCall.Mid(1U).c_str(), data.getRemote().c_str());
+			wxLogMessage(wxT("CCS: Mapped %s to %s, added to the cache"), m_yourCall.Mid(1U).c_str(), data.getRemote().c_str());
+			addToCache(m_yourCall.Mid(1U), data.getRemote());
 			m_yourCall = data.getRemote();
 			m_handler->ccsLinkMade(m_yourCall);
 			break;
@@ -386,14 +390,21 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		if (!dtmf.Left(1U).IsSameAs(wxT("*")))
 			return;
 
-		m_local    = m_myCall1;
-		m_yourCall = dtmf;
-		m_seqNo    = 0U;
+		wxString callsign = findInCache(dtmf);
+		if (!callsign.IsEmpty()) {
+			wxLogMessage(wxT("CCS: New outgoing link to %s/%s from %s"), dtmf.Mid(1U).c_str(), callsign.c_str(), m_myCall1.c_str());
+			m_yourCall = callsign;
+		} else {
+			wxLogMessage(wxT("CCS: New outgoing link to %s from %s"), dtmf.Mid(1U).c_str(), m_myCall1.c_str());
+			m_yourCall = dtmf;
+		}
+
+		m_local = m_myCall1;
+		m_seqNo = 0U;
 
 		m_state = CS_ACTIVE;
 		m_inactivityTimer.start();
 
-		wxLogMessage(wxT("CCS: New outgoing link to %s from %s"), m_yourCall.Mid(1U).c_str(), m_local.c_str());
 	}
 
 	CAMBEData temp(data);
@@ -505,4 +516,18 @@ unsigned int CCCSHandler::calcBackoff()
 		return 60U;
 	else
 		return timeout;
+}
+
+void CCCSHandler::addToCache(const wxString &dtmf, const wxString &callsign)
+{
+	wxMutexLocker locker(m_mutex);
+
+	m_cache[dtmf] = callsign;
+}
+
+wxString CCCSHandler::findInCache(const wxString &dtmf)
+{
+	wxMutexLocker locker(m_mutex);
+
+	return m_cache[dtmf];
 }

@@ -45,6 +45,8 @@ enum CCS_STATUS {
 	CS_ACTIVE
 };
 
+WX_DECLARE_STRING_HASH_MAP(wxString, CCCSCache_t);
+
 class CCCSHandler {
 public:
 	CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, unsigned int localPort);
@@ -93,6 +95,9 @@ private:
 
 	static wxString       m_ccsHost;
 
+	static CCCSCache_t    m_cache;
+	static wxMutex        m_mutex;
+
 	ICCSCallback*       m_handler;
 	wxString            m_callsign;
 	wxString            m_reflector;
@@ -120,6 +125,9 @@ private:
 	void process(CCCSData& data);
 
 	unsigned int calcBackoff();
+
+	static void     addToCache(const wxString& dtmf, const wxString& callsign);
+	static wxString findInCache(const wxString& dtmf);
 };
 
 #endif
