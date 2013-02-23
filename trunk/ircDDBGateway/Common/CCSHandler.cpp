@@ -120,8 +120,6 @@ m_myCall2()
 	if (latitude != 0.0 && longitude != 0.0)
 		m_locator = CUtils::latLonToLoc(latitude, longitude);
 
-	wxLogMessage(wxT("CCS: Opening UDP port %u for %s"), localPort, callsign.c_str());
-
 	// Add to the global list
 	for (unsigned int i = 0U; i < m_count; i++) {
 		if (m_handlers[i] == NULL) {
@@ -314,6 +312,8 @@ bool CCCSHandler::connect()
 	bool res = m_protocol.open();
 	if (!res)
 		return false;
+
+	wxLogMessage(wxT("CCS: Opening UDP port %u for %s"), m_protocol.getPort(), m_callsign.c_str());
 
 	m_waitTimer.start();
 

@@ -2197,11 +2197,11 @@ void CRepeaterHandler::startupInt()
 	}
 
 
+	m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_index + 1U, m_latitude, m_longitude, CCS_PORT + m_index);
+
 	// Start up our CCS link if we are DV mode
-	if (!m_ddMode) {
-		m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_index + 1U, m_latitude, m_longitude, CCS_PORT + m_index);
+	if (!m_ddMode)
 		m_ccsHandler->connect();
-	}
 
 	// Link to a startup reflector/repeater
 	if (m_linkAtStartup && !m_linkStartup.IsEmpty()) {

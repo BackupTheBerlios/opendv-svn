@@ -1,6 +1,5 @@
 CCS002	ccs002.xreflector.net
+CCS003	ccs003.xreflector.net
 CCS004	ccs004.xreflector.net
 CCS006	ccs006.xreflector.net
-CCS017	ccs017.xreflector.net
-CCS020	ccs020.xreflector.net
 CCS021	ccs021.xreflector.net
