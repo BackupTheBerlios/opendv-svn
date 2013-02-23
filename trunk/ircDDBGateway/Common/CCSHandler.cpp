@@ -390,7 +390,7 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		if (!dtmf.Left(1U).IsSameAs(wxT("*")))
 			return;
 
-		wxString callsign = findInCache(dtmf);
+		wxString callsign = findInCache(dtmf.Mid(1U));
 		if (!callsign.IsEmpty()) {
 			wxLogMessage(wxT("CCS: New outgoing link to %s/%s from %s"), dtmf.Mid(1U).c_str(), callsign.c_str(), m_myCall1.c_str());
 			m_yourCall = callsign;
@@ -518,14 +518,14 @@ unsigned int CCCSHandler::calcBackoff()
 		return timeout;
 }
 
-void CCCSHandler::addToCache(const wxString &dtmf, const wxString &callsign)
+void CCCSHandler::addToCache(const wxString& dtmf, const wxString& callsign)
 {
 	wxMutexLocker locker(m_mutex);
 
 	m_cache[dtmf] = callsign;
 }
 
-wxString CCCSHandler::findInCache(const wxString &dtmf)
+wxString CCCSHandler::findInCache(const wxString& dtmf)
 {
 	wxMutexLocker locker(m_mutex);
 
