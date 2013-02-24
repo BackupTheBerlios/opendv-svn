@@ -45,7 +45,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="Raspbian-20130222"
+rev="Raspbian-20130224"
 
 if [ $UID -ne 0 ]; then
 	echo
