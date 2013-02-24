@@ -1225,3 +1225,8 @@ Correct Portugese translations now used.
 Added a DTMF to callsign cache to CCS.
 Allow selection of CCS server names.
 Internal CCS changes.
+
+2013xxxx
+--------
+
+Added CCS010
