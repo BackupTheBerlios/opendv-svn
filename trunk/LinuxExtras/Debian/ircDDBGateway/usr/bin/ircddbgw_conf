@@ -2894,6 +2894,9 @@ if [ -f $CONFIGFILE ]; then
     read_value $CONFIGFILE "DATAPATH"
     DATAPATH=$VALUE
 
+    read_value $CONFIGFILE "OPENDVDATA"
+    OPENDVDATA=$VALUE
+
     read_value $CONFIGFILE "BACKUPPATH"
     BACKUPPATH=$VALUE
 
