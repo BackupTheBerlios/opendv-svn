@@ -3,6 +3,7 @@ LOGPATH=/var/log/opendv
 DEFVALUES=/home/opendv/ircddbgateway/ircddbgateway.default
 DATAPATH=/home/opendv/ircddbgateway/data
 CFGPATH=/home/opendv/ircddbgateway
+OPENDVDATA=/home/opendv/data
 IRCDDBGWCONFIG=/home/opendv/ircddbgateway/ircddbgateway
 TIMESERVERCFG=/home/opendv/ircddbgateway/timeserver
 DASHBOARDCFG=/var/www/ircddblocal.php

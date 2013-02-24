@@ -682,7 +682,7 @@ ccsEnabled: <ENTER> Den alten Wert beibehalten (Wert in [])
 ccsEnabled: 
 
 ccsHostmissing: 
-ccsHostmissing:Das File CCS_Host.txt fehlt! 
+ccsHostmissing:Das File CCS_Hosts.txt fehlt! 
 ccsHostmissing: 
 
 ccsHostentries:

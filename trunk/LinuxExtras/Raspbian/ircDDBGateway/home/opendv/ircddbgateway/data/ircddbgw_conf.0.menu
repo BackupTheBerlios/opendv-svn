@@ -665,7 +665,7 @@ ccsEnabled: <CR> Keep old value
 ccsEnabled: 
 
 ccsHostmissing: 
-ccsHostmissing:File CCS_Host.txt is missing! 
+ccsHostmissing:File CCS_Hosts.txt is missing! 
 ccsHostmissing: 
 
 ccsHostentries:

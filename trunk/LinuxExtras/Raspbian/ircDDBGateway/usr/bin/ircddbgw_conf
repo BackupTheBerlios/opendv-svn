@@ -39,6 +39,7 @@
 # 2013-02-09 dl5di    fix permissions on exit for those who started the software accidently from root
 # 2013-02-21 dl5di    CCS enable/disable
 # 2013-02-22 dl5di	  CCS Host
+# 2013-02-24 dl5di    bugfix CCS_Hosts.txt and language files
 #
 # Todo / known issues:
 # - implement sanity check for config file 
@@ -2069,9 +2070,9 @@ function ccs_setup(){
     read_value $IRCDDBGWCONFIG $var
     print_text $var 
 
-    if [ -e /usr/local/etc/CCS_Hosts.txt ]; then
+    if [ -e $OPENDVDATA/CCS_Hosts.txt ]; then
 		print_text "ccsHostentries"
-		cat "/usr/local/etc/CCS_Hosts.txt" | cut -c -7
+		cat "$OPENDVDATA/CCS_Hosts.txt" | cut -c -7
 		request_input $var 6 8 2 "$VALUE"
 		if [ "$?" = 3 ]; then
 				reset_value $var

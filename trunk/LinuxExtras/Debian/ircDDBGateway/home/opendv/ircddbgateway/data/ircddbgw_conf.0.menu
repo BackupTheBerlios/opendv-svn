@@ -630,7 +630,6 @@ aprs_setup:More information may be be found at http://www.aprs2.net
 aprs_setup: 
 aprs_setup:********************************************************************************
 
-
 aprsEnabled: 
 aprsEnabled: 0    DISABLE APRS service  
 aprsEnabled: 1    ENABLE  APRS service  
@@ -664,6 +663,14 @@ ccsEnabled:
 ccsEnabled: -    RESET to default
 ccsEnabled: <CR> Keep old value
 ccsEnabled: 
+
+ccsHostmissing: 
+ccsHostmissing:File CCS_Hosts.txt is missing! 
+ccsHostmissing: 
+
+ccsHostentries:
+ccsHostentries:Enter CCS-Host from list:
+ccsHostentries:
 
 dextra_setup: 
 dextra_setup: 
@@ -741,14 +748,6 @@ dcsEnabled:
 dcsEnabled: -    RESET to default
 dcsEnabled: <CR> Keep old value
 dcsEnabled: 
-
-ccsHostmissing: 
-ccsHostmissing:File CCS_Host.txt is missing! 
-ccsHostmissing: 
-
-ccsHostentries:
-ccsHostentries:Enter CCS-Host from list:
-ccsHostentries:
 
 stn_setup: 
 stn_setup: 

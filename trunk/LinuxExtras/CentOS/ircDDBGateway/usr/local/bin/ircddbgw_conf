@@ -60,12 +60,13 @@
 # 2013-01-25 dl5di    ircddbEnabled setting added
 # 2013-02-21 dl5di    CCS enable/disable
 # 2013-02-22 dl5di	  CCS Host
+# 2013-02-24 dl5di    change in configuration file of ircddbgw_conf 
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20130222"
+rev="20130224"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -2235,9 +2236,9 @@ function ccs_setup(){
     read_value $IRCDDBGWCONFIG $var
     print_text $var 
 
-    if [ -e /usr/local/etc/CCS_Hosts.txt ]; then
+    if [ -e $OPENDVDATA/CCS_Hosts.txt ]; then
 		print_text "ccsHostentries"
-		cat "/usr/local/etc/CCS_Hosts.txt" | cut -c -7
+		cat "$OPENDVDATA/CCS_Hosts.txt" | cut -c -7
 		request_input $var 6 8 2 "$VALUE"
 		if [ "$?" = 3 ]; then
 				reset_value $var
