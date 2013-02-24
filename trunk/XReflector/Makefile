@@ -8,7 +8,7 @@ include settings.mk
 all:	XRFRemote/xrfremote XReflector/xreflector
 
 XRFRemote/xrfremote:	Common/Common.a
-		make -C RemoteControl
+		make -C XRFRemote
 
 XReflector/xreflector:	ircDDB/libircDDB.a Common/Common.a
 		make -C XReflector

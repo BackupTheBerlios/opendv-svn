@@ -1,11 +1,11 @@
-all:			remotecontrol
+all:			xrfremote
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
 xrfremote:	RemoteControlApp.o RemoteControlCallsignData.o RemoteControlConfig.o RemoteControlFrame.o RemoteControlLinkData.o \
 				RemoteControlPreferences.o RemoteControlRemoteControlHandler.o RemoteControlRemoteSet.o RemoteControlRepeaterData.o \
 				RemoteControlRepeaterPanel.o RemoteControlStarNetGroup.o RemoteControlStarNetPanel.o RemoteControlStarNetUser.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o remotecontrol RemoteControlApp.o RemoteControlCallsignData.o RemoteControlConfig.o RemoteControlFrame.o \
+				$(CC) $(LDFLAGS) -o xrfremote RemoteControlApp.o RemoteControlCallsignData.o RemoteControlConfig.o RemoteControlFrame.o \
 				RemoteControlLinkData.o RemoteControlPreferences.o RemoteControlRemoteControlHandler.o RemoteControlRemoteSet.o \
 				RemoteControlRepeaterData.o RemoteControlRepeaterPanel.o RemoteControlStarNetGroup.o RemoteControlStarNetPanel.o \
 				RemoteControlStarNetUser.o ../Common/Common.a $(LIBS)
