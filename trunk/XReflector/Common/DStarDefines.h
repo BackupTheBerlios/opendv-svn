@@ -110,7 +110,8 @@ const unsigned char SCRAMBLER_BYTE2 = 0x4FU;
 const unsigned char SCRAMBLER_BYTE3 = 0x93U;
 
 const unsigned int  DPLUS_PORT  = 20001U;
-const unsigned int  DEXTRA_PORT = 30001U;
+const unsigned int  DEXTRA_PORT = 30003U;
+const unsigned int  DELINK_PORT = 30011U;
 const unsigned int  DCS_PORT    = 30051U;
 const unsigned int  CCS_PORT    = 30061U;
 const unsigned int  G2_DV_PORT  = 40000U;

@@ -24,6 +24,7 @@
 const wxString DEXTRA_HOSTS_FILE_NAME = wxT("DExtra_Hosts.txt");
 const wxString DPLUS_HOSTS_FILE_NAME  = wxT("DPlus_Hosts.txt");
 const wxString DCS_HOSTS_FILE_NAME    = wxT("DCS_Hosts.txt");
+const wxString XRF_LINK_HOSTS_FILE_NAME = wxT("XRF_Link_Hosts.txt");
 
 const wxString LINKS_BASE_NAME   = wxT("Links");
 const wxString TEXT_BASE_NAME    = wxT("Text");

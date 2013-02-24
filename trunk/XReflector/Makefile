@@ -5,9 +5,9 @@
 
 include settings.mk
 
-all:	RemoteControl/remotecontrol XReflector/xreflector
+all:	XRFRemote/xrfremote XReflector/xreflector
 
-RemoteControl/remotecontrol:	Common/Common.a
+XRFRemote/xrfremote:	Common/Common.a
 		make -C RemoteControl
 
 XReflector/xreflector:	ircDDB/libircDDB.a Common/Common.a
@@ -20,14 +20,14 @@ ircDDB/libircDDB.a:
 		make -C ircDDB
 
 install:	all
-		make -C RemoteControl install
+		make -C XRFRemote install
 		make -C XReflector install
 		make -C Data install
 
 clean:
 		rm -f core *~ *.bak
 		make -C Common clean
-		make -C RemoteControl clean
+		make -C XRFRemote clean
 		make -C XReflector clean
 		
 include package.mk
