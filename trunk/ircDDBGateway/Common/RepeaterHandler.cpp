@@ -726,9 +726,20 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
 					if (command.IsSameAs(wxT("CCSA"))) {
-						m_ccsHandler->writeEnd();
+						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
+							m_ccsHandler->writeEnd();
+							m_linkStatus = LS_NONE;
+							m_linkRepeater.Clear();
+							triggerInfo();
+						}
 					} else {
 						ccsDTMF = command.Mid(3U);
+						CDPlusHandler::unlink(this);
+						CDExtraHandler::unlink(this);
+						CDCSHandler::unlink(this);
+						m_linkStatus   = LS_LINKING_CCS;
+						m_linkRepeater = command.Mid(4U);
+						triggerInfo();
 					}
 				} else if (command.IsSameAs(wxT("       I"))) {
 					m_g2Status = G2_INFO;
@@ -832,6 +843,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 
 		case G2_ECHO:
 			m_echo->writeData(data);
+			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 
 			if (data.isEnd()) {
@@ -841,6 +853,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			break;
 
 		case G2_INFO:
+			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 
 			if (data.isEnd()) {
@@ -852,6 +865,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			break;
 
 		case G2_VERSION:
+			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 
 			if (data.isEnd()) {
@@ -948,8 +962,14 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-					if (command.IsSameAs(wxT("CCSA")))
-						m_ccsHandler->writeEnd();
+					if (command.IsSameAs(wxT("CCSA"))) {
+						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
+							m_ccsHandler->writeEnd();
+							m_linkStatus = LS_NONE;
+							m_linkRepeater.Clear();
+							triggerInfo();
+						}
+					}
 				} else if (command.IsSameAs(wxT("       I"))) {
 					// Do nothing
 				} else {
@@ -1049,11 +1069,6 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (m_repeaterId != 0x00U)
 		return false;
 
-	// If CCS is active then incoming audio from outgoing reflector links is dropped
-	CCS_STATUS ccsStatus = m_ccsHandler->getStatus();
-	if (direction == DIR_OUTGOING && ccsStatus == CS_ACTIVE && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
-		return false;
-
 	// Rewrite the ID if we're using Icom hardware
 	if (m_hwType == HW_ICOM) {
 		unsigned int id1 = header.getId();
@@ -1095,11 +1110,6 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 {
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
-		return false;
-
-	// If CCS is active then incoming audio from outgoing reflector links is dropped
-	CCS_STATUS ccsStatus = m_ccsHandler->getStatus();
-	if (direction == DIR_OUTGOING && ccsStatus == CS_ACTIVE && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		return false;
 
 	// Rewrite the ID if we're using Icom hardware
@@ -1817,6 +1827,9 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 
 void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString& user, CHeaderData& header)
 {
+	if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
+		return;
+
 	if (callsign.Left(1).IsSameAs(wxT("/"))) {
 		if (m_irc == NULL) {
 			wxLogMessage(wxT("%s is trying to G2 route with ircDDB disabled"), user.c_str());
@@ -1911,6 +1924,9 @@ void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString
 
 void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const wxString& user, const wxString& type)
 {
+	if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
+		return;
+
 	if (m_linkReconnect == RECONNECT_FIXED)
 		return;
 
@@ -2112,10 +2128,6 @@ void CRepeaterHandler::linkInt(const wxString& callsign)
 
 void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 {
-	CCS_STATUS status = m_ccsHandler->getStatus();
-	if (status == CS_ACTIVE)
-		return;
-
 	CHeaderData temp(header);
 
 	temp.setCQCQCQ();
@@ -2137,10 +2149,6 @@ void CRepeaterHandler::sendToOutgoing(const CHeaderData& header)
 
 void CRepeaterHandler::sendToOutgoing(const CAMBEData& data)
 {
-	CCS_STATUS status = m_ccsHandler->getStatus();
-	if (status == CS_ACTIVE)
-		return;
-
 	CAMBEData temp(data);
 
 	CDExtraHandler::writeAMBE(this, temp, DIR_OUTGOING);
@@ -2321,7 +2329,7 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 			text.Printf(wxT("Kobler til %s"), callsign.c_str());
 			break;
 		case TL_PORTUGUES:
-			text.Printf(wxT("Ligando a %s"), callsign.c_str());
+			text.Printf(wxT("Conectando, %s"), callsign.c_str());
 			break;
 		default:
 			text.Printf(wxT("Linking to %s"), callsign.c_str());
@@ -2370,7 +2378,7 @@ void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
 			text.Printf(wxT("Tilkoblet %s"), callsign.c_str());
 			break;
 		case TL_PORTUGUES:
-			text.Printf(wxT("Ligada a %s"), callsign.c_str());
+			text.Printf(wxT("Conectado a %s"), callsign.c_str());
 			break;
 		default:
 			text.Printf(wxT("Linked to %s"), callsign.c_str());
@@ -2419,7 +2427,7 @@ void CRepeaterHandler::writeNotLinked()
 			text = wxT("Ikke linket");
 			break;
 		case TL_PORTUGUES:
-			text = wxT("Nao ligado");
+			text = wxT("Desconectado");
 			break;
 		default:
 			text = wxT("Not linked");
@@ -2478,8 +2486,8 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 			tempText.Printf(wxT("%s er opptatt"), callsign.c_str());
 			break;
 		case TL_PORTUGUES:
-			text = wxT("Nao ligado");
-			tempText.Printf(wxT("%s ocupado"), callsign.c_str());
+			text = wxT("Desconectado");
+			tempText.Printf(wxT("%s, ocupado"), callsign.c_str());
 			break;
 		default:
 			text = wxT("Not linked");
@@ -2530,105 +2538,156 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 			text.Printf(wxT("Tilkoblet %s"), callsign.c_str());
 			break;
 		case TL_PORTUGUES:
-			text.Printf(wxT("Ligada a %s"), callsign.c_str());
+			text.Printf(wxT("Conectado a %s"), callsign.c_str());
 			break;
 		default:
 			text.Printf(wxT("Linked to %s"), callsign.c_str());
 			break;
 	}
 
-	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
+	CDPlusHandler::unlink(this);
+	CDExtraHandler::unlink(this);
+	CDCSHandler::unlink(this);
+
+	m_linkStatus   = LS_LINKED_CCS;
+	m_linkRepeater = callsign;
+
+	CTextData textData(m_linkStatus, callsign, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
+
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+
+	triggerInfo();
 }
 
 void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 {
+	wxString tempText;
 	wxString text;
 
 	switch (m_language) {
 		case TL_DEUTSCH:
-			text = wxT("CCS ist beendet");
+			text = wxT("Nicht verbunden");
+			tempText = wxT("CCS ist beendet");
 			break;
 		case TL_DANSK:
-			text = wxT("CCS er afsluttet");
+			text = wxT("Ikke forbundet");
+			tempText = wxT("CCS er afsluttet");
 			break;
 		case TL_FRANCAIS:
-			text = wxT("CCS a pris fin");
+			text = wxT("Non connecte");
+			tempText = wxT("CCS a pris fin");
 			break;
 		case TL_ITALIANO:
-			text = wxT("CCS e finita");
+			text = wxT("Non connesso");
+			tempText = wxT("CCS e finita");
 			break;
 		case TL_POLSKI:
-			text = wxT("CCS zakonczyl");
+			text = wxT("Nie polaczony");
+			tempText = wxT("CCS zakonczyl");
 			break;
 		case TL_ESPANOL:
-			text = wxT("CCS ha terminado");
+			text = wxT("No enlazado");
+			tempText = wxT("CCS ha terminado");
 			break;
 		case TL_SVENSKA:
-			text = wxT("CCS har upphort");
+			text = wxT("Ej lankad");
+			tempText = wxT("CCS har upphort");
 			break;
 		case TL_NEDERLANDS_NL:
 		case TL_NEDERLANDS_BE:
-			text = wxT("CCS is afgelopen");
+			text = wxT("Niet gelinkt");
+			tempText = wxT("CCS is afgelopen");
 			break;
 		case TL_NORSK:
-			text = wxT("CCS er avsluttet");
+			text = wxT("Ikke linket");
+			tempText = wxT("CCS er avsluttet");
 			break;
 		case TL_PORTUGUES:
-			text = wxT("CCS terminou");
+			text = wxT("Desconectado");
+			tempText = wxT("CCS terminou");
 			break;
 		default:
-			text = wxT("CCS has ended");
+			text = wxT("Not linked");
+			tempText = wxT("CCS has ended");
 			break;
 	}
 
-	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
+	m_linkStatus = LS_NONE;
+	m_linkRepeater.Clear();
+
+	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
+
+	m_audio->setStatus(LS_NONE, wxEmptyString, text);
+	m_audio->setTempText(tempText);
+
+	triggerInfo();
 }
 
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
 {
+	wxString tempText;
 	wxString text;
 
 	switch (m_language) {
 		case TL_DEUTSCH:
-			text.Printf(wxT("%s unbekannt"), dtmf.c_str());
+			text = wxT("Nicht verbunden");
+			tempText.Printf(wxT("%s unbekannt"), dtmf.c_str());
 			break;
 		case TL_DANSK:
-			text.Printf(wxT("%s unknown"), dtmf.c_str());
+			text = wxT("Ikke forbundet");
+			tempText.Printf(wxT("%s unknown"), dtmf.c_str());
 			break;
 		case TL_FRANCAIS:
-			text.Printf(wxT("%s inconnu"), dtmf.c_str());
+			text = wxT("Non connecte");
+			tempText.Printf(wxT("%s inconnu"), dtmf.c_str());
 			break;
 		case TL_ITALIANO:
-			text.Printf(wxT("Sconosciuto %s"), dtmf.c_str());
+			text = wxT("Non connesso");
+			tempText.Printf(wxT("Sconosciuto %s"), dtmf.c_str());
 			break;
 		case TL_POLSKI:
-			text.Printf(wxT("%s nieznany"), dtmf.c_str());
+			text = wxT("Nie polaczony");
+			tempText.Printf(wxT("%s nieznany"), dtmf.c_str());
 			break;
 		case TL_ESPANOL:
-			text.Printf(wxT("Desconocido %s"), dtmf.c_str());
+			text = wxT("No enlazado");
+			tempText.Printf(wxT("Desconocido %s"), dtmf.c_str());
 			break;
 		case TL_SVENSKA:
-			text.Printf(wxT("%s okand"), dtmf.c_str());
+			text = wxT("Ej lankad");
+			tempText.Printf(wxT("%s okand"), dtmf.c_str());
 			break;
 		case TL_NEDERLANDS_NL:
 		case TL_NEDERLANDS_BE:
-			text.Printf(wxT("%s bekend"), dtmf.c_str());
+			text = wxT("Niet gelinkt");
+			tempText.Printf(wxT("%s bekend"), dtmf.c_str());
 			break;
 		case TL_NORSK:
-			text.Printf(wxT("%s ukjent"), dtmf.c_str());
+			text = wxT("Ikke linket");
+			tempText.Printf(wxT("%s ukjent"), dtmf.c_str());
 			break;
 		case TL_PORTUGUES:
-			text.Printf(wxT("%s desconhecido"), dtmf.c_str());
+			text = wxT("Desconectado");
+			tempText.Printf(wxT("%s desconhecido"), dtmf.c_str());
 			break;
 		default:
-			text.Printf(wxT("%s unknown"), dtmf.c_str());
+			text = wxT("Not linked");
+			tempText.Printf(wxT("%s unknown"), dtmf.c_str());
 			break;
 	}
 
-	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port, true);
+	m_linkStatus = LS_NONE;
+	m_linkRepeater.Clear();
+
+	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
+
+	m_audio->setStatus(LS_NONE, wxEmptyString, text);
+	m_audio->setTempText(tempText);
+
+	triggerInfo();
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)

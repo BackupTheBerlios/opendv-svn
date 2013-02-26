@@ -393,6 +393,7 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		wxString callsign = findInCache(dtmf.Mid(1U));
 		if (!callsign.IsEmpty()) {
 			wxLogMessage(wxT("CCS: New outgoing link to %s/%s from %s"), dtmf.Mid(1U).c_str(), callsign.c_str(), m_myCall1.c_str());
+			m_handler->ccsLinkMade(callsign);
 			m_yourCall = callsign;
 		} else {
 			wxLogMessage(wxT("CCS: New outgoing link to %s from %s"), dtmf.Mid(1U).c_str(), m_myCall1.c_str());

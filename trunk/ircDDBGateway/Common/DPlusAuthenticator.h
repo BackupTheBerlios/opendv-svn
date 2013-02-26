@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #ifndef	DPlusAuthenticator_H
 #define	DPlusAuthenticator_H
 
+#include "TCPReaderWriterClient.h"
 #include "CacheManager.h"
 #include "Timer.h"
 
@@ -52,6 +53,7 @@ private:
 
 	bool poll(const wxString& callsign, const wxString& hostname, unsigned int port, unsigned char id);
 	bool authenticate(const wxString& callsign, const wxString& hostname, unsigned int port, unsigned char id, bool writeToCache);
+	bool read(CTCPReaderWriterClient& socket, unsigned char* buffer, unsigned int len) const;
 };
 
 #endif

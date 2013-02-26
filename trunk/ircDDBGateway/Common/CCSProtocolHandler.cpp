@@ -137,6 +137,8 @@ bool CCCSProtocolHandler::readPackets()
 	if (m_buffer[0] == '0' && m_buffer[1] == '0' && m_buffer[2] == '0' && m_buffer[3] == '1') {
 		m_type = CT_DATA;
 		return false;
+	} else if (m_buffer[0] == 'L' && m_buffer[1] == 'L' && m_buffer[2] == 'L') {
+		return true;
 	} else {
 		switch (m_length) {
 			case 14U:

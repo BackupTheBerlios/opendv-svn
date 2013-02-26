@@ -688,9 +688,11 @@ void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
 				case LS_NONE:
 					text.Append(_("  Not linked"));
 					break;
+				case LS_LINKED_LOOPBACK:
 				case LS_LINKED_DEXTRA:
 				case LS_LINKED_DPLUS:
 				case LS_LINKED_DCS:
+				case LS_LINKED_CCS:
 					text.Append(_("  Linked to  "));
 					text.Append(linkCallsign);
 					break;

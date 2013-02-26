@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "TCPReaderWriterClient.h"
 #include "DPlusAuthenticator.h"
 #include "UDPReaderWriter.h"
 #include "DStarDefines.h"
@@ -28,6 +27,8 @@ const unsigned int OPENDSTAR_PORT = 20001U;
 
 const wxString DUTCHSTAR_HOSTNAME = wxT("dpns.dutch-star.eu");
 const unsigned int DUTCHSTAR_PORT = 20001U;
+
+const unsigned int TCP_TIMEOUT = 10U;
 
 CDPlusAuthenticator::CDPlusAuthenticator(const wxString& loginCallsign, const wxString& gatewayCallsign, const wxString& address, CCacheManager* cache) :
 wxThread(wxTHREAD_JOINABLE),
@@ -131,7 +132,7 @@ bool CDPlusAuthenticator::authenticate(const wxString& callsign, const wxString&
 	buffer[19U] = '9';
 
 	buffer[28U] = 'W';
-	buffer[29U] = 'X';
+	buffer[29U] = '7';
 	buffer[30U] = 'I';
 	buffer[31U] = 'B';
 	buffer[32U] = id;
@@ -146,28 +147,27 @@ bool CDPlusAuthenticator::authenticate(const wxString& callsign, const wxString&
 
 	ret = socket.write(buffer, 56U);
 	if (!ret) {
+		socket.close();
 		delete[] buffer;
 		return false;
 	}
 
-	int n = socket.read(buffer + 0U, 2U, 5U);
+	ret = read(socket, buffer + 0U, 2U);
 
-	while (n > 0) {
+	while (ret) {
 		unsigned int len = (buffer[1U] & 0x0FU) * 256U + buffer[0U];
 
 		// Ensure that we get exactly len - 2U bytes from the TCP stream
-		unsigned int offset = 0U;
-		do {
-			n = socket.read(buffer + 2U + offset, len - 2U - offset, 5U);
-			if (n == -1)
-				break;
-			offset += n;
-		} while ((len - 2U - offset) > 0U);
+		ret = read(socket, buffer + 2U, len - 2U);
+		if (!ret) {
+			wxLogError(wxT("Short read from %s:%u"), hostname.c_str(), port);
+			break;
+		}
 
 		if ((buffer[1U] & 0xC0U) != 0xC0U || buffer[2U] != 0x01U) {
 			wxLogError(wxT("Invalid packet received from %s:%u"), hostname.c_str(), port);
-			CUtils::dump(wxT("Details:"), buffer, 16U);
-			n = socket.read(buffer + 0U, 2U, 5U);
+			CUtils::dump(wxT("Details:"), buffer, len);
+			ret = read(socket, buffer + 0U, 2U);
 			continue;
 		}
 	
@@ -193,7 +193,7 @@ bool CDPlusAuthenticator::authenticate(const wxString& callsign, const wxString&
 			}
 		}
 
-		n = socket.read(buffer + 0U, 2U, 5U);
+		ret = read(socket, buffer + 0U, 2U);
 	}
 
 	wxLogMessage(wxT("Registered with %s using callsign %s"), hostname.c_str(), callsign.c_str());
@@ -236,7 +236,7 @@ bool CDPlusAuthenticator::poll(const wxString& callsign, const wxString& hostnam
 		buffer[i + 20U] = callsign.GetChar(i);
 
 	buffer[28U] = 'W';
-	buffer[29U] = 'X';
+	buffer[29U] = '7';
 	buffer[30U] = 'I';
 	buffer[31U] = 'B';
 	buffer[32U] = id;
@@ -260,4 +260,19 @@ bool CDPlusAuthenticator::poll(const wxString& callsign, const wxString& hostnam
 	socket.close();
 
 	return ret;
+}
+
+bool CDPlusAuthenticator::read(CTCPReaderWriterClient &socket, unsigned char *buffer, unsigned int len) const
+{
+	unsigned int offset = 0U;
+
+	do {
+		int n = socket.read(buffer + offset, len - offset, TCP_TIMEOUT);
+		if (n == -1)
+			return false;
+
+		offset += n;
+	} while ((len - offset) > 0U);
+
+	return true;
 }

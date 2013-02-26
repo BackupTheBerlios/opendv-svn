@@ -192,9 +192,11 @@ void CAudioUnit::clock(unsigned int ms)
 			case LS_NONE:
 				lookup(id, wxT("notlinked"));
 				break;
+			case LS_LINKED_CCS:
 			case LS_LINKED_DCS:
 			case LS_LINKED_DPLUS:
 			case LS_LINKED_DEXTRA:
+			case LS_LINKED_LOOPBACK:
 				found = lookup(id, wxT("linkedto"));
 				if (!found) {
 					lookup(id, wxT("linked"));
@@ -333,7 +335,11 @@ void CAudioUnit::spellReflector(unsigned int id, const wxString &reflector)
 
 	wxChar c = reflector.GetChar(length - 1U);
 
-	if (m_linkStatus == LS_LINKING_DCS || m_linkStatus == LS_LINKED_DCS) {
+	if (c == wxT(' '))
+		return;
+
+	if (m_linkStatus == LS_LINKING_DCS || m_linkStatus == LS_LINKED_DCS ||
+	    m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
 		lookup(id, wxString(c));
 		return;
 	}
