@@ -369,7 +369,11 @@ void CIRCDDBGatewayThread::run()
 		if (m_logEnabled) {
 			m_statusTimer1.clock(ms);
 			if (m_statusTimer1.hasExpired()) {
-				if (CDExtraHandler::stateChange() || CDPlusHandler::stateChange() || CDCSHandler::stateChange())
+				bool ret1 = CDExtraHandler::stateChange();
+				bool ret2 = CDPlusHandler::stateChange();
+				bool ret3 = CDCSHandler::stateChange();
+				bool ret4 = CCCSHandler::stateChange();
+				if (ret1 || ret2 || ret3 || ret4)
 					writeStatus();
 	
 				m_statusTimer1.reset();
@@ -1176,6 +1180,7 @@ void CIRCDDBGatewayThread::writeStatus()
 	CDExtraHandler::writeStatus(file);
 	CDPlusHandler::writeStatus(file);
 	CDCSHandler::writeStatus(file);
+	CCCSHandler::writeStatus(file);
 
 	file.Close();
 }
@@ -1195,14 +1200,21 @@ CIRCDDBGatewayStatusData* CIRCDDBGatewayThread::getStatus() const
 		if (ret) {
 			wxString incoming1 = CDExtraHandler::getIncoming(callsign);
 			wxString incoming2 = CDCSHandler::getIncoming(callsign);
+			wxString incoming3 = CCCSHandler::getIncoming(callsign);
 
 			wxString incoming;
-			if (!incoming1.IsEmpty() && !incoming2.IsEmpty())
-				incoming = incoming1 + wxT(" ") + incoming2;
-			else if (!incoming1.IsEmpty())
-				incoming = incoming1;
-			else if (!incoming2.IsEmpty())
-				incoming = incoming2;
+			if (!incoming1.IsEmpty()) {
+				incoming.Append(incoming1);
+				incoming.Append(wxT(" "));
+			}
+			if (!incoming2.IsEmpty()) {
+				incoming.Append(incoming2);
+				incoming.Append(wxT(" "));
+			}
+			if (!incoming3.IsEmpty()) {
+				incoming.Append(incoming3);
+				incoming.Append(wxT(" "));
+			}
 
 			status->setRepeater(i, callsign, linkStatus, linkCallsign, incoming);
 		}

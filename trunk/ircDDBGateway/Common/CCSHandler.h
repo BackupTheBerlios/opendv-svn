@@ -77,6 +77,11 @@ public:
 
 	static void setHost(const wxString& host);
 
+	static bool stateChange();
+	static void writeStatus(wxFFile& file);
+
+	static wxString getIncoming(const wxString& callsign);
+
 	static void finalise();
 
 protected:
@@ -98,6 +103,8 @@ private:
 	static CCCSCache_t    m_cache;
 	static wxMutex        m_mutex;
 
+	static bool           m_stateChange;
+
 	ICCSCallback*       m_handler;
 	wxString            m_callsign;
 	wxString            m_reflector;
@@ -115,6 +122,8 @@ private:
 	unsigned int        m_tryCount;
 	unsigned int        m_id;
 	unsigned int        m_seqNo;
+	time_t              m_time;
+	DIRECTION           m_direction;
 	wxString            m_yourCall;
 	wxString            m_myCall1;
 	wxString            m_myCall2;

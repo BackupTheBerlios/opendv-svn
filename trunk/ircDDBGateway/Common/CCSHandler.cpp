@@ -34,6 +34,8 @@ wxString                 CCCSHandler::m_ccsHost;
 CCCSCache_t              CCCSHandler::m_cache;
 wxMutex                  CCCSHandler::m_mutex;
 
+bool                     CCCSHandler::m_stateChange = false;
+
 
 void CCCSHandler::initialise(unsigned int count)
 {
@@ -85,6 +87,21 @@ void CCCSHandler::clock(unsigned int ms)
 	}
 }
 
+wxString CCCSHandler::getIncoming(const wxString& callsign)
+{
+	wxString incoming;
+
+	for (unsigned int i = 0U; i < m_count; i++) {
+		CCCSHandler* handler = m_handlers[i];
+		if (handler != NULL && handler->m_direction == DIR_INCOMING && handler->m_callsign.IsSameAs(callsign)) {
+			incoming.Append(handler->m_yourCall);
+			incoming.Append(wxT("  "));
+		}
+	}
+
+	return incoming;
+}
+
 void CCCSHandler::finalise()
 {
 	for (unsigned int i = 0U; i < m_count; i++)
@@ -111,6 +128,8 @@ m_tryTimer(1000U, 1U),					// 1 second
 m_tryCount(0U),
 m_id(0x00U),
 m_seqNo(0U),
+m_time(),
+m_direction(DIR_OUTGOING),
 m_yourCall(),
 m_myCall1(),
 m_myCall2()
@@ -203,9 +222,12 @@ void CCCSHandler::process(CAMBEData& data)
 
 	// This is a new incoming CCS call
 	if (m_state == CS_CONNECTED) {
-		m_yourCall = header.getMyCall1();
-		m_local    = header.getYourCall();
-		m_state    = CS_ACTIVE;
+		m_yourCall    = header.getMyCall1();
+		m_local       = header.getYourCall();
+		m_direction   = DIR_INCOMING;
+		m_time        = ::time(NULL);
+		m_state       = CS_ACTIVE;
+		m_stateChange = true;
 		m_inactivityTimer.start();
 
 		m_handler->ccsLinkMade(m_yourCall);
@@ -241,7 +263,8 @@ void CCCSHandler::process(CCCSData& data)
 		case CT_TERMINATE:
 			if (m_state == CS_ACTIVE) {
 				wxLogMessage(wxT("CCS: Link between %s and %s has been terminated"), data.getLocal().c_str(), data.getRemote().c_str());
-				m_state = CS_CONNECTED;
+				m_stateChange = true;
+				m_state       = CS_CONNECTED;
 				m_inactivityTimer.stop();
 				m_handler->ccsLinkEnded(data.getRemote());
 			}
@@ -249,7 +272,8 @@ void CCCSHandler::process(CCCSData& data)
 
 		case CT_DTMFNOTFOUND:
 			wxLogMessage(wxT("CCS: Cannot map %s to a callsign"), m_yourCall.Mid(1U).c_str());
-			m_state = CS_CONNECTED;
+			m_stateChange = true;
+			m_state       = CS_CONNECTED;
 			m_inactivityTimer.stop();
 			m_handler->ccsLinkFailed(m_yourCall.Mid(1U));
 			break;
@@ -257,6 +281,7 @@ void CCCSHandler::process(CCCSData& data)
 		case CT_DTMFFOUND:
 			wxLogMessage(wxT("CCS: Mapped %s to %s, added to the cache"), m_yourCall.Mid(1U).c_str(), data.getRemote().c_str());
 			addToCache(m_yourCall.Mid(1U), data.getRemote());
+			m_stateChange = true;
 			m_yourCall = data.getRemote();
 			m_handler->ccsLinkMade(m_yourCall);
 			break;
@@ -357,7 +382,8 @@ void CCCSHandler::writeEnd()
 	m_protocol.writeMisc(data);
 	m_protocol.writeMisc(data);
 
-	m_state = CS_CONNECTED;
+	m_stateChange = true;
+	m_state       = CS_CONNECTED;
 	m_inactivityTimer.stop();
 
 	m_handler->ccsLinkEnded(m_yourCall);
@@ -403,7 +429,10 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		m_local = m_myCall1;
 		m_seqNo = 0U;
 
-		m_state = CS_ACTIVE;
+		m_time        = ::time(NULL);
+		m_stateChange = true;
+		m_state       = CS_ACTIVE;
+		m_direction   = DIR_OUTGOING;
 		m_inactivityTimer.start();
 
 	}
@@ -444,8 +473,10 @@ void CCCSHandler::clockInt(unsigned int ms)
 		m_inactivityTimer.stop();
 		m_pollTimer.stop();
 
-		if (m_state == CS_ACTIVE)
+		if (m_state == CS_ACTIVE) {
+			m_stateChange = true;
 			m_handler->ccsLinkEnded(m_yourCall);
+		}
 
 		m_waitTimer.start();
 
@@ -472,7 +503,8 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 	if (m_inactivityTimer.isRunning() && m_inactivityTimer.hasExpired()) {
 		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str());
-		m_state = CS_CONNECTED;
+		m_stateChange = true;
+		m_state       = CS_CONNECTED;
 		m_inactivityTimer.stop();
 
 		m_handler->ccsLinkEnded(m_yourCall);
@@ -517,6 +549,47 @@ unsigned int CCCSHandler::calcBackoff()
 		return 60U;
 	else
 		return timeout;
+}
+
+bool CCCSHandler::stateChange()
+{
+	bool stateChange = m_stateChange;
+
+	m_stateChange = false;
+
+	return stateChange;
+}
+
+void CCCSHandler::writeStatus(wxFFile& file)
+{
+	for (unsigned int i = 0U; i < m_count; i++) {
+		CCCSHandler* handler = m_handlers[i];
+		if (handler != NULL) {
+			struct tm* tm = ::gmtime(&handler->m_time);
+
+			switch (handler->m_direction) {
+				case DIR_OUTGOING:
+					if (handler->m_state == CS_ACTIVE) {
+						wxString text;
+						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: CCS link - Rptr: %s Refl: %s Dir: Outgoing\n"),
+							tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
+							handler->m_callsign.c_str(), handler->m_yourCall.c_str());
+						file.Write(text);
+					}
+					break;
+
+				case DIR_INCOMING:
+					if (handler->m_state == CS_ACTIVE) {
+						wxString text;
+						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: CCS link - Rptr: %s Refl: %s Dir: Incoming\n"),
+							tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
+							handler->m_callsign.c_str(), handler->m_yourCall.c_str());
+						file.Write(text);
+					}
+					break;
+			}
+		}
+	}
 }
 
 void CCCSHandler::addToCache(const wxString& dtmf, const wxString& callsign)

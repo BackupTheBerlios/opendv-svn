@@ -728,18 +728,24 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 					if (command.IsSameAs(wxT("CCSA"))) {
 						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
 							m_ccsHandler->writeEnd();
+							m_queryTimer.stop();
 							m_linkStatus = LS_NONE;
 							m_linkRepeater.Clear();
 							triggerInfo();
 						}
 					} else {
-						ccsDTMF = command.Mid(3U);
-						CDPlusHandler::unlink(this);
-						CDExtraHandler::unlink(this);
-						CDCSHandler::unlink(this);
-						m_linkStatus   = LS_LINKING_CCS;
-						m_linkRepeater = command.Mid(4U);
-						triggerInfo();
+						CCS_STATUS status = m_ccsHandler->getStatus();
+						if (status == CS_CONNECTED) {
+							ccsDTMF = command.Mid(3U);
+							CDPlusHandler::unlink(this);
+							CDExtraHandler::unlink(this);
+							CDCSHandler::unlink(this);
+							m_ccsHandler->setReflector();
+							m_queryTimer.start();
+							m_linkStatus   = LS_LINKING_CCS;
+							m_linkRepeater = command.Mid(4U);
+							triggerInfo();
+						}
 					}
 				} else if (command.IsSameAs(wxT("       I"))) {
 					m_g2Status = G2_INFO;
@@ -752,6 +758,9 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 
 	// Incoming links get everything
 	sendToIncoming(data);
+
+	// CCS gets everything
+	m_ccsHandler->writeAMBE(data, ccsDTMF);
 
 	if (m_drats != NULL)
 		m_drats->writeData(data);
@@ -817,7 +826,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			if (data.isEnd())
 				m_repeaterId = 0x00U;
 
-			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 			break;
 
@@ -843,7 +851,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 
 		case G2_ECHO:
 			m_echo->writeData(data);
-			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 
 			if (data.isEnd()) {
@@ -853,7 +860,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			break;
 
 		case G2_INFO:
-			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 
 			if (data.isEnd()) {
@@ -865,7 +871,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			break;
 
 		case G2_VERSION:
-			m_ccsHandler->writeAMBE(data, ccsDTMF);
 			sendToOutgoing(data);
 
 			if (data.isEnd()) {
@@ -965,6 +970,7 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 					if (command.IsSameAs(wxT("CCSA"))) {
 						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
 							m_ccsHandler->writeEnd();
+							m_queryTimer.stop();
 							m_linkStatus = LS_NONE;
 							m_linkRepeater.Clear();
 							triggerInfo();
@@ -1402,11 +1408,12 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 
 	// If the ircDDB query timer has expired
 	if (m_queryTimer.isRunning() && m_queryTimer.hasExpired()) {
-		wxLogMessage(wxT("ircDDB did not reply within five seconds"));
 		m_queryTimer.stop();
 
 		if (m_g2Status == G2_USER || m_g2Status == G2_REPEATER) {
 			// User or repeater not found in time, remove G2 settings
+			wxLogMessage(wxT("ircDDB did not reply within five seconds"));
+
 			m_g2Status = G2_LOCAL;
 			m_g2User.Clear();
 			m_g2Repeater.Clear();
@@ -1414,13 +1421,24 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 
 			delete m_g2Header;
 			m_g2Header = NULL;
-		}
-
-		if (m_linkStatus == LS_PENDING_IRCDDB) {
+		} else if (m_linkStatus == LS_PENDING_IRCDDB) {
 			// Repeater not found in time
+			wxLogMessage(wxT("ircDDB did not reply within five seconds"));
+
 			m_linkStatus = LS_NONE;
 			m_linkRepeater.Clear();
 			m_linkGateway.Clear();
+
+			writeNotLinked();
+			triggerInfo();
+		} else if (m_linkStatus == LS_LINKING_CCS) {
+			// CCS didn't reply in time
+			wxLogMessage(wxT("CCS did not reply within five seconds"));
+
+			m_ccsHandler->writeEnd();
+
+			m_linkStatus = LS_NONE;
+			m_linkRepeater.Clear();
 
 			writeNotLinked();
 			triggerInfo();
@@ -2551,6 +2569,7 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 
 	m_linkStatus   = LS_LINKED_CCS;
 	m_linkRepeater = callsign;
+	m_queryTimer.stop();
 
 	CTextData textData(m_linkStatus, callsign, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
@@ -2615,11 +2634,16 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 
 	m_linkStatus = LS_NONE;
 	m_linkRepeater.Clear();
+	m_queryTimer.stop();
 
-	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
+	// Restart fixed links
+	if (m_linkReconnect == RECONNECT_FIXED)
+		linkInt(m_linkStartup);
+
+	CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
 
-	m_audio->setStatus(LS_NONE, wxEmptyString, text);
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 	m_audio->setTempText(tempText);
 
 	triggerInfo();
@@ -2680,11 +2704,16 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
 
 	m_linkStatus = LS_NONE;
 	m_linkRepeater.Clear();
+	m_queryTimer.stop();
 
-	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
+	// Restart fixed links
+	if (m_linkReconnect == RECONNECT_FIXED)
+		linkInt(m_linkStartup);
+
+	CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
 	m_repeaterHandler->writeText(textData);
 
-	m_audio->setStatus(LS_NONE, wxEmptyString, text);
+	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 	m_audio->setTempText(tempText);
 
 	triggerInfo();
