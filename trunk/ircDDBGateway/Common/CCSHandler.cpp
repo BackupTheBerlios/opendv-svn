@@ -571,7 +571,7 @@ void CCCSHandler::writeStatus(wxFFile& file)
 				case DIR_OUTGOING:
 					if (handler->m_state == CS_ACTIVE) {
 						wxString text;
-						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: CCS link - Rptr: %s Refl: %s Dir: Outgoing\n"),
+						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: CCS link - Rptr: %s Remote: %s Dir: Outgoing\n"),
 							tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
 							handler->m_callsign.c_str(), handler->m_yourCall.c_str());
 						file.Write(text);
@@ -581,7 +581,7 @@ void CCCSHandler::writeStatus(wxFFile& file)
 				case DIR_INCOMING:
 					if (handler->m_state == CS_ACTIVE) {
 						wxString text;
-						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: CCS link - Rptr: %s Refl: %s Dir: Incoming\n"),
+						text.Printf(wxT("%04d-%02d-%02d %02d:%02d:%02d: CCS link - Rptr: %s Remote: %s Dir: Incoming\n"),
 							tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, 
 							handler->m_callsign.c_str(), handler->m_yourCall.c_str());
 						file.Write(text);

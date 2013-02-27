@@ -737,10 +737,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 						CCS_STATUS status = m_ccsHandler->getStatus();
 						if (status == CS_CONNECTED) {
 							ccsDTMF = command.Mid(3U);
-							CDPlusHandler::unlink(this);
-							CDExtraHandler::unlink(this);
-							CDCSHandler::unlink(this);
-							m_ccsHandler->setReflector();
+							suspendLinks();
 							m_queryTimer.start();
 							m_linkStatus   = LS_LINKING_CCS;
 							m_linkRepeater = command.Mid(4U);
@@ -2563,9 +2560,7 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 			break;
 	}
 
-	CDPlusHandler::unlink(this);
-	CDExtraHandler::unlink(this);
-	CDCSHandler::unlink(this);
+	suspendLinks();
 
 	m_linkStatus   = LS_LINKED_CCS;
 	m_linkRepeater = callsign;
@@ -2636,17 +2631,18 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	// Restart fixed links
-	if (m_linkReconnect == RECONNECT_FIXED)
-		linkInt(m_linkStartup);
+	restoreLinks();
 
-	CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
-	m_repeaterHandler->writeText(textData);
-
-	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 	m_audio->setTempText(tempText);
 
-	triggerInfo();
+	if (m_linkReconnect != RECONNECT_FIXED) {
+		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
+		m_repeaterHandler->writeText(textData);
+
+		m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+
+		triggerInfo();
+	}
 }
 
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
@@ -2706,17 +2702,18 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	// Restart fixed links
-	if (m_linkReconnect == RECONNECT_FIXED)
-		linkInt(m_linkStartup);
+	restoreLinks();
 
-	CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
-	m_repeaterHandler->writeText(textData);
-
-	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 	m_audio->setTempText(tempText);
 
-	triggerInfo();
+	if (m_linkReconnect != RECONNECT_FIXED) {
+		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
+		m_repeaterHandler->writeText(textData);
+
+		m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+
+		triggerInfo();
+	}
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)
@@ -2750,6 +2747,25 @@ void CRepeaterHandler::sendStats()
 {
 	if (m_irc != NULL)
 		m_irc->sendHeardWithTXStats(m_myCall1, m_myCall2, m_yourCall, m_rptCall1, m_rptCall2, m_flag1, m_flag2, m_flag3, m_frames, m_silence, m_errors / 2U);
+}
+
+void CRepeaterHandler::suspendLinks()
+{
+	CDPlusHandler::unlink(this);
+	CDExtraHandler::unlink(this);
+	CDCSHandler::unlink(this);
+
+	m_linkReconnectTimer.stop();
+
+	m_ccsHandler->setReflector();
+}
+
+void CRepeaterHandler::restoreLinks()
+{
+	if (m_linkReconnect == RECONNECT_FIXED)
+		linkInt(m_linkStartup);
+	else if (m_linkReconnect != RECONNECT_NEVER)
+		m_linkReconnectTimer.start();
 }
 
 void CRepeaterHandler::triggerInfo()

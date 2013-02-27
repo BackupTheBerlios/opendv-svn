@@ -279,6 +279,9 @@ private:
 
 	void linkInt(const wxString& callsign);
 
+	void suspendLinks();
+	void restoreLinks();
+
 	void triggerInfo();
 };
 
