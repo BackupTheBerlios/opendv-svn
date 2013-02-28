@@ -121,11 +121,17 @@ void CCCSHandler::finalise()
 	delete[] m_handlers;
 }
 
-CCCSHandler::CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, unsigned int localPort) :
+CCCSHandler::CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, double frequency, double offset, const wxString& description1, const wxString& description2, const wxString& url, unsigned int localPort) :
 m_handler(handler),
 m_callsign(callsign),
 m_reflector(),
-m_locator(),
+m_latitude(latitude),
+m_longitude(longitude),
+m_frequency(frequency),
+m_offset(offset),
+m_description1(description1),
+m_description2(description2),
+m_url(url),
 m_ccsAddress(),
 m_protocol(localPort, m_localAddress),
 m_state(CS_DISABLED),
@@ -146,9 +152,6 @@ m_myCall1(),
 m_myCall2()
 {
 	wxASSERT(handler != NULL);
-
-	if (latitude != 0.0 && longitude != 0.0)
-		m_locator = CUtils::latLonToLoc(latitude, longitude);
 
 	// Add to the global list
 	for (unsigned int i = 0U; i < m_count; i++) {
@@ -351,6 +354,15 @@ bool CCCSHandler::connect()
 
 	wxLogMessage(wxT("CCS: Opening UDP port %u for %s"), m_protocol.getPort(), m_callsign.c_str());
 
+	// Give our location, frequenct, etc
+	CCCSData data(m_latitude, m_longitude, m_frequency, m_offset, m_description1, m_description2, m_url, CT_INFO);
+	data.setDestination(m_ccsAddress, CCS_PORT);
+
+	unsigned char buffer[130U];
+	unsigned int len = data.getCCSData(buffer, 130U);
+	CUtils::dump(wxT("Info"), buffer, len);
+	// m_protocol.writeMisc(data);
+
 	m_waitTimer.start();
 
 	m_state = CS_CONNECTING;
@@ -523,8 +535,10 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 	if (m_waitTimer.isRunning() && m_waitTimer.hasExpired()) {
 		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
-		if (!m_locator.IsEmpty())
-			connect.setLocator(m_locator);
+		if (m_latitude != 0.0 && m_longitude != 0.0) {
+			wxString locator = CUtils::latLonToLoc(m_latitude, m_longitude);
+			connect.setLocator(locator);
+		}
 		m_protocol.writeConnect(connect);
 
 		m_tryTimer.setTimeout(1U);

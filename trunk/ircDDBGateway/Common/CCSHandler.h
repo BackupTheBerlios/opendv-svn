@@ -49,7 +49,7 @@ WX_DECLARE_STRING_HASH_MAP(wxString, CCCSCache_t);
 
 class CCCSHandler {
 public:
-	CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, unsigned int localPort);
+	CCCSHandler(ICCSCallback* handler, const wxString& callsign, unsigned int delay, double latitude, double longitude, double frequency, double offset, const wxString& description1, const wxString& description2, const wxString& url, unsigned int localPort);
 	~CCCSHandler();
 
 	bool connect();
@@ -110,7 +110,13 @@ private:
 	ICCSCallback*       m_handler;
 	wxString            m_callsign;
 	wxString            m_reflector;
-	wxString            m_locator;
+	double              m_latitude;
+	double              m_longitude;
+	double              m_frequency;
+	double              m_offset;
+	wxString            m_description1;
+	wxString            m_description2;
+	wxString            m_url;
 	in_addr             m_ccsAddress;
 	CCCSProtocolHandler m_protocol;
 	CCS_STATUS          m_state;

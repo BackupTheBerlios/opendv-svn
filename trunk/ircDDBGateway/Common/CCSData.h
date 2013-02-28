@@ -30,11 +30,13 @@
 enum CC_TYPE {
 	CT_TERMINATE,
 	CT_DTMFNOTFOUND,
-	CT_DTMFFOUND
+	CT_DTMFFOUND,
+	CT_INFO
 };
 
 class CCCSData {
 public:
+	CCCSData(double latitude, double longitude, double frequency, double offset, const wxString& description1, const wxString& description2, const wxString& url, CC_TYPE type);
 	CCCSData(const wxString& local, const wxString& remote, CC_TYPE type);
 	CCCSData();
 	~CCCSData();
@@ -56,6 +58,13 @@ public:
 private:
 	wxString     m_local;
 	wxString     m_remote;
+	double       m_latitude;
+	double       m_longitude;
+	double       m_frequency;
+	double       m_offset;
+	wxString     m_description1;
+	wxString     m_description2;
+	wxString     m_url;
 	CC_TYPE      m_type;
 	in_addr      m_yourAddress;
 	unsigned int m_yourPort;

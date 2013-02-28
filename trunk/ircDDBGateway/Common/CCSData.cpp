@@ -20,9 +20,33 @@
 #include "CCSData.h"
 #include "Utils.h"
 
+CCCSData::CCCSData(double latitude, double longitude, double frequency, double offset, const wxString& description1, const wxString& description2, const wxString& url, CC_TYPE type) :
+m_local(),
+m_remote(),
+m_latitude(latitude),
+m_longitude(longitude),
+m_frequency(frequency),
+m_offset(offset),
+m_description1(description1),
+m_description2(description2),
+m_url(url),
+m_type(type),
+m_yourAddress(),
+m_yourPort(0U),
+m_myPort(0U)
+{
+}
+
 CCCSData::CCCSData(const wxString& local, const wxString& remote, CC_TYPE type) :
 m_local(local),
 m_remote(remote),
+m_latitude(0.0),
+m_longitude(0.0),
+m_frequency(0.0),
+m_offset(0.0),
+m_description1(),
+m_description2(),
+m_url(),
 m_type(type),
 m_yourAddress(),
 m_yourPort(0U),
@@ -33,6 +57,13 @@ m_myPort(0U)
 CCCSData::CCCSData() :
 m_local(),
 m_remote(),
+m_latitude(0.0),
+m_longitude(0.0),
+m_frequency(0.0),
+m_offset(0.0),
+m_description1(),
+m_description2(),
+m_url(),
 m_type(),
 m_yourAddress(),
 m_yourPort(0U),
@@ -97,19 +128,31 @@ bool CCCSData::setCCSData(const unsigned char *data, unsigned int length, const 
 unsigned int CCCSData::getCCSData(unsigned char* data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 38U);
+	wxASSERT(length >= 124U);
 
-	::memset(data, ' ', 38U);
+	if (m_type == CT_TERMINATE) {
+		::memset(data, ' ', 38U);
 
-	for (unsigned int i = 0U; i < m_remote.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		data[i + 0U] = m_remote.GetChar(i);
+		for (unsigned int i = 0U; i < m_remote.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+			data[i + 0U] = m_remote.GetChar(i);
 
-	::memcpy(data + 8U, "0001", 4U);
+		::memcpy(data + 8U, "0001", 4U);
 
-	for (unsigned int i = 0U; i < m_local.Len() && i < LONG_CALLSIGN_LENGTH; i++)
-		data[i + 12U] = m_local.GetChar(i);
+		for (unsigned int i = 0U; i < m_local.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+			data[i + 12U] = m_local.GetChar(i);
 
-	return 38U;
+		return 38U;
+	} else if (m_type == CT_INFO) {
+		wxString buffer;
+		buffer.Printf(wxT("INFO%10.4lf%10.4lf%10.4lf%10.4lf%20s%20s%40s"), m_latitude, m_longitude, m_frequency, m_offset, m_description1.c_str(), m_description2.c_str(), m_url.c_str());
+
+		for (unsigned int i = 0U; i < buffer.Len() && i < 124U; i++)
+			data[i] = buffer.GetChar(i);
+
+		return 124U;
+	}
+
+	return 0U;
 }
 
 wxString CCCSData::getLocal() const

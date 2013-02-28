@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ const unsigned int DESCRIPTION_LENGTH = 20U;
 const unsigned int FREQUENCY_LENGTH   = 8U;
 const unsigned int OFFSET_LENGTH      = 6U;
 const unsigned int PORT_LENGTH        = 5U;
+const unsigned int URL_LENGTH         = 40U;
 
 const unsigned int BORDER_SIZE = 5U;
 
@@ -117,6 +118,7 @@ m_url(NULL)
 	sizer->Add(urlLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	m_url = new wxTextCtrl(this, -1, url, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_url->SetMaxLength(URL_LENGTH);
 	sizer->Add(m_url, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	SetAutoLayout(true);

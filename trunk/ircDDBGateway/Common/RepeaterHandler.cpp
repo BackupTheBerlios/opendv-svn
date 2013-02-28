@@ -1695,6 +1695,17 @@ void CRepeaterHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& call
 
 void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 {
+	// CCS removal
+	if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
+		wxLogMessage(wxT("Dropping CCS link to %s"), m_linkRepeater.c_str());
+
+		m_ccsHandler->writeEnd();
+
+		m_linkStatus = LS_NONE;
+		m_linkRepeater.Clear();
+		m_queryTimer.stop();
+	}
+
 	m_linkStartup   = reflector;
 	m_linkReconnect = reconnect;
 
@@ -2219,7 +2230,7 @@ void CRepeaterHandler::startupInt()
 	}
 
 
-	m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_index + 1U, m_latitude, m_longitude, CCS_PORT + m_index);
+	m_ccsHandler = new CCCSHandler(this, m_rptCallsign, m_index + 1U, m_latitude, m_longitude, m_frequency, m_offset, m_description1, m_description2, m_url, CCS_PORT + m_index);
 
 	// Start up our CCS link if we are DV mode
 	if (!m_ddMode)
