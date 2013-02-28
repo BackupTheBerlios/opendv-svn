@@ -213,7 +213,6 @@ $col[1] = "#f0f0a0";
 	while ($linkLine = fgets($linkLog)) {
 // 2013-02-27 19:49:27: CCS link - Rptr: DB0LJ  B Remote: DL5DI    Dir: Incoming
             if(preg_match_all('/^(.{19}).*(C[A-Za-z]*).*Rptr: (.{8}).*Remote: (.{8}).*Dir: (.{8})$/',$linkLine,$linx) > 0){
-		$statimg = "<img src=\"images/20green.png\">";
                 $linkDate = $linx[1][0];
                 $linkType = $linx[2][0];
                 $linkRptr = $linx[3][0];
