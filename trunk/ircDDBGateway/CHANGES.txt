@@ -1231,6 +1231,7 @@ Internal CCS changes.
 
 CCS now updates links.log and the GUI for incoming links.
 Suspend outgoing links when a CCS link starts.
+Added CCS to the Remote Control application.
 Allow voice messages for CCS.
 Revision of the Portuguese messages.
 Added CCS010

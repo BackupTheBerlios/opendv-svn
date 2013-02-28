@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -81,6 +81,16 @@ static int wxCALLBACK itemCompare(long item1, long item2, long sortData)
 	// D-Plus comes next
 	if (proto1 == PROTO_DPLUS)
 		return 1;
+
+	if (proto2 == PROTO_DPLUS)
+		return -1;
+
+	// DExtra next
+	if (proto1 == PROTO_DEXTRA)
+		return 1;
+
+	if (proto2 == PROTO_DEXTRA)
+		return -1;
 
 	return -1;
 }
@@ -284,6 +294,9 @@ void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 				break;
 			case PROTO_DCS:
 				m_list->SetItem(0L, 1, wxT("DCS"));
+				break;
+			case PROTO_CCS:
+				m_list->SetItem(0L, 1, wxT("CCS"));
 				break;
 			default:
 				m_list->SetItem(0L, 1, wxT("?????"));

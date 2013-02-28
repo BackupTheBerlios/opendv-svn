@@ -80,6 +80,8 @@ public:
 	static bool stateChange();
 	static void writeStatus(wxFFile& file);
 
+	static void getInfo(ICCSCallback* handler, CRemoteRepeaterData& data);
+
 	static wxString getIncoming(const wxString& callsign);
 
 	static void finalise();

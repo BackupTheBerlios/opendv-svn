@@ -1437,8 +1437,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 			m_linkStatus = LS_NONE;
 			m_linkRepeater.Clear();
 
-			writeNotLinked();
-			triggerInfo();
+			restoreLinks();
 		}
 	}
 

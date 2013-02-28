@@ -87,6 +87,17 @@ void CCCSHandler::clock(unsigned int ms)
 	}
 }
 
+void CCCSHandler::getInfo(ICCSCallback* handler, CRemoteRepeaterData& data)
+{
+	wxASSERT(handler != NULL);
+
+	for (unsigned int i = 0U; i < m_count; i++) {
+		CCCSHandler* ccs = m_handlers[i];
+		if (ccs != NULL && ccs->m_handler == handler && ccs->m_state == CS_ACTIVE)
+			data.addLink(ccs->m_yourCall, PROTO_CCS, true, ccs->m_direction, false);
+	}
+}
+
 wxString CCCSHandler::getIncoming(const wxString& callsign)
 {
 	wxString incoming;
