@@ -17,12 +17,6 @@ Update of documentation required:
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-2013-02-21
-CCS settings to be added to configuration programs
-- select of CCS host
-
-----------------------------------------------------------------------------------------------------------------------------------------------------------
-
 2013-01-31
 Reported by: several
 adjust ntpd parameters for arm Devices (ignore panic threshold on Raspberry Pi))
@@ -32,7 +26,7 @@ adjust ntpd parameters for arm Devices (ignore panic threshold on Raspberry Pi))
 
 2013-01-28
 Reported by Dennis, N5VRP
-provide Icons for ircDDBGateway, Repeater modules and configuartion programs
+provide Icons for ircDDBGateway, Repeater modules and configuration programs
 (set LOCALE properly and use root/non-root in Debian systems where necessary)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------

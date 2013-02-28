@@ -14,7 +14,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 
 }
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20121020";
+$rev="20130301";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -194,12 +194,62 @@ $col[1] = "#f0f0a0";
 ?>
     </table>
     <p>    
+    <font size=+1><b>CCS Connects</b></font>
+    <table BORDER=0 BGCOLOR=white>
+    <font size=-1>
+    <tr bgcolor=black>
+    <th width=70><a class=tooltip href="#"><font color=white><center><b>Repeater</b></center></font><span><b>Callsign of connected repeater</b></span></a></th>
+    <th width=80><a class=tooltip href="#"><font color=white><center><b>Linked to</b></center></font><span><b>Actual link status</b></span></a></th>
+    <th width=60><a class=tooltip href="#"><font color=white><center><b>Protocol</b></center></font><span><b>Protocol</b></span></a></th>
+    <th width=80><a class=tooltip href="#"><font color=white><center><b>Direction</b></center></font><span><b>Direction</b>incoming or outgoing</span></a></th>
+    <th width=130><a class=tooltip href="#"><font color=white><center><b>Last Change (UTC)</b></center></font><span><b>Timestamp of last change</b>UTC</span></a></th>
+    </tr>
+
+<?php
+    $tot = array(0=>"Never",1=>"Fixed",2=>"5min",3=>"10min",4=>"15",5=>"20",6=>"25min",7=>"30min",8=>"60min",9=>"90min",10=>"120min",11=>"180min");
+    $ci = 0;
+    if ($linkLog = fopen($linkLogPath,'r')) {
+	$i=0;
+	while ($linkLine = fgets($linkLog)) {
+// 2013-02-27 19:49:27: CCS link - Rptr: DB0LJ  B Remote: DL5DI    Dir: Incoming
+            if(preg_match_all('/^(.{19}).*(C[A-Za-z]*).*Rptr: (.{8}).*Remote: (.{8}).*Dir: (.{8})$/',$linkLine,$linx) > 0){
+		$statimg = "<img src=\"images/20green.png\">";
+                $linkDate = $linx[1][0];
+                $linkType = $linx[2][0];
+                $linkRptr = $linx[3][0];
+                $linkRem = $linx[4][0];
+                $linkDir = $linx[5][0];
+		$ci++;
+		if($ci > 1) { $ci = 0; }
+		print "<tr bgcolor=\"$col[$ci]\">";
+		print "<td align=left>$linkRptr</td>";
+		print "<td>$linkRem</td>";
+		print "<td>CCS</td>";
+		print "<td>$linkDir</td>";
+		print "<td>$linkDate</td>";
+		print "</tr>";
+	    }
+	}
+	fclose($linkLog);
+    }
+    $ci++;
+    if($ci > 1) { $ci = 0; }
+    print "<tr bgcolor=\"$col[$ci]\">";
+    print "<td>&nbsp;</td>";
+    print "<td>&nbsp;</td>";
+    print "<td>&nbsp;</td>";
+    print "<td>&nbsp;</td>";
+    print "<td>&nbsp;</td>";
+    print "</tr>";    
+    print "</table>";
+?>
+    <p>    
     <font size=+1><b>Dongle Connects</b></font>
     <table BORDER=0 BGCOLOR=white>
     <font size=-1>
     <tr bgcolor=black>
-    <th width=40><a class=tooltip href="#"><font color=white><center><b>Module</b></center></font><span><b>Gateway Module</b></span></a></th>
-    <th width=80><a class=tooltip href="#"><font color=white><center><b>Linked to</b></center></font><span><b>Actual link status</b></span></a></th>
+    <th width=70><a class=tooltip href="#"><font color=white><center><b>Repeater</b></center></font><span><b>Callsign of local repeater</b></span></a></th>
+    <th width=80><a class=tooltip href="#"><font color=white><center><b>Linked to</b></center></font><span><b>Callsign of Destination</b></span></a></th>
     <th width=60><a class=tooltip href="#"><font color=white><center><b>Protocol</b></center></font><span><b>Protocol</b></span></a></th>
     <th width=80><a class=tooltip href="#"><font color=white><center><b>Direction</b></center></font><span><b>Direction</b>incoming or outgoing</span></a></th>
     <th width=130><a class=tooltip href="#"><font color=white><center><b>Last Change (UTC)</b></center></font><span><b>Timestamp of last change</b>UTC</span></a></th>
