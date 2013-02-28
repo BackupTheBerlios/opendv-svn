@@ -1798,8 +1798,8 @@ Fix for GMSK modems request for space.
 Added DCS021.
 Added XRF333.
 
-201302xx
+201303xx
 --------
 
-Updated to match ircDDB Gateway 201302xx.
+Updated to match ircDDB Gateway 201303xx.
 Added XRF150

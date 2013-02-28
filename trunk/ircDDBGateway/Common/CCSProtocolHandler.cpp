@@ -102,8 +102,8 @@ bool CCCSProtocolHandler::writeConnect(const CConnectData& connect)
 
 bool CCCSProtocolHandler::writeMisc(const CCCSData& data)
 {
-	unsigned char buffer[130U];
-	unsigned int length = data.getCCSData(buffer, 130U);
+	unsigned char buffer[140U];
+	unsigned int length = data.getCCSData(buffer, 140U);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Misc"), buffer, length);

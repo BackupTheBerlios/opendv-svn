@@ -36,7 +36,7 @@ enum CC_TYPE {
 
 class CCCSData {
 public:
-	CCCSData(double latitude, double longitude, double frequency, double offset, const wxString& description1, const wxString& description2, const wxString& url, CC_TYPE type);
+	CCCSData(const wxString& local, double latitude, double longitude, double frequency, double offset, const wxString& description1, const wxString& description2, const wxString& url, CC_TYPE type);
 	CCCSData(const wxString& local, const wxString& remote, CC_TYPE type);
 	CCCSData();
 	~CCCSData();

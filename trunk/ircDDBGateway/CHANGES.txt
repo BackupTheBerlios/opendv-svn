@@ -1226,7 +1226,7 @@ Added a DTMF to callsign cache to CCS.
 Allow selection of CCS server names.
 Internal CCS changes.
 
-201302xx
+201303xx
 --------
 
 CCS now updates links.log and the GUI for incoming links.

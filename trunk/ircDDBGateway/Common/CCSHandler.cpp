@@ -355,13 +355,9 @@ bool CCCSHandler::connect()
 	wxLogMessage(wxT("CCS: Opening UDP port %u for %s"), m_protocol.getPort(), m_callsign.c_str());
 
 	// Give our location, frequenct, etc
-	CCCSData data(m_latitude, m_longitude, m_frequency, m_offset, m_description1, m_description2, m_url, CT_INFO);
+	CCCSData data(m_callsign, m_latitude, m_longitude, m_frequency, m_offset, m_description1, m_description2, m_url, CT_INFO);
 	data.setDestination(m_ccsAddress, CCS_PORT);
-
-	unsigned char buffer[130U];
-	unsigned int len = data.getCCSData(buffer, 130U);
-	CUtils::dump(wxT("Info"), buffer, len);
-	// m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
 
 	m_waitTimer.start();
 
