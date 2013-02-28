@@ -144,7 +144,7 @@ unsigned int CCCSData::getCCSData(unsigned char* data, unsigned int length) cons
 		return 38U;
 	} else if (m_type == CT_INFO) {
 		wxString buffer;
-		buffer.Printf(wxT("IRPT%.7s %s%10.4lf%10.4lf%10.4lf%10.4lf%20s%20s%40s"), m_local.Mid(0U, LONG_CALLSIGN_LENGTH - 1U).c_str(), m_local.Mid(LONG_CALLSIGN_LENGTH - 1U, 1U).c_str(), m_latitude, m_longitude, m_frequency, m_offset, m_description1.c_str(), m_description2.c_str(), m_url.c_str());
+		buffer.Printf(wxT("IRPT%.7s %s%-10.4lf%-10.4lf%-10.4lf%-10.4lf%-20s%-20s%-40s"), m_local.Mid(0U, LONG_CALLSIGN_LENGTH - 1U).c_str(), m_local.Mid(LONG_CALLSIGN_LENGTH - 1U, 1U).c_str(), m_latitude, m_longitude, m_frequency, m_offset, m_description1.c_str(), m_description2.c_str(), m_url.c_str());
 
 		for (unsigned int i = 0U; i < buffer.Len() && i < 133U; i++)
 			data[i] = buffer.GetChar(i);
