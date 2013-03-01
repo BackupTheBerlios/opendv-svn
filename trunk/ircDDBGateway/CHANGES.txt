@@ -1236,3 +1236,4 @@ Allow voice messages for CCS.
 Revision of the Portuguese messages.
 Added CCS010
 Added XRF150
+Added CCS005
