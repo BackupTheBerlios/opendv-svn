@@ -34,10 +34,16 @@ Files:
 /home/opendv/ircddbgateway/data/ircddbgateway/*.hlp	helpfiles in different languages
 /home/opendv/ircddbgateway/data/*.mnu			menufiles in different languages
     
-/home/opendv/data					AMBE-files shared with ircDDBGateway
+/home/opendv/data						AMBE-files shared with ircDDBGateway
 
 /etc/default/ircddbgateway				startup options for ircddbgateway
 /etc/default/timeserver					startup options for the timeserver
+
+/usr/bin/ircddbgateway.sh				startfile for GUI mode (incl. LOCALE settings)
+/usr/bin/ircddbgateway-ddmode.sh		include file for startfile
+/usr/bin/ircddbgw_conf					configuration tool
+
+/var/www								dashboard files
 
 This last 2 files need to be edited manually if want to change the logpath or switch logging on/off.
 
@@ -48,6 +54,6 @@ ircddbgw_conf will create the basic configfile for the ircddbgateway module and 
 the startup options in /etc/default.
 Special menu options allow to activate the automatic startup script or manually start ircddbgateway.
 
-august 28th 2012
+March 1st 2013
 
 Hans, DL5DI
