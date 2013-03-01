@@ -531,17 +531,17 @@ int CDVAPController::getSignal() const
 
 bool CDVAPController::getName()
 {
-	int ret = m_serial.write(DVAP_REQ_NAME, DVAP_REQ_NAME_LEN);
-	if (ret != int(DVAP_REQ_NAME_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_NAME, DVAP_REQ_NAME_LEN);
+		if (ret != int(DVAP_REQ_NAME_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -565,17 +565,17 @@ bool CDVAPController::getName()
 
 bool CDVAPController::getFirmware()
 {
-	int ret = m_serial.write(DVAP_REQ_FIRMWARE, DVAP_REQ_FIRMWARE_LEN);
-	if (ret != int(DVAP_REQ_FIRMWARE_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_FIRMWARE, DVAP_REQ_FIRMWARE_LEN);
+		if (ret != int(DVAP_REQ_FIRMWARE_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -596,17 +596,17 @@ bool CDVAPController::getFirmware()
 
 bool CDVAPController::getSerial()
 {
-	int ret = m_serial.write(DVAP_REQ_SERIAL, DVAP_REQ_SERIAL_LEN);
-	if (ret != int(DVAP_REQ_SERIAL_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_SERIAL, DVAP_REQ_SERIAL_LEN);
+		if (ret != int(DVAP_REQ_SERIAL_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -627,17 +627,17 @@ bool CDVAPController::getSerial()
 
 bool CDVAPController::start()
 {
-	int ret = m_serial.write(DVAP_REQ_START, DVAP_REQ_START_LEN);
-	if (ret != int(DVAP_REQ_START_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_START, DVAP_REQ_START_LEN);
+		if (ret != int(DVAP_REQ_START_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -655,17 +655,17 @@ bool CDVAPController::start()
 
 bool CDVAPController::stop()
 {
-	int ret = m_serial.write(DVAP_REQ_STOP, DVAP_REQ_STOP_LEN);
-	if (ret != int(DVAP_REQ_STOP_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_STOP, DVAP_REQ_STOP_LEN);
+		if (ret != int(DVAP_REQ_STOP_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -683,17 +683,17 @@ bool CDVAPController::stop()
 
 bool CDVAPController::setModulation()
 {
-	int ret = m_serial.write(DVAP_REQ_MODULATION, DVAP_REQ_MODULATION_LEN);
-	if (ret != int(DVAP_REQ_MODULATION_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_MODULATION, DVAP_REQ_MODULATION_LEN);
+		if (ret != int(DVAP_REQ_MODULATION_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -711,17 +711,17 @@ bool CDVAPController::setModulation()
 
 bool CDVAPController::setMode()
 {
-	int ret = m_serial.write(DVAP_REQ_MODE, DVAP_REQ_MODE_LEN);
-	if (ret != int(DVAP_REQ_MODE_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_MODE, DVAP_REQ_MODE_LEN);
+		if (ret != int(DVAP_REQ_MODE_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -739,23 +739,21 @@ bool CDVAPController::setMode()
 
 bool CDVAPController::setSquelch()
 {
-	unsigned char buffer[10U];
-
-	::memcpy(buffer, DVAP_REQ_SQUELCH, DVAP_REQ_SQUELCH_LEN);
-
-	::memcpy(buffer + 4U, &m_squelch, sizeof(wxInt8));
-
-	int ret = m_serial.write(buffer, DVAP_REQ_SQUELCH_LEN);
-	if (ret != int(DVAP_REQ_SQUELCH_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		unsigned char buffer[10U];
+		::memcpy(buffer, DVAP_REQ_SQUELCH, DVAP_REQ_SQUELCH_LEN);
+		::memcpy(buffer + 4U, &m_squelch, sizeof(wxInt8));
+
+		int ret = m_serial.write(buffer, DVAP_REQ_SQUELCH_LEN);
+		if (ret != int(DVAP_REQ_SQUELCH_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -773,24 +771,23 @@ bool CDVAPController::setSquelch()
 
 bool CDVAPController::setPower()
 {
-	unsigned char buffer[10U];
-
-	::memcpy(buffer, DVAP_REQ_POWER, DVAP_REQ_POWER_LEN);
-
-	wxInt16 power = wxINT16_SWAP_ON_BE(m_power);
-	::memcpy(buffer + 4U, &power, sizeof(wxInt16));
-
-	int ret = m_serial.write(buffer, DVAP_REQ_POWER_LEN);
-	if (ret != int(DVAP_REQ_POWER_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		unsigned char buffer[10U];
+		::memcpy(buffer, DVAP_REQ_POWER, DVAP_REQ_POWER_LEN);
+
+		wxInt16 power = wxINT16_SWAP_ON_BE(m_power);
+		::memcpy(buffer + 4U, &power, sizeof(wxInt16));
+
+		int ret = m_serial.write(buffer, DVAP_REQ_POWER_LEN);
+		if (ret != int(DVAP_REQ_POWER_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -808,19 +805,17 @@ bool CDVAPController::setPower()
 
 bool CDVAPController::setFrequency()
 {
-	unsigned char buffer[10U];
-
-	int ret = m_serial.write(DVAP_REQ_FREQLIMITS, DVAP_REQ_FREQLIMITS_LEN);
-	if (ret != int(DVAP_REQ_FREQLIMITS_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	unsigned int count = 0U;
 	unsigned int length;
 	RESP_TYPE resp;
 	do {
-		::wxMilliSleep(5UL);
+		int ret = m_serial.write(DVAP_REQ_FREQLIMITS, DVAP_REQ_FREQLIMITS_LEN);
+		if (ret != int(DVAP_REQ_FREQLIMITS_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 
@@ -847,20 +842,21 @@ bool CDVAPController::setFrequency()
 		return false;
 	}
 
-	::memcpy(buffer, DVAP_REQ_FREQUENCY, DVAP_REQ_FREQUENCY_LEN);
-
-	wxUint32 frequency = wxUINT32_SWAP_ON_BE(m_frequency);
-	::memcpy(buffer + 4U, &frequency, sizeof(wxUint32));
-
-	ret = m_serial.write(buffer, DVAP_REQ_FREQUENCY_LEN);
-	if (ret != int(DVAP_REQ_FREQUENCY_LEN)) {
-		m_serial.close();
-		return false;
-	}
-
 	count = 0U;
 	do {
-		::wxMilliSleep(5UL);
+		unsigned char buffer[10U];
+		::memcpy(buffer, DVAP_REQ_FREQUENCY, DVAP_REQ_FREQUENCY_LEN);
+
+		wxUint32 frequency = wxUINT32_SWAP_ON_BE(m_frequency);
+		::memcpy(buffer + 4U, &frequency, sizeof(wxUint32));
+
+		int ret = m_serial.write(buffer, DVAP_REQ_FREQUENCY_LEN);
+		if (ret != int(DVAP_REQ_FREQUENCY_LEN)) {
+			m_serial.close();
+			return false;
+		}
+
+		::wxMilliSleep(50UL);
 
 		resp = getResponse(m_buffer, length);
 

@@ -1801,5 +1801,6 @@ Added XRF333.
 201303xx
 --------
 
+Make the DVAP initialisation less aggressive.
 Updated to match ircDDB Gateway 201303xx.
 Added XRF150
