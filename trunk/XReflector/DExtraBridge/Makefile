@@ -1,54 +1,54 @@
-all:			DExtraClient
+all:			DExtraBridge
 
-CFLAGS :=		-I../Common $(CFLAGS)
+CFLAGS :=		-I../DVCommon $(CFLAGS)
 
 OBJS :=			DExtraClientApp.o DExtraClientCallsignSet.o DExtraClientControllerSet.o DExtraClientFrame.o DExtraClientHostFile.o DExtraClientPanel.o \
 				DExtraClientPreferences.o DExtraClientReflectorSet.o DExtraClientThread.o
 
-DExtraClient:	$(OBJS)
-				$(CC) $(LDFLAGS) -o DExtraClient $(OBJS) ../Common/Common.a $(LIBS)
+DExtraBridge:	$(OBJS)
+				$(CC) $(LDFLAGS) -o DExtraBridge $(OBJS) ../DVCommon/Common.a $(LIBS)
 
-DExtraClientApp.o:	DExtraClientApp.cpp DExtraClientApp.h DExtraClientThread.h DExtraClientFrame.h DExtraClientDefs.h ../Common/SerialController.h \
-				../Common/DStarDefines.h ../Common/MessageData.h ../Common/DVDongleSet.h ../Common/HeaderData.h ../Common/BusyData.h ../Common/Logger.h \
-				../Common/Version.h ../Common/ExternalController.h ../Common/URIUSBController.h ../Common/K8055Controller.h ../Common/DummyController.h \
-				../Common/SerialDataController.h
+DExtraClientApp.o:	DExtraClientApp.cpp DExtraClientApp.h DExtraClientThread.h DExtraClientFrame.h DExtraClientDefs.h ../DVCommon/SerialController.h \
+				../DVCommon/DStarDefines.h ../DVCommon/MessageData.h ../DVCommon/DVDongleSet.h ../DVCommon/HeaderData.h ../DVCommon/BusyData.h ../DVCommon/Logger.h \
+				../DVCommon/Version.h ../DVCommon/ExternalController.h ../DVCommon/URIUSBController.h ../DVCommon/K8055Controller.h ../DVCommon/DummyController.h \
+				../DVCommon/SerialDataController.h
 				$(CC) $(CFLAGS) -c DExtraClientApp.cpp
 
-DExtraClientCallsignSet.o:	DExtraClientCallsignSet.cpp DExtraClientCallsignSet.h ../Common/CallsignTextCtrl.h
+DExtraClientCallsignSet.o:	DExtraClientCallsignSet.cpp DExtraClientCallsignSet.h ../DVCommon/CallsignTextCtrl.h
 				$(CC) $(CFLAGS) -c DExtraClientCallsignSet.cpp
 
-DExtraClientControllerSet.o:	DExtraClientControllerSet.cpp DExtraClientControllerSet.h ../Common/SerialController.h
+DExtraClientControllerSet.o:	DExtraClientControllerSet.cpp DExtraClientControllerSet.h ../DVCommon/SerialController.h
 				$(CC) $(CFLAGS) -c DExtraClientControllerSet.cpp
 
 DExtraClientFrame.o:	DExtraClientFrame.cpp DExtraClientFrame.h DExtraClientPreferences.h DExtraClientDefs.h DExtraClientApp.h DExtraClientPanel.h \
-				DExtraClient.xpm ../Common/CallsignTextCtrl.h ../Common/MessageEvent.h ../Common/DStarDefines.h ../Common/MessageEvent.h \
-				../Common/HeaderEvent.h ../Common/MessageData.h ../Common/ErrorEvent.h ../Common/HeaderData.h ../Common/BusyEvent.h ../Common/BusyData.h \
-				../Common/Version.h
+				DExtraClient.xpm ../DVCommon/CallsignTextCtrl.h ../DVCommon/MessageEvent.h ../DVCommon/DStarDefines.h ../DVCommon/MessageEvent.h \
+				../DVCommon/HeaderEvent.h ../DVCommon/MessageData.h ../DVCommon/ErrorEvent.h ../DVCommon/HeaderData.h ../DVCommon/BusyEvent.h ../DVCommon/BusyData.h \
+				../DVCommon/Version.h
 				$(CC) $(CFLAGS) -c DExtraClientFrame.cpp
 
 DExtraClientHostFile.o:	DExtraClientHostFile.cpp DExtraClientHostFile.h
 				$(CC) $(CFLAGS) -c DExtraClientHostFile.cpp
 
-DExtraClientPanel.o:	DExtraClientPanel.cpp DExtraClientPanel.h DExtraClientDefs.h DExtraClientApp.h DExtraClientHostFile.h ../Common/DStarDefines.h \
-				../Common/MessageData.h ../Common/HeaderData.h ../Common/BusyData.h
+DExtraClientPanel.o:	DExtraClientPanel.cpp DExtraClientPanel.h DExtraClientDefs.h DExtraClientApp.h DExtraClientHostFile.h ../DVCommon/DStarDefines.h \
+				../DVCommon/MessageData.h ../DVCommon/HeaderData.h ../DVCommon/BusyData.h
 				$(CC) $(CFLAGS) -c DExtraClientPanel.cpp
 
 DExtraClientPreferences.o:	DExtraClientPreferences.cpp DExtraClientPreferences.h DExtraClientCallsignSet.h DExtraClientControllerSet.h DExtraClientDefs.h \
-				DExtraClientReflectorSet.h ../Common/SoundcardSet.h ../Common/DVDongleSet.h ../Common/MessageSet.h ../Common/BleepSet.h
+				DExtraClientReflectorSet.h ../DVCommon/SoundcardSet.h ../DVCommon/DVDongleSet.h ../DVCommon/MessageSet.h ../DVCommon/BleepSet.h
 				$(CC) $(CFLAGS) -c DExtraClientPreferences.cpp
 
 DExtraClientReflectorSet.o:	DExtraClientReflectorSet.cpp DExtraClientReflectorSet.h DExtraClientHostFile.h DExtraClientDefs.h
 				$(CC) $(CFLAGS) -c DExtraClientReflectorSet.cpp
 
-DExtraClientThread.o:	DExtraClientThread.cpp DExtraClientThread.h DExtraClientDefs.h DExtraClientApp.h ../Common/DStarDefines.h \
-				../Common/SoundCardReaderWriter.h ../Common/DVDongleController.h ../Common/DVDongleThread.h ../Common/DVTOOLFileWriter.h \
-				../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h ../Common/AudioCallback.h ../Common/MessageData.h ../Common/DExtraProtocolHandler.h \
-				../Common/Timer.h ../Common/RingBuffer.h ../Common/HeaderData.h ../Common/BusyData.h ../Common/ExternalController.h ../Common/AudioDelay.h
+DExtraClientThread.o:	DExtraClientThread.cpp DExtraClientThread.h DExtraClientDefs.h DExtraClientApp.h ../DVCommon/DStarDefines.h \
+				../DVCommon/SoundCardReaderWriter.h ../DVCommon/DVDongleController.h ../DVCommon/DVDongleThread.h ../DVCommon/DVTOOLFileWriter.h \
+				../DVCommon/SlowDataEncoder.h ../DVCommon/SlowDataDecoder.h ../DVCommon/AudioCallback.h ../DVCommon/MessageData.h ../DVCommon/DExtraProtocolHandler.h \
+				../DVCommon/Timer.h ../DVCommon/RingBuffer.h ../DVCommon/HeaderData.h ../DVCommon/BusyData.h ../DVCommon/ExternalController.h ../DVCommon/AudioDelay.h
 				$(CC) $(CFLAGS) -c DExtraClientThread.cpp
 
-install:		DExtraClient
-				install -g bin -o root -m 0775 DExtraClient     $(BINDIR)
+install:		DExtraBridge
+				install -g bin -o root -m 0775 DExtraBridge     $(BINDIR)
 				install -g bin -o root -m 0664 DExtra_Hosts.txt $(DATADIR)
 
 clean:
-				rm -f core DExtraClient *.o *~ *.bak
+				rm -f core DExtraBridge *.o *~ *.bak
