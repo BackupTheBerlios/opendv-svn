@@ -1,4 +1,4 @@
-Repeater - 20130219
+Repeater - 20130302
 ===================
 
 20090530
@@ -1798,9 +1798,9 @@ Fix for GMSK modems request for space.
 Added DCS021.
 Added XRF333.
 
-201303xx
+20130302
 --------
 
 Make the DVAP initialisation less aggressive.
-Updated to match ircDDB Gateway 201303xx.
+Updated to match ircDDB Gateway 20130302.
 Added XRF150

@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130223
+ircDDB Gateway - 20130302
 =========================
 
 20101010
@@ -1226,7 +1226,7 @@ Added a DTMF to callsign cache to CCS.
 Allow selection of CCS server names.
 Internal CCS changes.
 
-201303xx
+20130302
 --------
 
 CCS now updates links.log and the GUI for incoming links.
@@ -1234,6 +1234,5 @@ Suspend outgoing links when a CCS link starts.
 Added CCS to the Remote Control application.
 Allow voice messages for CCS.
 Revision of the Portuguese messages.
-Added CCS010
+Added CCS005 and CCS010
 Added XRF150
-Added CCS005
