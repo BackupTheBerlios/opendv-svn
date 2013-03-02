@@ -10,16 +10,16 @@ G4KLX XReflector.
 
 Files:
 
-/etc/xreflector					main configfile for XRFeflector
+/etc/xreflector						main configfile for XRFeflector
     
-/etc/default/xreflector_conf	default values for all settings
+/etc/default/xreflector_conf		default values for all settings
 
-/etc/init.d/xreflector			startscripts for xreflector
+/etc/init.d/xreflector				startscripts for xreflector
 
 /usr/share/xreflector_conf/*.hlp	helpfiles in different languages
 /usr/share/xreflector_conf/*.mnu	menufiles in different languages
     
-/etc/sysconfig/xreflector		binarypath and commandline options for xreflector module
+/etc/sysconfig/xreflector			binary-path and commandline options for xreflector module
 
 This last file need to be edited before the configuration if you want to change 
 the logpath or switch logging on/off.

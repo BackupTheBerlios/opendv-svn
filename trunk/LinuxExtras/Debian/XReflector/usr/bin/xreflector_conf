@@ -3,3 +3,7 @@
 # XReflector configuration script
 # Hans-J. Barthen (DL5DI) - dl5di@gmx.de
 #
+#callsign=XRF990
+#address=44.225.73.3
+#dplusEnabled=1
+#logEnabled=1

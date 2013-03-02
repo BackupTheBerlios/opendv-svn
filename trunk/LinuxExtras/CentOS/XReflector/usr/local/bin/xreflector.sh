@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# XReflector start script for GUI
+# ircDDBGateway start script for GUI
 # Hans-J. Barthen (DL5DI) - dl5di@gmx.de
 #
-# description: Starts the G4KLX XReflector in GUI mode and sets the LC_NUMERIC LOCALE
-# to en_US.UTF-8 to make the configfile compatible for GUI and daemon modem.
-# config: /etc/sysconfig/xreflector
+# description: Starts the G4KLX ircDDBGateway in GUI mode and sets the LC_NUMERIC LOCALE
+# to en_US.UTF-8 to make the configfile compatible for GUI and daemon mode.
+# config: /etc/sysconfig/ircddbgateway
 #
 
 if [ $UID -ne 0 ]; then
@@ -16,7 +16,5 @@ if [ $UID -ne 0 ]; then
 	exit 1
 fi
 
-xhost -
-# start xreflector
-su -c "/usr/bin/xreflector -gui -logdir=/var/log/opendv" opendv
-xhost +
+# start main task with correct LOCALE settings
+LC_NUMERIC="en_US.UTF-8" /usr/local/bin/xreflector -gui -logdir=/var/log/dstar
