@@ -1,0 +1,38 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+TODOs
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2013-02-21
+XReflector:
+- configuration program for XReflector
+- finetuning of new xreflector packages
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2013-02-21
+Update of documentation required:
+- CCS features
+- dashboard sample configuration
+- XReflector
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2013-01-31
+Reported by: several
+adjust ntpd parameters for arm Devices (ignore panic threshold on Raspberry Pi))
+(... ntpd is not really part of the ircDDBGateway/repeater packages ...)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2013-01-28
+Reported by Dennis, N5VRP
+provide Icons for ircDDBGateway, Repeater modules and configuration programs
+(set LOCALE properly and use root/non-root in Debian systems where necessary)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2013-01-25:
+dashboard has to be changed or switched off when ircDDB is disabled.
+Most of current data are fetched from ircddb.net and no longer available without connectivity.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------

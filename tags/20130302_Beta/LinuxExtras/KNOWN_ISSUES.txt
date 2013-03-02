@@ -1,0 +1,87 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+OPEN ISSUES
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-21
+REPORTED: Michael OZ5WU
+VERIFIED: 2012-02-21
+PRIORITY: normal
+SOLVED: open
+
+Check soundmodem settings on Rapsberry Pi.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-03
+REPORTED: DL5DI
+VERIFIED: 2012-02-03
+PRIORITY: normal
+SOLVED: open
+
+Check GPIO and soundmodem activation and settings on Rapsberry Pi.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-02
+REPORTED: Tom ON4TOP
+VERIFIED: 2013-02-02
+PRIORITY: high
+SOLVED: open
+
+Check repository server uploads.
+Upload process seems to break when one server times out.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-01:
+REPORTED: Alan M0AQC
+VERIFIED: not yet
+PRIORITY: high
+SOLVED: open
+
+Check autostart of repeater packages on Raspberry Pi (and Debian in general)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FOUND: 2013-02-01
+REPORTED: Alan M0AQC
+VERIFIED: not yet
+PRIORITY: normal
+SOLVED: open
+
+Check reflector autoconnect and timer of DCS linking in ircddbgw_conf (Raspbian and in general)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: verification issue during installation/upgrade
+FOUND: 2012-09-04
+REPORTED: ON4TOP
+VERIFIED: 2012-09-04
+PRIORITY: low
+SOLVED: open
+
+apt-get always shows verification issue which needs to be confirmed.
+clarification if/how this can be solved.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: messages/notices during installation of packages
+FOUND: 2012-09-04
+REPORTED: DL5DI
+VERIFIED: 2012-09-07
+PRIORITY: low
+SOLVED: open
+
+
+ircddbgateway-20120908-2:
+insserv: script repeater_4: service repeater already provided!
+insserv: script repeater_2: service repeater already provided!
+insserv: script repeater_1: service repeater already provided!
+
+dh_make rules still use "Replaces repeater" after data already have been excluded to separate package.
+
+Solution:
+change dh_make control file, remove "Replaces"
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
