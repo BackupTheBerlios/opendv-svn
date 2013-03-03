@@ -7,7 +7,7 @@ Common.a:		AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterT
 				DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o DPlusProtocolHandlerPool.o DPlusSet.o \
 				DPRSSet.o DRATSServer.o DTMF.o DummyRepeaterProtocolHandler.o EchoUnit.o G2Handler.o G2ProtocolHandler.o GatewayCache.o HBRepeaterProtocolHandler.o \
 				HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o LogEvent.o Logger.o PollData.o PortTextCtrl.o RemoteHandler.o \
-				RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o RemoteStarNetGroup.o RemoteStarNetUser.o RepeaterCache.o RepeaterHandler.o \
+				RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteReflectorData.o RemoteSet.o RemoteStarNetGroup.o RemoteStarNetUser.o RepeaterCache.o RepeaterHandler.o \
 				RepeaterDataSet.o RepeaterInfoSet.o RestrictedTextCtrl.o SHA256.o SlowDataEncoder.o StarNetHandler.o StarNetSet.o StatusData.o TCPReaderWriterClient.o \
 				TCPReaderWriterServer.o TextCollector.o TextData.o Timer.o UDPReaderWriter.o UserCache.o Utils.o VersionUnit.o
 				$(AR) rcs Common.a AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterThread.o AudioUnit.o CacheManager.o CallsignServer.o \
@@ -15,10 +15,10 @@ Common.a:		AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterT
 				DDData.o DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o \
 				DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o DummyRepeaterProtocolHandler.o EchoUnit.o G2Handler.o G2ProtocolHandler.o \
 				GatewayCache.o HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o LogEvent.o Logger.o \
-				PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o RemoteStarNetGroup.o \
+				PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteReflectorData.o RemoteSet.o RemoteStarNetGroup.o \
 				RemoteStarNetUser.o RepeaterCache.o RepeaterHandler.o RepeaterDataSet.o RepeaterInfoSet.o RestrictedTextCtrl.o SHA256.o SlowDataEncoder.o \
 				StarNetHandler.o StarNetSet.o StatusData.o TCPReaderWriterClient.o TCPReaderWriterServer.o TextCollector.o TextData.o Timer.o UDPReaderWriter.o \
-				UserCache.o Utils.o VersionUnit.o
+				UserCache.o Utils.o VersionUnit.o 
 
 AddressTextCtrl.o:	AddressTextCtrl.cpp AddressTextCtrl.h RestrictedTextCtrl.h
 				$(CC) $(CFLAGS) -c AddressTextCtrl.cpp
@@ -182,6 +182,10 @@ RemoteProtocolHandler.o:	RemoteProtocolHandler.cpp RemoteProtocolHandler.h Remot
 RemoteRepeaterData.o:	RemoteRepeaterData.cpp RemoteRepeaterData.h RemoteLinkData.h
 
 				$(CC) $(CFLAGS) -c RemoteRepeaterData.cpp
+
+RemoteReflectorData.o:	RemoteReflectorData.cpp RemoteReflectorData.h RemoteLinkData.h
+
+				$(CC) $(CFLAGS) -c RemoteReflectorData.cpp
 
 RemoteSet.o:	RemoteSet.cpp RemoteSet.h PortTextCtrl.h DStarDefines.h
 				$(CC) $(CFLAGS) -c RemoteSet.cpp
