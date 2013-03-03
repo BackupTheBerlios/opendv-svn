@@ -40,6 +40,7 @@
 # 2013-02-21 dl5di    CCS enable/disable
 # 2013-02-22 dl5di	  CCS Host
 # 2013-02-24 dl5di    bugfix CCS_Hosts.txt and language files
+# 2013-03-03 dl5di    fix upgrade
 #
 # Todo / known issues:
 # - implement sanity check for config file 
@@ -3003,7 +3004,7 @@ while [ "$SELECT" -ne 99 ]; do
 			logging
 			;;
 		20)
-			if [ -f $INITPATH/ircddbgateway ]; then
+			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_act" 
 				/usr/sbin/update-rc.d ircddbgateway defaults
 			else
@@ -3012,7 +3013,7 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat scr_act" >> $LOG
 			;;
 		21)
-			if [ -f $INITPATH/ircddbgateway ]; then
+			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_deact" 
 				/usr/sbin/update-rc.d ircddbgateway remove
 			else
@@ -3021,7 +3022,7 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat scr_deact" >> $LOG
 			;;
 		22)
-			if [ -f  $INITPATH/timeserver ]; then
+			if [ -f  /etc/init.d/timeserver ]; then
 				print_text "timer_act" 
 				/usr/sbin/update-rc.d timeserver defaults
 			else
@@ -3030,7 +3031,7 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat timer_act" >> $LOG
 			;;
 		23)
-			if [ -f  $INITPATH/timeserver ]; then
+			if [ -f  /etc/init.d/timeserver ]; then
 				print_text "timer_deact" 
 				/usr/sbin/update-rc.d timeserver remove
 			else
@@ -3039,9 +3040,9 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat timer_deact" >> $LOG
 			;;
 		30)
-			if [ -f $INITPATH/ircddbgateway ]; then
+			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_start" 
-				$INITPATH/ircddbgateway start
+				/etc/init.d/ircddbgateway start
 			else
 				echo ""
 				echo "ERROR: no startup script found"
@@ -3050,27 +3051,27 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat scr_start" >> $LOG
 			;;
 		31)
-			if [ -f $INITPATH/ircddbgateway ]; then
+			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_stop" 
-				$INITPATH/ircddbgateway stop
+				/etc/init.d/ircddbgateway stop
 			else
 				print_text "scr_err" 
 			fi
 			echo "$Dat scr_stop" >> $LOG
 			;;
 		32)
-			if [ -f $INITPATH/ircddbgateway ]; then
+			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_restart" 
-				$INITPATH/ircddbgateway restart
+				/etc/init.d/ircddbgateway restart
 			else
 				print_text "scr_err" 
 			fi
 			echo "$Dat scr_restart" >> $LOG
 			;;
 		33)
-			if [ -f $INITPATH/timeserver ]; then
+			if [ -f /etc/init.d/timeserver ]; then
 				print_text "timer_start" 
-				$INITPATH/timeserver start
+				/etc/init.d/timeserver start
 			else
 				echo ""
 				echo "ERROR: no startup script found"
@@ -3079,18 +3080,18 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat scr_start" >> $LOG
 			;;
 		34)
-			if [ -f $INITPATH/timeserver ]; then
+			if [ -f /etc/init.d/timeserver ]; then
 				print_text "timer_stop" 
-				$INITPATH/timeserver stop
+				/etc/init.d/timeserver stop
 			else
 				print_text "scr_err" 
 			fi
 			echo "$Dat scr_stop" >> $LOG
 			;;
 		35)
-			if [ -f $INITPATH/timeserver ]; then
+			if [ -f /etc/init.d/timeserver ]; then
 				print_text "timer_restart" 
-				$INITPATH/timeserver restart
+				/etc/init.d/timeserver restart
 			else
 				print_text "scr_err" 
 			fi
@@ -3102,7 +3103,8 @@ while [ "$SELECT" -ne 99 ]; do
 			echo "$Dat backup" >> $LOG
 			;;
 
-		81) yum update ircddbgateway
+		81) apt-get update
+			apt-get upgrade ircddbgateway
 			;;
 			
 		90)

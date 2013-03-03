@@ -1,6 +1,9 @@
-BACKUPPATH=/var/backups
-LOGPATH=/var/log/opendv
-DEFVALUES=/home/opendv/xreflector/xreflector.default
-DATAPATH=/home/opendv/xreflector/data
-CFGPATH=/home/opendv/xreflector
-XREFLECTORCONFIG=/home/opendv/xreflector/xreflector
+BACKUPPATH=/etc
+LOGPATH=/var/log/dstar
+CFGPATH=/etc
+DEFVALUES=/etc/default/xreflector
+DATAPATH=/usr/share/xreflector_conf
+OPENDVDATA=/usr/local/etc
+XREFLECTORCONFIG=/etc/xreflector
+DASHBOARDCFG=/var/www/html/xreflectorlocal.php
+XRFCFGCONFIG=/etc/xreflector_conf

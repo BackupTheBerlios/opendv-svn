@@ -43,6 +43,7 @@
 # 2013-02-09 dl5di    fix permissions on exit for those who started the software accidently from root
 # 2013-02-10 dl5di    bugfixes
 # 2013-02-11 dl5di    fix audiodir
+# 2013-03-03 dl5di    fix upgrade
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
