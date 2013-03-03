@@ -2548,7 +2548,8 @@ setup_main(){
 		echo "$Dat backup" >> $LOG
 		;;
 
-	    81) yum update repeater
+	    81) apt-get update
+			apt-get upgrade repeater
 		;;
 	    
 	    90)
