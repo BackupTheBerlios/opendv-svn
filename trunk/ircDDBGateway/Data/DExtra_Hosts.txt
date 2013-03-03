@@ -37,5 +37,6 @@ XRF333	91.121.98.37
 XRF353	62.30.114.194
 XRF587	xrf587.no-ip.org
 XRF669	xrf669.no-ip.org
+XRF707	k7ek.no-ip.org
 XRF777	62.167.15.53
 XRF901	n1dot.dyndns.org
