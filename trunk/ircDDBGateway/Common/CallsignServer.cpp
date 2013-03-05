@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 
 const wxString CALLSERVER_HOSTNAME = wxT("dns.xreflector.net");
 const unsigned int CALLSERVER_PORT = 20001U;
+
+const unsigned int TCP_TIMEOUT = 10U;
 
 CCallsignServer::CCallsignServer(const wxString& callsign, const wxString& address, CCacheManager* cache) :
 wxThread(wxTHREAD_JOINABLE),
@@ -103,12 +105,12 @@ unsigned int CCallsignServer::process(const wxString& hostname, unsigned int por
 
 	unsigned int offset = 0U;
 
-	int n = socket.read(buffer, 2000U, 5U);
-	if (n > 0)
+	int n = socket.read(buffer, 2000U, TCP_TIMEOUT);
+	if (n >= 0)
 		offset += n;
 
-	while (n > 0) {
-		n = socket.read(buffer + offset, 2000U, 5U);
+	while (n >= 0) {
+		n = socket.read(buffer + offset, 2000U, TCP_TIMEOUT);
 		if (n > 0)
 			offset += n;
 	}

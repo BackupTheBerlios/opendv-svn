@@ -164,10 +164,13 @@ void CDExtraHandler::getInfo(IReflectorCallback* handler, CRemoteRepeaterData& d
 		CDExtraHandler* reflector = m_reflectors[i];
 		if (reflector != NULL) {
 			if (reflector->m_destination == handler) {
-				if (reflector->m_direction == DIR_INCOMING && reflector->m_repeater.IsEmpty())
-					data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, DIR_INCOMING, true);
-				else
-					data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, reflector->m_direction, false);
+				if (reflector->m_direction == DIR_INCOMING && reflector->m_repeater.IsEmpty()) {
+					if (reflector->m_linkState != DEXTRA_UNLINKING)
+						data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, DIR_INCOMING, true);
+				} else {
+					if (reflector->m_linkState != DEXTRA_UNLINKING)
+						data.addLink(reflector->m_reflector, PROTO_DEXTRA, reflector->m_linkState == DEXTRA_LINKED, reflector->m_direction, false);
+				}
 			}
 		}
 	}

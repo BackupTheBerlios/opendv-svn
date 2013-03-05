@@ -176,6 +176,7 @@ bool CConnectData::setDCSData(const unsigned char* data, unsigned int length, co
 	m_repeater.SetChar(LONG_CALLSIGN_LENGTH - 1U, data[LONG_CALLSIGN_LENGTH + 0U]);
 
 	switch (length) {
+		case 519U:
 		case 19U:
 			m_reflector = wxString((const char*)(data + LONG_CALLSIGN_LENGTH + 3U), wxConvLocal, LONG_CALLSIGN_LENGTH);
 			m_reflector.SetChar(LONG_CALLSIGN_LENGTH - 1U, data[LONG_CALLSIGN_LENGTH + 1U]);

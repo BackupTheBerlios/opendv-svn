@@ -1533,7 +1533,7 @@ void CRepeaterHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
 		triggerInfo();
 	}
 
-	if (protocol == DP_LOOPBACK && m_linkStatus == LS_LINKING_LOOPBACK) {
+	if (protocol == DP_DCS && m_linkStatus == LS_LINKING_LOOPBACK) {
 		wxLogMessage(wxT("Loopback link to %s established"), callsign.c_str());
 		m_linkStatus = LS_LINKED_LOOPBACK;
 		writeLinkedTo(callsign);
@@ -1569,15 +1569,10 @@ bool CRepeaterHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& calls
 		}
 
 		if (protocol == DP_DCS && callsign.IsSameAs(m_linkRepeater)) {
-			wxLogMessage(wxT("DCS link to %s has ended"), m_linkRepeater.c_str());
-			m_linkRepeater.Clear();
-			m_linkStatus = LS_NONE;
-			writeNotLinked();
-			triggerInfo();
-		}
-
-		if (protocol == DP_LOOPBACK && callsign.IsSameAs(m_linkRepeater)) {
-			wxLogMessage(wxT("Loopback link to %s has ended"), m_linkRepeater.c_str());
+			if (m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKING_DCS)
+				wxLogMessage(wxT("DCS link to %s has ended"), m_linkRepeater.c_str());
+			else
+				wxLogMessage(wxT("Loopback link to %s has ended"), m_linkRepeater.c_str());
 			m_linkRepeater.Clear();
 			m_linkStatus = LS_NONE;
 			writeNotLinked();
@@ -1630,21 +1625,14 @@ bool CRepeaterHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& calls
 				triggerInfo();
 				return true;
 
-			case LS_LINKING_DCS:
-				return true;
-
-			default:
-				return false;
-		}
-	}
-
-	if (protocol == DP_LOOPBACK) {
-		switch (m_linkStatus) {
 			case LS_LINKED_LOOPBACK:
 				wxLogMessage(wxT("Loopback link to %s has failed, relinking"), m_linkRepeater.c_str());
 				m_linkStatus = LS_LINKING_LOOPBACK;
 				writeLinkingTo(m_linkRepeater);
 				triggerInfo();
+				return true;
+
+			case LS_LINKING_DCS:
 				return true;
 
 			case LS_LINKING_LOOPBACK:
@@ -1677,15 +1665,10 @@ void CRepeaterHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& call
 	}
 
 	if (protocol == DP_DCS && callsign.IsSameAs(m_linkRepeater)) {
-		wxLogMessage(wxT("DCS link to %s was refused"), m_linkRepeater.c_str());
-		m_linkRepeater.Clear();
-		m_linkStatus = LS_NONE;
-		writeIsBusy(callsign);
-		triggerInfo();
-	}
-
-	if (protocol == DP_LOOPBACK && callsign.IsSameAs(m_linkRepeater)) {
-		wxLogMessage(wxT("Loopback link to %s was refused"), m_linkRepeater.c_str());
+		if (m_linkStatus == LS_LINKED_DCS || m_linkStatus == LS_LINKING_DCS)
+			wxLogMessage(wxT("DCS link to %s was refused"), m_linkRepeater.c_str());
+		else
+			wxLogMessage(wxT("Loopback link to %s was refused"), m_linkRepeater.c_str());
 		m_linkRepeater.Clear();
 		m_linkStatus = LS_NONE;
 		writeIsBusy(callsign);

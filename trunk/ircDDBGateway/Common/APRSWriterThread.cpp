@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ void* CAPRSWriterThread::Entry()
 				if (length == 0)
 					wxLogWarning(wxT("No response from the APRS server after %u seconds"), APRS_TIMEOUT);
 
-				if (length == -1) {
+				if (length < 0) {
 					m_connected = false;
 					m_socket.close();
 					wxLogError(wxT("Error when reading from the APRS server"));
@@ -176,7 +176,7 @@ bool CAPRSWriterThread::connect()
 		m_socket.close();
 		return false;
 	}
-	if (length == -1) {
+	if (length < 0) {
 		wxLogError(wxT("Error when reading from the APRS server"));
 		m_socket.close();
 		return false;

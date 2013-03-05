@@ -19,6 +19,8 @@
 #ifndef	PollData_H
 #define	PollData_H
 
+#include "Defs.h"
+
 #include <wx/wx.h>
 
 #if defined(__WINDOWS__)
@@ -29,7 +31,7 @@
 
 class CPollData {
 public:
-	CPollData(const wxString& data1, const wxString& data2, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
+	CPollData(const wxString& data1, const wxString& data2, DIRECTION direction, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CPollData(const wxString& data, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CPollData(const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CPollData();
@@ -57,11 +59,13 @@ public:
 	unsigned int getYourPort() const;
 	unsigned int getMyPort() const;
 
+	DIRECTION    getDirection() const;
 	unsigned int getLength() const;
 
 private:
 	wxString     m_data1;
 	wxString     m_data2;
+	DIRECTION    m_direction;
 	bool         m_dongle;
 	unsigned int m_length;
 	in_addr      m_yourAddress;

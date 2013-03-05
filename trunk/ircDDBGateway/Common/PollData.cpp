@@ -21,9 +21,10 @@
 #include "DStarDefines.h"
 #include "Utils.h"
 
-CPollData::CPollData(const wxString& data1, const wxString& data2, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
+CPollData::CPollData(const wxString& data1, const wxString& data2, DIRECTION direction, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_data1(data1),
 m_data2(data2),
+m_direction(direction),
 m_dongle(false),
 m_length(0U),
 m_yourAddress(yourAddress),
@@ -36,6 +37,7 @@ m_myPort(myPort)
 CPollData::CPollData(const wxString& data, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_data1(data),
 m_data2(),
+m_direction(DIR_OUTGOING),
 m_dongle(false),
 m_length(0U),
 m_yourAddress(yourAddress),
@@ -48,6 +50,7 @@ m_myPort(myPort)
 CPollData::CPollData(const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_data1(),
 m_data2(),
+m_direction(DIR_OUTGOING),
 m_dongle(false),
 m_length(0U),
 m_yourAddress(yourAddress),
@@ -60,6 +63,7 @@ m_myPort(myPort)
 CPollData::CPollData() :
 m_data1(),
 m_data2(),
+m_direction(DIR_OUTGOING),
 m_dongle(false),
 m_length(0U),
 m_yourAddress(),
@@ -100,6 +104,7 @@ bool CPollData::setDCSData(const unsigned char* data, unsigned int length, const
 			m_data1       = wxString((const char*)(data + 0U), wxConvLocal, LONG_CALLSIGN_LENGTH);
 			m_data2       = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH);
 			m_length      = length;
+			m_direction   = DIR_INCOMING;
 			m_yourAddress = yourAddress;
 			m_yourPort    = yourPort;
 			m_myPort      = myPort;
@@ -110,6 +115,7 @@ bool CPollData::setDCSData(const unsigned char* data, unsigned int length, const
 			m_data2       = wxString((const char*)(data + 9U), wxConvLocal, LONG_CALLSIGN_LENGTH - 1U);
 			m_data2.Append(wxString((const char*)(data + 17U), wxConvLocal, 1U));
 			m_length      = length;
+			m_direction   = DIR_OUTGOING;
 			m_yourAddress = yourAddress;
 			m_yourPort    = yourPort;
 			m_myPort      = myPort;
@@ -166,7 +172,7 @@ unsigned int CPollData::getDCSData(unsigned char *data, unsigned int length) con
 	wxASSERT(data != NULL);
 	wxASSERT(length >= 17U);
 
-	if (!m_data2.IsEmpty()) {
+	if (m_direction == DIR_OUTGOING) {
 		::memset(data, ' ', 17U);
 
 		for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
@@ -179,14 +185,21 @@ unsigned int CPollData::getDCSData(unsigned char *data, unsigned int length) con
 
 		return 17U;
 	} else {
-		::memset(data, ' ', LONG_CALLSIGN_LENGTH + 1U);
+		::memset(data, ' ', 22U);
 
-		for (unsigned int i = 0U; i < m_data1.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
-			data[i] = m_data1.GetChar(i);
+		for (unsigned int i = 0U; i < m_data1.Len() && i < LONG_CALLSIGN_LENGTH; i++)
+			data[i + 0U] = m_data1.GetChar(i);
 
-		data[LONG_CALLSIGN_LENGTH] = 0x00;
+		for (unsigned int i = 0U; i < m_data2.Len() && i < (LONG_CALLSIGN_LENGTH - 1U); i++)
+			data[i + 9U] = m_data2.GetChar(i);
 
-		return 9U;
+		if (m_data2.Len() >= LONG_CALLSIGN_LENGTH)
+			data[17U] = m_data2.GetChar(LONG_CALLSIGN_LENGTH - 1U);
+
+		data[18U] = 0x0AU;
+		data[19U] = 0x00U;
+
+		return 22U;
 	}
 }
 
@@ -258,6 +271,11 @@ unsigned int CPollData::getYourPort() const
 unsigned int CPollData::getMyPort() const
 {
 	return m_myPort;
+}
+
+DIRECTION CPollData::getDirection() const
+{
+	return m_direction;
 }
 
 unsigned int CPollData::getLength() const

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -206,7 +206,9 @@ int CTCPReaderWriterClient::read(unsigned char* buffer, unsigned int length, uns
 #endif
 
 	ssize_t len = ::recv(m_fd, (char*)buffer, length, 0);
-	if (len < 0) {
+	if (len == 0) {
+		return -2;
+	} else if (len < 0) {
 #if defined(__WINDOWS__)
 		wxLogError(wxT("Error returned from recv, err=%d"), ::GetLastError());
 #else

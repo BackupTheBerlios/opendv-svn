@@ -1236,3 +1236,9 @@ Allow voice messages for CCS.
 Revision of the Portuguese messages.
 Added CCS005 and CCS010
 Added XRF150
+
+201303xx
+--------
+
+Fixed incoming DCS and loopback links.
+Fixed the CPU hogging bug.

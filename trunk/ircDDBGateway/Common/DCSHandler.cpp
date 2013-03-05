@@ -136,10 +136,13 @@ void CDCSHandler::getInfo(IReflectorCallback* handler, CRemoteRepeaterData& data
 		CDCSHandler* reflector = m_reflectors[i];
 		if (reflector != NULL) {
 			if (reflector->m_destination == handler) {
-				if (reflector->m_direction == DIR_INCOMING && reflector->m_repeater.IsEmpty())
-					data.addLink(reflector->m_reflector, PROTO_DCS, reflector->m_linkState == DCS_LINKED, DIR_INCOMING, true);
-				else
-					data.addLink(reflector->m_reflector, PROTO_DCS, reflector->m_linkState == DCS_LINKED, reflector->m_direction, false);
+				if (reflector->m_direction == DIR_INCOMING && reflector->m_repeater.IsEmpty()) {
+					if (reflector->m_linkState != DCS_UNLINKING)
+						data.addLink(reflector->m_reflector, PROTO_DCS, reflector->m_linkState == DCS_LINKED, DIR_INCOMING, true);
+				} else {
+					if (reflector->m_linkState != DCS_UNLINKING)
+						data.addLink(reflector->m_reflector, PROTO_DCS, reflector->m_linkState == DCS_LINKED, reflector->m_direction, false);
+				}
 			}
 		}
 	}
@@ -187,7 +190,7 @@ void CDCSHandler::process(CPollData& poll)
 				handler->m_linkState == DCS_LINKED &&
 				length == 22U) {
 				handler->m_pollInactivityTimer.reset();
-				CPollData reply(handler->m_repeater, handler->m_reflector, handler->m_yourAddress, handler->m_yourPort);
+				CPollData reply(handler->m_repeater, handler->m_reflector, handler->m_direction, handler->m_yourAddress, handler->m_yourPort);
 				handler->m_handler->writePoll(reply);
 				return;
 			} else if (handler->m_reflector.Left(LONG_CALLSIGN_LENGTH - 1U).IsSameAs(reflector.Left(LONG_CALLSIGN_LENGTH - 1U)) &&
@@ -676,7 +679,7 @@ bool CDCSHandler::clockInt(unsigned int ms)
 	if (m_pollTimer.isRunning() && m_pollTimer.hasExpired()) {
 		m_pollTimer.reset();
 
-		CPollData poll(m_repeater, m_yourAddress, m_yourPort);
+		CPollData poll(m_repeater, m_reflector, m_direction, m_yourAddress, m_yourPort);
 		m_handler->writePoll(poll);
 	}
 

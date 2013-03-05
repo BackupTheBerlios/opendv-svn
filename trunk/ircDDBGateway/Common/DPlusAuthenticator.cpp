@@ -268,7 +268,7 @@ bool CDPlusAuthenticator::read(CTCPReaderWriterClient &socket, unsigned char *bu
 
 	do {
 		int n = socket.read(buffer + offset, len - offset, TCP_TIMEOUT);
-		if (n == -1)
+		if (n < 0)
 			return false;
 
 		offset += n;

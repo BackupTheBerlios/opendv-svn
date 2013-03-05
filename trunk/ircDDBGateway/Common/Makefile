@@ -169,7 +169,7 @@ LogEvent.o:		LogEvent.cpp LogEvent.h
 Logger.o:		Logger.cpp Logger.h
 				$(CC) $(CFLAGS) -c Logger.cpp
 
-PollData.o:		PollData.cpp PollData.h DStarDefines.h Utils.h
+PollData.o:		PollData.cpp PollData.h DStarDefines.h Defs.h Utils.h
 				$(CC) $(CFLAGS) -c PollData.cpp
 
 PortTextCtrl.o:	PortTextCtrl.cpp PortTextCtrl.h RestrictedTextCtrl.h

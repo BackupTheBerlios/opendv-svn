@@ -66,8 +66,8 @@ bool CDCSProtocolHandler::writeData(const CAMBEData& data)
 
 bool CDCSProtocolHandler::writePoll(const CPollData& poll)
 {
-	unsigned char buffer[20U];
-	unsigned int length = poll.getDCSData(buffer, 20U);
+	unsigned char buffer[25U];
+	unsigned int length = poll.getDCSData(buffer, 25U);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Poll"), buffer, length);
@@ -111,8 +111,7 @@ bool CDCSProtocolHandler::readPackets()
 	m_length = length;
 
 	if (m_buffer[0] == '0' && m_buffer[1] == '0' && m_buffer[2] == '0' && m_buffer[3] == '1') {
-		if (m_length == 100U ||
-			m_length == 600U) {		// Old DCS
+		if (m_length == 100U) {
 			m_type = DC_DATA;
 			return false;
 		}
@@ -126,7 +125,7 @@ bool CDCSProtocolHandler::readPackets()
 				m_type = DC_POLL;
 				return false;
 			case 14U:
-			case 19U:		// Old DCS
+			case 19U:
 			case 519U:
 				m_type = DC_CONNECT;
 				return false;
