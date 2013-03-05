@@ -257,6 +257,9 @@ private:
 	// CCS
 	CCCSHandler*              m_ccsHandler;
 
+	// Reflector restoration
+	wxString                  m_lastReflector;
+
 	// Icom heard data
 	wxString                  m_heardUser;
 	wxString                  m_heardRepeater;

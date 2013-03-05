@@ -1240,5 +1240,6 @@ Added XRF150
 201303xx
 --------
 
+More aggressive link restoration after a CCS link has ended.
 Fixed incoming DCS and loopback links.
 Fixed the CPU hogging bug.

@@ -121,6 +121,7 @@ m_drats(NULL),
 m_dtmf(),
 m_pollTimer(1000U, 900U),			// 15 minutes
 m_ccsHandler(NULL),
+m_lastReflector(),
 m_heardUser(),
 m_heardRepeater(),
 m_heardTimer(1000U, 0U, 100U)		// 100ms
@@ -2742,6 +2743,13 @@ void CRepeaterHandler::sendStats()
 
 void CRepeaterHandler::suspendLinks()
 {
+	m_lastReflector.Clear();
+	if (m_linkStatus == LS_LINKING_DCS      || m_linkStatus == LS_LINKED_DCS    ||
+        m_linkStatus == LS_LINKING_DEXTRA   || m_linkStatus == LS_LINKED_DEXTRA ||
+	    m_linkStatus == LS_LINKING_DPLUS    || m_linkStatus == LS_LINKED_DPLUS  ||
+        m_linkStatus == LS_LINKING_LOOPBACK || m_linkStatus == LS_LINKED_LOOPBACK)
+		m_lastReflector = m_linkRepeater;
+
 	CDPlusHandler::unlink(this);
 	CDExtraHandler::unlink(this);
 	CDCSHandler::unlink(this);
@@ -2753,10 +2761,16 @@ void CRepeaterHandler::suspendLinks()
 
 void CRepeaterHandler::restoreLinks()
 {
-	if (m_linkReconnect == RECONNECT_FIXED)
+	if (m_linkReconnect == RECONNECT_FIXED) {
 		linkInt(m_linkStartup);
-	else if (m_linkReconnect != RECONNECT_NEVER)
+	} else if (m_linkReconnect == RECONNECT_NEVER) {
+		if (!m_lastReflector.IsEmpty())
+			linkInt(m_lastReflector);
+	} else {
 		m_linkReconnectTimer.start();
+		if (!m_lastReflector.IsEmpty())
+			linkInt(m_lastReflector);
+	}
 }
 
 void CRepeaterHandler::triggerInfo()
