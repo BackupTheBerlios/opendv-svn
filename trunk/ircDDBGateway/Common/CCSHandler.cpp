@@ -522,6 +522,16 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 	if (m_inactivityTimer.isRunning() && m_inactivityTimer.hasExpired()) {
 		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str());
+
+		CCCSData data(m_local, m_yourCall, CT_TERMINATE);
+		data.setDestination(m_ccsAddress, CCS_PORT);
+
+		m_protocol.writeMisc(data);
+		m_protocol.writeMisc(data);
+		m_protocol.writeMisc(data);
+		m_protocol.writeMisc(data);
+		m_protocol.writeMisc(data);
+
 		m_stateChange = true;
 		m_state       = CS_CONNECTED;
 		m_inactivityTimer.stop();

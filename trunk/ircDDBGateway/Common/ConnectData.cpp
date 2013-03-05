@@ -177,13 +177,15 @@ bool CConnectData::setDCSData(const unsigned char* data, unsigned int length, co
 
 	switch (length) {
 		case 519U:
+			m_reflector = wxString((const char*)(data + LONG_CALLSIGN_LENGTH + 3U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+			m_reflector.SetChar(LONG_CALLSIGN_LENGTH - 1U, data[LONG_CALLSIGN_LENGTH + 1U]);
+			m_type = CT_LINK1;
+			break;
+
 		case 19U:
 			m_reflector = wxString((const char*)(data + LONG_CALLSIGN_LENGTH + 3U), wxConvLocal, LONG_CALLSIGN_LENGTH);
 			m_reflector.SetChar(LONG_CALLSIGN_LENGTH - 1U, data[LONG_CALLSIGN_LENGTH + 1U]);
-			if (data[LONG_CALLSIGN_LENGTH + 1U] == 0x20U)
-				m_type = CT_UNLINK;
-			else
-				m_type = CT_LINK1;
+			m_type = CT_UNLINK;
 			break;
 
 		case 14U:

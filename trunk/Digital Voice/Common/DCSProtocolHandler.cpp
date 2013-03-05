@@ -273,7 +273,7 @@ bool CDCSProtocolHandler::readPackets()
 		return false;
 
 	if (m_buffer[0] == '0' && m_buffer[1] == '0' && m_buffer[2] == '0' && m_buffer[3] == '1') {
-		if (m_length == 100U || m_length == 600U) {
+		if (m_length == 100U) {
 			m_type = NETWORK_DATA;
 			return false;
 		}

@@ -1633,8 +1633,6 @@ bool CRepeaterHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& calls
 				return true;
 
 			case LS_LINKING_DCS:
-				return true;
-
 			case LS_LINKING_LOOPBACK:
 				return true;
 
