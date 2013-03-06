@@ -33,6 +33,7 @@
 # 2012-09-29 dl5di    bugfix, reset if logdir
 # 2012-12-22 dl5di    ethernet configuration for dvrptrepeater V2
 # 2013-01-22 dl5di    cleanups
+# 2013-03-06 dl5di    bugfix request_selection/request_value
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -42,7 +43,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20130122"
+rev="20130306"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1663,20 +1664,25 @@ function hwtype1(){
 	VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var "$DEFAULT" "$VALUE"
-    INPUT=$?
-    case $INPUT in
-	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+    request_value $var 0 1 2 "$VALUE"
+    RET="$?"
+    case $RET in
+	1)
+	    VALUE=$INPUT
 	    ;;
-	2)   
-	    write_value $REPEATERCONFIG $var "$VALUE"
+	2)
+#	    VALUE=$VALUE
+	    ;;
+	3)
+	    VALUE=$DEFAULT
 	    ;;
 	*)
-    	    reset_value $var
+	    echo "ERROR"
+	    echo "ERROR $var" >> $LOG
+	    break
 	    ;;
     esac
-
+    write_value $REPEATERCONFIG $var "$VALUE"
     return 1
 }
 
@@ -1699,22 +1705,27 @@ function hwtype2(){
 	VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var "$DEFAULT" "$VALUE"
-    INPUT=$?
-    case $INPUT in
-	[1-2])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
-	    modemVersion=$INPUT
+    request_value $var 1 2 2 "$VALUE"
+    RET="$?"
+    case $RET in
+	1)
+	    VALUE=$INPUT
 	    ;;
-	3)   
-	    write_value $REPEATERCONFIG $var "$VALUE"
-	    modemVersion=$VALUE
+	2)
+#	    VALUE=$VALUE
+	    ;;
+	3)
+	    VALUE=$DEFAULT
 	    ;;
 	*)
-	    modemVersion=$DEFAULT
-    	    reset_value $var
+	    echo "ERROR"
+	    echo "ERROR $var" >> $LOG
+	    break
 	    ;;
     esac
+
+    write_value $REPEATERCONFIG $var "$VALUE"
+    modemVersion=$INPUT
 
     if [ $modemVersion = 1 ]; then
 	modemConnection=0
@@ -1735,23 +1746,26 @@ function hwtype2(){
 	    VALUE=$DEFAULT
         fi
 	print_text $var 
-        request_selection $var "$DEFAULT" "$VALUE"
-	INPUT=$?
-        case $INPUT in
-	    [0-1])
-    		write_value $REPEATERCONFIG $var "$INPUT"
-		modemConnection=$INPUT
+	request_value $var 0 1 2 "$VALUE"
+	RET="$?"
+	case $RET in
+	    1)
+		VALUE=$INPUT
+	        ;;
+	    2)
+#	    	VALUE=$VALUE
 		;;
-	    2)   
-		write_value $REPEATERCONFIG $var "$VALUE"
-		modemConnection=$VALUE
+	    3)
+		VALUE=$DEFAULT
 		;;
 	    *)
-    		reset_value $var
-		modemConnection=$DEFAULT
+		echo "ERROR"
+		echo "ERROR $var" >> $LOG
+		break
 		;;
 	esac
-
+	write_value $REPEATERCONFIG $var "$VALUE"
+	modemConnection=$INPUT
     fi
 
     if [ $modemConnection = 0 ]; then
@@ -1910,20 +1924,25 @@ function hwtype2(){
 	VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var "$DEFAULT" "$VALUE"
-    INPUT=$?
-    case $INPUT in
-	[0-1])
-    	    write_value $REPEATERCONFIG $var "$INPUT"
+    request_value $var 0 1 2 "$VALUE"
+    RET="$?"
+    case $RET in
+	1)
+	    VALUE=$INPUT
 	    ;;
-	2)   
-	    write_value $REPEATERCONFIG $var "$VALUE"
+	2)
+#	    VALUE=$VALUE	
+	    ;;
+	3)
+	    VALUE=$DEFAULT
 	    ;;
 	*)
-    	    reset_value $var
+	    echo "ERROR"
+	    echo "ERROR $var" >> $LOG
+	    break
 	    ;;
     esac
-
+    write_value $REPEATERCONFIG $var "$VALUE"
 #
 # modemModLevel=15
 # (1-100%)
