@@ -727,13 +727,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
 					if (command.IsSameAs(wxT("CCSA"))) {
-						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
-							m_ccsHandler->writeEnd();
-							m_queryTimer.stop();
-							m_linkStatus = LS_NONE;
-							m_linkRepeater.Clear();
-							triggerInfo();
-						}
+						m_ccsHandler->writeEnd();
 					} else {
 						CCS_STATUS status = m_ccsHandler->getStatus();
 						if (status == CS_CONNECTED) {
@@ -965,15 +959,8 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-					if (command.IsSameAs(wxT("CCSA"))) {
-						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
-							m_ccsHandler->writeEnd();
-							m_queryTimer.stop();
-							m_linkStatus = LS_NONE;
-							m_linkRepeater.Clear();
-							triggerInfo();
-						}
-					}
+					if (command.IsSameAs(wxT("CCSA")))
+						m_ccsHandler->writeEnd();
 				} else if (command.IsSameAs(wxT("       I"))) {
 					// Do nothing
 				} else {
@@ -2515,6 +2502,9 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 
 void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction)
 {
+	if (direction == DIR_INCOMING)
+		return;
+
 	wxString text;
 
 	switch (m_language) {
@@ -2568,6 +2558,9 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction
 
 void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION direction)
 {
+	if (direction == DIR_INCOMING)
+		return;
+
 	wxString tempText;
 	wxString text;
 
@@ -2623,12 +2616,11 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION directio
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	if (direction == DIR_OUTGOING)
-		restoreLinks();
+	restoreLinks();
 
 	m_audio->setTempText(tempText);
 
-	if (m_linkReconnect != RECONNECT_FIXED) {
+	if (m_linkReconnect == LS_NONE) {
 		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
 		m_repeaterHandler->writeText(textData);
 
@@ -2640,6 +2632,9 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION directio
 
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 {
+	if (direction == DIR_INCOMING)
+		return;
+
 	wxString tempText;
 	wxString text;
 
@@ -2695,12 +2690,11 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	if (direction == DIR_OUTGOING)
-		restoreLinks();
+	restoreLinks();
 
 	m_audio->setTempText(tempText);
 
-	if (m_linkReconnect != RECONNECT_FIXED) {
+	if (m_linkReconnect == LS_NONE) {
 		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
 		m_repeaterHandler->writeText(textData);
 
