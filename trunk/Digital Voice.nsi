@@ -65,7 +65,6 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\DExtraClient\DExtra_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\COPYING.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\CHANGES.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\TODO.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Digital Voice\USAGE.txt"
 
   ;Create start menu entry
@@ -79,7 +78,6 @@ Section "Repeater Program Files" SecProgram
   CreateShortCut "$SMPROGRAMS\Digital Voice\Sound Card Client.lnk"     "$INSTDIR\SoundCardClient.exe"
   CreateShortCut "$SMPROGRAMS\Digital Voice\Licence.lnk"               "$INSTDIR\COPYING.txt"
   CreateShortCut "$SMPROGRAMS\Digital Voice\Changes.lnk"               "$INSTDIR\CHANGES.txt"
-  CreateShortCut "$SMPROGRAMS\Digital Voice\ToDo.lnk"                  "$INSTDIR\TODO.txt"
   CreateShortCut "$SMPROGRAMS\Digital Voice\Usage.lnk"                 "$INSTDIR\USAGE.txt"
   CreateShortCut "$SMPROGRAMS\Digital Voice\Uninstall.lnk"             "$INSTDIR\Uninstall.exe"
 

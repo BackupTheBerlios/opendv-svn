@@ -1098,7 +1098,8 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		m_ccsHandler->writeHeader(header);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_CCS)
+	// Should CCS be here? XXX
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
 		return true;
 
 	// Reset the slow data text collector, used for DCS text passing
@@ -1133,7 +1134,8 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		m_ccsHandler->writeAMBE(data);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_CCS)
+	// Should CCS be here? XXX
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
 		return true;
 
 	// Collect the text from the slow data for DCS
@@ -2511,7 +2513,7 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 	m_ccsHandler->setReflector();
 }
 
-void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
+void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction)
 {
 	wxString text;
 
@@ -2552,8 +2554,6 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 			break;
 	}
 
-	suspendLinks();
-
 	m_linkStatus   = LS_LINKED_CCS;
 	m_linkRepeater = callsign;
 	m_queryTimer.stop();
@@ -2566,7 +2566,7 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign)
 	triggerInfo();
 }
 
-void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
+void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION direction)
 {
 	wxString tempText;
 	wxString text;
@@ -2623,7 +2623,8 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	restoreLinks();
+	if (direction == DIR_OUTGOING)
+		restoreLinks();
 
 	m_audio->setTempText(tempText);
 
@@ -2637,7 +2638,7 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign)
 	}
 }
 
-void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
+void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 {
 	wxString tempText;
 	wxString text;
@@ -2694,7 +2695,8 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf)
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	restoreLinks();
+	if (direction == DIR_OUTGOING)
+		restoreLinks();
 
 	m_audio->setTempText(tempText);
 
@@ -2743,7 +2745,6 @@ void CRepeaterHandler::sendStats()
 
 void CRepeaterHandler::suspendLinks()
 {
-	m_lastReflector.Clear();
 	if (m_linkStatus == LS_LINKING_DCS      || m_linkStatus == LS_LINKED_DCS    ||
         m_linkStatus == LS_LINKING_DEXTRA   || m_linkStatus == LS_LINKED_DEXTRA ||
 	    m_linkStatus == LS_LINKING_DPLUS    || m_linkStatus == LS_LINKED_DPLUS  ||
@@ -2771,6 +2772,8 @@ void CRepeaterHandler::restoreLinks()
 		if (!m_lastReflector.IsEmpty())
 			linkInt(m_lastReflector);
 	}
+
+	m_lastReflector.Clear();
 }
 
 void CRepeaterHandler::triggerInfo()

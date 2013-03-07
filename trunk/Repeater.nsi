@@ -88,7 +88,6 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Data\se_SE.indx"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\COPYING.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\CHANGES.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\TODO.txt"
 
   ;Create start menu entry
   CreateDirectory "$SMPROGRAMS\Repeater"
@@ -104,7 +103,6 @@ Section "Repeater Program Files" SecProgram
   CreateShortCut "$SMPROGRAMS\Repeater\Split Repeater.lnk"           "$INSTDIR\SplitRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Licence.lnk"                  "$INSTDIR\COPYING.txt"
   CreateShortCut "$SMPROGRAMS\Repeater\Changes.lnk"                  "$INSTDIR\CHANGES.txt"
-  CreateShortCut "$SMPROGRAMS\Repeater\ToDo.lnk"                     "$INSTDIR\TODO.txt"
   CreateShortCut "$SMPROGRAMS\Repeater\Uninstall.lnk"                "$INSTDIR\Uninstall.exe"
 
   ;Create uninstaller

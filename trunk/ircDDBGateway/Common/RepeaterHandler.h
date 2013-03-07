@@ -124,9 +124,9 @@ public:
 	virtual void linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign);
 	virtual bool linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable);
 
-	virtual void ccsLinkMade(const wxString& callsign);
-	virtual void ccsLinkFailed(const wxString& dtmf);
-	virtual void ccsLinkEnded(const wxString& callsign);
+	virtual void ccsLinkMade(const wxString& callsign, DIRECTION direction);
+	virtual void ccsLinkFailed(const wxString& dtmf, DIRECTION direction);
+	virtual void ccsLinkEnded(const wxString& callsign, DIRECTION direction);
 
 protected:
 	CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);

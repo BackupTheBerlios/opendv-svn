@@ -32,11 +32,11 @@ public:
 
 	virtual bool process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source) = 0;
 
-	virtual void ccsLinkMade(const wxString& callsign) = 0;
+	virtual void ccsLinkMade(const wxString& callsign, DIRECTION direction) = 0;
 
-	virtual void ccsLinkFailed(const wxString& dtmf) = 0;
+	virtual void ccsLinkFailed(const wxString& dtmf, DIRECTION direction) = 0;
 
-	virtual void ccsLinkEnded(const wxString& callsign) = 0;
+	virtual void ccsLinkEnded(const wxString& callsign, DIRECTION direction) = 0;
 
 private:
 };

@@ -170,7 +170,7 @@ unsigned int CPollData::getDExtraData(unsigned char *data, unsigned int length) 
 unsigned int CPollData::getDCSData(unsigned char *data, unsigned int length) const
 {
 	wxASSERT(data != NULL);
-	wxASSERT(length >= 17U);
+	wxASSERT(length >= 22U);
 
 	if (m_direction == DIR_OUTGOING) {
 		::memset(data, ' ', 17U);

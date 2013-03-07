@@ -244,7 +244,7 @@ void CCCSHandler::process(CAMBEData& data)
 		m_stateChange = true;
 		m_inactivityTimer.start();
 
-		m_handler->ccsLinkMade(m_yourCall);
+		m_handler->ccsLinkMade(m_yourCall, m_direction);
 
 		wxLogMessage(wxT("CCS: New incoming link to %s from %s"), m_local.c_str(), m_yourCall.c_str());
 	}
@@ -280,7 +280,7 @@ void CCCSHandler::process(CCCSData& data)
 				m_stateChange = true;
 				m_state       = CS_CONNECTED;
 				m_inactivityTimer.stop();
-				m_handler->ccsLinkEnded(data.getRemote());
+				m_handler->ccsLinkEnded(data.getRemote(), m_direction);
 			}
 			break;
 
@@ -289,7 +289,7 @@ void CCCSHandler::process(CCCSData& data)
 			m_stateChange = true;
 			m_state       = CS_CONNECTED;
 			m_inactivityTimer.stop();
-			m_handler->ccsLinkFailed(m_yourCall.Mid(1U));
+			m_handler->ccsLinkFailed(m_yourCall.Mid(1U), m_direction);
 			break;
 
 		case CT_DTMFFOUND:
@@ -297,7 +297,7 @@ void CCCSHandler::process(CCCSData& data)
 			addToCache(m_yourCall.Mid(1U), data.getRemote());
 			m_stateChange = true;
 			m_yourCall = data.getRemote();
-			m_handler->ccsLinkMade(m_yourCall);
+			m_handler->ccsLinkMade(m_yourCall, m_direction);
 			break;
 
 		default:
@@ -405,7 +405,7 @@ void CCCSHandler::writeEnd()
 	m_state       = CS_CONNECTED;
 	m_inactivityTimer.stop();
 
-	m_handler->ccsLinkEnded(m_yourCall);
+	m_handler->ccsLinkEnded(m_yourCall, m_direction);
 }
 
 void CCCSHandler::writeHeard(CHeaderData& header)
@@ -438,7 +438,7 @@ void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
 		wxString callsign = findInCache(dtmf.Mid(1U));
 		if (!callsign.IsEmpty()) {
 			wxLogMessage(wxT("CCS: New outgoing link to %s/%s from %s"), dtmf.Mid(1U).c_str(), callsign.c_str(), m_myCall1.c_str());
-			m_handler->ccsLinkMade(callsign);
+			m_handler->ccsLinkMade(callsign, m_direction);
 			m_yourCall = callsign;
 		} else {
 			wxLogMessage(wxT("CCS: New outgoing link to %s from %s"), dtmf.Mid(1U).c_str(), m_myCall1.c_str());
@@ -494,7 +494,7 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 		if (m_state == CS_ACTIVE) {
 			m_stateChange = true;
-			m_handler->ccsLinkEnded(m_yourCall);
+			m_handler->ccsLinkEnded(m_yourCall, m_direction);
 		}
 
 		m_waitTimer.start();
@@ -536,7 +536,7 @@ void CCCSHandler::clockInt(unsigned int ms)
 		m_state       = CS_CONNECTED;
 		m_inactivityTimer.stop();
 
-		m_handler->ccsLinkEnded(m_yourCall);
+		m_handler->ccsLinkEnded(m_yourCall, m_direction);
 	}
 
 	if (m_waitTimer.isRunning() && m_waitTimer.hasExpired()) {

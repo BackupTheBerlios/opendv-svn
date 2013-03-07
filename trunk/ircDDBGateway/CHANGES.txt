@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130302
+ircDDB Gateway - 20130307
 =========================
 
 20101010
@@ -1237,9 +1237,11 @@ Revision of the Portuguese messages.
 Added CCS005 and CCS010
 Added XRF150
 
-201303xx
+20130307
 --------
 
+Links are not dropped on gateways with incoming CCS links.
+CCS is passed to outgoing links on the incoming gateway.
 More aggressive link restoration after a CCS link has ended.
 Fixed incoming DCS and loopback links.
 Fixed the CPU hogging bug.

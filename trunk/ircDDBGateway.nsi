@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "ircDDB Gateway 20130302"
-  OutFile "ircDDBGateway-20130302.exe"
+  Name "ircDDB Gateway 20130307"
+  OutFile "ircDDBGateway-20130307.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\ircDDBGateway"
@@ -56,7 +56,6 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\wxmsw28u_core_vc_custom.dll"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\CHANGES.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\COPYING.txt"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\TODO.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\CCS_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\DCS_Hosts.txt"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\DExtra_Hosts.txt"
@@ -99,7 +98,6 @@ Section "Repeater Program Files" SecProgram
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Time Server.lnk"      "$INSTDIR\TimeServer.exe"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Changes.lnk"          "$INSTDIR\CHANGES.txt"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Licence.lnk"          "$INSTDIR\COPYING.txt"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\ToDo.lnk"             "$INSTDIR\TODO.txt"
   CreateShortCut "$SMPROGRAMS\ircDDBGateway\Uninstall.lnk"        "$INSTDIR\Uninstall.exe"
 
   ;Create uninstaller
