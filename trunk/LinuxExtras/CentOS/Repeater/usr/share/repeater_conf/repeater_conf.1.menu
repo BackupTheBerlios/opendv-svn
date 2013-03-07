@@ -420,7 +420,7 @@ pttInvert: 1=EIN
 pttInvert:
 
 modemVersion:
-modemVersion:Modem-/Protocol-Version
+modemVersion:Firmware-/Protocol-Version
 modemVersion:
 modemVersion: 1-2
 modemVersion:

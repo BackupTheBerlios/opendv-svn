@@ -455,7 +455,7 @@ pttInvert: 1=ON
 pttInvert:
 
 modemVersion:
-modemVersion:Modem-/Protocol-Version (DVRPTR V1 and V2)
+modemVersion:Firmware-/Protocol-Version (DVRPTR V1 and V2)
 modemVersion:
 modemVersion: 1-2
 modemVersion:
