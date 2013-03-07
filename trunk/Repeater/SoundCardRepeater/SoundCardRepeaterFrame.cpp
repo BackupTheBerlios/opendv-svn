@@ -484,8 +484,8 @@ void CSoundCardRepeaterFrame::onPreferences(wxCommandEvent& event)
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
 	ACK_TYPE ack;
-	bool restriction, rpt1Validation;
-	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	bool restriction, rpt1Validation, dtmfBlanking;
+	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	wxString gatewayAddress, localAddress;
 	unsigned int gatewayPort, localPort;
@@ -524,7 +524,7 @@ void CSoundCardRepeaterFrame::onPreferences(wxCommandEvent& event)
 	unsigned int activeHangTime;
 	::wxGetApp().getActiveHang(activeHangTime);
 
-	CSoundCardRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation,
+	CSoundCardRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
 		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, hangTime, beaconTime,
 		beaconText, beaconVoice, language, readDevice, writeDevice, rxInvert, txInvert, rxLevel, txLevel,
 		squelchMode, squelchLevel, interfaceType, interfaceConfig, pttDelay, pttInvert, enabled, rpt1Callsign,
@@ -540,7 +540,8 @@ void CSoundCardRepeaterFrame::onPreferences(wxCommandEvent& event)
 	ack            = dialog1.getAck();
 	restriction    = dialog1.getRestriction();
 	rpt1Validation = dialog1.getRPT1Validation();
-	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	dtmfBlanking   = dialog1.getDTMFBlanking();
+	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	gatewayAddress = dialog1.getGatewayAddress();
 	gatewayPort    = dialog1.getGatewayPort();

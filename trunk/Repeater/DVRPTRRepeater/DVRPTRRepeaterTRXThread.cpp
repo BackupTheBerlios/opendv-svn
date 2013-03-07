@@ -129,7 +129,8 @@ m_whiteList(NULL),
 m_blackList(NULL),
 m_greyList(NULL),
 m_blocked(false),
-m_busyData(false)
+m_busyData(false),
+m_blanking(true)
 {
 	m_networkQueue = new COutputQueue*[NETWORK_QUEUE_COUNT];
 	for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
@@ -327,7 +328,7 @@ void CDVRPTRRepeaterTRXThread::kill()
 	m_killed = true;
 }
 
-void CDVRPTRRepeaterTRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CDVRPTRRepeaterTRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
@@ -346,6 +347,7 @@ void CDVRPTRRepeaterTRXThread::setCallsign(const wxString& callsign, const wxStr
 	m_ack            = ack;
 	m_restriction    = restriction;
 	m_rpt1Validation = rpt1Validation;
+	m_blanking       = dtmfBlanking;
 }
 
 void CDVRPTRRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* handler)
@@ -1441,7 +1443,8 @@ void CDVRPTRRepeaterTRXThread::processRadioFrame(unsigned char* data, FRAME_TYPE
 
 		// Send the data for transmission, but only in duplex mode
 		if (m_mode == MODE_DUPLEX) {
-			blankDTMF(data);
+			if (m_blanking)
+				blankDTMF(data);
 			m_radioQueue.addData(data, DV_FRAME_LENGTH_BYTES, false);
 		}
 	}
@@ -1812,14 +1815,17 @@ TRISTATE CDVRPTRRepeaterTRXThread::checkHeader(CHeaderData& header)
 
 	wxString my = header.getMyCall1();
 
-	// Make sure MyCall is not empty, a silly value, or the repeater or gateway callsigns
-	if (my.IsSameAs(m_rptCallsign) ||
-		my.IsSameAs(m_gwyCallsign) ||
-		my.Left(6U).IsSameAs(wxT("NOCALL")) ||
-		my.Left(6U).IsSameAs(wxT("N0CALL")) ||
-		my.Left(6U).IsSameAs(wxT("MYCALL"))) {
-		wxLogMessage(wxT("Invalid MYCALL value of %s, ignoring"), my.c_str());
-		return STATE_UNKNOWN;
+	// Make sure MyCall is not empty, a silly value, or the repeater or gateway callsigns, STN* is a special case
+	if (!my.Left(3U).IsSameAs(wxT("STN"))) {
+		if (my.IsSameAs(m_rptCallsign) ||
+			my.IsSameAs(m_gwyCallsign) ||
+			my.IsSameAs(wxT("        ")) ||
+			my.Left(6U).IsSameAs(wxT("NOCALL")) ||
+			my.Left(6U).IsSameAs(wxT("N0CALL")) ||
+			my.Left(6U).IsSameAs(wxT("MYCALL"))) {
+			wxLogMessage(wxT("Invalid MYCALL value of %s, ignoring"), my.c_str());
+			return STATE_UNKNOWN;
+		}
 	}
 
 	// Check the MyCall value against the regular expression

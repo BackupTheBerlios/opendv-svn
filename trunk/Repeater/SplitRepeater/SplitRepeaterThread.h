@@ -39,7 +39,7 @@ public:
 	CSplitRepeaterThread();
 	virtual ~CSplitRepeaterThread();
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CSplitRepeaterProtocolHandler* hander);
 	virtual bool setGateway(const wxString& address, unsigned int port);
 	virtual bool setReceiver1(const wxString& address, unsigned int port);
@@ -172,6 +172,7 @@ private:
 	unsigned int               m_receiver2Choice;
 	unsigned int               m_receiver1Rejected;
 	unsigned int               m_receiver2Rejected;
+	bool                       m_blanking;
 
 	void processNetworkHeader(CSplitRepeaterHeaderData* header);
 	void processNetworkFrame(CSplitRepeaterAMBEData* data);
@@ -203,6 +204,7 @@ private:
 	TRISTATE checkHeader(CSplitRepeaterHeaderData& header);
 	void clock(unsigned long ms);
 	void clearQueue(unsigned int n);
+	void blankDTMF(CSplitRepeaterAMBEData& data);
 };
 
 #endif

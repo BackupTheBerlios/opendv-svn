@@ -32,7 +32,7 @@ public:
 	CDVRPTRRepeaterTXThread();
 	virtual ~CDVRPTRRepeaterTXThread();
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
 	virtual void setModem(IDVRPTRController* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
@@ -89,7 +89,6 @@ private:
 	unsigned int processNetworkFrame(unsigned char* data, unsigned int length, unsigned char seqNo);
 	void endOfNetworkData();
 	void clock(unsigned int ms);
-	void blankDTMF(unsigned char* data);
 };
 
 #endif

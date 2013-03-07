@@ -270,7 +270,7 @@ void CSoundCardRepeaterTXRXThread::setReader(CWAVFileReader* reader)
 	m_reader = reader;
 }
 
-void CSoundCardRepeaterTXRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CSoundCardRepeaterTXRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
@@ -1039,7 +1039,6 @@ unsigned int CSoundCardRepeaterTXRXThread::processNetworkFrame(unsigned char* da
 			::memcpy(buffer, m_lastData, DV_FRAME_LENGTH_BYTES);
 
 			m_ambe.regenerate(buffer);
-			blankDTMF(buffer);
 
 			// Convert the bytes to bits for transmission
 			bool bits[VOICE_FRAME_LENGTH_BITS * 2U];
@@ -1080,8 +1079,6 @@ unsigned int CSoundCardRepeaterTXRXThread::processNetworkFrame(unsigned char* da
 	unsigned int n = 0U;
 	for (unsigned int i = 0U; i < length; i++, n += 8U)
 		CUtils::byteToBitsRev(data[i], bits + n);
-
-	blankDTMF(bits);
 
 	m_networkBuffer.addData(bits, length * 8U);
 
@@ -1330,25 +1327,4 @@ void CSoundCardRepeaterTXRXThread::writeStatistics()
 	m_networkCount  = 0U;
 	m_transmitCount = 0U;
 	m_timeCount     = 0U;
-}
-
-void CSoundCardRepeaterTXRXThread::blankDTMF(bool* data)
-{
-	wxASSERT(data != NULL);
-
-	if (data[1U] && data[7U] && data[11U] && data[21U] && data[25U] && data[31U] && !data[49U] && !data[55U])
-		::memcpy(data, NULL_AMBE_DATA_BITS, VOICE_FRAME_LENGTH_BITS * sizeof(bool));
-}
-
-void CSoundCardRepeaterTXRXThread::blankDTMF(unsigned char* data)
-{
-	wxASSERT(data != NULL);
-
-	// DTMF begins with these byte values
-	if ((data[0] & DTMF_MASK[0]) == DTMF_SIG[0] && (data[1] & DTMF_MASK[1]) == DTMF_SIG[1] &&
-		(data[2] & DTMF_MASK[2]) == DTMF_SIG[2] && (data[3] & DTMF_MASK[3]) == DTMF_SIG[3] &&
-		(data[4] & DTMF_MASK[4]) == DTMF_SIG[4] && (data[5] & DTMF_MASK[5]) == DTMF_SIG[5] &&
-		(data[6] & DTMF_MASK[6]) == DTMF_SIG[6] && (data[7] & DTMF_MASK[7]) == DTMF_SIG[7] &&
-		(data[8] & DTMF_MASK[8]) == DTMF_SIG[8])
-		::memcpy(data, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 }

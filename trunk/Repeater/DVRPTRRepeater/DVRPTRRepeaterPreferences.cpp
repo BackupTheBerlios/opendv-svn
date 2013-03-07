@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ const unsigned int BORDER_SIZE   = 5U;
 #include <wx/notebook.h>
 
 CDVRPTRRepeaterPreferences::CDVRPTRRepeaterPreferences(wxWindow* parent, int id, const wxString& callsign,
-	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation,
+	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int beaconTime,
 	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, DVRPTR_VERSION version,
@@ -53,7 +53,7 @@ m_controller(NULL)
 
 	wxNotebook* noteBook = new wxNotebook(this, -1);
 
-	m_callsign = new CDVRPTRRepeaterCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation);
+	m_callsign = new CDVRPTRRepeaterCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 	noteBook->AddPage(m_callsign, _("Callsign"), true);
 
 	m_network = new CNetworkSet(noteBook, -1, APPLICATION_NAME, gatewayAddress, gatewayPort, localAddress, localPort);
@@ -130,6 +130,11 @@ bool CDVRPTRRepeaterPreferences::getRestriction() const
 bool CDVRPTRRepeaterPreferences::getRPT1Validation() const
 {
 	return m_callsign->getRPT1Validation();
+}
+
+bool CDVRPTRRepeaterPreferences::getDTMFBlanking() const
+{
+	return m_callsign->getDTMFBlanking();
 }
 
 wxString CDVRPTRRepeaterPreferences::getGatewayAddress() const

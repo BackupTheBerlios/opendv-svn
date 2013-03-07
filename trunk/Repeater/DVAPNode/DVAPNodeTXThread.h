@@ -79,7 +79,6 @@ private:
 	unsigned int processNetworkFrame(unsigned char* data, unsigned int length, unsigned char seqNo);
 	void endOfNetworkData();
 	void clock(unsigned int ms);
-	void blankDTMF(unsigned char* data);
 };
 
 #endif

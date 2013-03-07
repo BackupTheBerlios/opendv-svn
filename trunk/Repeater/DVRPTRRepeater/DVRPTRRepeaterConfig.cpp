@@ -24,6 +24,7 @@ const wxString  KEY_MODE               = wxT("mode");
 const wxString  KEY_ACK                = wxT("ack");
 const wxString  KEY_RESTRICTION        = wxT("restriction");
 const wxString  KEY_RPT1_VALIDATION    = wxT("rpt1Validation");
+const wxString  KEY_DTMF_BLANKING      = wxT("dtmfBlanking");
 const wxString  KEY_GATEWAY_ADDRESS    = wxT("gatewayAddress");
 const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
@@ -84,6 +85,7 @@ const DSTAR_MODE      DEFAULT_MODE               = MODE_DUPLEX;
 const ACK_TYPE        DEFAULT_ACK                = AT_BER;
 const bool            DEFAULT_RESTRICTION        = false;
 const bool            DEFAULT_RPT1_VALIDATION    = true;
+const bool            DEFAULT_DTMF_BLANKING      = true;
 const wxString        DEFAULT_GATEWAY_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
@@ -149,6 +151,7 @@ m_mode(DEFAULT_MODE),
 m_ack(DEFAULT_ACK),
 m_restriction(DEFAULT_RESTRICTION),
 m_rpt1Validation(DEFAULT_RPT1_VALIDATION),
+m_dtmfBlanking(DEFAULT_DTMF_BLANKING),
 m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
@@ -222,6 +225,8 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_RESTRICTION, &m_restriction, DEFAULT_RESTRICTION);
 
 	m_config->Read(m_name + KEY_RPT1_VALIDATION, &m_rpt1Validation, DEFAULT_RPT1_VALIDATION);
+
+	m_config->Read(m_name + KEY_DTMF_BLANKING, &m_dtmfBlanking, DEFAULT_DTMF_BLANKING);
 
 	m_config->Read(m_name + KEY_GATEWAY_ADDRESS, &m_gatewayAddress, DEFAULT_GATEWAY_ADDRESS);
 
@@ -381,6 +386,7 @@ m_mode(DEFAULT_MODE),
 m_ack(DEFAULT_ACK),
 m_restriction(DEFAULT_RESTRICTION),
 m_rpt1Validation(DEFAULT_RPT1_VALIDATION),
+m_dtmfBlanking(DEFAULT_DTMF_BLANKING),
 m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
@@ -490,6 +496,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_RPT1_VALIDATION)) {
 			val.ToLong(&temp1);
 			m_rpt1Validation = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DTMF_BLANKING)) {
+			val.ToLong(&temp1);
+			m_dtmfBlanking = temp1 == 1L;
 		} else if (key.IsSameAs(KEY_GATEWAY_ADDRESS)) {
 			m_gatewayAddress = val;
 		} else if (key.IsSameAs(KEY_GATEWAY_PORT)) {
@@ -632,7 +641,7 @@ CDVRPTRRepeaterConfig::~CDVRPTRRepeaterConfig()
 
 #endif
 
-void CDVRPTRRepeaterConfig::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation) const
+void CDVRPTRRepeaterConfig::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation, bool& dtmfBlanking) const
 {
 	callsign       = m_callsign;
 	gateway        = m_gateway;
@@ -640,9 +649,10 @@ void CDVRPTRRepeaterConfig::getCallsign(wxString& callsign, wxString& gateway, D
 	ack            = m_ack;
 	restriction    = m_restriction;
 	rpt1Validation = m_rpt1Validation;
+	dtmfBlanking   = m_dtmfBlanking;
 }
 
-void CDVRPTRRepeaterConfig::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CDVRPTRRepeaterConfig::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 	m_callsign       = callsign;
 	m_gateway        = gateway;
@@ -650,6 +660,7 @@ void CDVRPTRRepeaterConfig::setCallsign(const wxString& callsign, const wxString
 	m_ack            = ack;
 	m_restriction    = restriction;
 	m_rpt1Validation = rpt1Validation;
+	m_dtmfBlanking   = dtmfBlanking;
 }
 
 void CDVRPTRRepeaterConfig::getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const
@@ -849,6 +860,7 @@ bool CDVRPTRRepeaterConfig::write()
 	m_config->Write(m_name + KEY_ACK, long(m_ack));
 	m_config->Write(m_name + KEY_RESTRICTION, m_restriction);
 	m_config->Write(m_name + KEY_RPT1_VALIDATION, m_rpt1Validation);
+	m_config->Write(m_name + KEY_DTMF_BLANKING, m_dtmfBlanking);
 	m_config->Write(m_name + KEY_GATEWAY_ADDRESS, m_gatewayAddress);
 	m_config->Write(m_name + KEY_GATEWAY_PORT, long(m_gatewayPort));
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
@@ -937,6 +949,7 @@ bool CDVRPTRRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_ACK.c_str(), int(m_ack)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RESTRICTION.c_str(), m_restriction ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RPT1_VALIDATION.c_str(), m_rpt1Validation ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DTMF_BLANKING.c_str(), m_dtmfBlanking ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_GATEWAY_ADDRESS.c_str(), m_gatewayAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_GATEWAY_PORT.c_str(), m_gatewayPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);

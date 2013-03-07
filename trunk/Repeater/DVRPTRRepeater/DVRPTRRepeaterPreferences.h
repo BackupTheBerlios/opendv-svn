@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 class CDVRPTRRepeaterPreferences : public wxDialog {
 public:
 	CDVRPTRRepeaterPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& gateway,
-		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress,
+		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, const wxString& gatewayAddress,
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
 		TEXT_LANG language, DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort,
@@ -58,6 +58,7 @@ public:
 	virtual ACK_TYPE     getAck() const;
 	virtual bool         getRestriction() const;
 	virtual bool         getRPT1Validation() const;
+	virtual bool         getDTMFBlanking() const;
 
 	virtual wxString     getGatewayAddress() const;
 	virtual unsigned int getGatewayPort() const;

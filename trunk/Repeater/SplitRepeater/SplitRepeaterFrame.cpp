@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -371,8 +371,8 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
 	ACK_TYPE ack;
-	bool restriction, rpt1Validation;
-	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	bool restriction, rpt1Validation, dtmfBlanking;
+	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	wxString gatewayAddress, localAddress;
 	unsigned int gatewayPort, localPort;
@@ -411,7 +411,7 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	wxString command3, command3Line, command4, command4Line;
 	::wxGetApp().getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line);
 
-	CSplitRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation,
+	CSplitRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
 		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, frameWaitTime, beaconTime, beaconText,
 		beaconVoice, language, receiver1Address, receiver1Port, receiver2Address, receiver2Port,
 		transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, enabled, rpt1Callsign,
@@ -426,7 +426,8 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	ack            = dialog1.getAck();
 	restriction    = dialog1.getRestriction();
 	rpt1Validation = dialog1.getRPT1Validation();
-	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	dtmfBlanking   = dialog1.getDTMFBlanking();
+	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	gatewayAddress = dialog1.getGatewayAddress();
 	gatewayPort    = dialog1.getGatewayPort();

@@ -33,7 +33,7 @@ public:
 	CGMSKRepeaterTXRXThread();
 	virtual ~CGMSKRepeaterTXRXThread();
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
 	virtual void setModem(IGMSKModem* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
@@ -116,7 +116,6 @@ private:
 	void endOfNetworkData();
 	bool setRepeaterState(DSTAR_RPT_STATE state);
 	void clock(unsigned int ms);
-	void blankDTMF(unsigned char* data);
 
 	bool reopenModem();
 };

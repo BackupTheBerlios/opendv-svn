@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 class CGMSKRepeaterCallsignSet : public wxPanel {
 public:
-	CGMSKRepeaterCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	CGMSKRepeaterCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual ~CGMSKRepeaterCallsignSet();
 
 	virtual bool Validate();
@@ -37,6 +37,7 @@ public:
 	virtual ACK_TYPE   getAck() const;
 	virtual bool       getRestriction() const;
 	virtual bool       getRPT1Validation() const;
+	virtual bool       getDTMFBlanking() const;
 
 	virtual void onMode(wxCommandEvent& event);
 
@@ -49,6 +50,7 @@ private:
 	wxChoice*          m_ack;
 	wxChoice*          m_restriction;
 	wxChoice*          m_rpt1Validation;
+	wxChoice*          m_dtmfBlanking;
 
 	DECLARE_EVENT_TABLE()
 };

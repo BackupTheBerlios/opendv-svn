@@ -44,7 +44,7 @@ public:
 
 	virtual void callback(const wxFloat32* input, wxFloat32* output, unsigned int nSamples, int id);
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
 	virtual void setSoundCard(CSoundCardReaderWriter* soundcard, wxFloat32 rxLevel, wxFloat32 txLevel, SQUELCH_MODE squelchMode, wxFloat32 squelchLevel, bool rxInvert, bool txInvert);
 	virtual void setController(CExternalController* controller, int pttDelay);
@@ -162,8 +162,6 @@ private:
 	void getStatistics();
 	void writeStatistics();
 	void clock(unsigned int ms);
-	void blankDTMF(bool* data);
-	void blankDTMF(unsigned char* data);
 };
 
 #endif

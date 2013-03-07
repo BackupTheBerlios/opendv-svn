@@ -140,7 +140,7 @@ void CGMSKRepeaterRXThread::kill()
 	m_killed = true;
 }
 
-void CGMSKRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CGMSKRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 }
 

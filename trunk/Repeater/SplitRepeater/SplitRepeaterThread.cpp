@@ -129,7 +129,8 @@ m_receiver2Packets(0U),
 m_receiver1Choice(0U),
 m_receiver2Choice(0U),
 m_receiver1Rejected(0U),
-m_receiver2Rejected(0U)
+m_receiver2Rejected(0U),
+m_blanking(true)
 {
 	m_receiver1Address.s_addr    = INADDR_NONE;
 	m_receiver2Address.s_addr    = INADDR_NONE;
@@ -286,7 +287,7 @@ void CSplitRepeaterThread::kill()
 	m_killed = true;
 }
 
-void CSplitRepeaterThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CSplitRepeaterThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
@@ -305,6 +306,7 @@ void CSplitRepeaterThread::setCallsign(const wxString& callsign, const wxString&
 	m_ack            = ack;
 	m_restriction    = restriction;
 	m_rpt1Validation = rpt1Validation;
+	m_blanking       = dtmfBlanking;
 }
 
 void CSplitRepeaterThread::setProtocolHandler(CSplitRepeaterProtocolHandler* handler)
@@ -1310,8 +1312,11 @@ void CSplitRepeaterThread::processRadioFrame(CSplitRepeaterAMBEData* data)
 		data->setId(m_radioId);
 
 		// Transmit the data on the radio, but only in duplex mode
-		if (m_mode == MODE_DUPLEX)
+		if (m_mode == MODE_DUPLEX) {
+			if (m_blanking)
+				blankDTMF(*data);
 			transmitFrame(data);
+		}
 
 		// Send data over the network if the user is not blocked
 		if (!m_blocked) {
@@ -1346,11 +1351,13 @@ void CSplitRepeaterThread::processNetworkFrame(CSplitRepeaterAMBEData* data)
 
 	bool end = data->isEnd();
 	if (end) {
+		blankDTMF(*data);
 		transmitFrame(data);
 		setRepeaterState(DSRS_LISTENING);
 		return;
 	}
 
+	blankDTMF(*data);
 	transmitFrame(data);
 }
 
@@ -1763,14 +1770,17 @@ TRISTATE CSplitRepeaterThread::checkHeader(CSplitRepeaterHeaderData& header)
 
 	wxString my = header.getMyCall1();
 
-	// Make sure MyCall is not empty, a silly value, or the repeater or gateway callsigns
-	if (my.IsSameAs(m_rptCallsign) ||
-		my.IsSameAs(m_gwyCallsign) ||
-		my.Left(6U).IsSameAs(wxT("NOCALL")) ||
-		my.Left(6U).IsSameAs(wxT("N0CALL")) ||
-		my.Left(6U).IsSameAs(wxT("MYCALL"))) {
-		wxLogMessage(wxT("Invalid MYCALL value of %s, ignoring"), my.c_str());
-		return STATE_UNKNOWN;
+	// Make sure MyCall is not empty, a silly value, or the repeater or gateway callsigns, STN* is a special case
+	if (!my.Left(3U).IsSameAs(wxT("STN"))) {
+		if (my.IsSameAs(m_rptCallsign) ||
+			my.IsSameAs(m_gwyCallsign) ||
+			my.IsSameAs(wxT("        ")) ||
+			my.Left(6U).IsSameAs(wxT("NOCALL")) ||
+			my.Left(6U).IsSameAs(wxT("N0CALL")) ||
+			my.Left(6U).IsSameAs(wxT("MYCALL"))) {
+			wxLogMessage(wxT("Invalid MYCALL value of %s, ignoring"), my.c_str());
+			return STATE_UNKNOWN;
+		}
 	}
 
 	// Check the MyCall value against the regular expression
@@ -1820,4 +1830,20 @@ void CSplitRepeaterThread::clearQueue(unsigned int n)
 			wxLogWarning(wxT("Unknown queue to clear - %u"), n);
 			break;
 	}
+}
+
+void CSplitRepeaterThread::blankDTMF(CSplitRepeaterAMBEData& data)
+{
+	unsigned char ambe[DV_FRAME_LENGTH_BYTES];
+	data.getData(ambe, DV_FRAME_LENGTH_BYTES);
+
+	// DTMF begins with these byte values
+	if ((ambe[0] & DTMF_MASK[0]) == DTMF_SIG[0] && (ambe[1] & DTMF_MASK[1]) == DTMF_SIG[1] &&
+		(ambe[2] & DTMF_MASK[2]) == DTMF_SIG[2] && (ambe[3] & DTMF_MASK[3]) == DTMF_SIG[3] &&
+		(ambe[4] & DTMF_MASK[4]) == DTMF_SIG[4] && (ambe[5] & DTMF_MASK[5]) == DTMF_SIG[5] &&
+		(ambe[6] & DTMF_MASK[6]) == DTMF_SIG[6] && (ambe[7] & DTMF_MASK[7]) == DTMF_SIG[7] &&
+		(ambe[8] & DTMF_MASK[8]) == DTMF_SIG[8])
+		::memcpy(ambe, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
+
+	data.setData(ambe, DV_FRAME_LENGTH_BYTES);
 }

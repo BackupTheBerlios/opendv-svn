@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ BEGIN_EVENT_TABLE(CSoundCardRepeaterCallsignSet, wxPanel)
 END_EVENT_TABLE()
 
 
-CSoundCardRepeaterCallsignSet::CSoundCardRepeaterCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation) :
+CSoundCardRepeaterCallsignSet::CSoundCardRepeaterCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
@@ -39,7 +39,8 @@ m_suffix(NULL),
 m_mode(NULL),
 m_ack(NULL),
 m_restriction(NULL),
-m_rpt1Validation(NULL)
+m_rpt1Validation(NULL),
+m_dtmfBlanking(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(3);
 
@@ -134,6 +135,18 @@ m_rpt1Validation(NULL)
 	sizer->Add(m_rpt1Validation, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_rpt1Validation->SetSelection(rpt1Validation ? 1 : 0);
 
+	wxStaticText* dummy4 = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy4, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* dtmfBlankingLabel = new wxStaticText(this, -1, _("DTMF Blanking"));
+	sizer->Add(dtmfBlankingLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_dtmfBlanking = new wxChoice(this, -1, wxDefaultPosition, wxSize(CALLSIGN_WIDTH, -1));
+	m_dtmfBlanking->Append(_("Off"));
+	m_dtmfBlanking->Append(_("On"));
+	sizer->Add(m_dtmfBlanking, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_dtmfBlanking->SetSelection(dtmfBlanking ? 1 : 0);
+
 	SetAutoLayout(true);
 
 	sizer->Fit(this);
@@ -189,6 +202,12 @@ bool CSoundCardRepeaterCallsignSet::Validate()
 
 	if (m_rpt1Validation->GetSelection() == wxNOT_FOUND) {
 		wxMessageDialog dialog(this, _("RPT1 Validation is not set"), m_title + _(" Error"), wxICON_ERROR);
+		dialog.ShowModal();
+		return false;
+	}
+
+	if (m_dtmfBlanking->GetSelection() == wxNOT_FOUND) {
+		wxMessageDialog dialog(this, _("DTMF Blanking is not set"), m_title + _(" Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		return false;
 	}
@@ -271,6 +290,13 @@ void CSoundCardRepeaterCallsignSet::onMode(wxCommandEvent &event)
 bool CSoundCardRepeaterCallsignSet::getRPT1Validation() const
 {
 	int n = m_rpt1Validation->GetCurrentSelection();
+
+	return n == 1;
+}
+
+bool CSoundCardRepeaterCallsignSet::getDTMFBlanking() const
+{
+	int n = m_dtmfBlanking->GetCurrentSelection();
 
 	return n == 1;
 }

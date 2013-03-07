@@ -417,8 +417,8 @@ void CDVRPTRRepeaterFrame::onPreferences(wxCommandEvent& event)
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
 	ACK_TYPE ack;
-	bool restriction, rpt1Validation;
-	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	bool restriction, rpt1Validation, dtmfBlanking;
+	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	wxString gatewayAddress, localAddress;
 	unsigned int gatewayPort, localPort;
@@ -453,7 +453,7 @@ void CDVRPTRRepeaterFrame::onPreferences(wxCommandEvent& event)
 	unsigned int activeHangTime;
 	::wxGetApp().getController(controllerType, activeHangTime);
 
-	CDVRPTRRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation,
+	CDVRPTRRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
 		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText,
 		beaconVoice, language, version, connectionType, usbPort, address, port, rxInvert, txInvert, channel,
 		modLevel, txDelay, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3,
@@ -468,7 +468,8 @@ void CDVRPTRRepeaterFrame::onPreferences(wxCommandEvent& event)
 	ack            = dialog1.getAck();
 	restriction    = dialog1.getRestriction();
 	rpt1Validation = dialog1.getRPT1Validation();
-	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	dtmfBlanking   = dialog1.getDTMFBlanking();
+	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	gatewayAddress = dialog1.getGatewayAddress();
 	gatewayPort    = dialog1.getGatewayPort();

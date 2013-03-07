@@ -208,14 +208,14 @@ void CDVRPTRRepeaterApp::showLog(const wxString& text)
 	m_frame->showLog(text);
 }
 
-void CDVRPTRRepeaterApp::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation) const
+void CDVRPTRRepeaterApp::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation, bool& dtmfBlanking) const
 {
-	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 }
 
-void CDVRPTRRepeaterApp::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CDVRPTRRepeaterApp::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
-	m_config->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	m_config->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 }
 
 void CDVRPTRRepeaterApp::getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const
@@ -364,8 +364,8 @@ void CDVRPTRRepeaterApp::createThread()
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
 	ACK_TYPE ack;
-	bool restriction, rpt1Validation;
-	getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
+	bool restriction, rpt1Validation, dtmfBlanking;
+	getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	IDVRPTRRepeaterThread* thread = NULL;
 	switch (mode) {
@@ -383,8 +383,8 @@ void CDVRPTRRepeaterApp::createThread()
 			break;
 	}
 
-	thread->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation);
-	wxLogInfo(wxT("Callsign set to \"%s\", gateway set to \"%s\", mode: %d, ack: %d, restriction: %d, RPT1 validation: %d"), callsign.c_str(), gateway.c_str(), int(mode), int(ack), restriction, rpt1Validation);
+	thread->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	wxLogInfo(wxT("Callsign set to \"%s\", gateway set to \"%s\", mode: %d, ack: %d, restriction: %d, RPT1 validation: %d, DTMF blanking: %d"), callsign.c_str(), gateway.c_str(), int(mode), int(ack), int(restriction), int(rpt1Validation), int(dtmfBlanking));
 
 	wxString gatewayAddress, localAddress;
 	unsigned int gatewayPort, localPort;

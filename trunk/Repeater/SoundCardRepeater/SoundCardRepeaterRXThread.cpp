@@ -165,7 +165,7 @@ void CSoundCardRepeaterRXThread::setReader(CWAVFileReader* reader)
 	m_reader = reader;
 }
 
-void CSoundCardRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CSoundCardRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 }
 

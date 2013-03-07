@@ -145,7 +145,7 @@ void CDVRPTRRepeaterTXThread::kill()
 	m_killed = true;
 }
 
-void CDVRPTRRepeaterTXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CDVRPTRRepeaterTXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
@@ -393,7 +393,6 @@ unsigned int CDVRPTRRepeaterTXThread::processNetworkFrame(unsigned char* data, u
 		} else {
 			::memcpy(buffer, m_lastData, DV_FRAME_LENGTH_BYTES);
 			m_ambe.regenerate(buffer);
-			blankDTMF(buffer);
 		}
 
 		if (m_networkSeqNo == 0U)
@@ -418,7 +417,6 @@ unsigned int CDVRPTRRepeaterTXThread::processNetworkFrame(unsigned char* data, u
 		m_networkSeqNo = 0U;
 
 	m_ambe.regenerate(data);
-	blankDTMF(data);
 
 	m_networkQueue[m_writeNum]->addData(data, DV_FRAME_LENGTH_BYTES, false);
 
@@ -493,17 +491,4 @@ void CDVRPTRRepeaterTXThread::command3()
 
 void CDVRPTRRepeaterTXThread::command4()
 {
-}
-
-void CDVRPTRRepeaterTXThread::blankDTMF(unsigned char* data)
-{
-	wxASSERT(data != NULL);
-
-	// DTMF begins with these byte values
-	if ((data[0] & DTMF_MASK[0]) == DTMF_SIG[0] && (data[1] & DTMF_MASK[1]) == DTMF_SIG[1] &&
-		(data[2] & DTMF_MASK[2]) == DTMF_SIG[2] && (data[3] & DTMF_MASK[3]) == DTMF_SIG[3] &&
-		(data[4] & DTMF_MASK[4]) == DTMF_SIG[4] && (data[5] & DTMF_MASK[5]) == DTMF_SIG[5] &&
-		(data[6] & DTMF_MASK[6]) == DTMF_SIG[6] && (data[7] & DTMF_MASK[7]) == DTMF_SIG[7] &&
-		(data[8] & DTMF_MASK[8]) == DTMF_SIG[8])
-		::memcpy(data, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 }

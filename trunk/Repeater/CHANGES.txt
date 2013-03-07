@@ -1804,3 +1804,9 @@ Added XRF333.
 Make the DVAP initialisation less aggressive.
 Updated to match ircDDB Gateway 20130302.
 Added XRF150
+
+201303xx
+--------
+
+Allow STN* callsigns as the my callsign.
+Allow for switching DTMF blanking off for duplex.

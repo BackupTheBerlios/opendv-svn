@@ -44,7 +44,7 @@ public:
 	CDVRPTRRepeaterTRXThread();
 	virtual ~CDVRPTRRepeaterTRXThread();
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
 	virtual void setModem(IDVRPTRController* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
@@ -173,6 +173,7 @@ private:
 	CCallsignList*             m_greyList;
 	bool                       m_blocked;
 	bool                       m_busyData;
+	bool                       m_blanking;
 
 	void receiveHeader(unsigned char* data, unsigned int length);
 	void receiveRadioData(unsigned char* data, unsigned int length);

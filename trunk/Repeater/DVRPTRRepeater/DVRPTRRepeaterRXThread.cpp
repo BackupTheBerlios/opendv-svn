@@ -113,7 +113,7 @@ void CDVRPTRRepeaterRXThread::kill()
 	m_killed = true;
 }
 
-void CDVRPTRRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation)
+void CDVRPTRRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
 {
 }
 

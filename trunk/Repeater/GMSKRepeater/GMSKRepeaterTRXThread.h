@@ -37,7 +37,7 @@ public:
 	CGMSKRepeaterTRXThread();
 	virtual ~CGMSKRepeaterTRXThread();
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
 	virtual void setModem(IGMSKModem* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
@@ -173,6 +173,7 @@ private:
 	CCallsignList*             m_greyList;
 	bool                       m_blocked;
 	bool                       m_busyData;
+	bool                       m_blanking;
 
 	bool receiveRadioHeader();
 	bool receiveRadioData();

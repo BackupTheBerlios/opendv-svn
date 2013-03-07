@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,13 +36,13 @@
 class CSoundCardRepeaterPreferences : public wxDialog {
 public:
 	CSoundCardRepeaterPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& gateway,
-		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress,
-		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
-		unsigned int ackTime, unsigned int hangTime, unsigned int beaconTime, const wxString& beaconText,
-		bool beaconVoice, TEXT_LANG language, const wxString& readDevice, const wxString& writeDevice,
-		bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, SQUELCH_MODE squelchMode,
-		wxFloat32 squelchLevel, const wxString& interfaceType, unsigned int interfaceConfig, int pttDelay,
-		bool pttInvert, bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign,
+		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
+		const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort,
+		unsigned int timeout, unsigned int ackTime, unsigned int hangTime, unsigned int beaconTime,
+		const wxString& beaconText, bool beaconVoice, TEXT_LANG language, const wxString& readDevice,
+		const wxString& writeDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel,
+		SQUELCH_MODE squelchMode, wxFloat32 squelchLevel, const wxString& interfaceType, unsigned int interfaceConfig,
+		int pttDelay, bool pttInvert, bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign,
 		const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2,
 		const wxString& status3, const wxString& status4,const wxString& status5, const wxString& command1,
 		const wxString& command1Line, const wxString& command2, const wxString& command2Line,
@@ -59,6 +59,7 @@ public:
 	virtual ACK_TYPE     getAck() const;
 	virtual bool         getRestriction() const;
 	virtual bool         getRPT1Validation() const;
+	virtual bool         getDTMFBlanking() const;
 
 	virtual wxString     getGatewayAddress() const;
 	virtual unsigned int getGatewayPort() const;
