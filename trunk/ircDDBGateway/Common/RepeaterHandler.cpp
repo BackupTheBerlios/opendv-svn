@@ -616,6 +616,14 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	m_g2Repeater.Clear();
 	m_g2Gateway.Clear();
 
+	// Check if this user is restricted
+	m_restricted = false;
+	if (m_restrictList != NULL) {
+		bool res = m_restrictList->isInList(m_myCall1);
+		if (res)
+			m_restricted = true;
+	}
+
 	// Reject silly RPT2 values
 	if (m_rptCall2.IsSameAs(m_rptCallsign) || m_rptCall2.IsSameAs(wxT("        ")))
 		return;
@@ -637,7 +645,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	}
 
 	m_starNet = CStarNetHandler::findStarNet(header);
-	if (m_starNet != NULL) {
+	if (m_starNet != NULL && !m_restricted) {
 		wxLogMessage(wxT("StarNet routing by %s to %s"), m_myCall1.c_str(), m_yourCall.c_str());
 		m_starNet->process(header);
 		m_g2Status = G2_STARNET;
@@ -672,15 +680,9 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		return;
 	}
 
-	// If restricted then don't send to the command handlers
-	m_restricted = false;
-	if (m_restrictList != NULL) {
-		bool res = m_restrictList->isInList(m_myCall1);
-		if (res) {
-			sendToOutgoing(header);
-			m_restricted = true;
-			return;
-		}
+	if (m_restricted) {
+		sendToOutgoing(header);
+		return;
 	}
 
 	g2CommandHandler(m_yourCall, m_myCall1, header);
@@ -727,7 +729,8 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
 					if (command.IsSameAs(wxT("CCSA"))) {
-						m_ccsHandler->writeEnd();
+						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
+							m_ccsHandler->writeEnd();
 					} else {
 						CCS_STATUS status = m_ccsHandler->getStatus();
 						if (status == CS_CONNECTED) {
@@ -736,7 +739,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 							m_queryTimer.start();
 							m_linkStatus   = LS_LINKING_CCS;
 							m_linkRepeater = command.Mid(4U);
-							triggerInfo();
 						}
 					}
 				} else if (command.IsSameAs(wxT("       I"))) {
@@ -921,11 +923,6 @@ void CRepeaterHandler::processBusy(CHeaderData& header)
 	m_repeaterId = 0x00U;
 	m_watchdogTimer.start();
 
-	// Reject simple cases
-	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ")) || m_yourCall.IsSameAs(wxT("       L")) ||
-	    m_yourCall.IsSameAs(wxT("       E"))     || m_yourCall.IsSameAs(wxT("       I")))
-		return;
-
 	// If restricted then don't send to the command handler
 	m_restricted = false;
 	if (m_restrictList != NULL) {
@@ -935,6 +932,11 @@ void CRepeaterHandler::processBusy(CHeaderData& header)
 			return;
 		}
 	}
+
+	// Reject simple cases
+	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ")) || m_yourCall.IsSameAs(wxT("       L")) ||
+	    m_yourCall.IsSameAs(wxT("       E"))     || m_yourCall.IsSameAs(wxT("       I")))
+		return;
 
 	reflectorCommandHandler(m_yourCall, m_myCall1, wxT("background UR Call"));
 }
@@ -959,8 +961,10 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-					if (command.IsSameAs(wxT("CCSA")))
-						m_ccsHandler->writeEnd();
+					if (command.IsSameAs(wxT("CCSA"))) {
+						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
+							m_ccsHandler->writeEnd();
+					}
 				} else if (command.IsSameAs(wxT("       I"))) {
 					// Do nothing
 				} else {
@@ -1085,7 +1089,6 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		m_ccsHandler->writeHeader(header);
 
-	// Should CCS be here? XXX
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
 		return true;
 
@@ -1121,7 +1124,6 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
 		m_ccsHandler->writeAMBE(data);
 
-	// Should CCS be here? XXX
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
 		return true;
 
@@ -2502,9 +2504,6 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 
 void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction)
 {
-	if (direction == DIR_INCOMING)
-		return;
-
 	wxString text;
 
 	switch (m_language) {
@@ -2544,6 +2543,8 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction
 			break;
 	}
 
+	suspendLinks();
+
 	m_linkStatus   = LS_LINKED_CCS;
 	m_linkRepeater = callsign;
 	m_queryTimer.stop();
@@ -2558,9 +2559,6 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction
 
 void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION direction)
 {
-	if (direction == DIR_INCOMING)
-		return;
-
 	wxString tempText;
 	wxString text;
 
@@ -2616,11 +2614,8 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION directio
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	restoreLinks();
-
-	m_audio->setTempText(tempText);
-
-	if (m_linkReconnect == LS_NONE) {
+	bool res = restoreLinks();
+	if (!res) {
 		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
 		m_repeaterHandler->writeText(textData);
 
@@ -2628,13 +2623,12 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION directio
 
 		triggerInfo();
 	}
+
+	m_audio->setTempText(tempText);
 }
 
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 {
-	if (direction == DIR_INCOMING)
-		return;
-
 	wxString tempText;
 	wxString text;
 
@@ -2690,11 +2684,8 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 	m_linkRepeater.Clear();
 	m_queryTimer.stop();
 
-	restoreLinks();
-
-	m_audio->setTempText(tempText);
-
-	if (m_linkReconnect == LS_NONE) {
+	bool res = restoreLinks();
+	if (!res) {
 		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
 		m_repeaterHandler->writeText(textData);
 
@@ -2702,6 +2693,8 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 
 		triggerInfo();
 	}
+
+	m_audio->setTempText(tempText);
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)
@@ -2754,20 +2747,27 @@ void CRepeaterHandler::suspendLinks()
 	m_ccsHandler->setReflector();
 }
 
-void CRepeaterHandler::restoreLinks()
+bool CRepeaterHandler::restoreLinks()
 {
 	if (m_linkReconnect == RECONNECT_FIXED) {
 		linkInt(m_linkStartup);
+		return true;
 	} else if (m_linkReconnect == RECONNECT_NEVER) {
-		if (!m_lastReflector.IsEmpty())
+		if (!m_lastReflector.IsEmpty()) {
 			linkInt(m_lastReflector);
+			return true;
+		}
 	} else {
 		m_linkReconnectTimer.start();
-		if (!m_lastReflector.IsEmpty())
+		if (!m_lastReflector.IsEmpty()) {
 			linkInt(m_lastReflector);
+			return true;
+		}
 	}
 
 	m_lastReflector.Clear();
+
+	return false;
 }
 
 void CRepeaterHandler::triggerInfo()

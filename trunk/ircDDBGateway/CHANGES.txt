@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130307
+ircDDB Gateway - 20130309
 =========================
 
 20101010
@@ -1245,3 +1245,8 @@ CCS is passed to outgoing links on the incoming gateway.
 More aggressive link restoration after a CCS link has ended.
 Fixed incoming DCS and loopback links.
 Fixed the CPU hogging bug.
+
+20130309
+--------
+
+Restored previous CCS behaviour, for now.

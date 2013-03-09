@@ -1,4 +1,4 @@
-Repeater - 20130302
+Repeater - 20130309
 ===================
 
 20090530
@@ -1805,7 +1805,7 @@ Make the DVAP initialisation less aggressive.
 Updated to match ircDDB Gateway 20130302.
 Added XRF150
 
-201303xx
+20130309
 --------
 
 Allow STN* callsigns as the my callsign.

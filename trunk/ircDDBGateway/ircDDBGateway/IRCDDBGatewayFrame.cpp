@@ -705,7 +705,7 @@ void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
 
 			wxString incoming = status->getIncoming(i);
 			if (!incoming.IsEmpty()) {
-				incoming.Prepend(wxT("[ "));
+				incoming.Prepend(wxT("[  "));
 				incoming.Append(wxT("]"));
 			}
 			m_incoming[i]->SetLabel(incoming);
