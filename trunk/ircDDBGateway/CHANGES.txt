@@ -1250,3 +1250,8 @@ Fixed the CPU hogging bug.
 --------
 
 Restored previous CCS behaviour, for now.
+
+201303xx
+--------
+
+Fixed port E configuration problem in the GUI.

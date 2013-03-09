@@ -102,13 +102,13 @@ wxString CCCSHandler::getIncoming(const wxString& callsign)
 {
 	wxString incoming;
 
-//	for (unsigned int i = 0U; i < m_count; i++) {
-//		CCCSHandler* handler = m_handlers[i];
-//		if (handler != NULL && handler->m_direction == DIR_INCOMING && handler->m_callsign.IsSameAs(callsign)) {
-//			incoming.Append(handler->m_yourCall);
-//			incoming.Append(wxT("  "));
-//		}
-//	}
+	for (unsigned int i = 0U; i < m_count; i++) {
+		CCCSHandler* handler = m_handlers[i];
+		if (handler != NULL && handler->m_direction == DIR_INCOMING && handler->m_callsign.IsSameAs(callsign)) {
+			incoming.Append(handler->m_yourCall);
+			incoming.Append(wxT("  "));
+		}
+	}
 
 	return incoming;
 }
@@ -387,22 +387,23 @@ void CCCSHandler::disconnectInt()
 
 void CCCSHandler::writeEnd()
 {
-	if (m_state == CS_ACTIVE) {
-		wxLogMessage(wxT("CCS: Link to %s from %s has been terminated locally"), m_yourCall.c_str(), m_local.c_str());
+	if (m_state != CS_ACTIVE)
+		return;
 
-		CCCSData data(m_local, m_yourCall, CT_TERMINATE);
-		data.setDestination(m_ccsAddress, CCS_PORT);
+	wxLogMessage(wxT("CCS: Link to %s from %s has been terminated locally"), m_yourCall.c_str(), m_local.c_str());
 
-		m_protocol.writeMisc(data);
-		m_protocol.writeMisc(data);
-		m_protocol.writeMisc(data);
-		m_protocol.writeMisc(data);
-		m_protocol.writeMisc(data);
+	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
+	data.setDestination(m_ccsAddress, CCS_PORT);
 
-		m_stateChange = true;
-		m_state       = CS_CONNECTED;
-		m_inactivityTimer.stop();
-	}
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+
+	m_stateChange = true;
+	m_state       = CS_CONNECTED;
+	m_inactivityTimer.stop();
 
 	m_handler->ccsLinkEnded(m_yourCall, m_direction);
 }

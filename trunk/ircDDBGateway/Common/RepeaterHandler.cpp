@@ -729,8 +729,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
 					if (command.IsSameAs(wxT("CCSA"))) {
-						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
-							m_ccsHandler->writeEnd();
+						m_ccsHandler->writeEnd();
 					} else {
 						CCS_STATUS status = m_ccsHandler->getStatus();
 						if (status == CS_CONNECTED) {
@@ -961,10 +960,8 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-					if (command.IsSameAs(wxT("CCSA"))) {
-						if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
-							m_ccsHandler->writeEnd();
-					}
+					if (command.IsSameAs(wxT("CCSA")))
+						m_ccsHandler->writeEnd();
 				} else if (command.IsSameAs(wxT("       I"))) {
 					// Do nothing
 				} else {
@@ -1086,7 +1083,7 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 
 	sendToIncoming(header);
 
-	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
+	if (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS)
 		m_ccsHandler->writeHeader(header);
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
@@ -1121,7 +1118,7 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 
 	sendToIncoming(data);
 
-	if (direction == DIR_INCOMING && (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS))
+	if (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS)
 		m_ccsHandler->writeAMBE(data);
 
 	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
@@ -2504,6 +2501,9 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 
 void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction)
 {
+	if (direction == DIR_INCOMING)
+		return;
+
 	wxString text;
 
 	switch (m_language) {
@@ -2559,6 +2559,9 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction
 
 void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION direction)
 {
+	if (direction == DIR_INCOMING)
+		return;
+
 	wxString tempText;
 	wxString text;
 
@@ -2629,6 +2632,9 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION directio
 
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 {
+	if (direction == DIR_INCOMING)
+		return;
+
 	wxString tempText;
 	wxString text;
 

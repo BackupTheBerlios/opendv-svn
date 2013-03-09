@@ -520,10 +520,11 @@ bool CRepeaterDataSet::isDDMode() const
 	int c = m_band->GetCurrentSelection();
 
 	switch (c) {
-		case 5:
 		case 6:
 		case 7:
 		case 8:
+		case 9:
+		case 10:
 			return true;
 		default:
 			return false;
