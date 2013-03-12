@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #include <wx/wx.h>
 #include <wx/listctrl.h>
 
+WX_DEFINE_ARRAY_INT(PROTOCOL, CArrayProtocol);
+
 class CRemoteControlRepeaterPanel : public wxPanel {
 public:
 	CRemoteControlRepeaterPanel(wxWindow* parent, int id, const wxString& callsign);
@@ -34,13 +36,17 @@ public:
 	virtual void onRefresh(wxCommandEvent& event);
 	virtual void onLink(wxCommandEvent& event);
 	virtual void onUnlink(wxCommandEvent& event);
+	virtual void onSelect(wxListEvent& event);
 
 private:
-	wxString    m_callsign;
-	wxListCtrl* m_list;
-	wxChoice*   m_reflector;
-	wxChoice*   m_channel;
-	wxChoice*   m_reconnect;
+	wxString       m_callsign;
+	wxListCtrl*    m_list;
+	wxChoice*      m_reflector;
+	wxChoice*      m_channel;
+	wxChoice*      m_reconnect;
+	int            m_selected;
+	wxArrayString  m_reflectors;
+	CArrayProtocol m_protocols;
 
 	DECLARE_EVENT_TABLE()
 };

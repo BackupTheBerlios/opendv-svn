@@ -113,6 +113,7 @@ public:
 	void processBusy(CAMBEData& data);
 
 	void link(RECONNECT reconnect, const wxString& reflector);
+	void unlink(PROTOCOL protocol, const wxString& reflector);
 
 	CRemoteRepeaterData* getInfo() const;
 

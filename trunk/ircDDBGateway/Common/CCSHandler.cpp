@@ -408,6 +408,34 @@ void CCCSHandler::writeEnd()
 	m_handler->ccsLinkEnded(m_yourCall, m_direction);
 }
 
+bool CCCSHandler::unlink(const wxString& callsign)
+{
+	if (m_state != CS_ACTIVE)
+		return false;
+
+	if (!m_yourCall.IsSameAs(callsign))
+		return false;
+
+	wxLogMessage(wxT("CCS: Link to %s from %s has been terminated by command"), m_yourCall.c_str(), m_local.c_str());
+
+	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
+	data.setDestination(m_ccsAddress, CCS_PORT);
+
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+	m_protocol.writeMisc(data);
+
+	m_stateChange = true;
+	m_state       = CS_CONNECTED;
+	m_inactivityTimer.stop();
+
+	m_handler->ccsLinkEnded(m_yourCall, m_direction);
+
+	return true;
+}
+
 void CCCSHandler::writeHeard(CHeaderData& header)
 {
 	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)

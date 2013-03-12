@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ public:
 	virtual void repeaterRefresh(const wxString& callsign);
 	virtual void starNetRefresh(const wxString& callsign);
 	virtual void link(const wxString& callsign, RECONNECT reconnect, const wxString& reflector);
+	virtual void unlink(const wxString& callsign, PROTOCOL protocol, const wxString& reflector);
 	virtual void starNetLogoff(const wxString& callsign, const wxString& user);
 
 private:

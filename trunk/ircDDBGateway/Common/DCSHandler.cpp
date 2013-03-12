@@ -317,26 +317,50 @@ void CDCSHandler::link(IReflectorCallback* handler, const wxString& repeater, co
 	}
 }
 
-void CDCSHandler::unlink(IReflectorCallback* handler, const wxString& exclude)
+void CDCSHandler::unlink(IReflectorCallback* handler, const wxString& callsign, bool exclude)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CDCSHandler* reflector = m_reflectors[i];
 
 		if (reflector != NULL) {
-			if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination == handler && !reflector->m_reflector.IsSameAs(exclude)) {
-				wxLogMessage(wxT("Removing outgoing DCS link %s, %s"), reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
+			bool found = false;
 
-				if (reflector->m_linkState == DCS_LINKING || reflector->m_linkState == DCS_LINKED) {
-					CConnectData connect(reflector->m_repeater, reflector->m_reflector, CT_UNLINK, reflector->m_yourAddress, reflector->m_yourPort);
-					reflector->m_handler->writeConnect(connect);
+			if (exclude) {
+				if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination == handler && !reflector->m_reflector.IsSameAs(callsign)) {
+					wxLogMessage(wxT("Removing outgoing DCS link %s, %s"), reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
 
-					reflector->m_linkState = DCS_UNLINKING;
-					reflector->m_tryTimer.setTimeout(1U);
-					reflector->m_tryTimer.start();
-					reflector->m_tryCount = 0U;
+					if (reflector->m_linkState == DCS_LINKING || reflector->m_linkState == DCS_LINKED) {
+						CConnectData connect(reflector->m_repeater, reflector->m_reflector, CT_UNLINK, reflector->m_yourAddress, reflector->m_yourPort);
+						reflector->m_handler->writeConnect(connect);
+
+						reflector->m_linkState = DCS_UNLINKING;
+						reflector->m_tryTimer.setTimeout(1U);
+						reflector->m_tryTimer.start();
+						reflector->m_tryCount = 0U;
+					}
+
+					found = true;
 				}
+			} else {
+				if (reflector->m_destination == handler && reflector->m_reflector.IsSameAs(callsign)) {
+					wxLogMessage(wxT("Removing DCS link %s, %s"), reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
 
-				// If an active link with incoming traffic, send an EOT to the repeater
+					if (reflector->m_linkState == DCS_LINKING || reflector->m_linkState == DCS_LINKED) {
+						CConnectData connect(reflector->m_repeater, reflector->m_reflector, CT_UNLINK, reflector->m_yourAddress, reflector->m_yourPort);
+						reflector->m_handler->writeConnect(connect);
+
+						reflector->m_linkState = DCS_UNLINKING;
+						reflector->m_tryTimer.setTimeout(1U);
+						reflector->m_tryTimer.start();
+						reflector->m_tryCount = 0U;
+					}
+
+					found = true;
+				}
+			}
+
+			// If an active link with incoming traffic, send an EOT to the repeater
+			if (found) {
 				if (reflector->m_dcsId != 0x00U) {
 					unsigned int seq = reflector->m_dcsSeq + 1U;
 					if (seq == 21U)

@@ -1255,3 +1255,6 @@ Restored previous CCS behaviour, for now.
 --------
 
 Fixed port E configuration problem in the GUI.
+Don't sort on protocol in the Remote Control GUI.
+Remote Control can now unlink incoming links and incoming CCS.
+Incoming CCS no longer unlinks existing reflector links.

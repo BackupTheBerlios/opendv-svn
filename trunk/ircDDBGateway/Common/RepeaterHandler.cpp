@@ -1820,6 +1820,36 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 	linkInt(m_linkStartup);
 }
 
+void CRepeaterHandler::unlink(PROTOCOL protocol, const wxString& reflector)
+{
+	if (protocol == PROTO_CCS) {
+		m_ccsHandler->unlink(reflector);
+		return;
+	}
+
+	if (m_linkReconnect == RECONNECT_FIXED && m_linkRepeater.IsSameAs(reflector)) {
+		wxLogMessage(wxT("Cannot unlink %s because it is fixed"), reflector.c_str());
+		return;
+	}
+
+	switch (protocol) {
+		case PROTO_DPLUS:
+			CDPlusHandler::unlink(this, reflector, false);
+			break;
+
+		case PROTO_DEXTRA:
+			CDExtraHandler::unlink(this, reflector, false);
+			break;
+
+		case PROTO_DCS:
+			CDCSHandler::unlink(this, reflector, false);
+			break;
+
+		default:
+			break;
+	}
+}
+
 void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString& user, CHeaderData& header)
 {
 	if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
@@ -2748,6 +2778,8 @@ void CRepeaterHandler::suspendLinks()
 	CDExtraHandler::unlink(this);
 	CDCSHandler::unlink(this);
 
+	m_linkStatus = LS_NONE;
+	m_linkRepeater.Clear();
 	m_linkReconnectTimer.stop();
 
 	m_ccsHandler->setReflector();

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -412,6 +412,50 @@ bool CRemoteControlRemoteControlHandler::link(const wxString& callsign, RECONNEC
 	p += LONG_CALLSIGN_LENGTH;
 
 	wxInt32 temp1 = wxInt32(reconnect);
+	wxInt32 temp2 = wxINT32_SWAP_ON_BE(temp1);
+	::memcpy(p, &temp2, sizeof(wxInt32));
+	m_outLength += sizeof(wxInt32);
+	p += sizeof(wxInt32);
+
+	::memset(p, ' ', LONG_CALLSIGN_LENGTH);
+	for (unsigned int i = 0U; i < reflector.Len(); i++)
+		p[i] = reflector.GetChar(i);
+
+	m_outLength += LONG_CALLSIGN_LENGTH;
+	p += LONG_CALLSIGN_LENGTH;
+
+	bool ret = m_socket.write(m_outBuffer, m_outLength, m_address, m_port);
+	if (!ret) {
+		m_retryCount = 0U;
+		return false;
+	} else {
+		m_retryCount = 1U;
+		return true;
+	}
+}
+
+bool CRemoteControlRemoteControlHandler::unlink(const wxString& callsign, PROTOCOL protocol, const wxString& reflector)
+{
+	wxASSERT(!callsign.IsEmpty());
+
+	if (!m_loggedIn || m_retryCount > 0U)
+		return false;
+
+	unsigned char* p = m_outBuffer;
+	m_outLength = 0U;
+
+	::memcpy(p, "UNL", 3U);
+	m_outLength += 3U;
+	p += 3U;
+
+	::memset(p, ' ', LONG_CALLSIGN_LENGTH);
+	for (unsigned int i = 0U; i < callsign.Len(); i++)
+		p[i] = callsign.GetChar(i);
+
+	m_outLength += LONG_CALLSIGN_LENGTH;
+	p += LONG_CALLSIGN_LENGTH;
+
+	wxInt32 temp1 = wxInt32(protocol);
 	wxInt32 temp2 = wxINT32_SWAP_ON_BE(temp1);
 	::memcpy(p, &temp2, sizeof(wxInt32));
 	m_outLength += sizeof(wxInt32);

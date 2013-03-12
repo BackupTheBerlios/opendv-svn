@@ -378,29 +378,56 @@ void CDPlusHandler::relink(IReflectorCallback* handler, const wxString &gateway)
 	}	
 }
 
-void CDPlusHandler::unlink(IReflectorCallback* handler, const wxString& exclude)
+void CDPlusHandler::unlink(IReflectorCallback* handler, const wxString& callsign, bool exclude)
 {
 	for (unsigned int i = 0U; i < m_maxReflectors; i++) {
 		CDPlusHandler* reflector = m_reflectors[i];
 
 		if (reflector != NULL) {
-			if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination == handler && !reflector->m_reflector.IsSameAs(exclude)) {
-				wxLogMessage(wxT("Removing outgoing D-Plus link %s, %s"), reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
+			bool found = false;
 
-				if (reflector->m_linkState == DPLUS_LINKING || reflector->m_linkState == DPLUS_LINKED) {
-					CConnectData connect(CT_UNLINK, reflector->m_yourAddress, DPLUS_PORT);
-					reflector->m_handler->writeConnect(connect);
-					reflector->m_handler->writeConnect(connect);
+			if (exclude) {
+				if (reflector->m_direction == DIR_OUTGOING && reflector->m_destination == handler && !reflector->m_reflector.IsSameAs(callsign)) {
+					wxLogMessage(wxT("Removing outgoing D-Plus link %s, %s"), reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
 
-					reflector->m_linkState = DPLUS_UNLINKING;
-					reflector->m_tryTimer.setTimeout(1U);
-					reflector->m_tryTimer.start();
-					reflector->m_pollTimer.stop();
-					reflector->m_pollInactivityTimer.stop();
-					reflector->m_tryCount = 0U;
+					if (reflector->m_linkState == DPLUS_LINKING || reflector->m_linkState == DPLUS_LINKED) {
+						CConnectData connect(CT_UNLINK, reflector->m_yourAddress, DPLUS_PORT);
+						reflector->m_handler->writeConnect(connect);
+						reflector->m_handler->writeConnect(connect);
+
+						reflector->m_linkState = DPLUS_UNLINKING;
+						reflector->m_tryTimer.setTimeout(1U);
+						reflector->m_tryTimer.start();
+						reflector->m_pollTimer.stop();
+						reflector->m_pollInactivityTimer.stop();
+						reflector->m_tryCount = 0U;
+					}
+
+					found = true;
 				}
+			} else {
+				if (reflector->m_destination == handler && reflector->m_reflector.IsSameAs(callsign)) {
+					wxLogMessage(wxT("Removing D-Plus link %s, %s"), reflector->m_repeater.c_str(), reflector->m_reflector.c_str());
 
-				// If an active link with incoming traffic, send an EOT to the repeater
+					if (reflector->m_linkState == DPLUS_LINKING || reflector->m_linkState == DPLUS_LINKED) {
+						CConnectData connect(CT_UNLINK, reflector->m_yourAddress, DPLUS_PORT);
+						reflector->m_handler->writeConnect(connect);
+						reflector->m_handler->writeConnect(connect);
+
+						reflector->m_linkState = DPLUS_UNLINKING;
+						reflector->m_tryTimer.setTimeout(1U);
+						reflector->m_tryTimer.start();
+						reflector->m_pollTimer.stop();
+						reflector->m_pollInactivityTimer.stop();
+						reflector->m_tryCount = 0U;
+					}
+
+					found = true;
+				}
+			}
+
+			// If an active link with incoming traffic, send an EOT to the repeater
+			if (found) {
 				if (reflector->m_dPlusId != 0x00U) {
 					unsigned int seq = reflector->m_dPlusSeq + 1U;
 					if (seq == 21U)

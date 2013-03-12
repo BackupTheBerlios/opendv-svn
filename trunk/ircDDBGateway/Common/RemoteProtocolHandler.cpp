@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -123,6 +123,13 @@ RPH_TYPE CRemoteProtocolHandler::readType()
 		}
 		m_type = RPHT_LINK;
 		return m_type;
+	} else if (::memcmp(m_inBuffer, "UNL", 3U) == 0) {
+		if (!m_loggedIn) {
+			sendNAK(wxT("You are not logged in"));
+			return m_type;
+		}
+		m_type = RPHT_UNLINK;
+		return m_type;
 	} else if (::memcmp(m_inBuffer, "LGO", 3U) == 0) {
 		if (!m_loggedIn) {
 			sendNAK(wxT("You are not logged in"));
@@ -218,6 +225,22 @@ bool CRemoteProtocolHandler::readLink(wxString& callsign, RECONNECT& reconnect, 
 
 	if (reflector.IsSameAs(wxT("        ")))
 		reflector.Clear();
+
+	return true;
+}
+
+bool CRemoteProtocolHandler::readUnlink(wxString& callsign, PROTOCOL& protocol, wxString& reflector)
+{
+	if (m_type != RPHT_UNLINK)
+		return false;
+
+	callsign = wxString((char*)(m_inBuffer + 3U), wxConvLocal, LONG_CALLSIGN_LENGTH);
+
+	wxInt32 temp;
+	::memcpy(&temp, m_inBuffer + 3U + LONG_CALLSIGN_LENGTH, sizeof(wxInt32));
+	protocol = PROTOCOL(wxINT32_SWAP_ON_BE(temp));
+
+	reflector = wxString((char*)(m_inBuffer + 3U + LONG_CALLSIGN_LENGTH + sizeof(wxInt32)), wxConvLocal, LONG_CALLSIGN_LENGTH);
 
 	return true;
 }

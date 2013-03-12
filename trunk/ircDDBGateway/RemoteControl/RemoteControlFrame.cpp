@@ -295,6 +295,11 @@ void CRemoteControlFrame::link(const wxString& callsign, RECONNECT reconnect, co
 	m_handler->link(callsign, reconnect, reflector);
 }
 
+void CRemoteControlFrame::unlink(const wxString& callsign, PROTOCOL protocol, const wxString& reflector)
+{
+	m_handler->unlink(callsign, protocol, reflector);
+}
+
 void CRemoteControlFrame::starNetLogoff(const wxString& callsign, const wxString& user)
 {
 	m_handler->logoff(callsign, user);

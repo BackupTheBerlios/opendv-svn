@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -128,6 +128,11 @@ void CRemoteControlApp::starNetRefresh(const wxString& callsign)
 void CRemoteControlApp::link(const wxString& callsign, RECONNECT reconnect, const wxString& reflector)
 {
 	m_frame->link(callsign, reconnect, reflector);
+}
+
+void CRemoteControlApp::unlink(const wxString& callsign, PROTOCOL protocol, const wxString& reflector)
+{
+	m_frame->unlink(callsign, protocol, reflector);
 }
 
 void CRemoteControlApp::starNetLogoff(const wxString& callsign, const wxString& user)

@@ -24,15 +24,17 @@
 #include <wx/filename.h>
 
 enum {
-	Button_Refresh = 7100,
+	List_Reflectors = 7100,
+	Button_Refresh,
 	Button_Link,
 	Button_Unlink
 };
 
 BEGIN_EVENT_TABLE(CRemoteControlRepeaterPanel, wxPanel)
-	EVT_BUTTON(Button_Refresh, CRemoteControlRepeaterPanel::onRefresh)
-	EVT_BUTTON(Button_Link,    CRemoteControlRepeaterPanel::onLink)
-	EVT_BUTTON(Button_Unlink,  CRemoteControlRepeaterPanel::onUnlink)
+	EVT_LIST_ITEM_SELECTED(List_Reflectors, CRemoteControlRepeaterPanel::onSelect)
+	EVT_BUTTON(Button_Refresh,              CRemoteControlRepeaterPanel::onRefresh)
+	EVT_BUTTON(Button_Link,                 CRemoteControlRepeaterPanel::onLink)
+	EVT_BUTTON(Button_Unlink,               CRemoteControlRepeaterPanel::onUnlink)
 END_EVENT_TABLE()
 
 #if defined(__WINDOWS__)
@@ -63,49 +65,20 @@ const unsigned int RECONNECT_WIDTH = 100U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-static int wxCALLBACK itemCompare(long item1, long item2, long sortData)
-{
-	PROTOCOL proto1 = PROTOCOL(item1);
-	PROTOCOL proto2 = PROTOCOL(item2);
-
-	if (proto1 == proto2)
-		return 0;
-
-	// DCS at the top
-	if (proto1 == PROTO_DCS)
-		return 1;
-
-	if (proto2 == PROTO_DCS)
-		return -1;
-
-	// D-Plus comes next
-	if (proto1 == PROTO_DPLUS)
-		return 1;
-
-	if (proto2 == PROTO_DPLUS)
-		return -1;
-
-	// DExtra next
-	if (proto1 == PROTO_DEXTRA)
-		return 1;
-
-	if (proto2 == PROTO_DEXTRA)
-		return -1;
-
-	return -1;
-}
-
 CRemoteControlRepeaterPanel::CRemoteControlRepeaterPanel(wxWindow* parent, int id, const wxString& callsign) :
 wxPanel(parent, id),
 m_callsign(callsign),
 m_list(NULL),
 m_reflector(NULL),
 m_channel(NULL),
-m_reconnect(NULL)
+m_reconnect(NULL),
+m_selected(-1),
+m_reflectors(),
+m_protocols()
 {
 	wxBoxSizer* sizer1 = new wxBoxSizer(wxHORIZONTAL);
 
-	m_list = new wxListCtrl(this, -1, wxDefaultPosition, wxSize(LIST_WIDTH, LIST_HEIGHT), wxLC_REPORT | wxLC_SINGLE_SEL);
+	m_list = new wxListCtrl(this, List_Reflectors, wxDefaultPosition, wxSize(LIST_WIDTH, LIST_HEIGHT), wxLC_REPORT | wxLC_SINGLE_SEL);
 	m_list->InsertColumn(0L, _("Callsign"));
 	m_list->SetColumnWidth(0L, CALLSIGN_WIDTH);
 	m_list->InsertColumn(1L, _("Protocol"));
@@ -251,6 +224,8 @@ CRemoteControlRepeaterPanel::~CRemoteControlRepeaterPanel()
 void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 {
 	m_list->DeleteAllItems();
+	m_reflectors.Clear();
+	m_protocols.Clear();
 
 	RECONNECT reconnect = data.getReconnect();
 	m_reconnect->SetSelection(int(reconnect));
@@ -279,6 +254,9 @@ void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 		bool       isLinked = link.isLinked();
 		DIRECTION direction = link.getDirection();
 		bool       isDongle = link.isDongle();
+
+		m_reflectors.Add(callsign);
+		m_protocols.Add(protocol);
 
 		m_list->InsertItem(0L, callsign);
 
@@ -325,8 +303,6 @@ void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 		else
 			m_list->SetItem(0L, 4, _("Linking"));
 	}
-
-	m_list->SortItems(itemCompare, 0L);
 }
 
 void CRemoteControlRepeaterPanel::onRefresh(wxCommandEvent& event)
@@ -371,11 +347,18 @@ void CRemoteControlRepeaterPanel::onLink(wxCommandEvent& event)
 
 void CRemoteControlRepeaterPanel::onUnlink(wxCommandEvent& event)
 {
-	int n = m_reconnect->GetCurrentSelection();
-	if (n == wxNOT_FOUND)
+	if (m_selected == -1)
 		return;
 
-	RECONNECT reconnect = RECONNECT(n);
+	wxString reflector = m_reflectors.Item(m_selected);
+	PROTOCOL  protocol = m_protocols.Item(m_selected);
 
-	::wxGetApp().link(m_callsign, reconnect, wxEmptyString);
+	m_selected = -1;
+
+	::wxGetApp().unlink(m_callsign, protocol, reflector);
+}
+
+void CRemoteControlRepeaterPanel::onSelect(wxListEvent& event)
+{
+	m_selected = event.GetSelection();
 }

@@ -59,6 +59,8 @@ public:
 	void writeAMBE(CAMBEData& data, const wxString& dtmf = wxEmptyString);
 	void writeEnd();
 
+	bool unlink(const wxString& callsign);
+
 	void setReflector(const wxString& callsign = wxEmptyString);
 
 	CCS_STATUS getStatus() const;

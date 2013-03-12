@@ -55,7 +55,7 @@ public:
 	static void setMaxDongles(unsigned int maxDongles);
 
 	static void link(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, const in_addr& address);
-	static void unlink(IReflectorCallback* handler, const wxString& exclude = wxEmptyString);
+	static void unlink(IReflectorCallback* handler, const wxString& reflector = wxEmptyString, bool exclude = true);
 	static void unlink();
 
 	static void writeHeader(IReflectorCallback* handler, CHeaderData& header, DIRECTION direction);

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ public:
 	bool getStarNet(const wxString& callsign);
 
 	bool link(const wxString& callsign, RECONNECT reconnect, const wxString& reflector);
+	bool unlink(const wxString& callsign, PROTOCOL protocol, const wxString& reflector);
 	bool logoff(const wxString& callsign, const wxString& user);
 
 	bool logout();

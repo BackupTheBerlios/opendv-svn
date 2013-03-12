@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ enum RPH_TYPE {
 	RPHT_REPEATER,
 	RPHT_STARNET,
 	RPHT_LINK,
+	RPHT_UNLINK,
 	RPHT_LINKSCR,
 	RPHT_LOGOFF,
 	RPHT_LOGOUT,
@@ -53,6 +54,7 @@ public:
 	wxString readRepeater();
 	wxString readStarNetGroup();
 	bool     readLink(wxString& callsign, RECONNECT& reconnect, wxString& reflector);
+	bool     readUnlink(wxString& callsign, PROTOCOL& protocol, wxString& reflector);
 	bool     readLinkScr(wxString& callsign, RECONNECT& reconnect, wxString& reflector);
 	bool     readLogoff(wxString& callsign, wxString& user);
 

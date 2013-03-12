@@ -85,10 +85,18 @@ void CRemoteHandler::process()
 				RECONNECT reconnect;
 				m_handler.readLink(callsign, reconnect, reflector);
 				if (reflector.IsEmpty())
-					wxLogMessage(wxT("Remote control user has linked \"%s\" to \"None\" with reconnect %d"), callsign.c_str(), reconnect);
+					wxLogMessage(wxT("Remote control user has linked \"%s\" to \"None\" with reconnect %d"), callsign.c_str(), int(reconnect));
 				else
-					wxLogMessage(wxT("Remote control user has linked \"%s\" to \"%s\" with reconnect %d"), callsign.c_str(), reflector.c_str(), reconnect);
+					wxLogMessage(wxT("Remote control user has linked \"%s\" to \"%s\" with reconnect %d"), callsign.c_str(), reflector.c_str(), int(reconnect));
 				link(callsign, reconnect, reflector, true);
+			}
+			break;
+		case RPHT_UNLINK: {
+				wxString callsign, reflector;
+				PROTOCOL protocol;
+				m_handler.readUnlink(callsign, protocol, reflector);
+				wxLogMessage(wxT("Remote control user has unlinked \"%s\" from \"%s\" for protocol %d"), callsign.c_str(), reflector.c_str(), int(protocol));
+				unlink(callsign, protocol, reflector);
 			}
 			break;
 		case RPHT_LINKSCR: {
@@ -173,10 +181,21 @@ void CRemoteHandler::link(const wxString& callsign, RECONNECT reconnect, const w
 
 	repeater->link(reconnect, reflector);
 
-	if (respond){
+	if (respond)
 	    m_handler.sendACK();
+}
+
+void CRemoteHandler::unlink(const wxString& callsign, PROTOCOL protocol, const wxString& reflector)
+{
+	CRepeaterHandler* repeater = CRepeaterHandler::findDVRepeater(callsign);
+	if (repeater == NULL) {
+		m_handler.sendNAK(wxT("Invalid repeater callsign"));
+		return;
 	}
 
+	repeater->unlink(protocol, reflector);
+
+    m_handler.sendACK();
 }
 
 void CRemoteHandler::logoff(const wxString& callsign, const wxString& user)
