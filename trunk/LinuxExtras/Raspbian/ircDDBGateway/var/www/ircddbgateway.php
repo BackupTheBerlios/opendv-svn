@@ -14,7 +14,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 
 }
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20130301";
+$rev="20130312";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -54,11 +54,13 @@ $col[1] = "#f0f0a0";
     <tr bgcolor=black>
     <th width=130><a class="tooltip" href="#"><font color=white><center><b>ircDDB-Net</b></center></font><span><b>ircDDB-Net</b></span></a></th>
     <th width=90><a class="tooltip" href="#"><font color=white><center><b>APRS-Host</b></center></font><span><b>APRS-Host</b></span></a></th>
+    <th width=40><a class="tooltip" href="#"><font color=white><center><b>CCS</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>DCS</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>DExtra</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>DPlus</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>D-Rats</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>Info</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
+    <th width=40><a class="tooltip" href="#"><font color=white><center><b>ircDDB</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>Echo</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     <th width=40><a class="tooltip" href="#"><font color=white><center><b>Log</b></center></font><span><b>Actual status</b>- green: enabled<br>- red: disabled</span></a></th>
     </tr>
@@ -66,11 +68,13 @@ $col[1] = "#f0f0a0";
 <?php
     print "<td>$configs[ircddbHostname]</td>\n";
     if($configs['aprsEnabled'] == 1){ print "<td align=center width=40>$configs[aprsHostname]</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"></td>";}
+    if($configs['ccsEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['dcsEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['dextraEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['dplusEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['dratsEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['infoEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
+    if($configs['ircddbEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['echoEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
     if($configs['logEnabled'] == 1){print "<td align=center width=40><img src=\"images/20green.png\"</td>"; } else { print "<td align=center width=40><img src=\"images/20red.png\"</td>"; }
 ?>

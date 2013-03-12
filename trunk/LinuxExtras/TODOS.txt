@@ -2,13 +2,20 @@
 TODOs
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-2013-02-21
-XReflector:
-- configuration program for XReflector
-- finetuning of new xreflector packages
+2013-03-12
+all Debian StartScripts:
+- improve ntp handling (DL1BFF)
+-- make ntpdate setting configurable, only set time when required
+2013-01-31
+Reported by: several
+adjust ntpd parameters for arm Devices (ignore panic threshold on Raspberry Pi))
+(... ntpd is not really part of the ircDDBGateway/repeater packages ...)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+2013-03-11
+- describe remote repeater configuration
+- add chart which shows connections and ports
 2013-02-21
 Update of documentation required:
 - CCS features
@@ -17,10 +24,18 @@ Update of documentation required:
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-2013-01-31
-Reported by: several
-adjust ntpd parameters for arm Devices (ignore panic threshold on Raspberry Pi))
-(... ntpd is not really part of the ircDDBGateway/repeater packages ...)
+2013-03-10
+ircddbgw_conf / repeater_conf:
+- add option to remove repeater modules 
+- add option to configure remote repeater modules
+- add option to configure non-daemon repeater modules (dummyrepeater) 
+ 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2013-02-21
+XReflector:
+- configuration program for XReflector
+- finetuning of new xreflector packages
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
