@@ -59,14 +59,15 @@
 # 2013-01-22 dl5di    bugfix
 # 2013-01-25 dl5di    ircddbEnabled setting added
 # 2013-02-21 dl5di    CCS enable/disable
-# 2013-02-22 dl5di	  CCS Host
+# 2013-02-22 dl5di    CCS Host
 # 2013-02-24 dl5di    change in configuration file of ircddbgw_conf 
+# 2013-03-12 dl5di    bugfix in request_selection calls
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20130224"
+rev="20130312"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1774,20 +1775,20 @@ function ircddb_setup(){
     read_default $var
     read_value $IRCDDBGWCONFIG $var
     if [ "$?" = 0 ]; then
-		VALUE=$DEFAULT
+	VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])
-    	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+			write_value $IRCDDBGWCONFIG $var "$INPUT"
 			;;
 		2)   
 			write_value $IRCDDBGWCONFIG $var "$VALUE"
 			;;
 		*)
-    	    reset_value $var
+			reset_value $var
 			;;
     esac
 
@@ -2080,7 +2081,7 @@ function dextra_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])
@@ -2137,7 +2138,7 @@ function dplus_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])
@@ -2215,7 +2216,7 @@ function ccs_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])
@@ -2270,7 +2271,7 @@ function dcs_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])
@@ -2495,7 +2496,7 @@ function stn_setup(){
 			VALUE=$DEFAULT
 		fi
 		print_text "starNetCallsignSwitch" 
-		request_selection $var $DEFAULT $VALUE
+		request_selection $var "$DEFAULT" "$VALUE"
 		INPUT=$?
 		case $INPUT in
 			[0-1])
@@ -2521,7 +2522,7 @@ function stn_setup(){
 			VALUE=$DEFAULT
 		fi
 		print_text "starNetTXMsgSwitch" 
-		request_selection $var $DEFAULT $VALUE
+		request_selection $var "$DEFAULT" "$VALUE"
 		INPUT=$?
 		case $INPUT in
 			[0-1])
@@ -2619,7 +2620,7 @@ function timeserver_setup(){
 				if [ "$?" = 0 ]; then
 				VALUE=$DEFAULT
 				fi
-				request_selection $var $DEFAULT $VALUE
+				request_selection $var "$DEFAULT" "$VALUE"
 				INPUT=$?
 				case $INPUT in
 				[0-1])
@@ -2913,7 +2914,7 @@ function misc_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])

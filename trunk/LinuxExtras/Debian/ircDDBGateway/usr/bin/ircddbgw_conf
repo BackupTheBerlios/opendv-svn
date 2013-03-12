@@ -41,12 +41,13 @@
 # 2013-02-22 dl5di	  CCS Host
 # 2013-02-24 dl5di    bugfix CCS_Hosts.txt and language files
 # 2013-03-03 dl5di    fix upgrade
+# 2013-03-12 dl5di    bugfix in request_selection calls
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="Debian-20130224"
+rev="Debian-20130312"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1620,7 +1621,7 @@ function ircddb_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 		[0-1])
@@ -1920,7 +1921,7 @@ function dextra_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 	[0-1])
@@ -1977,7 +1978,7 @@ function dplus_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 	[0-1])
@@ -2054,7 +2055,7 @@ function ccs_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 	[0-1])
@@ -2109,7 +2110,7 @@ function dcs_setup(){
 		VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 	[0-1])
@@ -2171,18 +2172,18 @@ function stn_setup(){
 	print_text "starNetBand" 
 	request_input $var 1 1 2 "$VALUE"
 	if [ "$?" = 3 ]; then
-    	reset_value $var
+		reset_value $var
 	else
-	    INPUT=$(echo $INPUT | awk '{print toupper($0)}')
+		INPUT=$(echo $INPUT | awk '{print toupper($0)}')
 #'
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+		write_value $IRCDDBGWCONFIG $var "$INPUT"
 	fi
 	echo ""
 #
 # starNetCallsign#=
 #
 	var="starNetCallsign$stn"
-    Dat=`date +%Y%m%d%H%M`
+	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
 	read_default $var
 	read_value $IRCDDBGWCONFIG $var
@@ -2192,46 +2193,46 @@ function stn_setup(){
 	print_text "starNetCallsign" 
 	request_callsign "$var" 3 0 "$VALUE"
 	if [ "$?" = 3 ]; then
-	    echo "(STARnet Server $stn) "
-	    print_text "starNetReset"
-	    request_selection "Delete STARnet Server $stn?" 1 1
-	    INPUT=$?
-	    case $INPUT in
+		echo "(STARnet Server $stn) "
+		print_text "starNetReset"
+		request_selection "Delete STARnet Server $stn?" 1 1
+		INPUT=$?
+		case $INPUT in
 		0)
-    		return 0
-		    ;;
+			return 0
+			;;
 		1)
-    		reset_value "starNetCallsign$stn"
-		    reset_value "starNetLogoff$stn"
-		    reset_value "starNetPermanen$stn"
-		    reset_value "starNetInfo$stn"
-		    reset_value "starNetReflector$stn"
-		    reset_value "starNetUserTimeout$stn"
-		    reset_value "starNetGroupTimeout$stn"
-		    reset_value "starNetCallsignSwitch$stn"
-		    reset_value "starNetTXMsgSwitch$stn"
-		    reset_value "starNetReflector$stn"
-		    return 0
-		    ;;
+			reset_value "starNetCallsign$stn"
+			reset_value "starNetLogoff$stn"
+			reset_value "starNetPermanen$stn"
+			reset_value "starNetInfo$stn"
+			reset_value "starNetReflector$stn"
+			reset_value "starNetUserTimeout$stn"
+			reset_value "starNetGroupTimeout$stn"
+			reset_value "starNetCallsignSwitch$stn"
+			reset_value "starNetTXMsgSwitch$stn"
+			reset_value "starNetReflector$stn"
+			return 0
+			;;
 		2)
-		    write_value $IRCDDBGWCONFIG $var "$VALUE"
-		    ;;
+			write_value $IRCDDBGWCONFIG $var "$VALUE"
+			;;
 		*)
-		    write_value $IRCDDBGWCONFIG $var "$DEFAULT"
-		    ;;
-	    esac
+			write_value $IRCDDBGWCONFIG $var "$DEFAULT"
+			;;
+		esac
 	else
-	    INPUT=$(echo $INPUT | awk '{print toupper($0)}')
+		INPUT=$(echo $INPUT | awk '{print toupper($0)}')
 #'
-	    write_value $IRCDDBGWCONFIG $var "$INPUT"
+		write_value $IRCDDBGWCONFIG $var "$INPUT"
 	fi
 #
 # starNetLogoff#=
 #
 	var="starNetLogoff$stn"
-    Dat=`date +%Y%m%d%H%M`
+	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
-    read_default $var
+	read_default $var
 	read_value $IRCDDBGWCONFIG $var
 	if [ "$?" = 0 ]; then
 	    VALUE=$DEFAULT
@@ -2333,7 +2334,7 @@ function stn_setup(){
 	    VALUE=$DEFAULT
 	fi
 	print_text "starNetCallsignSwitch" 
-	request_selection $var $DEFAULT $VALUE
+	request_selection $var "$DEFAULT" "$VALUE"
 	INPUT=$?
 	case $INPUT in
 	    [0-1])
@@ -2359,7 +2360,7 @@ function stn_setup(){
 	    VALUE=$DEFAULT
 	fi
 	print_text "starNetTXMsgSwitch" 
-	request_selection $var $DEFAULT $VALUE
+	request_selection $var "$DEFAULT" "$VALUE"
 	INPUT=$?
 	case $INPUT in
 	    [0-1])
@@ -2457,7 +2458,7 @@ function timeserver_setup(){
 		    if [ "$?" = 0 ]; then
 				VALUE=$DEFAULT
 		    fi
-		    request_selection $var $DEFAULT $VALUE
+		    request_selection $var "$DEFAULT" "$VALUE"
 		    INPUT=$?
 		    case $INPUT in
 			[0-1])
@@ -2752,7 +2753,7 @@ function misc_setup(){
 	VALUE=$DEFAULT
     fi
     print_text $var 
-    request_selection $var $DEFAULT $VALUE
+    request_selection $var "$DEFAULT" "$VALUE"
     INPUT=$?
     case $INPUT in
 	[0-1])
