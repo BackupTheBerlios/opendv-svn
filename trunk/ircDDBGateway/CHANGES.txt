@@ -1259,3 +1259,4 @@ Don't sort on protocol in the Remote Control GUI.
 Remote Control can now unlink incoming links and incoming CCS.
 Incoming CCS no longer unlinks existing reflector links.
 Voice and text messages on incoming CCS links.
+Added XRF038.
