@@ -72,6 +72,7 @@ m_list(NULL),
 m_reflector(NULL),
 m_channel(NULL),
 m_reconnect(NULL),
+m_unlink(NULL),
 m_selected(-1),
 m_reflectors(),
 m_protocols()
@@ -206,8 +207,9 @@ m_protocols()
 	wxButton* linkButton = new wxButton(this, Button_Link, _("Link"), wxDefaultPosition, wxSize(BUTTON_WIDTH, -1));
 	sizer2->Add(linkButton, 0, wxALL, BORDER_SIZE);
 
-	wxButton* unlinkButton = new wxButton(this, Button_Unlink, _("Unlink"), wxDefaultPosition, wxSize(BUTTON_WIDTH, -1));
-	sizer2->Add(unlinkButton, 0, wxALL, BORDER_SIZE);
+	m_unlink = new wxButton(this, Button_Unlink, _("Unlink"), wxDefaultPosition, wxSize(BUTTON_WIDTH, -1));
+	sizer2->Add(m_unlink, 0, wxALL, BORDER_SIZE);
+	m_unlink->Disable();
 
 	sizer1->Add(sizer2);
 
@@ -224,6 +226,7 @@ CRemoteControlRepeaterPanel::~CRemoteControlRepeaterPanel()
 void CRemoteControlRepeaterPanel::add(const CRemoteControlRepeaterData& data)
 {
 	m_list->DeleteAllItems();
+	m_unlink->Disable();
 	m_reflectors.Clear();
 	m_protocols.Clear();
 
@@ -354,6 +357,7 @@ void CRemoteControlRepeaterPanel::onUnlink(wxCommandEvent& event)
 	PROTOCOL  protocol = m_protocols.Item(m_selected);
 
 	m_selected = -1;
+	m_unlink->Disable();
 
 	::wxGetApp().unlink(m_callsign, protocol, reflector);
 }
@@ -361,4 +365,6 @@ void CRemoteControlRepeaterPanel::onUnlink(wxCommandEvent& event)
 void CRemoteControlRepeaterPanel::onSelect(wxListEvent& event)
 {
 	m_selected = event.GetSelection();
+
+	m_unlink->Enable();
 }

@@ -44,6 +44,7 @@ private:
 	wxChoice*      m_reflector;
 	wxChoice*      m_channel;
 	wxChoice*      m_reconnect;
+	wxButton*      m_unlink;
 	int            m_selected;
 	wxArrayString  m_reflectors;
 	CArrayProtocol m_protocols;

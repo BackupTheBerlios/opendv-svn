@@ -408,13 +408,13 @@ void CCCSHandler::writeEnd()
 	m_handler->ccsLinkEnded(m_yourCall, m_direction);
 }
 
-bool CCCSHandler::unlink(const wxString& callsign)
+void CCCSHandler::unlink(const wxString& callsign)
 {
 	if (m_state != CS_ACTIVE)
-		return false;
+		return;
 
 	if (!m_yourCall.IsSameAs(callsign))
-		return false;
+		return;
 
 	wxLogMessage(wxT("CCS: Link to %s from %s has been terminated by command"), m_yourCall.c_str(), m_local.c_str());
 
@@ -432,8 +432,6 @@ bool CCCSHandler::unlink(const wxString& callsign)
 	m_inactivityTimer.stop();
 
 	m_handler->ccsLinkEnded(m_yourCall, m_direction);
-
-	return true;
 }
 
 void CCCSHandler::writeHeard(CHeaderData& header)

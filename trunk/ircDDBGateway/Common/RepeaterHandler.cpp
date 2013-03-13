@@ -2788,8 +2788,10 @@ void CRepeaterHandler::suspendLinks()
 bool CRepeaterHandler::restoreLinks()
 {
 	if (m_linkReconnect == RECONNECT_FIXED) {
-		linkInt(m_linkStartup);
-		return true;
+		if (!m_lastReflector.IsEmpty()) {
+			linkInt(m_linkStartup);
+			return true;
+		}
 	} else if (m_linkReconnect == RECONNECT_NEVER) {
 		if (!m_lastReflector.IsEmpty()) {
 			linkInt(m_lastReflector);
