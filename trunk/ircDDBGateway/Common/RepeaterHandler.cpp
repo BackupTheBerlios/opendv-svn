@@ -2804,8 +2804,10 @@ void CRepeaterHandler::suspendLinks()
 	if (m_linkStatus == LS_LINKING_DCS      || m_linkStatus == LS_LINKED_DCS    ||
         m_linkStatus == LS_LINKING_DEXTRA   || m_linkStatus == LS_LINKED_DEXTRA ||
 	    m_linkStatus == LS_LINKING_DPLUS    || m_linkStatus == LS_LINKED_DPLUS  ||
-        m_linkStatus == LS_LINKING_LOOPBACK || m_linkStatus == LS_LINKED_LOOPBACK)
+		m_linkStatus == LS_LINKING_LOOPBACK || m_linkStatus == LS_LINKED_LOOPBACK) {
 		m_lastReflector = m_linkRepeater;
+		m_lastReflector.Trim();
+	}
 
 	CDPlusHandler::unlink(this);
 	CDExtraHandler::unlink(this);
@@ -2823,23 +2825,25 @@ bool CRepeaterHandler::restoreLinks()
 	if (m_linkReconnect == RECONNECT_FIXED) {
 		if (!m_lastReflector.IsEmpty()) {
 			linkInt(m_linkStartup);
+			m_lastReflector.Clear();
 			return true;
 		}
 	} else if (m_linkReconnect == RECONNECT_NEVER) {
 		if (!m_lastReflector.IsEmpty()) {
 			linkInt(m_lastReflector);
+			m_lastReflector.Clear();
 			return true;
 		}
 	} else {
 		m_linkReconnectTimer.start();
 		if (!m_lastReflector.IsEmpty()) {
 			linkInt(m_lastReflector);
+			m_lastReflector.Clear();
 			return true;
 		}
 	}
 
 	m_lastReflector.Clear();
-
 	return false;
 }
 
