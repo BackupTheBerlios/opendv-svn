@@ -116,6 +116,7 @@ m_linkReconnectTimer(1000U),
 m_linkRelink(false),
 m_echo(NULL),
 m_audio(NULL),
+m_infoNeeded(false),
 m_version(NULL),
 m_drats(NULL),
 m_dtmf(),
@@ -668,8 +669,8 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 
 	// Handle the Info command
 	if (m_infoEnabled && m_yourCall.IsSameAs(wxT("       I"))) {
-		m_g2Status = G2_INFO;
-		sendToOutgoing(header);
+		m_g2Status = G2_LOCAL;
+		m_infoNeeded = true;
 		return;
 	}
 
@@ -741,7 +742,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 						}
 					}
 				} else if (command.IsSameAs(wxT("       I"))) {
-					m_g2Status = G2_INFO;
+					m_infoNeeded = true;
 				} else {
 					reflectorCommandHandler(command, m_myCall1, wxT("DTMF"));
 				}
@@ -852,17 +853,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 			}
 			break;
 
-		case G2_INFO:
-			sendToOutgoing(data);
-
-			if (data.isEnd()) {
-				m_audio->sendStatus();
-
-				m_repeaterId = 0x00U;
-				m_g2Status   = G2_NONE;
-			}
-			break;
-
 		case G2_VERSION:
 			sendToOutgoing(data);
 
@@ -873,6 +863,11 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 				m_g2Status   = G2_NONE;
 			}
 			break;
+	}
+
+	if (data.isEnd() && m_infoNeeded) {
+		m_audio->sendStatus();
+		m_infoNeeded = false;
 	}
 }
 
@@ -972,8 +967,10 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 	}
 
 	if (data.isEnd()) {
-		if (m_g2Status == G2_INFO)
+		if (m_infoNeeded) {
 			m_audio->sendStatus();
+			m_infoNeeded = false;
+		}
 
 		if (m_g2Status == G2_VERSION)
 			m_version->sendVersion();
@@ -1470,10 +1467,6 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 					m_echo->end();
 					break;
 
-				case G2_INFO:
-					m_audio->sendStatus();
-					break;
-
 				case G2_VERSION:
 					m_version->sendVersion();
 					break;
@@ -1482,13 +1475,20 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 					break;
 			}
 
+			if (m_infoNeeded) {
+				m_audio->sendStatus();
+				m_infoNeeded = false;
+			}
+
 			m_repeaterId = 0x00U;
 			m_g2Status   = G2_NONE;
 		}
 
 		if (m_busyId != 0x00U) {
-			if (m_g2Status == G2_INFO)
+			if (m_infoNeeded) {
 				m_audio->sendStatus();
+				m_infoNeeded = false;
+			}
 
 			if (m_g2Status == G2_VERSION)
 				m_version->sendVersion();
@@ -2853,8 +2853,10 @@ void CRepeaterHandler::triggerInfo()
 		return;
 
 	// Either send the audio now, or queue it until the end of the transmission
-	if (m_repeaterId != 0x00U || m_busyId != 0x00U)
-		m_g2Status = G2_INFO;
-	else
+	if (m_repeaterId != 0x00U || m_busyId != 0x00U) {
+		m_infoNeeded = true;
+	} else {
 		m_audio->sendStatus();
+		m_infoNeeded = false;
+	}
 }

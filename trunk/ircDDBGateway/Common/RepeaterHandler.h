@@ -242,6 +242,7 @@ private:
 
 	// Voice messages
 	CAudioUnit*               m_audio;
+	bool                      m_infoNeeded;
 
 	// Version information
 	CVersionUnit*             m_version;
