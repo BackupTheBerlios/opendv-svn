@@ -62,12 +62,13 @@
 # 2013-02-22 dl5di    CCS Host
 # 2013-02-24 dl5di    change in configuration file of ircddbgw_conf 
 # 2013-03-12 dl5di    bugfix in request_selection calls
+# 2013-03-15 dl5di    allow new OZ callsign format
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="20130312"
+rev="20130315"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -353,6 +354,9 @@ function request_callsign(){
 				RETVAL=1
 				;;
 			"ANNAAA")
+				RETVAL=1
+				;;
+			"AANNAA")
 				RETVAL=1
 				;;
 			*)

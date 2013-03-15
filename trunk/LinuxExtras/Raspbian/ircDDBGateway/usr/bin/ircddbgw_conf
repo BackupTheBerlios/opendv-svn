@@ -42,12 +42,13 @@
 # 2013-02-24 dl5di    bugfix CCS_Hosts.txt and language files
 # 2013-03-03 dl5di    fix upgrade
 # 2013-03-12 dl5di    bugfix in request_selection calls
+# 2013-03-15 dl5di    allow new OZ callsign format
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="Raspbian-20130312"
+rev="Raspbian-20130315"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -333,6 +334,9 @@ function request_callsign(){
 				RETVAL=1
 				;;
 			"ANNAAA")
+				RETVAL=1
+				;;
+			"AANNAA")
 				RETVAL=1
 				;;
 			*)

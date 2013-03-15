@@ -45,6 +45,7 @@
 # 2013-02-11 dl5di    fix audiodir
 # 2013-03-03 dl5di    fix upgrade
 # 2013-03-06 dl5di    bugfix request_selection/request_value
+# 2013-03-15 dl5di    allow new OZ callsign format
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -54,7 +55,7 @@
 # - implement sanity check for config file 
 #   (find/eliminate dupes)
 #
-rev="20130306"
+rev="20130315"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -401,6 +402,9 @@ function request_callsign(){
 		RETVAL=1
 		;;
 	    "ANNAAA A")
+		RETVAL=1
+		;;
+	    "AANNAA A")
 		RETVAL=1
 		;;
     	    *)
