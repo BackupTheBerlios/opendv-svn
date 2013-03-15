@@ -1,4 +1,4 @@
-Repeater - 20130309
+Repeater - 20130315
 ===================
 
 20090530
@@ -1811,7 +1811,7 @@ Added XRF150
 Allow STN* callsigns as the my callsign.
 Allow for switching DTMF blanking off for duplex.
 
-201303xx
+20130315
 --------
 
 Added XRF038.
