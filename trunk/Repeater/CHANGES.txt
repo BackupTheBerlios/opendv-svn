@@ -1815,3 +1815,4 @@ Allow for switching DTMF blanking off for duplex.
 --------
 
 Added XRF038.
+Allow for the new format of Danish callsigns.
