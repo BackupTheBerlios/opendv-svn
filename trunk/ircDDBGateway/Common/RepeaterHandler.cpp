@@ -2365,6 +2365,7 @@ void CRepeaterHandler::writeLinkingTo(const wxString &callsign)
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+	triggerInfo();
 
 	m_ccsHandler->setReflector();
 }
@@ -2414,6 +2415,7 @@ void CRepeaterHandler::writeLinkedTo(const wxString &callsign)
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+	triggerInfo();
 
 	m_ccsHandler->setReflector(callsign);
 }
@@ -2463,6 +2465,7 @@ void CRepeaterHandler::writeNotLinked()
 	m_repeaterHandler->writeText(textData);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+	triggerInfo();
 
 	m_ccsHandler->setReflector();
 }
@@ -2520,11 +2523,15 @@ void CRepeaterHandler::writeIsBusy(const wxString& callsign)
 			break;
 	}
 
-	CTextData textData(LS_NONE, wxEmptyString, text, m_address, m_port);
-	m_repeaterHandler->writeText(textData);
+	CTextData textData1(m_linkStatus, m_linkRepeater, tempText, m_address, m_port, true);
+	m_repeaterHandler->writeText(textData1);
+
+	CTextData textData2(m_linkStatus, m_linkRepeater, text, m_address, m_port);
+	m_repeaterHandler->writeText(textData2);
 
 	m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
-	m_audio->setTempText(tempText);
+	m_audio->setTempStatus(m_linkStatus, m_linkRepeater, tempText);
+	triggerInfo();
 
 	m_ccsHandler->setReflector();
 }
@@ -2583,18 +2590,11 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction
 		m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
 		triggerInfo();
 	} else {
-		if (m_linkStatus == LS_NONE) {
-			// Incoming is not busy
-			CTextData textData(LS_LINKED_CCS, callsign, text, m_address, m_port);
-			m_repeaterHandler->writeText(textData);
+		CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port, true);
+		m_repeaterHandler->writeText(textData);
 
-			m_audio->setStatus(LS_LINKED_CCS, callsign, text);
-			triggerInfo();
-		} else {
-			// Incoming is busy so just set the temporary text
-			CTextData textData(LS_LINKED_CCS, callsign, text, m_address, m_port, true);
-			m_repeaterHandler->writeText(textData);
-		}
+		m_audio->setTempStatus(LS_LINKED_CCS, callsign, text);
+		triggerInfo();
 	}
 }
 
@@ -2658,28 +2658,23 @@ void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION directio
 
 		bool res = restoreLinks();
 		if (!res) {
-			CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
-			m_repeaterHandler->writeText(textData);
+			CTextData textData1(m_linkStatus, m_linkRepeater, tempText, m_address, m_port, true);
+			m_repeaterHandler->writeText(textData1);
+
+			CTextData textData2(m_linkStatus, m_linkRepeater, text, m_address, m_port);
+			m_repeaterHandler->writeText(textData2);
 
 			m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+			m_audio->setTempStatus(m_linkStatus, m_linkRepeater, tempText);
 			triggerInfo();
 		}
 	} else {
-		if (m_linkStatus == LS_NONE) {
-			// Incoming is not busy
-			CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
-			m_repeaterHandler->writeText(textData);
+		CTextData textData(m_linkStatus, m_linkRepeater, tempText, m_address, m_port, true);
+		m_repeaterHandler->writeText(textData);
 
-			m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
-			triggerInfo();
-		} else {
-			// Incoming is busy so just set the temporary text
-			CTextData textData(LS_NONE, callsign, tempText, m_address, m_port, true);
-			m_repeaterHandler->writeText(textData);
-		}
+		m_audio->setTempStatus(m_linkStatus, m_linkRepeater, tempText);
+		triggerInfo();
 	}
-
-	m_audio->setTempText(tempText);
 }
 
 void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
@@ -2742,28 +2737,23 @@ void CRepeaterHandler::ccsLinkFailed(const wxString& dtmf, DIRECTION direction)
 
 		bool res = restoreLinks();
 		if (!res) {
-			CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
-			m_repeaterHandler->writeText(textData);
+			CTextData textData1(m_linkStatus, m_linkRepeater, tempText, m_address, m_port, true);
+			m_repeaterHandler->writeText(textData1);
+
+			CTextData textData2(m_linkStatus, m_linkRepeater, text, m_address, m_port);
+			m_repeaterHandler->writeText(textData2);
 
 			m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
+			m_audio->setTempStatus(m_linkStatus, m_linkRepeater, tempText);
 			triggerInfo();
 		}
 	} else {
-		if (m_linkStatus == LS_NONE) {
-			// Incoming is not busy
-			CTextData textData(m_linkStatus, m_linkRepeater, text, m_address, m_port);
-			m_repeaterHandler->writeText(textData);
+		CTextData textData(m_linkStatus, m_linkRepeater, tempText, m_address, m_port, true);
+		m_repeaterHandler->writeText(textData);
 
-			m_audio->setStatus(m_linkStatus, m_linkRepeater, text);
-			triggerInfo();
-		} else {
-			// Incoming is busy so just set the temporary text
-			CTextData textData(LS_NONE, wxEmptyString, tempText, m_address, m_port, true);
-			m_repeaterHandler->writeText(textData);
-		}
+		m_audio->setTempStatus(m_linkStatus, m_linkRepeater, tempText);
+		triggerInfo();
 	}
-
-	m_audio->setTempText(tempText);
 }
 
 void CRepeaterHandler::writeStatus(CStatusData& statusData)

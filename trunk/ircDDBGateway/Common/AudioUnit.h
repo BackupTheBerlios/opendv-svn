@@ -73,7 +73,7 @@ public:
 	void sendStatus();
 
 	void setStatus(LINK_STATUS status, const wxString& reflector, const wxString& text);
-	void setTempText(const wxString& text);
+	void setTempStatus(LINK_STATUS status, const wxString& reflector, const wxString& text);
 
 	void cancel();
 
@@ -96,9 +96,12 @@ private:
 	CSlowDataEncoder   m_encoder;
 	AUDIO_STATUS       m_status;
 	LINK_STATUS        m_linkStatus;
+	LINK_STATUS        m_tempLinkStatus;
 	wxString           m_text;
 	wxString           m_tempText;
 	wxString           m_reflector;
+	wxString           m_tempReflector;
+	bool               m_hasTemporary;
 	CTimer             m_timer;
 	CAMBEData**        m_data;
 	unsigned int       m_in;
@@ -108,6 +111,7 @@ private:
 
 	bool lookup(unsigned int id, const wxString& name);
 	void spellReflector(unsigned int id, const wxString& reflector);
+	void sendStatus(LINK_STATUS status, const wxString& reflector, const wxString& text);
 
 	static bool readAMBE(const wxString& name);
 	static bool readIndex(const wxString& name);

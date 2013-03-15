@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130309
+ircDDB Gateway - 20130315
 =========================
 
 20101010
@@ -1251,7 +1251,7 @@ Fixed the CPU hogging bug.
 
 Restored previous CCS behaviour, for now.
 
-201303xx
+20130315
 --------
 
 Fixed port E configuration problem in the GUI.

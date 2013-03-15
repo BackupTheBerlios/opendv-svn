@@ -117,9 +117,12 @@ m_callsign(callsign),
 m_encoder(),
 m_status(AS_IDLE),
 m_linkStatus(LS_NONE),
+m_tempLinkStatus(LS_NONE),
 m_text(),
 m_tempText(),
 m_reflector(),
+m_tempReflector(),
+m_hasTemporary(false),
 m_timer(1000U, 2U),			// 2 seconds
 m_data(NULL),
 m_in(0U),
@@ -159,9 +162,12 @@ void CAudioUnit::setStatus(LINK_STATUS status, const wxString& reflector, const 
 	m_text       = text;
 }
 
-void CAudioUnit::setTempText(const wxString& text)
+void CAudioUnit::setTempStatus(LINK_STATUS status, const wxString& reflector, const wxString& text)
 {
-	m_tempText = text;
+	m_tempLinkStatus = status;
+	m_tempReflector  = reflector;
+	m_tempText       = text;
+	m_hasTemporary   = true;
 }
 
 void CAudioUnit::clock(unsigned int ms)
@@ -169,64 +175,14 @@ void CAudioUnit::clock(unsigned int ms)
 	m_timer.clock(ms);
 
 	if (m_status == AS_WAIT && m_timer.hasExpired()) {
-		if (m_tempText.IsEmpty()) {
-			m_encoder.setTextData(m_text);
+		if (m_hasTemporary) {
+			sendStatus(m_tempLinkStatus, m_tempReflector, m_tempText);
+			m_hasTemporary = false;
 		} else {
-			m_encoder.setTextData(m_tempText);
-			m_tempText.Clear();
+			sendStatus(m_linkStatus, m_reflector, m_text);
 		}
 
 		m_timer.stop();
-
-		// Create the message
-		unsigned int id = CHeaderData::createId();
-
-		lookup(id, wxT(" "));
-		lookup(id, wxT(" "));
-		lookup(id, wxT(" "));
-		lookup(id, wxT(" "));
-
-		bool found;
-
-		switch (m_linkStatus) {
-			case LS_NONE:
-				lookup(id, wxT("notlinked"));
-				break;
-			case LS_LINKED_CCS:
-			case LS_LINKED_DCS:
-			case LS_LINKED_DPLUS:
-			case LS_LINKED_DEXTRA:
-			case LS_LINKED_LOOPBACK:
-				found = lookup(id, wxT("linkedto"));
-				if (!found) {
-					lookup(id, wxT("linked"));
-					lookup(id, wxT("2"));
-				}
-				spellReflector(id, m_reflector);
-				break;
-			default:
-				found = lookup(id, wxT("linkingto"));
-				if (!found) {
-					lookup(id, wxT("linking"));
-					lookup(id, wxT("2"));
-				}
-				spellReflector(id, m_reflector);
-				break;
-		}
-
-		lookup(id, wxT(" "));
-		lookup(id, wxT(" "));
-		lookup(id, wxT(" "));
-		lookup(id, wxT(" "));
-
-		// RPT1 and RPT2 will be filled in later
-		CHeaderData header;
-		header.setMyCall1(m_callsign);
-		header.setMyCall2(wxT("INFO"));
-		header.setYourCall(wxT("CQCQCQ  "));
-		header.setId(id);
-
-		m_handler->process(header, DIR_INCOMING, AS_INFO);
 
 		m_out    = 0U;
 		m_seqNo  = 0U;
@@ -490,4 +446,59 @@ bool CAudioUnit::readIndex(const wxString& name)
 	file.Close();
 
 	return true;
+}
+
+void CAudioUnit::sendStatus(LINK_STATUS status, const wxString &reflector, const wxString &text)
+{
+		m_encoder.setTextData(text);
+
+		// Create the message
+		unsigned int id = CHeaderData::createId();
+
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+
+		bool found;
+
+		switch (status) {
+			case LS_NONE:
+				lookup(id, wxT("notlinked"));
+				break;
+			case LS_LINKED_CCS:
+			case LS_LINKED_DCS:
+			case LS_LINKED_DPLUS:
+			case LS_LINKED_DEXTRA:
+			case LS_LINKED_LOOPBACK:
+				found = lookup(id, wxT("linkedto"));
+				if (!found) {
+					lookup(id, wxT("linked"));
+					lookup(id, wxT("2"));
+				}
+				spellReflector(id, reflector);
+				break;
+			default:
+				found = lookup(id, wxT("linkingto"));
+				if (!found) {
+					lookup(id, wxT("linking"));
+					lookup(id, wxT("2"));
+				}
+				spellReflector(id, reflector);
+				break;
+		}
+
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+		lookup(id, wxT(" "));
+
+		// RPT1 and RPT2 will be filled in later
+		CHeaderData header;
+		header.setMyCall1(m_callsign);
+		header.setMyCall2(wxT("INFO"));
+		header.setYourCall(wxT("CQCQCQ  "));
+		header.setId(id);
+
+		m_handler->process(header, DIR_INCOMING, AS_INFO);
 }
