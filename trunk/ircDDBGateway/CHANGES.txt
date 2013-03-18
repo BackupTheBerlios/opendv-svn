@@ -1262,3 +1262,8 @@ Info commands are no longer sent over reflector links.
 Voice and text messages on incoming CCS links.
 Added XRF038.
 Updated REF047s IP address.
+
+201303xx
+--------
+
+Updated XRF003s IP address.

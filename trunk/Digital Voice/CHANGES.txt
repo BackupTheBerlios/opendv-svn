@@ -313,3 +313,4 @@ Added XRF333.
 --------
 
 Added XRF038.
+Updated XRF003s IP address.
