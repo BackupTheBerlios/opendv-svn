@@ -237,6 +237,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DescriptionTextCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DExtraHandler.cpp"
 				>
 			</File>
@@ -544,6 +548,10 @@
 			</File>
 			<File
 				RelativePath=".\Defs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DescriptionTextCtrl.h"
 				>
 			</File>
 			<File

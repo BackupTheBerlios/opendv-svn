@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ m_url(NULL)
 	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("QTH"));
 	sizer->Add(descriptionLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_description1 = new wxTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
+	m_description1 = new CDescriptionTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
 	m_description1->SetMaxLength(DESCRIPTION_LENGTH);
 	sizer->Add(m_description1, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -151,7 +151,7 @@ m_url(NULL)
 	wxStaticText* dummy8Label = new wxStaticText(this, -1, wxEmptyString);
 	sizer->Add(dummy8Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_description2 = new wxTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
+	m_description2 = new CDescriptionTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
 	m_description2->SetMaxLength(DESCRIPTION_LENGTH);
 	sizer->Add(m_description2, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -161,7 +161,7 @@ m_url(NULL)
 	wxStaticText* urlLabel = new wxStaticText(this, -1, _("URL"));
 	sizer->Add(urlLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_url = new wxTextCtrl(this, -1, url, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
+	m_url = new CDescriptionTextCtrl(this, -1, url, wxDefaultPosition, wxSize(DESCRIPTION_WIDTH, -1));
 	sizer->Add(m_url, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	SetAutoLayout(true);

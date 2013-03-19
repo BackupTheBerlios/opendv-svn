@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #ifndef	IRCDDBGatewayGatewaySet_H
 #define	IRCDDBGatewayGatewaySet_H
 
+#include "DescriptionTextCtrl.h"
 #include "CallsignTextCtrl.h"
 #include "AddressTextCtrl.h"
 #include "PortTextCtrl.h"
@@ -46,18 +47,18 @@ public:
 	virtual wxString     getURL() const;
 
 private:
-	wxString           m_title;
-	CCallsignTextCtrl* m_callsign;
-	CAddressTextCtrl*  m_address;
-	CAddressTextCtrl*  m_icomAddress;
-	CPortTextCtrl*     m_icomPort;
-	CAddressTextCtrl*  m_hbAddress;
-	CPortTextCtrl*     m_hbPort;
-	wxTextCtrl*        m_latitude;
-	wxTextCtrl*        m_longitude;
-	wxTextCtrl*        m_description1;
-	wxTextCtrl*        m_description2;
-	wxTextCtrl*        m_url;
+	wxString              m_title;
+	CCallsignTextCtrl*    m_callsign;
+	CAddressTextCtrl*     m_address;
+	CAddressTextCtrl*     m_icomAddress;
+	CPortTextCtrl*        m_icomPort;
+	CAddressTextCtrl*     m_hbAddress;
+	CPortTextCtrl*        m_hbPort;
+	wxTextCtrl*           m_latitude;
+	wxTextCtrl*           m_longitude;
+	CDescriptionTextCtrl* m_description1;
+	CDescriptionTextCtrl* m_description2;
+	CDescriptionTextCtrl* m_url;
 };
 
 #endif

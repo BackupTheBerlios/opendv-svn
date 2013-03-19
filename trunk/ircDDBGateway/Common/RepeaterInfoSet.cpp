@@ -103,21 +103,21 @@ m_url(NULL)
 	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("QTH"));
 	sizer->Add(descriptionLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_description1 = new wxTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_description1 = new CDescriptionTextCtrl(this, -1, description1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_description1->SetMaxLength(DESCRIPTION_LENGTH);
 	sizer->Add(m_description1, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* dummyLabel = new wxStaticText(this, -1, wxEmptyString);
 	sizer->Add(dummyLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_description2 = new wxTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_description2 = new CDescriptionTextCtrl(this, -1, description2, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_description2->SetMaxLength(DESCRIPTION_LENGTH);
 	sizer->Add(m_description2, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* urlLabel = new wxStaticText(this, -1, _("URL"));
 	sizer->Add(urlLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
-	m_url = new wxTextCtrl(this, -1, url, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
+	m_url = new CDescriptionTextCtrl(this, -1, url, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_url->SetMaxLength(URL_LENGTH);
 	sizer->Add(m_url, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 

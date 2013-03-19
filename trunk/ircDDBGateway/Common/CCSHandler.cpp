@@ -534,7 +534,7 @@ void CCCSHandler::clockInt(unsigned int ms)
 		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
 		m_protocol.writeConnect(connect);
 
-		wxLogMessage(wxT("Sending link attempt %u to %s"), m_tryCount);
+		wxLogMessage(wxT("CCS: Sending link attempt %u to %s"), m_tryCount);
 
 		unsigned int t = calcBackoff();
 		m_tryTimer.setTimeout(t);

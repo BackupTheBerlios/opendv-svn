@@ -3,19 +3,19 @@ all:			Common.a
 CFLAGS :=		-I../ircDDB $(CFLAGS)
 
 Common.a:		AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterThread.o AudioUnit.o CacheManager.o CallsignList.o CallsignServer.o \
-				CallsignTextCtrl.o CCITTChecksum.o CCSData.o CCSHandler.o CCSProtocolHandler.o ConnectData.o DCSHandler.o DCSProtocolHandler.o DCSProtocolHandlerPool.o \
-				DCSSet.o DDData.o DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o DPlusProtocolHandler.o \
-				DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o DummyRepeaterProtocolHandler.o EchoUnit.o G2Handler.o G2ProtocolHandler.o \
-				GatewayCache.o HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o LogEvent.o Logger.o \
-				PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o RemoteStarNetGroup.o \
+				CallsignTextCtrl.o CCITTChecksum.o CCSData.o CCSHandler.o CCSProtocolHandler.o ConnectData.o DescriptionTextCtrl.o DCSHandler.o DCSProtocolHandler.o \
+				DCSProtocolHandlerPool.o DCSSet.o DDData.o DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o \
+				DPlusProtocolHandler.o DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o DummyRepeaterProtocolHandler.o EchoUnit.o G2Handler.o \
+				G2ProtocolHandler.o GatewayCache.o HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o LogEvent.o \
+				Logger.o PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o RemoteStarNetGroup.o \
 				RemoteStarNetUser.o RepeaterCache.o RepeaterHandler.o RepeaterDataSet.o RepeaterInfoSet.o RestrictedTextCtrl.o SHA256.o SlowDataEncoder.o \
 				StarNetHandler.o StarNetSet.o StatusData.o TCPReaderWriterClient.o TCPReaderWriterServer.o TextCollector.o TextData.o Timer.o UDPReaderWriter.o \
 				UserCache.o Utils.o VersionUnit.o
 				$(AR) rcs Common.a AddressTextCtrl.o AMBEData.o APRSCollector.o APRSWriter.o APRSWriterThread.o AudioUnit.o CacheManager.o CallsignList.o \
-				CallsignServer.o CallsignTextCtrl.o CCITTChecksum.o CCSData.o CCSHandler.o CCSProtocolHandler.o ConnectData.o DCSHandler.o DCSProtocolHandler.o \
-				DCSProtocolHandlerPool.o DCSSet.o DDData.o DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o DPlusHandler.o \
-				DPlusProtocolHandler.o DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o DummyRepeaterProtocolHandler.o EchoUnit.o G2Handler.o \
-				G2ProtocolHandler.o GatewayCache.o HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o \
+				CallsignServer.o CallsignTextCtrl.o CCITTChecksum.o CCSData.o CCSHandler.o CCSProtocolHandler.o ConnectData.o DescriptionTextCtrl.o DCSHandler.o \
+				DCSProtocolHandler.o DCSProtocolHandlerPool.o DCSSet.o DDData.o DDHandler.o DExtraHandler.o DExtraProtocolHandler.o DExtraSet.o DPlusAuthenticator.o \
+				DPlusHandler.o DPlusProtocolHandler.o DPlusProtocolHandlerPool.o DPlusSet.o DPRSSet.o DRATSServer.o DTMF.o DummyRepeaterProtocolHandler.o EchoUnit.o \
+				G2Handler.o G2ProtocolHandler.o GatewayCache.o HBRepeaterProtocolHandler.o HeaderData.o HeaderLogger.o HeardData.o HostFile.o IcomRepeaterProtocolHandler.o \
 				LogEvent.o Logger.o PollData.o PortTextCtrl.o RemoteHandler.o RemoteLinkData.o RemoteProtocolHandler.o RemoteRepeaterData.o RemoteSet.o \
 				RemoteStarNetGroup.o RemoteStarNetUser.o RepeaterCache.o RepeaterHandler.o RepeaterDataSet.o RepeaterInfoSet.o RestrictedTextCtrl.o SHA256.o \
 				SlowDataEncoder.o StarNetHandler.o StarNetSet.o StatusData.o TCPReaderWriterClient.o TCPReaderWriterServer.o TextCollector.o TextData.o Timer.o \
@@ -67,6 +67,9 @@ CCSProtocolHandler.o:	CCSProtocolHandler.cpp CCSProtocolHandler.h AMBEData.h UDP
 
 ConnectData.o:	ConnectData.cpp ConnectData.h DStarDefines.h Version.h Utils.h
 				$(CC) $(CFLAGS) -c ConnectData.cpp
+
+DescriptionTextCtrl.o:	DescriptionTextCtrl.cpp DescriptionTextCtrl.h RestrictedTextCtrl.h
+				$(CC) $(CFLAGS) -c DescriptionTextCtrl.cpp
 
 DCSHandler.o:	DCSHandler.cpp DCSHandler.h DStarDefines.h RepeaterHandler.h Utils.h DCSProtocolHandlerPool.h DCSProtocolHandler.h ConnectData.h AMBEData.h \
 				PollData.h Timer.h Defs.h HeaderLogger.h ReflectorCallback.h HeaderData.h
@@ -212,7 +215,7 @@ RepeaterHandler.o:		RepeaterHandler.cpp RepeaterHandler.h RepeaterProtocolHandle
 RepeaterDataSet.o:	RepeaterDataSet.cpp RepeaterDataSet.h Defs.h DStarDefines.h AddressTextCtrl.h PortTextCtrl.h HostFile.h
 				$(CC) $(CFLAGS) -c RepeaterDataSet.cpp
 
-RepeaterInfoSet.o:	RepeaterInfoSet.cpp RepeaterInfoSet.h Defs.h DStarDefines.h
+RepeaterInfoSet.o:	RepeaterInfoSet.cpp RepeaterInfoSet.h Defs.h DStarDefines.h DescriptionTextCtrl.h
 				$(CC) $(CFLAGS) -c RepeaterInfoSet.cpp
 
 RestrictedTextCtrl.o:	RestrictedTextCtrl.cpp RestrictedTextCtrl.h

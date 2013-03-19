@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003,2009,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#include "DescriptionTextCtrl.h"
 
-#include <wx/wx.h>
+CDescriptionTextCtrl::CDescriptionTextCtrl(wxWindow* parent, int id, const wxString& value, const wxPoint& pos, const wxSize& size, long style) :
+CRestrictedTextCtrl(parent, id, value, pos, size, style, DESCRIPTION_CHARS)
+{
+}
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+CDescriptionTextCtrl::~CDescriptionTextCtrl()
+{
+}
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
-
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130315 - DEBUG");
-#else
-const wxString VERSION = wxT("20130315");
-#endif
-
-#endif

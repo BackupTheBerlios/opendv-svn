@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 #ifndef	RepeaterInfoSet_H
 #define	RepeaterInfoSet_H
+
+#include "DescriptionTextCtrl.h"
 
 #include <wx/wx.h>
 
@@ -41,16 +43,16 @@ public:
 	virtual wxString     getURL() const;
 
 private:
-	wxString           m_title;
-	wxTextCtrl*        m_frequency;
-	wxTextCtrl*        m_offset;
-	wxTextCtrl*        m_range;
-	wxTextCtrl*        m_latitude;
-	wxTextCtrl*        m_longitude;
-	wxTextCtrl*        m_agl;
-	wxTextCtrl*        m_description1;
-	wxTextCtrl*        m_description2;
-	wxTextCtrl*        m_url;
+	wxString              m_title;
+	wxTextCtrl*           m_frequency;
+	wxTextCtrl*           m_offset;
+	wxTextCtrl*           m_range;
+	wxTextCtrl*           m_latitude;
+	wxTextCtrl*           m_longitude;
+	wxTextCtrl*           m_agl;
+	CDescriptionTextCtrl* m_description1;
+	CDescriptionTextCtrl* m_description2;
+	CDescriptionTextCtrl* m_url;
 };
 
 #endif

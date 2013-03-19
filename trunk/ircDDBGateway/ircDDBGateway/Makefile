@@ -32,7 +32,7 @@ IRCDDBGatewayFrame.o:	IRCDDBGatewayFrame.cpp IRCDDBGatewayFrame.h IRCDDBGatewayP
 				$(CC) $(CFLAGS) -c IRCDDBGatewayFrame.cpp
 
 IRCDDBGatewayGatewaySet.o:	IRCDDBGatewayGatewaySet.cpp IRCDDBGatewayGatewaySet.h ../Common/DStarDefines.h ../Common/AddressTextCtrl.h \
-				../Common/PortTextCtrl.h ../Common/CallsignTextCtrl.h ../Common/Defs.h
+				../Common/PortTextCtrl.h ../Common/CallsignTextCtrl.h ../Common/DescriptionTextCtrl.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayGatewaySet.cpp
 
 IRCDDBGatewayIrcDDBSet.o:	IRCDDBGatewayIrcDDBSet.cpp IRCDDBGatewayIrcDDBSet.h
