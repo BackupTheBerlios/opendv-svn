@@ -135,9 +135,19 @@ unsigned char CDDData::getBand3() const
 	return m_header.getBand3();
 }
 
-void CDDData::setBands(unsigned char band1, unsigned char band2, unsigned char band3)
+void CDDData::setBand1(unsigned char band)
 {
-	m_header.setBands(band1, band2, band3);
+	m_header.setBand1(band);
+}
+
+void CDDData::setBand2(unsigned char band)
+{
+	m_header.setBand2(band);
+}
+
+void CDDData::setBand3(unsigned char band)
+{
+	m_header.setBand3(band);
 }
 
 unsigned char CDDData::getFlag1() const

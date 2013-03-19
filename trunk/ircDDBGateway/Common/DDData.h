@@ -41,7 +41,9 @@ public:
 	unsigned char getBand1() const;
 	unsigned char getBand2() const;
 	unsigned char getBand3() const;
-	void setBands(unsigned char band1, unsigned char band2, unsigned char band3);
+	void setBand1(unsigned char band);
+	void setBand2(unsigned char band);
+	void setBand3(unsigned char band);
 
 	unsigned char getFlag1() const;
 	unsigned char getFlag2() const;

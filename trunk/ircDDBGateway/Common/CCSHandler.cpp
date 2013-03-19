@@ -322,6 +322,11 @@ void CCCSHandler::process(CConnectData& connect)
 		m_pollTimer.start();
 		m_tryTimer.stop();
 
+		// Give our location, frequency, etc
+		CCCSData data(m_callsign, m_latitude, m_longitude, m_frequency, m_offset, m_description1, m_description2, m_url, CT_INFO);
+		data.setDestination(m_ccsAddress, CCS_PORT);
+		m_protocol.writeMisc(data);
+
 		m_state = CS_CONNECTED;
 
 		return;
@@ -353,11 +358,6 @@ bool CCCSHandler::connect()
 		return false;
 
 	wxLogMessage(wxT("CCS: Opening UDP port %u for %s"), m_protocol.getPort(), m_callsign.c_str());
-
-	// Give our location, frequenct, etc
-	CCCSData data(m_callsign, m_latitude, m_longitude, m_frequency, m_offset, m_description1, m_description2, m_url, CT_INFO);
-	data.setDestination(m_ccsAddress, CCS_PORT);
-	m_protocol.writeMisc(data);
 
 	m_waitTimer.start();
 
@@ -534,6 +534,8 @@ void CCCSHandler::clockInt(unsigned int ms)
 		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
 		m_protocol.writeConnect(connect);
 
+		wxLogMessage(wxT("Sending link attempt %u to %s"), m_tryCount);
+
 		unsigned int t = calcBackoff();
 		m_tryTimer.setTimeout(t);
 		m_tryTimer.reset();
@@ -547,7 +549,7 @@ void CCCSHandler::clockInt(unsigned int ms)
 	}
 
 	if (m_inactivityTimer.isRunning() && m_inactivityTimer.hasExpired()) {
-		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str());
+		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str(), m_callsign.c_str());
 
 		CCCSData data(m_local, m_yourCall, CT_TERMINATE);
 		data.setDestination(m_ccsAddress, CCS_PORT);
@@ -566,6 +568,8 @@ void CCCSHandler::clockInt(unsigned int ms)
 	}
 
 	if (m_waitTimer.isRunning() && m_waitTimer.hasExpired()) {
+		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str(), m_callsign.c_str());
+
 		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
 		if (m_latitude != 0.0 && m_longitude != 0.0) {
 			wxString locator = CUtils::latLonToLoc(m_latitude, m_longitude);

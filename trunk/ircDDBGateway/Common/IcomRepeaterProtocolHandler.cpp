@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -543,7 +543,9 @@ void CIcomRepeaterProtocolHandler::sendSingleReply(const CHeaderData& header)
 
 	CHeaderData replyHdr;
 	replyHdr.setId(id);
-	replyHdr.setBands(0xFFU, 0xFFU, 0xFFU);
+	replyHdr.setBand1(0xFFU);
+	replyHdr.setBand2(0xFFU);
+	replyHdr.setBand3(0xFFU);
 	replyHdr.setFlag1(0x01U);
 	replyHdr.setMyCall1(header.getRptCall2());
 	replyHdr.setMyCall2(wxT("    "));
@@ -559,7 +561,9 @@ void CIcomRepeaterProtocolHandler::sendSingleReply(const CHeaderData& header)
 
 	CAMBEData replyData;
 	replyData.setId(id);
-	replyData.setBands(0xFFU, 0xFFU, 0xFFU);
+	replyData.setBand1(0xFFU);
+	replyData.setBand2(0xFFU);
+	replyData.setBand3(0xFFU);
 	replyData.setSeq(0x40U);		// Seq = 0 and end-of-data
 	replyData.setData(buffer, DV_FRAME_MAX_LENGTH_BYTES);
 
@@ -572,7 +576,9 @@ void CIcomRepeaterProtocolHandler::sendMultiReply(const CHeaderData& header)
 
 	CHeaderData replyHdr;
 	replyHdr.setId(id);
-	replyHdr.setBands(0xFFU, 0xFFU, 0xFFU);
+	replyHdr.setBand1(0xFFU);
+	replyHdr.setBand2(0xFFU);
+	replyHdr.setBand3(0xFFU);
 	replyHdr.setFlag1(0x41U);
 	replyHdr.setMyCall1(header.getRptCall2());
 	replyHdr.setMyCall2(wxT("    "));
@@ -586,7 +592,9 @@ void CIcomRepeaterProtocolHandler::sendMultiReply(const CHeaderData& header)
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
 
 	replyData.setId(id);
-	replyData.setBands(0xFFU, 0xFFU, 0xFFU);
+	replyData.setBand1(0xFFU);
+	replyData.setBand2(0xFFU);
+	replyData.setBand3(0xFFU);
 
 	::memcpy(buffer + 0U, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES);
 	::memcpy(buffer + VOICE_FRAME_LENGTH_BYTES, END_PATTERN_BYTES + 0U, 3U);

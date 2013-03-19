@@ -1067,7 +1067,9 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 
 	// Send all original headers to all repeater types, and only send duplicate headers to homebrew repeaters
 	if (source != AS_DUP || (source == AS_DUP && m_hwType == HW_HOMEBREW)) {
-		header.setBands(m_band1, m_band2, m_band3);
+		header.setBand1(m_band1);
+		header.setBand2(m_band2);
+		header.setBand3(m_band3);
 		header.setDestination(m_address, m_port);
 		header.setRepeaters(m_gwyCallsign, m_rptCallsign);
 
@@ -1108,7 +1110,9 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 		data.setId(id);
 	}
 
-	data.setBands(m_band1, m_band2, m_band3);
+	data.setBand1(m_band1);
+	data.setBand2(m_band2);
+	data.setBand3(m_band3);
 	data.setDestination(m_address, m_port);
 
 	m_repeaterHandler->writeAMBE(data);

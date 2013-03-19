@@ -678,11 +678,19 @@ unsigned char CHeaderData::getBand3() const
 	return m_band3;
 }
 
-void CHeaderData::setBands(unsigned char band1, unsigned char band2, unsigned char band3)
+void CHeaderData::setBand1(unsigned char band)
 {
-	m_band1 = band1;
-	m_band2 = band2;
-	m_band3 = band3;
+	m_band1 = band;
+}
+
+void CHeaderData::setBand2(unsigned char band)
+{
+	m_band2 = band;
+}
+
+void CHeaderData::setBand3(unsigned char band)
+{
+	m_band3 = band;
 }
 
 unsigned int CHeaderData::getRptSeq() const
