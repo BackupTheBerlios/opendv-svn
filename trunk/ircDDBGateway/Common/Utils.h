@@ -32,6 +32,7 @@ public:
 	static void          byteToBits(unsigned char byte, bool* bits);
 	static void          byteToBitsRev(unsigned char byte, bool* bits);
 	static wxString      latLonToLoc(double latitude, double longitude);
+	static void          clean(wxString& str, const wxString& allowed);
 
 private:
 };

@@ -27,6 +27,7 @@
 #include "Version.h"
 #include "Logger.h"
 #include "IRCDDB.h"
+#include "Utils.h"
 
 #include <wx/cmdline.h>
 #include <wx/wfstream.h>
@@ -223,6 +224,11 @@ bool CIRCDDBGatewayAppD::createThread()
 	bool atStartup1;
 	RECONNECT reconnect1;
 	config.getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
+
+	CUtils::clean(description11, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(description12, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(url1, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+
 	if (!repeaterBand1.IsSameAs(wxT(" "))) {
 		wxString callsign1 = callsign;
 		if (!repeaterCall1.IsEmpty()) {
@@ -301,6 +307,11 @@ bool CIRCDDBGatewayAppD::createThread()
 	bool atStartup2;
 	RECONNECT reconnect2;
 	config.getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
+
+	CUtils::clean(description21, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(description22, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(url2, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+
 	if (!repeaterBand2.IsSameAs(wxT(" "))) {
 		wxString callsign2 = callsign;
 		if (!repeaterCall2.IsEmpty()) {
@@ -379,6 +390,11 @@ bool CIRCDDBGatewayAppD::createThread()
 	bool atStartup3;
 	RECONNECT reconnect3;
 	config.getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
+
+	CUtils::clean(description31, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(description32, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(url3, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+
 	if (!repeaterBand3.IsSameAs(wxT(" "))) {
 		wxString callsign3 = callsign;
 		if (!repeaterCall3.IsEmpty()) {
@@ -457,6 +473,11 @@ bool CIRCDDBGatewayAppD::createThread()
 	bool atStartup4;
 	RECONNECT reconnect4;
 	config.getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
+
+	CUtils::clean(description41, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(description42, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+	CUtils::clean(url4, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
+
 	if (!repeaterBand4.IsSameAs(wxT(" "))) {
 		wxString callsign4 = callsign;
 		if (!repeaterCall4.IsEmpty()) {

@@ -23,7 +23,7 @@
 
 #include "RestrictedTextCtrl.h"
 
-const wxString DESCRIPTION_CHARS  = wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,!&*()-+=@/\\");
+const wxString DESCRIPTION_CHARS  = wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;");
 
 class CDescriptionTextCtrl : public CRestrictedTextCtrl {
 
