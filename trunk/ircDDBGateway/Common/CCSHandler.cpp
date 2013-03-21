@@ -532,9 +532,11 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 	if (m_tryTimer.isRunning() && m_tryTimer.hasExpired()) {
 		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
+		if (m_latitude != 0.0 && m_longitude != 0.0) {
+			wxString locator = CUtils::latLonToLoc(m_latitude, m_longitude);
+			connect.setLocator(locator);
+		}
 		m_protocol.writeConnect(connect);
-
-		wxLogMessage(wxT("CCS: Sending link attempt %u to %s"), m_tryCount);
 
 		unsigned int t = calcBackoff();
 		m_tryTimer.setTimeout(t);
@@ -568,8 +570,6 @@ void CCCSHandler::clockInt(unsigned int ms)
 	}
 
 	if (m_waitTimer.isRunning() && m_waitTimer.hasExpired()) {
-		wxLogMessage(wxT("CCS: Activity timeout on link for %s"), m_callsign.c_str(), m_callsign.c_str());
-
 		CConnectData connect(m_callsign, CT_LINK1, m_ccsAddress, CCS_PORT);
 		if (m_latitude != 0.0 && m_longitude != 0.0) {
 			wxString locator = CUtils::latLonToLoc(m_latitude, m_longitude);
@@ -579,7 +579,6 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 		m_tryTimer.setTimeout(1U);
 		m_tryTimer.start();
-
 		m_tryCount = 1U;
 
 		m_waitTimer.stop();
@@ -599,6 +598,11 @@ void CCCSHandler::clockInt(unsigned int ms)
 
 unsigned int CCCSHandler::calcBackoff()
 {
+	if (m_tryCount >= 7U) {
+		m_tryCount++;
+		return 60U;
+	}
+
 	unsigned int timeout = 1U;
 
 	for (unsigned int i = 0U; i < m_tryCount; i++)

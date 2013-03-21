@@ -828,6 +828,11 @@ void CDCSHandler::writeStatus(wxFFile& file)
 
 unsigned int CDCSHandler::calcBackoff()
 {
+	if (m_tryCount >= 7U) {
+		m_tryCount++;
+		return 60U;
+	}
+
 	unsigned int timeout = 1U;
 
 	for (unsigned int i = 0U; i < m_tryCount; i++)

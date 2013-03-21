@@ -1267,4 +1267,5 @@ Updated REF047s IP address.
 --------
 
 Restrict the characters that can be entered into the description and URL fields.
+Fixed the retry backoff calculation.
 Updated XRF003s IP address.

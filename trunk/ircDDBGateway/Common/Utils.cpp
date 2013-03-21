@@ -247,14 +247,11 @@ wxString CUtils::latLonToLoc(double latitude, double longitude)
 	return wxString(locator, wxConvLocal, 6U);
 }
 
-void CUtils::clean(wxString &str, const wxString &allowed)
+void CUtils::clean(wxString &str, const wxString& allowed)
 {
-	for (unsigned int i = 0U; i < allowed.Len(); i++) {
-		int n = str.Find(allowed.GetChar(i));
-		while (n != wxNOT_FOUND) {
-			str.SetChar(n, wxT(' '));
-
-			n = str.Find(allowed.GetChar(i));
-		}
+	for (unsigned int i = 0U; i < str.Len(); i++) {
+		int n = allowed.Find(str.GetChar(i));
+		if (n == wxNOT_FOUND)
+			str.SetChar(i, wxT(' '));
 	}
 }
