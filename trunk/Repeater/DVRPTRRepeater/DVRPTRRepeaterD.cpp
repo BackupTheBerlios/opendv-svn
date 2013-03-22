@@ -241,7 +241,7 @@ bool CDVRPTRRepeaterD::createThread()
 	unsigned int announcementTime;
 	wxString announcementRecordRPT1, announcementRecordRPT2;
 	wxString announcementDeleteRPT1, announcementDeleteRPT2;
-	comfig.getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	config.getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 	if (mode == MODE_GATEWAY)
 		announcementEnabled = false;
 	m_thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
