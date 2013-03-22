@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -64,6 +64,50 @@ void CDVTOOLFileWriter::setDirectory(const wxString& dirName)
 wxString CDVTOOLFileWriter::getFileName() const
 {
 	return m_fileName;
+}
+
+bool CDVTOOLFileWriter::open(const wxString& filename, const CHeaderData& header)
+{
+	if (m_file.IsOpened())
+		close();
+
+	wxString name = filename;
+#if !defined(__WINDOWS__)
+	name.Replace(wxT(" "), wxT("_"));
+#endif
+
+	wxFileName fileName(m_dirName, name, wxT("dvtool"));
+	m_fileName = fileName.GetFullPath();
+
+	bool res = m_file.Open(m_fileName, wxT("wb"));
+	if (!res)
+		return false;
+
+	size_t n = m_file.Write(DVTOOL_SIGNATURE, DVTOOL_SIGNATURE_LENGTH);
+	if (n != DVTOOL_SIGNATURE_LENGTH) {
+		m_file.Close();
+		return false;
+	}
+
+	m_offset = m_file.Tell();
+
+	wxUint32 dummy = 0U;
+	n = m_file.Write(&dummy, sizeof(wxUint32));
+	if (n != sizeof(wxUint32)) {
+		m_file.Close();
+		return false;
+	}
+
+	m_sequence = 0U;
+	m_count = 0U;
+
+	res = writeHeader(header);
+	if (!res) {
+		m_file.Close();
+		return false;
+	}
+
+	return true;
 }
 
 bool CDVTOOLFileWriter::open(const CHeaderData& header)

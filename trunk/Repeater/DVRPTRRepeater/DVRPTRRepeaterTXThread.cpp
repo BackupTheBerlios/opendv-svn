@@ -174,6 +174,10 @@ void CDVRPTRRepeaterTXThread::setBeacon(unsigned int time, const wxString& text,
 {
 }
 
+void CDVRPTRRepeaterTXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+}
+
 void CDVRPTRRepeaterTXThread::setController(CExternalController* controller, unsigned int activeHangTime)
 {
 }
@@ -453,13 +457,13 @@ CDVRPTRRepeaterStatusData* CDVRPTRRepeaterTXThread::getStatus()
 
 	if (m_state == DSRS_LISTENING)
 		return new CDVRPTRRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
-				wxEmptyString, 0x00, 0x00, 0x00, m_tx, DSRXS_LISTENING, m_state, 0U, 0U, 0U, 0U, 0.0F,
+				wxEmptyString, 0x00, 0x00, 0x00, m_tx, DSRXS_LISTENING, m_state, 0U, 0U, 0U, 0U, 0U, 0U, 0.0F,
 				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 	else
 		return new CDVRPTRRepeaterStatusData(m_txHeader->getMyCall1(), m_txHeader->getMyCall2(),
 				m_txHeader->getYourCall(), m_txHeader->getRptCall1(), m_txHeader->getRptCall2(), 
 				m_txHeader->getFlag1(), m_txHeader->getFlag2(), m_txHeader->getFlag3(), m_tx, DSRXS_LISTENING,
-				m_state, 0U, 0U, 0U, 0U, loss * 100.0F, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
+				m_state, 0U, 0U, 0U, 0U, 0U, 0U, loss * 100.0F, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
 				wxEmptyString, wxEmptyString);
 }
 

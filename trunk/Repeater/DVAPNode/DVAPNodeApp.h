@@ -63,6 +63,9 @@ public:
 	virtual void getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const;
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
 
+	virtual void getAnnouncement(bool& enabled, unsigned int& time, wxString& recordRPT1, wxString& recordRPT2, wxString& deleteRPT1, wxString& deleteRPT2) const;
+	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
+
 	virtual void getLogging(bool& logging) const;
 	virtual void setLogging(bool logging);
 

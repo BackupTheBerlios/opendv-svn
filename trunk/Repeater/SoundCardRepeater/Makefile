@@ -47,7 +47,7 @@ SoundCardRepeaterLogger.o:	SoundCardRepeaterLogger.cpp SoundCardRepeaterLogger.h
 
 SoundCardRepeaterPreferences.o:	SoundCardRepeaterPreferences.cpp SoundCardRepeaterPreferences.h SoundCardRepeaterDefs.h SoundCardRepeaterRadioSet.h SoundCardRepeaterApp.h \
 							SoundCardRepeaterControllerSet.h SoundCardRepeaterTimesSet.h SoundCardRepeaterCallsignSet.h ../Common/NetworkSet.h \
-							../Common/BeaconSet.h ../Common/DStarDefines.h ../Common/ActiveHangSet.h ../Common/Control1Set.h ../Common/Control2Set.h
+							../Common/BeaconSet.h ../Common/AnnouncementSet.h ../Common/DStarDefines.h ../Common/ActiveHangSet.h ../Common/Control1Set.h ../Common/Control2Set.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterPreferences.cpp
 
 SoundCardRepeaterRadioSet.o:	SoundCardRepeaterRadioSet.cpp SoundCardRepeaterRadioSet.h SoundCardRepeaterApp.h SoundCardRepeaterDefs.h ../Common/SoundCardReaderWriter.h \
@@ -68,7 +68,7 @@ SoundCardRepeaterTRXThread.o:	SoundCardRepeaterTRXThread.cpp SoundCardRepeaterTR
 							../Common/WAVFileReader.h ../Common/AudioCallback.h ../Common/RingBuffer.h ../Common/Timer.h ../Common/ExternalController.h \
 							../Common/PTTDelay.h ../Common/Utils.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataDecoder.h \
 							../Common/SlowDataEncoder.h ../Common/AudioDelay.h ../Common/Version.h ../Common/Goertzel.h ../Common/DVTOOLFileWriter.h \
-							../Common/CallsignList.h ../Common/BeaconUnit.h ../Common/BeaconCallback.h
+							../Common/CallsignList.h ../Common/BeaconUnit.h ../Common/BeaconCallback.h ../Common/AnnouncementUnit.h ../Common/AnnouncementCallback.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterTRXThread.cpp
 
 SoundCardRepeaterTXRXThread.o:	SoundCardRepeaterTXRXThread.cpp SoundCardRepeaterTXRXThread.h SoundCardRepeaterThread.h SoundCardRepeaterDefs.h SoundCardRepeaterApp.h \

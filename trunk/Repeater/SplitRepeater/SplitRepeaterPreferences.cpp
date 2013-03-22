@@ -28,7 +28,9 @@ CSplitRepeaterPreferences::CSplitRepeaterPreferences(wxWindow* parent, int id, c
 	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime,
-	unsigned int beaconTime, const wxString& beaconText, bool beaconVoice, TEXT_LANG language,
+	unsigned int beaconTime, const wxString& beaconText, bool beaconVoice, TEXT_LANG language,bool announcementEnabled,
+	unsigned int announcementTime, const wxString& announcementRecordRPT1, const wxString& announcementRecordRPT2,
+	const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, 
 	const wxString& receiver1Address, unsigned int receiver1Port,
 	const wxString& receiver2Address, unsigned int receiver2Port,
 	const wxString& transmitter1Address, unsigned int transmitter1Port,
@@ -44,6 +46,7 @@ m_callsign(NULL),
 m_network(NULL),
 m_times(NULL),
 m_beacon(NULL),
+m_announcement(NULL),
 m_receiver1(NULL),
 m_receiver2(NULL),
 m_transmitter1(NULL),
@@ -66,6 +69,9 @@ m_control2(NULL)
 
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
+
+	m_announcement = new CAnnouncementSet(noteBook, -1, APPLICATION_NAME, announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	noteBook->AddPage(m_announcement, _("Announcement"), false);
 
 	m_receiver1 = new CSplitRepeaterAddressSet(noteBook, -1, APPLICATION_NAME, receiver1Address, receiver1Port);
 	noteBook->AddPage(m_receiver1, _("Receiver 1"), false);
@@ -104,7 +110,7 @@ CSplitRepeaterPreferences::~CSplitRepeaterPreferences()
 
 bool CSplitRepeaterPreferences::Validate()
 {
-	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_receiver1->Validate() || !m_receiver2->Validate() || !m_transmitter1->Validate() || !m_transmitter2->Validate() || !m_control1->Validate() || !m_control2->Validate())
+	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_announcement->Validate() || !m_receiver1->Validate() || !m_receiver2->Validate() || !m_transmitter1->Validate() || !m_transmitter2->Validate() || !m_control1->Validate() || !m_control2->Validate())
 		return false;
 
 	return true;	
@@ -198,6 +204,36 @@ bool CSplitRepeaterPreferences::getBeaconVoice() const
 TEXT_LANG CSplitRepeaterPreferences::getLanguage() const
 {
 	return m_beacon->getLanguage();
+}
+
+bool CSplitRepeaterPreferences::getAnnouncementEnabled() const
+{
+	return m_announcement->getEnabled();
+}
+
+unsigned int CSplitRepeaterPreferences::getAnnouncementTime() const
+{
+	return m_announcement->getTime();
+}
+
+wxString CSplitRepeaterPreferences::getAnnouncementRecordRPT1() const
+{
+	return m_announcement->getRecordRPT1();
+}
+
+wxString CSplitRepeaterPreferences::getAnnouncementRecordRPT2() const
+{
+	return m_announcement->getRecordRPT2();
+}
+
+wxString CSplitRepeaterPreferences::getAnnouncementDeleteRPT1() const
+{
+	return m_announcement->getDeleteRPT1();
+}
+
+wxString CSplitRepeaterPreferences::getAnnouncementDeleteRPT2() const
+{
+	return m_announcement->getDeleteRPT2();
 }
 
 wxString CSplitRepeaterPreferences::getReceiver1Address() const

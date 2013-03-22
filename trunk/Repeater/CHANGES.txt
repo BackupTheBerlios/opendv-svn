@@ -1821,3 +1821,4 @@ Allow for the new format of Danish callsigns.
 --------
 
 Updated XRF003s IP address.
+Added the recording and playback of announcements.

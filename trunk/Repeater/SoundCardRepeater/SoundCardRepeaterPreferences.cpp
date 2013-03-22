@@ -28,7 +28,9 @@ CSoundCardRepeaterPreferences::CSoundCardRepeaterPreferences(wxWindow* parent, i
 	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int hangTime,
-	unsigned int beaconTime, const wxString& beaconText, bool beaconVoice, TEXT_LANG language,
+	unsigned int beaconTime, const wxString& beaconText, bool beaconVoice, TEXT_LANG language, bool announcementEnabled,
+	unsigned int announcementTime, const wxString& announcementRecordRPT1, const wxString& announcementRecordRPT2,
+	const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, 
 	const wxString& readDevice, const wxString& writeDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel,
 	wxFloat32 txLevel, SQUELCH_MODE squelchMode, wxFloat32 squelchLevel, const wxString& interfaceType,
 	unsigned int interfaceConfig, int pttDelay, bool pttInvert, bool enabled, const wxString& rpt1Callsign,
@@ -43,6 +45,7 @@ m_callsign(NULL),
 m_network(NULL),
 m_times(NULL),
 m_beacon(NULL),
+m_announcement(NULL),
 m_radio(NULL),
 m_controller(NULL),
 m_control1(NULL),
@@ -64,6 +67,9 @@ m_active(NULL)
 
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
+
+	m_announcement = new CAnnouncementSet(noteBook, -1, APPLICATION_NAME, announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	noteBook->AddPage(m_announcement, _("Announcement"), false);
 
 	m_radio = new CSoundCardRepeaterRadioSet(noteBook, -1, APPLICATION_NAME, readDevice, writeDevice, rxLevel, txLevel, squelchMode, squelchLevel, rxInvert, txInvert);
 	noteBook->AddPage(m_radio, _("Radio"), false);
@@ -99,7 +105,7 @@ CSoundCardRepeaterPreferences::~CSoundCardRepeaterPreferences()
 
 bool CSoundCardRepeaterPreferences::Validate()
 {
-	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_radio->Validate() || !m_controller->Validate() || !m_control1->Validate() || !m_control2->Validate())
+	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_announcement->Validate() || !m_radio->Validate() || !m_controller->Validate() || !m_control1->Validate() || !m_control2->Validate())
 		return false;
 
 	return true;	
@@ -193,6 +199,36 @@ bool CSoundCardRepeaterPreferences::getBeaconVoice() const
 TEXT_LANG CSoundCardRepeaterPreferences::getLanguage() const
 {
 	return m_beacon->getLanguage();
+}
+
+bool CSoundCardRepeaterPreferences::getAnnouncementEnabled() const
+{
+	return m_announcement->getEnabled();
+}
+
+unsigned int CSoundCardRepeaterPreferences::getAnnouncementTime() const
+{
+	return m_announcement->getTime();
+}
+
+wxString CSoundCardRepeaterPreferences::getAnnouncementRecordRPT1() const
+{
+	return m_announcement->getRecordRPT1();
+}
+
+wxString CSoundCardRepeaterPreferences::getAnnouncementRecordRPT2() const
+{
+	return m_announcement->getRecordRPT2();
+}
+
+wxString CSoundCardRepeaterPreferences::getAnnouncementDeleteRPT1() const
+{
+	return m_announcement->getDeleteRPT1();
+}
+
+wxString CSoundCardRepeaterPreferences::getAnnouncementDeleteRPT2() const
+{
+	return m_announcement->getDeleteRPT2();
 }
 
 wxString CSoundCardRepeaterPreferences::getReadDevice() const

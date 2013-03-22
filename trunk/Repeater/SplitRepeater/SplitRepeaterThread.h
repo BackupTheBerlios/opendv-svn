@@ -23,10 +23,13 @@
 #include "SplitRepeaterStatusData.h"
 #include "SplitRepeaterHeaderData.h"
 #include "SplitRepeaterAMBEData.h"
+#include "AnnouncementCallback.h"
+#include "AnnouncementUnit.h"
 #include "SlowDataEncoder.h"
 #include "BeaconCallback.h"
 #include "DStarDefines.h"
 #include "CallsignList.h"
+#include "HeaderData.h"
 #include "BeaconUnit.h"
 #include "Timer.h"
 #include "Utils.h"
@@ -34,7 +37,7 @@
 #include <wx/wx.h>
 #include <wx/regex.h>
 
-class CSplitRepeaterThread : public IBeaconCallback {
+class CSplitRepeaterThread : public IBeaconCallback, public IAnnouncementCallback {
 public:
 	CSplitRepeaterThread();
 	virtual ~CSplitRepeaterThread();
@@ -48,6 +51,7 @@ public:
 	virtual bool setTransmitter2(const wxString& address, unsigned int port);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
+	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
 	virtual void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line);
 	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
@@ -68,6 +72,9 @@ public:
 
 	virtual void transmitBeaconHeader();
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end);
+
+	virtual void transmitAnnouncementHeader(CHeaderData* header);
+	virtual void transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end);
 
 private:
 	CSplitRepeaterProtocolHandler* m_protocolHandler;
@@ -96,6 +103,13 @@ private:
 	CBeaconUnit*               m_beacon;
 	unsigned int               m_beaconId;
 	unsigned int               m_beaconSeq;
+	CAnnouncementUnit*         m_announcement;
+	unsigned int               m_announcementId;
+	unsigned int               m_announcementSeq;
+	wxString                   m_recordRPT1;
+	wxString                   m_recordRPT2;
+	wxString                   m_deleteRPT1;
+	wxString                   m_deleteRPT2;
 	CSplitRepeaterHeaderData*  m_rxHeader;
 	CSplitRepeaterHeaderData*  m_txHeader;
 	unsigned char              m_radioSeqNo;
@@ -111,6 +125,7 @@ private:
 	CTimer                     m_status4Timer;
 	CTimer                     m_status5Timer;
 	CTimer                     m_beaconTimer;
+	CTimer                     m_announcementTimer;
 	DSTAR_RPT_STATE            m_state;
 	CSlowDataEncoder           m_ackEncoder;
 	CSlowDataEncoder           m_linkEncoder;
@@ -173,6 +188,8 @@ private:
 	unsigned int               m_receiver1Rejected;
 	unsigned int               m_receiver2Rejected;
 	bool                       m_blanking;
+	bool                       m_recording;
+	bool                       m_deleting;
 
 	void processNetworkHeader(CSplitRepeaterHeaderData* header);
 	void processNetworkFrame(CSplitRepeaterAMBEData* data);
@@ -201,6 +218,7 @@ private:
 	void endOfRadioData();
 	bool setRepeaterState(DSTAR_RPT_STATE state);
 	bool checkControl(const CSplitRepeaterHeaderData& header);
+	bool checkAnnouncements(const CSplitRepeaterHeaderData& header);
 	TRISTATE checkHeader(CSplitRepeaterHeaderData& header);
 	void clock(unsigned long ms);
 	void clearQueue(unsigned int n);

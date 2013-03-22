@@ -39,7 +39,7 @@ DVAPNodeLogger.o:	DVAPNodeLogger.cpp DVAPNodeLogger.h DVAPNodeApp.h
 				$(CC) $(CFLAGS) -c DVAPNodeLogger.cpp
 
 DVAPNodePreferences.o:	DVAPNodePreferences.cpp DVAPNodePreferences.h DVAPNodeDefs.h DVAPNodeDVAPSet.h DVAPNodeApp.h DVAPNodeTimesSet.h \
-						DVAPNodeCallsignSet.h ../Common/NetworkSet.h ../Common/BeaconSet.h ../Common/DStarDefines.h
+						DVAPNodeCallsignSet.h ../Common/NetworkSet.h ../Common/BeaconSet.h ../Common/AnnouncementSet.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DVAPNodePreferences.cpp
 
 DVAPNodeStatusData.o:	DVAPNodeStatusData.cpp DVAPNodeStatusData.h ../Common/DStarDefines.h
@@ -51,7 +51,8 @@ DVAPNodeThreadHelper.o:	DVAPNodeThreadHelper.cpp DVAPNodeThreadHelper.h DVAPNode
 DVAPNodeTRXThread.o:	DVAPNodeTRXThread.cpp DVAPNodeTRXThread.h DVAPNodeThread.h DVAPNodeDefs.h DVAPNodeApp.h DVAPNodeStatusData.h ../Common/Utils.h \
 					../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/HeaderData.h ../Common/Timer.h ../Common/DVAPController.h \
 					../Common/RepeaterProtocolHandler.h ../Common/SlowDataEncoder.h ../Common/OutputQueue.h ../Common/Version.h \
-					../Common/DVTOOLFileWriter.h ../Common/CallsignList.h ../Common/BeaconUnit.h ../Common/BeaconCallback.h
+					../Common/DVTOOLFileWriter.h ../Common/CallsignList.h ../Common/BeaconUnit.h ../Common/BeaconCallback.h ../Common/AnnouncementUnit.h \
+					../Common/AnnouncementCallback.h
 				$(CC) $(CFLAGS) -c DVAPNodeTRXThread.cpp
 
 DVAPNodeTXThread.o:	DVAPNodeTXThread.cpp DVAPNodeTXThread.h DVAPNodeThread.h DVAPNodeDefs.h DVAPNodeApp.h DVAPNodeStatusData.h ../Common/Utils.h \

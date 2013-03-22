@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ private:
 	wxStaticText* m_flags;
 	wxStaticText* m_percent;
 	wxStaticText* m_timeout;
-	wxStaticText* m_active;
 	wxStaticText* m_beacon;
+	wxStaticText* m_announce;
 	wxStaticText* m_text;
 	wxStaticText* m_logLine1;
 	wxStaticText* m_logLine2;

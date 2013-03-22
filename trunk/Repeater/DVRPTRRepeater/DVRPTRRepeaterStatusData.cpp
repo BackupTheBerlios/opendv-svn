@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ CDVRPTRRepeaterStatusData::CDVRPTRRepeaterStatusData(const wxString& myCall1, co
 													 DSTAR_RX_STATE rxState, DSTAR_RPT_STATE rptState,
 													 unsigned int timeoutTimer, unsigned int timeoutExpiry,
 													 unsigned int beaconTimer, unsigned int beaconExpiry,
+													 unsigned int announceTimer, unsigned int announceExpiry,
 													 float percent, const wxString& text, const wxString& status1,
 													 const wxString& status2, const wxString& status3,
 													 const wxString& status4, const wxString& status5) :
@@ -43,6 +44,8 @@ m_timeoutTimer(timeoutTimer),
 m_timeoutExpiry(timeoutExpiry),
 m_beaconTimer(beaconTimer),
 m_beaconExpiry(beaconExpiry),
+m_announceTimer(announceTimer),
+m_announceExpiry(announceExpiry),
 m_percent(percent),
 m_text(text),
 m_status1(status1),
@@ -130,6 +133,16 @@ unsigned int CDVRPTRRepeaterStatusData::getBeaconTimer() const
 unsigned int CDVRPTRRepeaterStatusData::getBeaconExpiry() const
 {
 	return m_beaconExpiry;
+}
+
+unsigned int CDVRPTRRepeaterStatusData::getAnnounceTimer() const
+{
+	return m_announceTimer;
+}
+
+unsigned int CDVRPTRRepeaterStatusData::getAnnounceExpiry() const
+{
+	return m_announceExpiry;
 }
 
 float CDVRPTRRepeaterStatusData::getPercent() const

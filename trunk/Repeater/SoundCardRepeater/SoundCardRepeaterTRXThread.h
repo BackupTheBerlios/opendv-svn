@@ -20,9 +20,11 @@
 #define	SoundCardRepeaterTRXThread_H
 
 #include "SoundCardRepeaterThread.h"
+#include "AnnouncementCallback.h"
 #include "DStarGMSKDemodulator.h"
 #include "LimitedLengthBuffer.h"
 #include "DStarGMSKModulator.h"
+#include "AnnouncementUnit.h"
 #include "DVTOOLFileWriter.h"
 #include "SlowDataDecoder.h"
 #include "SlowDataEncoder.h"
@@ -41,7 +43,7 @@
 #include <wx/wx.h>
 #include <wx/regex.h>
 
-class CSoundCardRepeaterTRXThread : public ISoundCardRepeaterThread, public IBeaconCallback {
+class CSoundCardRepeaterTRXThread : public ISoundCardRepeaterThread, public IBeaconCallback, public IAnnouncementCallback {
 public:
 	CSoundCardRepeaterTRXThread();
 	virtual ~CSoundCardRepeaterTRXThread();
@@ -54,6 +56,7 @@ public:
 	virtual void setController(CExternalController* controller, int pttDelay);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime, unsigned int hangTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
+	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
 	virtual void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4);
 	virtual void setActiveHang(unsigned int time);
 	virtual void setOutputs(bool out1, bool out2, bool out3, bool out4);
@@ -83,6 +86,9 @@ public:
 	virtual void transmitBeaconHeader();
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end);
 
+	virtual void transmitAnnouncementHeader(CHeaderData* header);
+	virtual void transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end);
+
 private:
 	CSoundCardReaderWriter*   m_soundcard;
 	CRepeaterProtocolHandler* m_protocolHandler;
@@ -101,6 +107,11 @@ private:
 	bool                      m_radioStarted;
 	bool                      m_networkStarted;
 	CBeaconUnit*              m_beacon;
+	CAnnouncementUnit*        m_announcement;
+	wxString                  m_recordRPT1;
+	wxString                  m_recordRPT2;
+	wxString                  m_deleteRPT1;
+	wxString                  m_deleteRPT2;
 	wxString                  m_rptCallsign;
 	wxString                  m_gwyCallsign;
 	CWAVFileReader*           m_reader;
@@ -128,6 +139,7 @@ private:
 	CTimer                    m_status5Timer;
 	CTimer                    m_hangTimer;
 	CTimer                    m_beaconTimer;
+	CTimer                    m_announcementTimer;
 	DSTAR_RPT_STATE           m_rptState;
 	CSlowDataDecoder          m_slowDataDecoder;
 	CSlowDataEncoder          m_ackEncoder;
@@ -214,6 +226,8 @@ private:
 	bool                      m_blocked;
 	bool                      m_busyData;
 	bool                      m_blanking;
+	bool                      m_recording;
+	bool                      m_deleting;
 
 	void receiveRadio();
 	void receiveNetwork();
@@ -243,6 +257,7 @@ private:
 	bool setRepeaterState(DSTAR_RPT_STATE state);
 	void readRadioData(const wxFloat32* buffer, unsigned int nSamples);
 	bool checkControl(const CHeaderData& header);
+	bool checkAnnouncements(const CHeaderData& header);
 	TRISTATE checkHeader(CHeaderData& header);
 	void getStatistics();
 	void writeStatistics();

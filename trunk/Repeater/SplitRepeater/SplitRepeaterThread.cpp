@@ -54,6 +54,13 @@ m_gwyCallsign(),
 m_beacon(NULL),
 m_beaconId(0x00U),
 m_beaconSeq(0U),
+m_announcement(NULL),
+m_announcementId(0x00U),
+m_announcementSeq(0U),
+m_recordRPT1(),
+m_recordRPT2(),
+m_deleteRPT1(),
+m_deleteRPT2(),
 m_rxHeader(NULL),
 m_txHeader(NULL),
 m_radioSeqNo(0U),
@@ -69,6 +76,7 @@ m_status3Timer(1000U, 3U),			// 3s
 m_status4Timer(1000U, 3U),			// 3s
 m_status5Timer(1000U, 3U),			// 3s
 m_beaconTimer(1000U, 600U),			// 10 mins
+m_announcementTimer(1000U, 0U),		// not running
 m_state(DSRS_LISTENING),
 m_ackEncoder(),
 m_linkEncoder(),
@@ -130,7 +138,9 @@ m_receiver1Choice(0U),
 m_receiver2Choice(0U),
 m_receiver1Rejected(0U),
 m_receiver2Rejected(0U),
-m_blanking(true)
+m_blanking(true),
+m_recording(false),
+m_deleting(false)
 {
 	m_receiver1Address.s_addr    = INADDR_NONE;
 	m_receiver2Address.s_addr    = INADDR_NONE;
@@ -174,6 +184,7 @@ void CSplitRepeaterThread::run()
 
 	m_stopped = false;
 
+	m_announcementTimer.start();
 	m_beaconTimer.start();
 	m_pollTimer.start();
 
@@ -205,6 +216,12 @@ void CSplitRepeaterThread::run()
 		if (m_beaconTimer.isRunning() && m_beaconTimer.hasExpired()) {
 			m_beacon->sendBeacon();
 			m_beaconTimer.reset();
+		}
+
+		// Send the announcement and restart the timer
+		if (m_announcementTimer.isRunning() && m_announcementTimer.hasExpired()) {
+			m_announcement->startAnnouncement();
+			m_announcementTimer.reset();
 		}
 
 		// Send the status 1 message after a few seconds
@@ -252,6 +269,7 @@ void CSplitRepeaterThread::run()
 				m_networkWatchdogTimer.stop();
 				m_ackTimer.stop();
 				m_beaconTimer.stop();
+				m_announcementTimer.stop();
 				m_state = DSRS_SHUTDOWN;
 			}
 		} else {
@@ -262,6 +280,7 @@ void CSplitRepeaterThread::run()
 				m_networkWatchdogTimer.stop();
 				m_ackTimer.stop();
 				m_beaconTimer.start();
+				m_announcementTimer.start();
 				m_state = DSRS_LISTENING;
 			}
 		}
@@ -399,6 +418,30 @@ void CSplitRepeaterThread::setBeacon(unsigned int time, const wxString& text, bo
 
 	if (time > 0U)
 		m_beacon = new CBeaconUnit(this, m_rptCallsign, text, voice, language);
+}
+
+void CSplitRepeaterThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+	if (enabled && time > 0U) {
+		m_announcement = new CAnnouncementUnit(this, m_rptCallsign);
+
+		m_announcementTimer.setTimeout(time);
+
+		m_recordRPT1 = recordRPT1;
+		m_recordRPT2 = recordRPT2;
+		m_deleteRPT1 = deleteRPT1;
+		m_deleteRPT2 = deleteRPT2;
+
+		m_recordRPT1.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_recordRPT2.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_deleteRPT1.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_deleteRPT2.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+
+		m_recordRPT1.Truncate(LONG_CALLSIGN_LENGTH);
+		m_recordRPT2.Truncate(LONG_CALLSIGN_LENGTH);
+		m_deleteRPT1.Truncate(LONG_CALLSIGN_LENGTH);
+		m_deleteRPT2.Truncate(LONG_CALLSIGN_LENGTH);
+	}
 }
 
 void CSplitRepeaterThread::setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line)
@@ -811,6 +854,44 @@ void CSplitRepeaterThread::transmitBeaconData(const unsigned char* data, unsigne
 	transmitFrame(&ambe);
 }
 
+void CSplitRepeaterThread::transmitAnnouncementHeader(CHeaderData* header1)
+{
+	m_announcementId  = CSplitRepeaterHeaderData::createId();
+	m_announcementSeq = 0U;
+
+	CSplitRepeaterHeaderData header2;
+	header2.setFlag1(header1->getFlag1());
+	header2.setFlag2(header1->getFlag2());
+	header2.setFlag3(header1->getFlag3());
+	header2.setMyCall1(header1->getMyCall1());
+	header2.setMyCall2(header1->getMyCall2());
+	header2.setYourCall(header1->getYourCall());
+	header2.setRptCall1(m_gwyCallsign);
+	header2.setRptCall2(m_rptCallsign);
+	header2.setId(m_beaconId);
+
+	delete header1;
+
+	wxLogMessage(wxT("Transmitting to - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header2.getMyCall1().c_str(), header2.getMyCall2().c_str(), header2.getYourCall().c_str(), header2.getRptCall1().c_str(), header2.getRptCall2().c_str(), header2.getFlag1(), header2.getFlag2(), header2.getFlag3());
+	transmitHeader(&header2);
+}
+
+void CSplitRepeaterThread::transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end)
+{
+	CSplitRepeaterAMBEData ambe;
+
+	ambe.setData(data, length);
+	ambe.setSeq(m_announcementSeq);
+	ambe.setId(m_announcementId);
+	ambe.setEnd(end);
+
+	m_announcementSeq++;
+	if (m_announcementSeq >= 21U)
+		m_announcementSeq = 0U;
+
+	transmitFrame(&ambe);
+}
+
 void CSplitRepeaterThread::transmitUserStatus(unsigned int n)
 {
 	unsigned int id = CSplitRepeaterHeaderData::createId();
@@ -893,7 +974,9 @@ void CSplitRepeaterThread::repeaterStateMachine()
 		if (m_receiver2Id == 0x00U) {
 			m_radioId = 0x00U;
 			endOfRadioData();
-			m_busyData = false;
+			m_recording = false;
+			m_deleting  = false;
+			m_busyData  = false;
 		}
 	}
 
@@ -906,7 +989,9 @@ void CSplitRepeaterThread::repeaterStateMachine()
 		if (m_receiver1Id == 0x00U) {
 			m_radioId = 0x00U;
 			endOfRadioData();
-			m_busyData = false;
+			m_recording = false;
+			m_deleting  = false;
+			m_busyData  = false;
 		}
 	}
 
@@ -961,10 +1046,12 @@ bool CSplitRepeaterThread::setRepeaterState(DSTAR_RPT_STATE state)
 	switch (m_state) {
 		case DSRS_SHUTDOWN:
 			m_beaconTimer.start();
+			m_announcementTimer.start();
 			break;
 
 		case DSRS_LISTENING:
 			m_beaconTimer.stop();
+			m_announcementTimer.stop();
 			break;
 
 		default:
@@ -980,6 +1067,7 @@ bool CSplitRepeaterThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_networkWatchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.stop();
+			m_announcementTimer.stop();
 			m_state = DSRS_SHUTDOWN;
 			break;
 
@@ -988,6 +1076,7 @@ bool CSplitRepeaterThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_networkWatchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
+			m_announcementTimer.start();
 			m_networkId = 0x00U;
 			m_state = DSRS_LISTENING;
 			break;
@@ -1066,6 +1155,17 @@ bool CSplitRepeaterThread::processRadioHeader(CSplitRepeaterHeaderData* header)
 	bool res = checkControl(*header);
 	if (res)
 		return true;
+
+	// Check announcement messages
+	res = checkAnnouncements(*header);
+	if (res) {
+		bool res = setRepeaterState(DSRS_INVALID);
+		if (res) {
+			delete m_rxHeader;
+			m_rxHeader = new CSplitRepeaterHeaderData(*header);
+		}
+		return true;
+	}
 
 	// If shutdown we ignore incoming headers
 	if (m_state == DSRS_SHUTDOWN)
@@ -1287,6 +1387,9 @@ void CSplitRepeaterThread::processRadioFrame(CSplitRepeaterAMBEData* data)
 
 	m_ambeFrames++;
 
+	unsigned char bytes[DV_FRAME_LENGTH_BYTES];
+	data->getData(bytes, DV_FRAME_LENGTH_BYTES);
+
 	bool end = data->isEnd();
 
 	// Only regenerate the AMBE on received radio data
@@ -1297,8 +1400,18 @@ void CSplitRepeaterThread::processRadioFrame(CSplitRepeaterAMBEData* data)
 		m_ambeBits   += 48U;		// Only count the bits with FEC added
 	}
 
-	if (::memcmp(data, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES) == 0)
+	if (::memcmp(bytes, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES) == 0)
 		m_ambeSilence++;
+
+	// If this is deleting an announcement, ignore the audio
+	if (m_deleting)
+		return;
+
+	// If this is recording an announcement, send the audio to the announcement unit and then stop
+	if (m_recording) {
+		m_announcement->writeData(bytes, DV_FRAME_LENGTH_BYTES, end);
+		return;
+	}
 
 	if (m_busyData) {
 		if (!m_blocked) {
@@ -1338,7 +1451,9 @@ void CSplitRepeaterThread::processRadioFrame(CSplitRepeaterAMBEData* data)
 
 		endOfRadioData();
 
-		m_busyData = false;
+		m_busyData  = false;
+		m_recording = false;
+		m_deleting  = false;
 	}
 }
 
@@ -1625,15 +1740,17 @@ CSplitRepeaterStatusData* CSplitRepeaterThread::getStatus()
 	if (m_state == DSRS_SHUTDOWN || m_state == DSRS_LISTENING)
 		return new CSplitRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
 				wxEmptyString, 0x00, 0x00, 0x00, m_state, m_timeoutTimer.getTimer(),
-				m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(), m_beaconTimer.getTimeout(), 0.0F,
+				m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(), m_beaconTimer.getTimeout(),
+				m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(), 0.0F,
 				m_ackText, m_status1Text, m_status2Text, m_status3Text, m_status4Text, m_status5Text);
 	else
 		return new CSplitRepeaterStatusData(m_rxHeader->getMyCall1(), m_rxHeader->getMyCall2(),
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_state,
 				m_timeoutTimer.getTimer(), m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(),
-				m_beaconTimer.getTimeout(), (errors * 100.0F) / bits, m_ackText, m_status1Text, m_status2Text,
-				m_status3Text, m_status4Text, m_status5Text);
+				m_beaconTimer.getTimeout(), m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(),
+				(errors * 100.0F) / bits, m_ackText, m_status1Text, m_status2Text, m_status3Text, m_status4Text,
+				m_status5Text);
 }
 
 void CSplitRepeaterThread::clock(unsigned long ms)
@@ -1650,8 +1767,11 @@ void CSplitRepeaterThread::clock(unsigned long ms)
 	m_status4Timer.clock(ms);
 	m_status5Timer.clock(ms);
 	m_beaconTimer.clock(ms);
+	m_announcementTimer.clock(ms);
 	if (m_beacon != NULL)
 		m_beacon->clock();
+	if (m_announcement != NULL)
+		m_announcement->clock();
 }
 
 void CSplitRepeaterThread::shutdown()
@@ -1734,6 +1854,37 @@ bool CSplitRepeaterThread::checkControl(const CSplitRepeaterHeaderData& header)
 	}
 
 	return true;
+}
+
+bool CSplitRepeaterThread::checkAnnouncements(const CSplitRepeaterHeaderData& header)
+{
+	if (m_announcement == NULL)
+		return false;
+
+	if (m_recordRPT1.IsSameAs(header.getRptCall1()) && m_recordRPT2.IsSameAs(header.getRptCall2())) {
+		wxLogMessage(wxT("Announcement creation requested by %s/%s"), header.getMyCall1().c_str(), header.getMyCall2().c_str());
+		CHeaderData header2;
+		header2.setFlag1(header.getFlag1());
+		header2.setFlag2(header.getFlag2());
+		header2.setFlag3(header.getFlag3());
+		header2.setMyCall1(header.getMyCall1());
+		header2.setMyCall2(header.getMyCall2());
+		header2.setYourCall(header.getYourCall());
+		header2.setRptCall1(header.getRptCall1());
+		header2.setRptCall2(header.getRptCall2());
+		m_announcement->writeHeader(header2);
+		m_recording = true;
+		return true;
+	}
+
+	if (m_deleteRPT1.IsSameAs(header.getRptCall1()) && m_deleteRPT2.IsSameAs(header.getRptCall2())) {
+		wxLogMessage(wxT("Announcement deletion requested by %s/%s"), header.getMyCall1().c_str(), header.getMyCall2().c_str());
+		m_announcement->deleteAnnouncement();
+		m_deleting = true;
+		return true;
+	}
+
+	return false;
 }
 
 TRISTATE CSplitRepeaterThread::checkHeader(CSplitRepeaterHeaderData& header)

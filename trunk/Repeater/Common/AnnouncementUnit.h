@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,39 +16,39 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DVTOOLFileWriter_H
-#define DVTOOLFileWriter_H
+#ifndef	AnnouncementUnit_H
+#define	AnnouncementUnit_H
 
+#include "AnnouncementCallback.h"
+#include "DVTOOLFileWriter.h"
+#include "DVTOOLFileReader.h"
+#include "DStarDefines.h"
 #include "HeaderData.h"
 
 #include <wx/wx.h>
-#include <wx/ffile.h>
 
-class CDVTOOLFileWriter {
+class CAnnouncementUnit {
 public:
-	CDVTOOLFileWriter();
-	~CDVTOOLFileWriter();
-
-	static void setDirectory(const wxString& dirName);
-
-	wxString getFileName() const;
-
-	bool open(const CHeaderData& header);
-	bool open(const wxString& filename, const CHeaderData& header);
-	bool write(const unsigned char* buffer, unsigned int length);
-	void close();
-
-private:
-	static wxString m_dirName;
-
-	wxString     m_fileName;
-	wxFFile      m_file;
-	wxUint32     m_count;
-	unsigned int m_sequence;
-	wxFileOffset m_offset;
+	CAnnouncementUnit(IAnnouncementCallback* handler, const wxString& callsign);
+	~CAnnouncementUnit();
 
 	bool writeHeader(const CHeaderData& header);
-	bool writeTrailer();
+	bool writeData(const unsigned char* data, unsigned int length, bool end);
+
+	void deleteAnnouncement();
+
+	void startAnnouncement();
+
+	void clock();
+
+private:
+	IAnnouncementCallback* m_handler;
+	wxString               m_localFileName;
+	CDVTOOLFileReader      m_reader;
+	CDVTOOLFileWriter      m_writer;
+	wxStopWatch            m_time;
+	unsigned int           m_out;
+	bool                   m_sending;
 };
 
 #endif

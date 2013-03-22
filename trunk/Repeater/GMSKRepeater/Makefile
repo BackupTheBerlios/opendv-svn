@@ -49,7 +49,7 @@ GMSKRepeaterModemSet.o:	GMSKRepeaterModemSet.cpp GMSKRepeaterModemSet.h GMSKRepe
 
 GMSKRepeaterPreferences.o:	GMSKRepeaterPreferences.cpp GMSKRepeaterPreferences.h GMSKRepeaterDefs.h GMSKRepeaterControllerSet.h \
 							GMSKRepeaterModemSet.h GMSKRepeaterApp.h GMSKRepeaterTimesSet.h GMSKRepeaterCallsignSet.h ../Common/NetworkSet.h \
-							../Common/BeaconSet.h ../Common/DStarDefines.h ../Common/Control1Set.h ../Common/Control2Set.h
+							../Common/BeaconSet.h ../Common/AnnouncementSet.h ../Common/DStarDefines.h ../Common/Control1Set.h ../Common/Control2Set.h
 				$(CC) $(CFLAGS) -c GMSKRepeaterPreferences.cpp
 
 GMSKRepeaterStatusData.o:	GMSKRepeaterStatusData.cpp GMSKRepeaterStatusData.h ../Common/DStarDefines.h
@@ -62,7 +62,8 @@ GMSKRepeaterTRXThread.o:	GMSKRepeaterTRXThread.cpp GMSKRepeaterTRXThread.h GMSKR
 							GMSKRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/GMSKModem.h ../Common/HeaderData.h \
 							../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataEncoder.h ../Common/OutputQueue.h \
 							../Common/Version.h ../Common/DVTOOLFileWriter.h ../Common/CallsignList.h ../Common/ExternalController.h \
-							../Common/DummyController.h ../Common/K8055Controller.h ../Common/BeaconUnit.h ../Common/BeaconCallback.h
+							../Common/DummyController.h ../Common/K8055Controller.h ../Common/BeaconUnit.h ../Common/BeaconCallback.h \
+							../Common/AnnouncementUnit.h ../Common/AnnouncementCallback.h
 				$(CC) $(CFLAGS) -c GMSKRepeaterTRXThread.cpp
 
 GMSKRepeaterTXRXThread.o:	GMSKRepeaterTXRXThread.cpp GMSKRepeaterTXRXThread.h GMSKRepeaterThread.h GMSKRepeaterDefs.h GMSKRepeaterApp.h \

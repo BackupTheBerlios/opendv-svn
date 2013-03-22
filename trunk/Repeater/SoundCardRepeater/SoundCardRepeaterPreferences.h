@@ -24,6 +24,7 @@
 #include "SoundCardRepeaterRadioSet.h"
 #include "SoundCardRepeaterTimesSet.h"
 #include "SoundCardRepeaterDefs.h"
+#include "AnnouncementSet.h"
 #include "ActiveHangSet.h"
 #include "DStarDefines.h"
 #include "Control1Set.h"
@@ -39,7 +40,9 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 		const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort,
 		unsigned int timeout, unsigned int ackTime, unsigned int hangTime, unsigned int beaconTime,
-		const wxString& beaconText, bool beaconVoice, TEXT_LANG language, const wxString& readDevice,
+		const wxString& beaconText, bool beaconVoice, TEXT_LANG language, bool announcementEnabled,
+		unsigned int announcementTime, const wxString& announcementRecordRPT1, const wxString& announcementRecordRPT2,
+		const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, const wxString& readDevice,
 		const wxString& writeDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel,
 		SQUELCH_MODE squelchMode, wxFloat32 squelchLevel, const wxString& interfaceType, unsigned int interfaceConfig,
 		int pttDelay, bool pttInvert, bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign,
@@ -74,6 +77,13 @@ public:
 	virtual wxString     getBeaconText() const;
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
+
+	virtual bool         getAnnouncementEnabled() const;
+	virtual unsigned int getAnnouncementTime() const;
+	virtual wxString     getAnnouncementRecordRPT1() const;
+	virtual wxString     getAnnouncementRecordRPT2() const;
+	virtual wxString     getAnnouncementDeleteRPT1() const;
+	virtual wxString     getAnnouncementDeleteRPT2() const;
 
 	virtual wxString     getReadDevice() const;
 	virtual wxString     getWriteDevice() const;
@@ -117,14 +127,15 @@ public:
 
 private:
 	CSoundCardRepeaterCallsignSet*   m_callsign;
-	CNetworkSet*                 m_network;
+	CNetworkSet*                     m_network;
 	CSoundCardRepeaterTimesSet*      m_times;
-	CBeaconSet*                  m_beacon;
+	CBeaconSet*                      m_beacon;
+	CAnnouncementSet*                m_announcement;
 	CSoundCardRepeaterRadioSet*      m_radio;
 	CSoundCardRepeaterControllerSet* m_controller;
-	CControl1Set*                m_control1;
-	CControl2Set*                m_control2;
-	CActiveHangSet*              m_active;
+	CControl1Set*                    m_control1;
+	CControl2Set*                    m_control2;
+	CActiveHangSet*                  m_active;
 };
 
 #endif

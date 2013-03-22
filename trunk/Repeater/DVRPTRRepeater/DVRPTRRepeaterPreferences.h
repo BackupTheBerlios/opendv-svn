@@ -24,6 +24,7 @@
 #include "DVRPTRRepeaterModemSet.h"
 #include "DVRPTRRepeaterTimesSet.h"
 #include "DVRPTRRepeaterDefs.h"
+#include "AnnouncementSet.h"
 #include "DStarDefines.h"
 #include "Control1Set.h"
 #include "Control2Set.h"
@@ -38,7 +39,9 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, const wxString& gatewayAddress,
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort,
+		TEXT_LANG language, bool announcementEnabled, unsigned int announcementTime, const wxString& announcementRecordRPT1,
+		const wxString& announcementRecordRPT2, const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2,
+		DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort,
 		const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel,
 		unsigned int modLevel, unsigned int txDelay, bool enabled, const wxString& rpt1Callsign,
 		const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1,
@@ -72,6 +75,13 @@ public:
 	virtual wxString     getBeaconText() const;
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
+
+	virtual bool         getAnnouncementEnabled() const;
+	virtual unsigned int getAnnouncementTime() const;
+	virtual wxString     getAnnouncementRecordRPT1() const;
+	virtual wxString     getAnnouncementRecordRPT2() const;
+	virtual wxString     getAnnouncementDeleteRPT1() const;
+	virtual wxString     getAnnouncementDeleteRPT2() const;
 
 	virtual DVRPTR_VERSION  getVersion() const;
 	virtual CONNECTION_TYPE getConnectionType() const;
@@ -116,6 +126,7 @@ private:
 	CNetworkSet*                  m_network;
 	CDVRPTRRepeaterTimesSet*      m_times;
 	CBeaconSet*                   m_beacon;
+	CAnnouncementSet*             m_announcement;
 	CDVRPTRRepeaterModemSet*      m_modem;
 	CControl1Set*                 m_control1;
 	CControl2Set*                 m_control2;

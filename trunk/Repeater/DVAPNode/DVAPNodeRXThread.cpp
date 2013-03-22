@@ -145,6 +145,10 @@ void CDVAPNodeRXThread::setBeacon(unsigned int time, const wxString& text, bool 
 {
 }
 
+void CDVAPNodeRXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+}
+
 void CDVAPNodeRXThread::setLogging(bool logging, const wxString& dir)
 {
 }
@@ -303,13 +307,13 @@ CDVAPNodeStatusData* CDVAPNodeRXThread::getStatus()
 
 	if (m_state == DSRS_LISTENING)
 		return new CDVAPNodeStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
-				wxEmptyString, 0x00, 0x00, 0x00, false, m_squelch, m_signal, m_state, 0U, 0U, 0U, 0U, 0.0F,
+				wxEmptyString, 0x00, 0x00, 0x00, false, m_squelch, m_signal, m_state, 0U, 0U, 0U, 0U, 0U, 0U, 0.0F,
 				wxEmptyString);
 	else
 		return new CDVAPNodeStatusData(m_rxHeader->getMyCall1(), m_rxHeader->getMyCall2(),
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), false, m_squelch,
-				m_signal, m_state, 0U, 0U, 0U, 0U, (errors * 100.0F) / bits, wxEmptyString);
+				m_signal, m_state, 0U, 0U, 0U, 0U, 0U, 0U, (errors * 100.0F) / bits, wxEmptyString);
 }
 
 void CDVAPNodeRXThread::clock(unsigned int ms)

@@ -28,7 +28,9 @@ CGMSKRepeaterPreferences::CGMSKRepeaterPreferences(wxWindow* parent, int id, con
 	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int beaconTime,
-	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, GMSK_MODEM_TYPE type, unsigned int address,
+	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, bool announcementEnabled,
+	unsigned int announcementTime, const wxString& announcementRecordRPT1, const wxString& announcementRecordRPT2,
+	const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, GMSK_MODEM_TYPE type, unsigned int address,
 	bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown,
 	const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3,
 	const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line,
@@ -42,6 +44,7 @@ m_callsign(NULL),
 m_network(NULL),
 m_times(NULL),
 m_beacon(NULL),
+m_announcement(NULL),
 m_modem(NULL),
 m_control1(NULL),
 m_control2(NULL),
@@ -62,6 +65,9 @@ m_controller(NULL)
 
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
+
+	m_announcement = new CAnnouncementSet(noteBook, -1, APPLICATION_NAME, announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	noteBook->AddPage(m_announcement, _("Announcement"), false);
 
 	m_modem = new CGMSKRepeaterModemSet(noteBook, -1, APPLICATION_NAME, type, address);
 	noteBook->AddPage(m_modem, _("Modem"), false);
@@ -94,7 +100,7 @@ CGMSKRepeaterPreferences::~CGMSKRepeaterPreferences()
 
 bool CGMSKRepeaterPreferences::Validate()
 {
-	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_modem->Validate() || !m_control1->Validate() || !m_control2->Validate() || !m_controller->Validate())
+	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_announcement->Validate() || !m_modem->Validate() || !m_control1->Validate() || !m_control2->Validate() || !m_controller->Validate())
 		return false;
 
 	return true;	
@@ -183,6 +189,36 @@ bool CGMSKRepeaterPreferences::getBeaconVoice() const
 TEXT_LANG CGMSKRepeaterPreferences::getLanguage() const
 {
 	return m_beacon->getLanguage();
+}
+
+bool CGMSKRepeaterPreferences::getAnnouncementEnabled() const
+{
+	return m_announcement->getEnabled();
+}
+
+unsigned int CGMSKRepeaterPreferences::getAnnouncementTime() const
+{
+	return m_announcement->getTime();
+}
+
+wxString CGMSKRepeaterPreferences::getAnnouncementRecordRPT1() const
+{
+	return m_announcement->getRecordRPT1();
+}
+
+wxString CGMSKRepeaterPreferences::getAnnouncementRecordRPT2() const
+{
+	return m_announcement->getRecordRPT2();
+}
+
+wxString CGMSKRepeaterPreferences::getAnnouncementDeleteRPT1() const
+{
+	return m_announcement->getDeleteRPT1();
+}
+
+wxString CGMSKRepeaterPreferences::getAnnouncementDeleteRPT2() const
+{
+	return m_announcement->getDeleteRPT2();
 }
 
 GMSK_MODEM_TYPE CGMSKRepeaterPreferences::getType() const

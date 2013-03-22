@@ -24,6 +24,7 @@
 #include "GMSKRepeaterModemSet.h"
 #include "GMSKRepeaterTimesSet.h"
 #include "GMSKRepeaterDefs.h"
+#include "AnnouncementSet.h"
 #include "DStarDefines.h"
 #include "Control1Set.h"
 #include "Control2Set.h"
@@ -38,7 +39,9 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 		const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort,
 		unsigned int timeout, unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, GMSK_MODEM_TYPE type, unsigned int address, bool enabled,
+		TEXT_LANG language, bool announcementEnabled, unsigned int announcementTime, const wxString& announcementRecordRPT1,
+		const wxString& announcementRecordRPT2, const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2,
+		GMSK_MODEM_TYPE type, unsigned int address, bool enabled,
 		const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown,
 		const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3,
 		const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line,
@@ -70,6 +73,13 @@ public:
 	virtual unsigned int getBeaconTime() const;
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
+
+	virtual bool         getAnnouncementEnabled() const;
+	virtual unsigned int getAnnouncementTime() const;
+	virtual wxString     getAnnouncementRecordRPT1() const;
+	virtual wxString     getAnnouncementRecordRPT2() const;
+	virtual wxString     getAnnouncementDeleteRPT1() const;
+	virtual wxString     getAnnouncementDeleteRPT2() const;
 
 	virtual GMSK_MODEM_TYPE getType() const;
 	virtual unsigned int    getAddress() const;
@@ -106,6 +116,7 @@ private:
 	CNetworkSet*                m_network;
 	CGMSKRepeaterTimesSet*      m_times;
 	CBeaconSet*                 m_beacon;
+	CAnnouncementSet*           m_announcement;
 	CGMSKRepeaterModemSet*      m_modem;
 	CControl1Set*               m_control1;
 	CControl2Set*               m_control2;

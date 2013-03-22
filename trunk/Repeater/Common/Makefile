@@ -1,13 +1,14 @@
 all:		Common.a
 
-OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o CCITTChecksum.o \
-		CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
-		DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o DVAPController.o \
-		DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o FIRFilter.o \
-		GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o NCO.o MessageTextCtrl.o \
-		NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o \
-		RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o \
-		TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
+OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o \
+		CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o \
+		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o \
+		DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o \
+		FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o NCO.o \
+		MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
+		RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o \
+		SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o \
+		WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -20,6 +21,12 @@ AddressTextCtrl.o:	AddressTextCtrl.cpp AddressTextCtrl.h RestrictedTextCtrl.h
 
 AMBEFEC.o:	AMBEFEC.cpp AMBEFEC.h Golay.h
 		$(CC) $(CFLAGS) -c AMBEFEC.cpp
+
+AnnouncementSet.o:	AnnouncementSet.cpp AnnouncementSet.h CallsignTextCtrl.h DStarDefines.h
+		$(CC) $(CFLAGS) -c AnnouncementSet.cpp
+
+AnnouncementUnit.o:	AnnouncementUnit.cpp AnnouncementUnit.h AnnouncementCallback.h HeaderData.h DStarDefines.h
+		$(CC) $(CFLAGS) -c AnnouncementUnit.cpp
 
 AudioDelay.o:	AudioDelay.cpp AudioDelay.h
 		$(CC) $(CFLAGS) -c AudioDelay.cpp

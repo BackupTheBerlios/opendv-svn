@@ -269,6 +269,16 @@ void CSplitRepeaterApp::setBeacon(unsigned int time, const wxString& text, bool 
 	m_config->setBeacon(time, text, voice, language);
 }
 
+void CSplitRepeaterApp::getAnnouncement(bool& enabled, unsigned int& time, wxString& recordRPT1, wxString& recordRPT2, wxString& deleteRPT1, wxString& deleteRPT2) const
+{
+	m_config->getAnnouncement(enabled, time, recordRPT1, recordRPT2, deleteRPT1, deleteRPT2);
+}
+
+void CSplitRepeaterApp::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+	m_config->setAnnouncement(enabled, time, recordRPT1, recordRPT2, deleteRPT1, deleteRPT2);
+}
+
 void CSplitRepeaterApp::getControl(bool& enabled, wxString& rpt1Callsign, wxString& rpt2Callsign, wxString& shutdown, wxString& startup, wxString& status1, wxString& status2, wxString& status3, wxString& status4, wxString& status5, wxString& command1, wxString& command1Line, wxString& command2, wxString& command2Line, wxString& command3, wxString& command3Line, wxString& command4, wxString& command4Line) const
 {
 	m_config->getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line);
@@ -365,6 +375,14 @@ void CSplitRepeaterApp::createThread()
 	getBeacon(beaconTime, beaconText, beaconVoice, language);
 	thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
+
+	bool announcementEnabled;
+	unsigned int announcementTime;
+	wxString announcementRecordRPT1, announcementRecordRPT2;
+	wxString announcementDeleteRPT1, announcementDeleteRPT2;
+	getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	wxLogInfo(wxT("Announcement enabled: %d, time: %u mins, record RPT1: \"%s\", record RPT2: \"%s\", delete RPT1: \"%s\", delete RPT2: \"%s\""), int(announcementEnabled), announcementTime / 60U, announcementRecordRPT1.c_str(), announcementRecordRPT2.c_str(), announcementDeleteRPT1.c_str(), announcementDeleteRPT2.c_str());
 
 	wxString receiver1Address;
 	unsigned int receiver1Port;

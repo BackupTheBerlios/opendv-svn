@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@ CDVAPNodeStatusData::CDVAPNodeStatusData(const wxString& myCall1, const wxString
 												 unsigned char flag2, unsigned char flag3, bool tx, bool squelch,
 												 int signal, DSTAR_RPT_STATE state, unsigned int timeoutTimer,
 												 unsigned int timeoutExpiry, unsigned int beaconTimer,
-												 unsigned int beaconExpiry, float percent,
-												 const wxString& text) :
+												 unsigned int beaconExpiry, unsigned int announceTimer,
+												 unsigned int announceExpiry, float percent, const wxString& text) :
 m_myCall1(myCall1),
 m_myCall2(myCall2),
 m_yourCall(yourCall),
@@ -42,6 +42,8 @@ m_timeoutTimer(timeoutTimer),
 m_timeoutExpiry(timeoutExpiry),
 m_beaconTimer(beaconTimer),
 m_beaconExpiry(beaconExpiry),
+m_announceTimer(announceTimer),
+m_announceExpiry(announceExpiry),
 m_percent(percent),
 m_text(text)
 {
@@ -129,6 +131,16 @@ unsigned int CDVAPNodeStatusData::getBeaconTimer() const
 unsigned int CDVAPNodeStatusData::getBeaconExpiry() const
 {
 	return m_beaconExpiry;
+}
+
+unsigned int CDVAPNodeStatusData::getAnnounceTimer() const
+{
+	return m_announceTimer;
+}
+
+unsigned int CDVAPNodeStatusData::getAnnounceExpiry() const
+{
+	return m_announceExpiry;
 }
 
 float CDVAPNodeStatusData::getPercent() const

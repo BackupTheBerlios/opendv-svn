@@ -59,6 +59,9 @@ public:
 	void getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const;
 	void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
 
+	void getAnnouncement(bool& enabled, unsigned int& time, wxString& recordRPT1, wxString& recordRPT2, wxString& deleteRPT1, wxString& deleteRPT2) const;
+	void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
+
 	void getControl(bool& enabled, wxString& rpt1Callsign, wxString& rpt2Callsign, wxString& shutdown, wxString& startup, wxString& status1, wxString& status2, wxString& status3, wxString& status4, wxString& status5, wxString& command1, wxString& command1Line, wxString& command2, wxString& command2Line, wxString& command3, wxString& command3Line, wxString& command4, wxString& command4Line) const;
 	void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line);
 
@@ -100,6 +103,12 @@ private:
 	wxString        m_beaconText;
 	bool            m_beaconVoice;
 	TEXT_LANG       m_language;
+	bool            m_announcementEnabled;
+	unsigned int    m_announcementTime;
+	wxString        m_announcementRecordRPT1;
+	wxString        m_announcementRecordRPT2;
+	wxString        m_announcementDeleteRPT1;
+	wxString        m_announcementDeleteRPT2;
 	bool            m_controlEnabled;
 	wxString        m_controlRpt1Callsign;
 	wxString        m_controlRpt2Callsign;

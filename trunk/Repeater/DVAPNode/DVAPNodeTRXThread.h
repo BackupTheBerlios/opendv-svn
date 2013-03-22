@@ -19,6 +19,8 @@
 #ifndef	DVAPNodeTRXThread_H
 #define	DVAPNodeTRXThread_H
 
+#include "AnnouncementCallback.h"
+#include "AnnouncementUnit.h"
 #include "DVTOOLFileWriter.h"
 #include "SlowDataEncoder.h"
 #include "DVAPNodeThread.h"
@@ -33,7 +35,7 @@
 #include <wx/wx.h>
 #include <wx/regex.h>
 
-class CDVAPNodeTRXThread : public IDVAPNodeThread, public IBeaconCallback {
+class CDVAPNodeTRXThread : public IDVAPNodeThread, public IBeaconCallback, public IAnnouncementCallback {
 public:
 	CDVAPNodeTRXThread();
 	virtual ~CDVAPNodeTRXThread();
@@ -43,6 +45,7 @@ public:
 	virtual void setDVAP(CDVAPController* dvap);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
+	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
 	virtual void setLogging(bool logging, const wxString& dir);
 	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
@@ -56,6 +59,9 @@ public:
 	virtual void transmitBeaconHeader();
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end);
 
+	virtual void transmitAnnouncementHeader(CHeaderData* header);
+	virtual void transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end);
+
 private:
 	CDVAPController*           m_dvap;
 	CRepeaterProtocolHandler*  m_protocolHandler;
@@ -63,6 +69,11 @@ private:
 	wxString                   m_rptCallsign;
 	wxString                   m_gwyCallsign;
 	CBeaconUnit*               m_beacon;
+	CAnnouncementUnit*         m_announcement;
+	wxString                   m_recordRPT1;
+	wxString                   m_recordRPT2;
+	wxString                   m_deleteRPT1;
+	wxString                   m_deleteRPT2;
 	CHeaderData*               m_rxHeader;
 	COutputQueue               m_localQueue;
 	COutputQueue**             m_networkQueue;
@@ -75,6 +86,7 @@ private:
 	CTimer                     m_pollTimer;
 	CTimer                     m_ackTimer;
 	CTimer                     m_beaconTimer;
+	CTimer                     m_announcementTimer;
 	CTimer                     m_dvapPollTimer;
 	DSTAR_RPT_STATE            m_state;
 	CSlowDataEncoder           m_ackEncoder;
@@ -109,6 +121,8 @@ private:
 	CCallsignList*             m_blackList;
 	CCallsignList*             m_greyList;
 	bool                       m_blocked;
+	bool                       m_recording;
+	bool                       m_deleting;
 
 	void receiveRadioHeader();
 	void receiveRadioData();
@@ -130,6 +144,7 @@ private:
 	void endOfRadioData();
 	void endOfNetworkData();
 	bool setRepeaterState(DSTAR_RPT_STATE state);
+	bool checkAnnouncements(const CHeaderData& header);
 	TRISTATE checkHeader(CHeaderData& header);
 	void clock(unsigned int ms);
 	void blankDTMF(unsigned char* data);

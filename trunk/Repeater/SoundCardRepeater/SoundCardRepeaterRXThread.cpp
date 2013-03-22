@@ -194,6 +194,10 @@ void CSoundCardRepeaterRXThread::setBeacon(unsigned int time, const wxString& te
 {
 }
 
+void CSoundCardRepeaterRXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+}
+
 void CSoundCardRepeaterRXThread::setController(CExternalController* controller, int pttDelay)
 {
 	wxASSERT(controller != NULL);

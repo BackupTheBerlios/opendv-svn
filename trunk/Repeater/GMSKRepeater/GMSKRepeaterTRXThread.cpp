@@ -41,6 +41,11 @@ m_ambeLength(0U),
 m_rptCallsign(),
 m_gwyCallsign(),
 m_beacon(NULL),
+m_announcement(NULL),
+m_recordRPT1(),
+m_recordRPT2(),
+m_deleteRPT1(),
+m_deleteRPT2(),
 m_rxHeader(NULL),
 m_localQueue((DV_FRAME_LENGTH_BYTES + 2U) * 50U, LOCAL_RUN_FRAME_COUNT),			// 1s worth of data
 m_radioQueue((DV_FRAME_LENGTH_BYTES + 2U) * 50U, RADIO_RUN_FRAME_COUNT),			// 1s worth of data
@@ -59,6 +64,7 @@ m_status3Timer(1000U, 3U),			// 3s
 m_status4Timer(1000U, 3U),			// 3s
 m_status5Timer(1000U, 3U),			// 3s
 m_beaconTimer(1000U, 600U),			// 10 mins
+m_announcementTimer(1000U, 0U),		// not running
 m_headerReadTimer(1000U, 0U, 50U),	// 50ms
 m_dataWaitTimer(1000U, 0U, 100U),	// 100ms
 m_state(DSRS_LISTENING),
@@ -138,7 +144,9 @@ m_blackList(NULL),
 m_greyList(NULL),
 m_blocked(false),
 m_busyData(false),
-m_blanking(true)
+m_blanking(true),
+m_recording(false),
+m_deleting(false)
 {
 	m_networkQueue = new COutputQueue*[NETWORK_QUEUE_COUNT];
 	for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
@@ -179,6 +187,7 @@ void CGMSKRepeaterTRXThread::run()
 
 	m_beaconTimer.start();
 	m_headerReadTimer.start();
+	m_announcementTimer.start();
 	m_controller->setActive(false);
 	m_controller->setRadioTransmit(false);
 
@@ -264,6 +273,12 @@ void CGMSKRepeaterTRXThread::run()
 			m_beaconTimer.reset();
 		}
 
+		// Send the announcement and restart the timer
+		if (m_announcementTimer.isRunning() && m_announcementTimer.hasExpired()) {
+			m_announcement->startAnnouncement();
+			m_announcementTimer.reset();
+		}
+
 		// Send the status 1 message after a few seconds
 		if (m_status1Timer.isRunning() && m_status1Timer.hasExpired()) {
 			m_status1Timer.stop();
@@ -326,6 +341,7 @@ void CGMSKRepeaterTRXThread::run()
 				m_activeHangTimer.stop();
 				m_ackTimer.stop();
 				m_beaconTimer.stop();
+				m_announcementTimer.stop();
 				m_dataWaitTimer.stop();
 				m_localQueue.reset();
 				m_radioQueue.reset();
@@ -342,6 +358,7 @@ void CGMSKRepeaterTRXThread::run()
 				m_watchdogTimer.stop();
 				m_ackTimer.stop();
 				m_beaconTimer.start();
+				m_announcementTimer.start();
 				m_state = DSRS_LISTENING;
 				if (m_protocolHandler != NULL)	// Tell the protocol handler
 					m_protocolHandler->reset();
@@ -461,6 +478,30 @@ void CGMSKRepeaterTRXThread::setBeacon(unsigned int time, const wxString& text, 
 
 	if (time > 0U)
 		m_beacon = new CBeaconUnit(this, m_rptCallsign, text, voice, language);
+}
+
+void CGMSKRepeaterTRXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+	if (enabled && time > 0U) {
+		m_announcement = new CAnnouncementUnit(this, m_rptCallsign);
+
+		m_announcementTimer.setTimeout(time);
+
+		m_recordRPT1 = recordRPT1;
+		m_recordRPT2 = recordRPT2;
+		m_deleteRPT1 = deleteRPT1;
+		m_deleteRPT2 = deleteRPT2;
+
+		m_recordRPT1.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_recordRPT2.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_deleteRPT1.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_deleteRPT2.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+
+		m_recordRPT1.Truncate(LONG_CALLSIGN_LENGTH);
+		m_recordRPT2.Truncate(LONG_CALLSIGN_LENGTH);
+		m_deleteRPT1.Truncate(LONG_CALLSIGN_LENGTH);
+		m_deleteRPT2.Truncate(LONG_CALLSIGN_LENGTH);
+	}
 }
 
 void CGMSKRepeaterTRXThread::setController(CExternalController* controller, unsigned int activeHangTime)
@@ -771,6 +812,19 @@ void CGMSKRepeaterTRXThread::transmitBeaconHeader()
 }
 
 void CGMSKRepeaterTRXThread::transmitBeaconData(const unsigned char* data, unsigned int length, bool end)
+{
+	m_localQueue.addData(data, length, end);
+}
+
+void CGMSKRepeaterTRXThread::transmitAnnouncementHeader(CHeaderData* header)
+{
+	header->setRptCall1(m_gwyCallsign);
+	header->setRptCall2(m_rptCallsign);
+
+	transmitLocalHeader(header);
+}
+
+void CGMSKRepeaterTRXThread::transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end)
 {
 	m_localQueue.addData(data, length, end);
 }
@@ -1278,10 +1332,12 @@ bool CGMSKRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 	switch (m_state) {
 		case DSRS_SHUTDOWN:
 			m_beaconTimer.start();
+			m_announcementTimer.start();
 			break;
 
 		case DSRS_LISTENING:
 			m_beaconTimer.stop();
+			m_announcementTimer.stop();
 			break;
 
 		default:
@@ -1296,6 +1352,7 @@ bool CGMSKRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_activeHangTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.stop();
+			m_announcementTimer.stop();
 			m_controller->setActive(false);
 			m_controller->setRadioTransmit(false);
 			m_state = DSRS_SHUTDOWN;
@@ -1306,6 +1363,7 @@ bool CGMSKRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_watchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
+			m_announcementTimer.start();
 			m_state = DSRS_LISTENING;
 			if (m_protocolHandler != NULL)	// Tell the protocol handler
 				m_protocolHandler->reset();
@@ -1387,6 +1445,19 @@ bool CGMSKRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 	bool res = checkControl(*header);
 	if (res) {
 		delete header;
+		return true;
+	}
+
+	// Check announcement messages
+	res = checkAnnouncements(*header);
+	if (res) {
+		bool res = setRepeaterState(DSRS_INVALID);
+		if (res) {
+			delete m_rxHeader;
+			m_rxHeader = header;
+		} else {
+			delete header;
+		}
 		return true;
 	}
 
@@ -1575,6 +1646,25 @@ void CGMSKRepeaterTRXThread::processRadioFrame(unsigned char* data, FRAME_TYPE t
 
 	if (::memcmp(data, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES) == 0)
 		m_ambeSilence++;
+
+	// If this is deleting an announcement, ignore the audio
+	if (m_deleting) {
+		if (type == FRAME_END) {
+			m_deleting  = false;
+			m_recording = false;
+		}
+		return;
+	}
+
+	// If this is recording an announcement, send the audio to the announcement unit and then stop
+	if (m_recording) {
+		m_announcement->writeData(data, DV_FRAME_LENGTH_BYTES, type == FRAME_END);
+		if (type == FRAME_END) {
+			m_deleting  = false;
+			m_recording = false;
+		}
+		return;
+	}
 
 	// Pass background AMBE data to the network
 	if (m_busyData) {
@@ -1822,7 +1912,8 @@ CGMSKRepeaterStatusData* CGMSKRepeaterTRXThread::getStatus()
 	if (m_state == DSRS_SHUTDOWN || m_state == DSRS_LISTENING) {
 		return new CGMSKRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
 				wxEmptyString, 0x00, 0x00, 0x00, m_tx, m_state, m_timeoutTimer.getTimer(),
-				m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(), m_beaconTimer.getTimeout(), 0.0F,
+				m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(), m_beaconTimer.getTimeout(),
+				m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(), 0.0F,
 				m_ackText, m_status1Text, m_status2Text, m_status3Text, m_status4Text, m_status5Text);
 	} else if (m_state == DSRS_NETWORK) {
 		float loss = 0.0F;
@@ -1833,8 +1924,8 @@ CGMSKRepeaterStatusData* CGMSKRepeaterTRXThread::getStatus()
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_state,
 				m_timeoutTimer.getTimer(), m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(),
-				m_beaconTimer.getTimeout(), loss * 100.0F, m_ackText, m_status1Text, m_status2Text,
-				m_status3Text, m_status4Text, m_status5Text);
+				m_beaconTimer.getTimeout(), m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(),
+				loss * 100.0F, m_ackText, m_status1Text, m_status2Text, m_status3Text, m_status4Text, m_status5Text);
 	} else {
 		float   bits = float(m_ambeBits - m_lastAMBEBits);
 		float errors = float(m_ambeErrors - m_lastAMBEErrors);
@@ -1848,8 +1939,9 @@ CGMSKRepeaterStatusData* CGMSKRepeaterTRXThread::getStatus()
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_state,
 				m_timeoutTimer.getTimer(), m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(),
-				m_beaconTimer.getTimeout(), (errors * 100.0F) / bits, m_ackText, m_status1Text, m_status2Text,
-				m_status3Text, m_status4Text, m_status5Text);
+				m_beaconTimer.getTimeout(), m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(),
+				(errors * 100.0F) / bits, m_ackText, m_status1Text, m_status2Text, m_status3Text, m_status4Text,
+				m_status5Text);
 	}
 }
 
@@ -1866,10 +1958,13 @@ void CGMSKRepeaterTRXThread::clock(unsigned int ms)
 	m_status4Timer.clock(ms);
 	m_status5Timer.clock(ms);
 	m_beaconTimer.clock(ms);
+	m_announcementTimer.clock(ms);
 	m_headerReadTimer.clock(ms);
 	m_dataWaitTimer.clock(ms);
 	if (m_beacon != NULL)
 		m_beacon->clock();
+	if (m_announcement != NULL)
+		m_announcement->clock();
 }
 
 void CGMSKRepeaterTRXThread::shutdown()
@@ -1968,6 +2063,28 @@ bool CGMSKRepeaterTRXThread::checkControl(const CHeaderData& header)
 	}
 
 	return true;
+}
+
+bool CGMSKRepeaterTRXThread::checkAnnouncements(const CHeaderData& header)
+{
+	if (m_announcement == NULL)
+		return false;
+
+	if (m_recordRPT1.IsSameAs(header.getRptCall1()) && m_recordRPT2.IsSameAs(header.getRptCall2())) {
+		wxLogMessage(wxT("Announcement creation requested by %s/%s"), header.getMyCall1().c_str(), header.getMyCall2().c_str());
+		m_announcement->writeHeader(header);
+		m_recording = true;
+		return true;
+	}
+
+	if (m_deleteRPT1.IsSameAs(header.getRptCall1()) && m_deleteRPT2.IsSameAs(header.getRptCall2())) {
+		wxLogMessage(wxT("Announcement deletion requested by %s/%s"), header.getMyCall1().c_str(), header.getMyCall2().c_str());
+		m_announcement->deleteAnnouncement();
+		m_deleting = true;
+		return true;
+	}
+
+	return false;
 }
 
 TRISTATE CGMSKRepeaterTRXThread::checkHeader(CHeaderData& header)

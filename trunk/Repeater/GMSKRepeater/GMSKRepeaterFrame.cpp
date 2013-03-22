@@ -97,8 +97,8 @@ m_rpt2(NULL),
 m_flags(NULL),
 m_percent(NULL),
 m_timeout(NULL),
-m_active(NULL),
 m_beacon(NULL),
+m_announce(NULL),
 m_text(NULL),
 m_status1(NULL),
 m_status2(NULL),
@@ -205,11 +205,11 @@ m_updates(gui)
 	m_beacon = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	timer2Sizer->Add(m_beacon, 0, wxALL, BORDER_SIZE);
 
-	wxStaticText* dummy1Label = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(LABEL_WIDTH, -1));
-	timer2Sizer->Add(dummy1Label, 0, wxALL, BORDER_SIZE);
+	wxStaticText* announceLabel = new wxStaticText(panel, -1, _("Announce:"), wxDefaultPosition, wxSize(LABEL_WIDTH, -1), wxALIGN_RIGHT);
+	timer2Sizer->Add(announceLabel, 0, wxALL, BORDER_SIZE);
 
-	wxStaticText* dummy2Label = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	timer2Sizer->Add(dummy2Label, 0, wxALL, BORDER_SIZE);
+	m_announce = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	timer2Sizer->Add(m_announce, 0, wxALL, BORDER_SIZE);
 
 	timer1Sizer->Add(timer2Sizer);
 	panelSizer->Add(timer1Sizer, 0, wxALL, BORDER_SIZE);
@@ -432,6 +432,12 @@ void CGMSKRepeaterFrame::onPreferences(wxCommandEvent& event)
 	TEXT_LANG language;
 	::wxGetApp().getBeacon(beaconTime, beaconText, beaconVoice, language);
 
+	bool announcementEnabled;
+	unsigned int announcementTime;
+	wxString announcementRecordRPT1, announcementRecordRPT2;
+	wxString announcementDeleteRPT1, announcementDeleteRPT2;
+	::wxGetApp().getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+
 	GMSK_MODEM_TYPE type;
 	unsigned int address;
 	::wxGetApp().getModem(type, address);
@@ -450,11 +456,11 @@ void CGMSKRepeaterFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getController(controllerType, activeHangTime);
 
 	CGMSKRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
-		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText,
-		beaconVoice, language, type, address, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1,
-		status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3,
-		command3Line, command4, command4Line, output1, output2, output3, output4, controllerType,
-		activeHangTime);
+		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText, beaconVoice, language,
+		announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1,
+		announcementDeleteRPT2, type, address, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2,
+		status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4,
+		command4Line, output1, output2, output3, output4, controllerType, activeHangTime);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -482,6 +488,14 @@ void CGMSKRepeaterFrame::onPreferences(wxCommandEvent& event)
 	beaconVoice = dialog1.getBeaconVoice();
 	language    = dialog1.getLanguage();
 	::wxGetApp().setBeacon(beaconTime, beaconText, beaconVoice, language);
+
+	announcementEnabled    = dialog1.getAnnouncementEnabled();
+	announcementTime       = dialog1.getAnnouncementTime();
+	announcementRecordRPT1 = dialog1.getAnnouncementRecordRPT1();
+	announcementRecordRPT2 = dialog1.getAnnouncementRecordRPT2();
+	announcementDeleteRPT1 = dialog1.getAnnouncementDeleteRPT1();
+	announcementDeleteRPT2 = dialog1.getAnnouncementDeleteRPT2();
+	::wxGetApp().setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 
 	type      = dialog1.getType();
 	address   = dialog1.getAddress();
@@ -586,6 +600,9 @@ void CGMSKRepeaterFrame::onTimer(wxTimerEvent& event)
 
 	text.Printf(wxT("%u/%u"), status->getBeaconTimer(), status->getBeaconExpiry());
 	m_beacon->SetLabel(text);
+
+	text.Printf(wxT("%u/%u"), status->getAnnounceTimer(), status->getAnnounceExpiry());
+	m_announce->SetLabel(text);
 
 	m_text->SetLabel(status->getText());
 	m_status1->SetLabel(status->getStatus1());

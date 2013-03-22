@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@ CGMSKRepeaterStatusData::CGMSKRepeaterStatusData(const wxString& myCall1, const 
 												 unsigned char flag2, unsigned char flag3, bool tx,
 												 DSTAR_RPT_STATE state, unsigned int timeoutTimer,
 												 unsigned int timeoutExpiry, unsigned int beaconTimer,
-												 unsigned int beaconExpiry, float percent,
+												 unsigned int beaconExpiry, unsigned int announceTimer,
+												 unsigned int announceExpiry, float percent,
 												 const wxString& text, const wxString& status1,
 												 const wxString& status2, const wxString& status3,
 												 const wxString& status4, const wxString& status5) :
@@ -42,6 +43,8 @@ m_timeoutTimer(timeoutTimer),
 m_timeoutExpiry(timeoutExpiry),
 m_beaconTimer(beaconTimer),
 m_beaconExpiry(beaconExpiry),
+m_announceTimer(announceTimer),
+m_announceExpiry(announceExpiry),
 m_percent(percent),
 m_text(text),
 m_status1(status1),
@@ -124,6 +127,16 @@ unsigned int CGMSKRepeaterStatusData::getBeaconTimer() const
 unsigned int CGMSKRepeaterStatusData::getBeaconExpiry() const
 {
 	return m_beaconExpiry;
+}
+
+unsigned int CGMSKRepeaterStatusData::getAnnounceTimer() const
+{
+	return m_announceTimer;
+}
+
+unsigned int CGMSKRepeaterStatusData::getAnnounceExpiry() const
+{
+	return m_announceExpiry;
 }
 
 float CGMSKRepeaterStatusData::getPercent() const

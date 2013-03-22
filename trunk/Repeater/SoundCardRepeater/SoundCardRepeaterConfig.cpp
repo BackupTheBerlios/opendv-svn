@@ -48,6 +48,12 @@ const wxString  KEY_BEACON_TIME        = wxT("beaconTime");
 const wxString  KEY_BEACON_TEXT        = wxT("beaconText");
 const wxString  KEY_BEACON_VOICE       = wxT("beaconVoice");
 const wxString  KEY_LANGUAGE           = wxT("language");
+const wxString  KEY_ANNOUNCEMENT_ENABLED     = wxT("announcementEnabled");
+const wxString  KEY_ANNOUNCEMENT_TIME        = wxT("announcementTime");
+const wxString  KEY_ANNOUNCEMENT_RECORD_RPT1 = wxT("announcementRecordRPT1");
+const wxString  KEY_ANNOUNCEMENT_RECORD_RPT2 = wxT("announcementRecordRPT2");
+const wxString  KEY_ANNOUNCEMENT_DELETE_RPT1 = wxT("announcementDeleteRPT1");
+const wxString  KEY_ANNOUNCEMENT_DELETE_RPT2 = wxT("announcementDeleteRPT2");
 const wxString  KEY_CONTROL_ENABLED    = wxT("controlEnabled");
 const wxString  KEY_CONTROL_RPT1       = wxT("controlRPT1");
 const wxString  KEY_CONTROL_RPT2       = wxT("controlRPT2");
@@ -109,6 +115,12 @@ const unsigned int DEFAULT_BEACON_TIME        = 600U;
 const wxString     DEFAULT_BEACON_TEXT        = wxT("D-Star Repeater");
 const bool         DEFAULT_BEACON_VOICE       = false;
 const TEXT_LANG    DEFAULT_LANGUAGE           = TL_ENGLISH_UK;
+const bool         DEFAULT_ANNOUNCEMENT_ENABLED     = false;
+const unsigned int DEFAULT_ANNOUNCEMENT_TIME        = 500U;
+const wxString     DEFAULT_ANNOUNCEMENT_RECORD_RPT1 = wxEmptyString;
+const wxString     DEFAULT_ANNOUNCEMENT_RECORD_RPT2 = wxEmptyString;
+const wxString     DEFAULT_ANNOUNCEMENT_DELETE_RPT1 = wxEmptyString;
+const wxString     DEFAULT_ANNOUNCEMENT_DELETE_RPT2 = wxEmptyString;
 const bool         DEFAULT_CONTROL_ENABLED    = false;
 const wxString     DEFAULT_CONTROL_RPT1       = wxEmptyString;
 const wxString     DEFAULT_CONTROL_RPT2       = wxEmptyString;
@@ -176,6 +188,12 @@ m_beaconTime(DEFAULT_BEACON_TIME),
 m_beaconText(DEFAULT_BEACON_TEXT),
 m_beaconVoice(DEFAULT_BEACON_VOICE),
 m_language(DEFAULT_LANGUAGE),
+m_announcementEnabled(DEFAULT_ANNOUNCEMENT_ENABLED),
+m_announcementTime(DEFAULT_ANNOUNCEMENT_TIME),
+m_announcementRecordRPT1(DEFAULT_ANNOUNCEMENT_RECORD_RPT1),
+m_announcementRecordRPT2(DEFAULT_ANNOUNCEMENT_RECORD_RPT2),
+m_announcementDeleteRPT1(DEFAULT_ANNOUNCEMENT_DELETE_RPT1),
+m_announcementDeleteRPT2(DEFAULT_ANNOUNCEMENT_DELETE_RPT2),
 m_controlEnabled(DEFAULT_CONTROL_ENABLED),
 m_controlRpt1Callsign(DEFAULT_CONTROL_RPT1),
 m_controlRpt2Callsign(DEFAULT_CONTROL_RPT2),
@@ -290,6 +308,19 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_LANGUAGE, &temp1, long(DEFAULT_LANGUAGE));
 	m_language = TEXT_LANG(temp1);
 
+	m_config->Read(m_name + KEY_ANNOUNCEMENT_ENABLED, &m_announcementEnabled, DEFAULT_ANNOUNCEMENT_ENABLED);
+
+	m_config->Read(m_name + KEY_ANNOUNCEMENT_TIME, &temp1, long(DEFAULT_ANNOUNCEMENT_TIME));
+	m_announcementTime = (unsigned int)temp1;
+
+	m_config->Read(m_name + KEY_ANNOUNCEMENT_RECORD_RPT1, &m_announcementRecordRPT1, DEFAULT_ANNOUNCEMENT_RECORD_RPT1);
+
+	m_config->Read(m_name + KEY_ANNOUNCEMENT_RECORD_RPT2, &m_announcementRecordRPT2, DEFAULT_ANNOUNCEMENT_RECORD_RPT2);
+
+	m_config->Read(m_name + KEY_ANNOUNCEMENT_DELETE_RPT1, &m_announcementDeleteRPT1, DEFAULT_ANNOUNCEMENT_DELETE_RPT1);
+
+	m_config->Read(m_name + KEY_ANNOUNCEMENT_DELETE_RPT2, &m_announcementDeleteRPT2, DEFAULT_ANNOUNCEMENT_DELETE_RPT2);
+
 	m_config->Read(m_name + KEY_CONTROL_ENABLED, &m_controlEnabled, DEFAULT_CONTROL_ENABLED);
 
 	m_config->Read(m_name + KEY_CONTROL_RPT1, &m_controlRpt1Callsign, DEFAULT_CONTROL_RPT1);
@@ -393,6 +424,12 @@ m_beaconTime(DEFAULT_BEACON_TIME),
 m_beaconText(DEFAULT_BEACON_TEXT),
 m_beaconVoice(DEFAULT_BEACON_VOICE),
 m_language(DEFAULT_LANGUAGE),
+m_announcementEnabled(DEFAULT_ANNOUNCEMENT_ENABLED),
+m_announcementTime(DEFAULT_ANNOUNCEMENT_TIME),
+m_announcementRecordRPT1(DEFAULT_ANNOUNCEMENT_RECORD_RPT1),
+m_announcementRecordRPT2(DEFAULT_ANNOUNCEMENT_RECORD_RPT2),
+m_announcementDeleteRPT1(DEFAULT_ANNOUNCEMENT_DELETE_RPT1),
+m_announcementDeleteRPT2(DEFAULT_ANNOUNCEMENT_DELETE_RPT2),
 m_controlEnabled(DEFAULT_CONTROL_ENABLED),
 m_controlRpt1Callsign(DEFAULT_CONTROL_RPT1),
 m_controlRpt2Callsign(DEFAULT_CONTROL_RPT2),
@@ -547,6 +584,20 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_LANGUAGE)) {
 			val.ToLong(&temp1);
 			m_language = TEXT_LANG(temp1);
+		} else if (key.IsSameAs(KEY_ANNOUNCEMENT_ENABLED)) {
+			val.ToLong(&temp1);
+			m_announcementEnabled = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_ANNOUNCEMENT_TIME)) {
+			val.ToULong(&temp2);
+			m_announcementTime = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_ANNOUNCEMENT_RECORD_RPT1)) {
+			m_announcementRecordRPT1 = val;
+		} else if (key.IsSameAs(KEY_ANNOUNCEMENT_RECORD_RPT2)) {
+			m_announcementRecordRPT2 = val;
+		} else if (key.IsSameAs(KEY_ANNOUNCEMENT_DELETE_RPT1)) {
+			m_announcementDeleteRPT1 = val;
+		} else if (key.IsSameAs(KEY_ANNOUNCEMENT_DELETE_RPT2)) {
+			m_announcementDeleteRPT2 = val;
 		} else if (key.IsSameAs(KEY_CONTROL_ENABLED)) {
 			val.ToLong(&temp1);
 			m_controlEnabled = temp1 == 1L;
@@ -738,6 +789,26 @@ void CSoundCardRepeaterConfig::setBeacon(unsigned int time, const wxString& text
 	m_language    = language;
 }
 
+void CSoundCardRepeaterConfig::getAnnouncement(bool& enabled, unsigned int& time, wxString& recordRPT1, wxString& recordRPT2, wxString& deleteRPT1, wxString& deleteRPT2) const
+{
+	enabled    = m_announcementEnabled;
+	time       = m_announcementTime;
+	recordRPT1 = m_announcementRecordRPT1;
+	recordRPT2 = m_announcementRecordRPT2;
+	deleteRPT1 = m_announcementDeleteRPT1;
+	deleteRPT2 = m_announcementDeleteRPT2;
+}
+
+void CSoundCardRepeaterConfig::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+	m_announcementEnabled     = enabled;
+	m_announcementTime        = time;
+	m_announcementRecordRPT1  = recordRPT1;
+	m_announcementRecordRPT2  = recordRPT2;
+	m_announcementDeleteRPT1  = deleteRPT1;
+	m_announcementDeleteRPT2  = deleteRPT2;
+}
+
 void CSoundCardRepeaterConfig::getControl(bool& enabled, wxString& rpt1Callsign, wxString& rpt2Callsign, wxString& shutdown, wxString& startup, wxString& status1, wxString& status2, wxString& status3, wxString& status4, wxString& status5, wxString& command1, wxString& command1Line, wxString& command2, wxString& command2Line, wxString& command3, wxString& command3Line, wxString& command4, wxString& command4Line, wxString& output1, wxString& output2, wxString& output3, wxString& output4) const
 {
 	enabled      = m_controlEnabled;
@@ -872,6 +943,12 @@ bool CSoundCardRepeaterConfig::write()
 	m_config->Write(m_name + KEY_BEACON_TEXT, m_beaconText);
 	m_config->Write(m_name + KEY_BEACON_VOICE, m_beaconVoice);
 	m_config->Write(m_name + KEY_LANGUAGE, long(m_language));
+	m_config->Write(m_name + KEY_ANNOUNCEMENT_ENABLED, m_announcementEnabled);
+	m_config->Write(m_name + KEY_ANNOUNCEMENT_TIME, long(m_announcementTime));
+	m_config->Write(m_name + KEY_ANNOUNCEMENT_RECORD_RPT1, m_announcementRecordRPT1);
+	m_config->Write(m_name + KEY_ANNOUNCEMENT_RECORD_RPT2, m_announcementRecordRPT2);
+	m_config->Write(m_name + KEY_ANNOUNCEMENT_DELETE_RPT1, m_announcementDeleteRPT1);
+	m_config->Write(m_name + KEY_ANNOUNCEMENT_DELETE_RPT2, m_announcementDeleteRPT2);
 	m_config->Write(m_name + KEY_CONTROL_ENABLED, m_controlEnabled);
 	m_config->Write(m_name + KEY_CONTROL_RPT1, m_controlRpt1Callsign);
 	m_config->Write(m_name + KEY_CONTROL_RPT2, m_controlRpt2Callsign);
@@ -962,6 +1039,12 @@ bool CSoundCardRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_BEACON_TEXT.c_str(), m_beaconText.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_BEACON_VOICE.c_str(), m_beaconVoice ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_LANGUAGE.c_str(), int(m_language)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_ANNOUNCEMENT_ENABLED.c_str(), m_announcementEnabled ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_ANNOUNCEMENT_TIME.c_str(), m_announcementTime); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_ANNOUNCEMENT_RECORD_RPT1.c_str(), m_announcementRecordRPT1.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_ANNOUNCEMENT_RECORD_RPT2.c_str(), m_announcementRecordRPT2.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_ANNOUNCEMENT_DELETE_RPT1.c_str(), m_announcementDeleteRPT1.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_ANNOUNCEMENT_DELETE_RPT2.c_str(), m_announcementDeleteRPT2.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_CONTROL_ENABLED.c_str(), m_controlEnabled ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_CONTROL_RPT1.c_str(), m_controlRpt1Callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_CONTROL_RPT2.c_str(), m_controlRpt2Callsign.c_str()); file.AddLine(buffer);

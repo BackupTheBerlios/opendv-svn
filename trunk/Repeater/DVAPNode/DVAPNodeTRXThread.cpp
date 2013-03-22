@@ -38,6 +38,11 @@ m_stopped(true),
 m_rptCallsign(),
 m_gwyCallsign(),
 m_beacon(NULL),
+m_announcement(NULL),
+m_recordRPT1(),
+m_recordRPT2(),
+m_deleteRPT1(),
+m_deleteRPT2(),
 m_rxHeader(NULL),
 m_localQueue((DV_FRAME_LENGTH_BYTES + 2U) * 50U, LOCAL_RUN_FRAME_COUNT),			// 1s worth of data
 m_networkQueue(NULL),
@@ -50,6 +55,7 @@ m_watchdogTimer(1000U, 2U),			// 2s
 m_pollTimer(1000U, 60U),			// 60s
 m_ackTimer(1000U, 0U, 500U),		// 0.5s
 m_beaconTimer(1000U, 600U),			// 10 mins
+m_announcementTimer(1000U, 0U),		// not running
 m_dvapPollTimer(1000U, 2U),			// 2s
 m_state(DSRS_LISTENING),
 m_ackEncoder(),
@@ -83,7 +89,9 @@ m_packetSilence(0U),
 m_whiteList(NULL),
 m_blackList(NULL),
 m_greyList(NULL),
-m_blocked(false)
+m_blocked(false),
+m_recording(false),
+m_deleting(false)
 {
 	m_networkQueue = new COutputQueue*[NETWORK_QUEUE_COUNT];
 	for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
@@ -116,6 +124,7 @@ void CDVAPNodeTRXThread::run()
 
 	m_beaconTimer.start();
 	m_dvapPollTimer.start();
+	m_announcementTimer.start();
 
 	if (m_protocolHandler != NULL)
 		m_pollTimer.start();
@@ -170,6 +179,12 @@ void CDVAPNodeTRXThread::run()
 		if (m_beaconTimer.isRunning() && m_beaconTimer.hasExpired()) {
 			m_beacon->sendBeacon();
 			m_beaconTimer.reset();
+		}
+
+		// Send the announcement and restart the timer
+		if (m_announcementTimer.isRunning() && m_announcementTimer.hasExpired()) {
+			m_announcement->startAnnouncement();
+			m_announcementTimer.reset();
 		}
 
 		if (m_localQueue.dataReady())
@@ -252,6 +267,30 @@ void CDVAPNodeTRXThread::setBeacon(unsigned int time, const wxString& text, bool
 
 	if (time > 0U)
 		m_beacon = new CBeaconUnit(this, m_rptCallsign, text, voice, language);
+}
+
+void CDVAPNodeTRXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+	if (enabled && time > 0U) {
+		m_announcement = new CAnnouncementUnit(this, m_rptCallsign);
+
+		m_announcementTimer.setTimeout(time);
+
+		m_recordRPT1 = recordRPT1;
+		m_recordRPT2 = recordRPT2;
+		m_deleteRPT1 = deleteRPT1;
+		m_deleteRPT2 = deleteRPT2;
+
+		m_recordRPT1.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_recordRPT2.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_deleteRPT1.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+		m_deleteRPT2.Append(wxT(' '), LONG_CALLSIGN_LENGTH);
+
+		m_recordRPT1.Truncate(LONG_CALLSIGN_LENGTH);
+		m_recordRPT2.Truncate(LONG_CALLSIGN_LENGTH);
+		m_deleteRPT1.Truncate(LONG_CALLSIGN_LENGTH);
+		m_deleteRPT2.Truncate(LONG_CALLSIGN_LENGTH);
+	}
 }
 
 void CDVAPNodeTRXThread::setLogging(bool logging, const wxString& dir)
@@ -444,6 +483,19 @@ void CDVAPNodeTRXThread::transmitBeaconHeader()
 }
 
 void CDVAPNodeTRXThread::transmitBeaconData(const unsigned char* data, unsigned int length, bool end)
+{
+	m_localQueue.addData(data, length, end);
+}
+
+void CDVAPNodeTRXThread::transmitAnnouncementHeader(CHeaderData* header)
+{
+	header->setRptCall1(m_gwyCallsign);
+	header->setRptCall2(m_rptCallsign);
+
+	transmitLocalHeader(header);
+}
+
+void CDVAPNodeTRXThread::transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end)
 {
 	m_localQueue.addData(data, length, end);
 }
@@ -657,6 +709,7 @@ bool CDVAPNodeTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 	// The "from" state
 	switch (m_state) {
 		case DSRS_LISTENING:
+			m_announcementTimer.stop();
 			m_beaconTimer.stop();
 			break;
 
@@ -671,6 +724,7 @@ bool CDVAPNodeTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_watchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
+			m_announcementTimer.start();
 			m_state = DSRS_LISTENING;
 			if (m_protocolHandler != NULL)	// Tell the protocol handler
 				m_protocolHandler->reset();
@@ -744,6 +798,19 @@ bool CDVAPNodeTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 bool CDVAPNodeTRXThread::processRadioHeader(CHeaderData* header)
 {
 	wxASSERT(header != NULL);
+
+	// Check announcement messages
+	bool res = checkAnnouncements(*header);
+	if (res) {
+		bool res = setRepeaterState(DSRS_INVALID);
+		if (res) {
+			delete m_rxHeader;
+			m_rxHeader = header;
+		} else {
+			delete header;
+		}
+		return true;
+	}
 
 	// We don't handle DD data packets
 	if (header->isDataPacket()) {
@@ -870,6 +937,25 @@ void CDVAPNodeTRXThread::processRadioFrame(unsigned char* data, FRAME_TYPE type)
 
 	if (::memcmp(data, NULL_AMBE_DATA_BYTES, VOICE_FRAME_LENGTH_BYTES) == 0)
 		m_ambeSilence++;
+
+	// If this is deleting an announcement, ignore the audio
+	if (m_deleting) {
+		if (type == FRAME_END) {
+			m_deleting  = false;
+			m_recording = false;
+		}
+		return;
+	}
+
+	// If this is recording an announcement, send the audio to the announcement unit and then stop
+	if (m_recording) {
+		m_announcement->writeData(data, DV_FRAME_LENGTH_BYTES, type == FRAME_END);
+		if (type == FRAME_END) {
+			m_deleting  = false;
+			m_recording = false;
+		}
+		return;
+	}
 
 	// Don't pass through the frame of an invalid transmission
 	if (m_state != DSRS_VALID)
@@ -1071,8 +1157,8 @@ CDVAPNodeStatusData* CDVAPNodeTRXThread::getStatus()
 	if (m_state == DSRS_LISTENING) {
 		return new CDVAPNodeStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
 				wxEmptyString, 0x00, 0x00, 0x00, m_tx, m_squelch, m_signal, m_state, m_timeoutTimer.getTimer(),
-				m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(), m_beaconTimer.getTimeout(), 0.0F,
-				m_ackText);
+				m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(), m_beaconTimer.getTimeout(),
+				m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(), 0.0F, m_ackText);
 	} else if (m_state == DSRS_NETWORK) {
 		float loss = 0.0F;
 		if (m_packetCount != 0U)
@@ -1082,7 +1168,8 @@ CDVAPNodeStatusData* CDVAPNodeTRXThread::getStatus()
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_squelch, m_signal,
 				m_state, m_timeoutTimer.getTimer(), m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(),
-				m_beaconTimer.getTimeout(), loss * 100.0F, m_ackText);
+				m_beaconTimer.getTimeout(), m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(),
+				loss * 100.0F, m_ackText);
 	} else {
 		float   bits = float(m_ambeBits - m_lastAMBEBits);
 		float errors = float(m_ambeErrors - m_lastAMBEErrors);
@@ -1096,7 +1183,8 @@ CDVAPNodeStatusData* CDVAPNodeTRXThread::getStatus()
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_squelch, m_signal,
 				m_state, m_timeoutTimer.getTimer(), m_timeoutTimer.getTimeout(), m_beaconTimer.getTimer(),
-				m_beaconTimer.getTimeout(), (errors * 100.0F) / bits, m_ackText);
+				m_beaconTimer.getTimeout(), m_announcementTimer.getTimer(), m_announcementTimer.getTimeout(),
+				(errors * 100.0F) / bits, m_ackText);
 	}
 }
 
@@ -1107,9 +1195,34 @@ void CDVAPNodeTRXThread::clock(unsigned int ms)
 	m_watchdogTimer.clock(ms);
 	m_ackTimer.clock(ms);
 	m_beaconTimer.clock(ms);
+	m_announcementTimer.clock(ms);
 	m_dvapPollTimer.clock(ms);
 	if (m_beacon != NULL)
 		m_beacon->clock();
+	if (m_announcement != NULL)
+		m_announcement->clock();
+}
+
+bool CDVAPNodeTRXThread::checkAnnouncements(const CHeaderData& header)
+{
+	if (m_announcement == NULL)
+		return false;
+
+	if (m_recordRPT1.IsSameAs(header.getRptCall1()) && m_recordRPT2.IsSameAs(header.getRptCall2())) {
+		wxLogMessage(wxT("Announcement creation requested by %s/%s"), header.getMyCall1().c_str(), header.getMyCall2().c_str());
+		m_announcement->writeHeader(header);
+		m_recording = true;
+		return true;
+	}
+
+	if (m_deleteRPT1.IsSameAs(header.getRptCall1()) && m_deleteRPT2.IsSameAs(header.getRptCall2())) {
+		wxLogMessage(wxT("Announcement deletion requested by %s/%s"), header.getMyCall1().c_str(), header.getMyCall2().c_str());
+		m_announcement->deleteAnnouncement();
+		m_deleting = true;
+		return true;
+	}
+
+	return false;
 }
 
 TRISTATE CDVAPNodeTRXThread::checkHeader(CHeaderData& header)

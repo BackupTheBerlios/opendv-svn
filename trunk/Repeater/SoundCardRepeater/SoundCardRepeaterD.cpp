@@ -236,6 +236,16 @@ bool CSoundCardRepeaterD::createThread()
 	m_thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
 	wxLogInfo(wxT("Beacon set to %u mins, text set to \"%s\", voice set to %d, language set to %d"), beaconTime / 60U, beaconText.c_str(), int(beaconVoice), int(language));
 
+	bool announcementEnabled;
+	unsigned int announcementTime;
+	wxString announcementRecordRPT1, announcementRecordRPT2;
+	wxString announcementDeleteRPT1, announcementDeleteRPT2;
+	comfig.getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	if (mode == MODE_GATEWAY)
+		announcementEnabled = false;
+	m_thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	wxLogInfo(wxT("Announcement enabled: %d, time: %u mins, record RPT1: \"%s\", record RPT2: \"%s\", delete RPT1: \"%s\", delete RPT2: \"%s\""), int(announcementEnabled), announcementTime / 60U, announcementRecordRPT1.c_str(), announcementRecordRPT2.c_str(), announcementDeleteRPT1.c_str(), announcementDeleteRPT2.c_str());
+
 	wxString readDevice, writeDevice;
 	bool rxInvert, txInvert;
 	wxFloat32 rxLevel, txLevel, squelchLevel;

@@ -207,6 +207,10 @@ void CSoundCardRepeaterTXThread::setBeacon(unsigned int time, const wxString& te
 {
 }
 
+void CSoundCardRepeaterTXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+}
+
 void CSoundCardRepeaterTXThread::setController(CExternalController* controller, int pttDelay)
 {
 	wxASSERT(controller != NULL);
@@ -624,16 +628,14 @@ CSoundCardRepeaterStatusData* CSoundCardRepeaterTXThread::getStatus()
 
 	if (m_rptState == DSRS_LISTENING)
 		return new CSoundCardRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
-				wxEmptyString, 0x00, 0x00, 0x00, m_tx, false, DSRXS_LISTENING, m_rptState, 0U, 0U,
-				m_activeHangTimer.getTimer(), m_activeHangTimer.getTimeout(), 0U, 0U, 0.0F, 0.0F,
-				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
+				wxEmptyString, 0x00, 0x00, 0x00, m_tx, false, DSRXS_LISTENING, m_rptState, 0U, 0U, 0U, 0U, 0U,
+				0U, 0.0F, 0.0F, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 	else
 		return new CSoundCardRepeaterStatusData(m_header->getMyCall1(), m_header->getMyCall2(),
 				m_header->getYourCall(), m_header->getRptCall1(), m_header->getRptCall2(), 
 				m_header->getFlag1(), m_header->getFlag2(), m_header->getFlag3(), m_tx, false,
-				DSRXS_LISTENING, m_rptState, 0U, 0U, m_activeHangTimer.getTimer(), m_activeHangTimer.getTimeout(),
-				0U, 0U, loss * 100.0F, 0.0F, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
-				wxEmptyString, wxEmptyString);
+				DSRXS_LISTENING, m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, loss * 100.0F, 0.0F,
+				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 }
 
 void CSoundCardRepeaterTXThread::clock(unsigned int ms)

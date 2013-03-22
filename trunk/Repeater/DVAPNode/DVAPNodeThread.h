@@ -40,6 +40,7 @@ public:
 	virtual void setDVAP(CDVAPController* dvap) = 0;
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime) = 0;
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language) = 0;
+	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2) = 0;
 	virtual void setLogging(bool logging, const wxString& dir) = 0;
 	virtual void setWhiteList(CCallsignList* list) = 0;
 	virtual void setBlackList(CCallsignList* list) = 0;

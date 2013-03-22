@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ public:
 							 const wxString& rptCall1, const wxString& rptCall2, unsigned char flag1,
 							 unsigned char flag2, unsigned char flag3, DSTAR_RPT_STATE state,
 							 unsigned int timeoutTimer, unsigned int timeoutExpiry, unsigned int beaconTimer,
-							 unsigned int beaconExpiry, float ber, const wxString& text, const wxString& status1,
-							 const wxString& status2, const wxString& status3, const wxString& status4,
-							 const wxString& status5);
+							 unsigned int beaconExpiry, unsigned int announceTimer, unsigned int announceExpiry,
+							 float ber, const wxString& text, const wxString& status1, const wxString& status2,
+							 const wxString& status3, const wxString& status4, const wxString& status5);
 	~CSplitRepeaterStatusData();
 
 	wxString      getMyCall1() const;
@@ -50,6 +50,9 @@ public:
 
 	unsigned int  getBeaconTimer() const;
 	unsigned int  getBeaconExpiry() const;
+
+	unsigned int  getAnnounceTimer() const;
+	unsigned int  getAnnounceExpiry() const;
 
 	float         getBER() const;
 
@@ -74,6 +77,8 @@ private:
 	unsigned int    m_timeoutExpiry;
 	unsigned int    m_beaconTimer;
 	unsigned int    m_beaconExpiry;
+	unsigned int    m_announceTimer;
+	unsigned int    m_announceExpiry;
 	float           m_ber;
 	wxString        m_text;
 	wxString        m_status1;

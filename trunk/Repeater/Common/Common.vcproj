@@ -166,6 +166,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AnnouncementSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AnnouncementUnit.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\AudioDelay.cpp"
 				>
 			</File>
@@ -461,6 +469,18 @@
 			</File>
 			<File
 				RelativePath=".\AnalogueDefines.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AnnouncementCallback.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AnnouncementSet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AnnouncementUnit.h"
 				>
 			</File>
 			<File

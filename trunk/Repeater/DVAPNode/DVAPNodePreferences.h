@@ -21,6 +21,7 @@
 
 #include "DVAPNodeCallsignSet.h"
 #include "DVAPNodeTimesSet.h"
+#include "AnnouncementSet.h"
 #include "DVAPNodeDVAPSet.h"
 #include "DVAPNodeDefs.h"
 #include "DStarDefines.h"
@@ -35,7 +36,9 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, const wxString& gatewayAddress, 
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
-		TEXT_LANG language, const wxString& port, unsigned int frequency, int power, int squelch);
+		TEXT_LANG language, bool announcementEnabled, unsigned int announcementTime, const wxString& announcementRecordRPT1,
+		const wxString& announcementRecordRPT2, const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2,
+		const wxString& port, unsigned int frequency, int power, int squelch);
 	virtual ~CDVAPNodePreferences();
 
 	virtual bool Validate();
@@ -60,6 +63,13 @@ public:
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
 
+	virtual bool         getAnnouncementEnabled() const;
+	virtual unsigned int getAnnouncementTime() const;
+	virtual wxString     getAnnouncementRecordRPT1() const;
+	virtual wxString     getAnnouncementRecordRPT2() const;
+	virtual wxString     getAnnouncementDeleteRPT1() const;
+	virtual wxString     getAnnouncementDeleteRPT2() const;
+
 	virtual wxString     getPort() const;
 	virtual unsigned int getFrequency() const;
 	virtual int          getPower() const;
@@ -70,6 +80,7 @@ private:
 	CNetworkSet*          m_network;
 	CDVAPNodeTimesSet*    m_times;
 	CBeaconSet*           m_beacon;
+	CAnnouncementSet*     m_announcement;
 	CDVAPNodeDVAPSet*     m_dvap;
 };
 

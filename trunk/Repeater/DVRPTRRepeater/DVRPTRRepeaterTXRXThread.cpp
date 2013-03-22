@@ -229,6 +229,10 @@ void CDVRPTRRepeaterTXRXThread::setBeacon(unsigned int time, const wxString& tex
 {
 }
 
+void CDVRPTRRepeaterTXRXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+{
+}
+
 void CDVRPTRRepeaterTXRXThread::setController(CExternalController* controller, unsigned int activeHangTime)
 {
 	wxASSERT(controller != NULL);
@@ -811,13 +815,13 @@ CDVRPTRRepeaterStatusData* CDVRPTRRepeaterTXRXThread::getStatus()
 
 	if (m_rptState == DSRS_SHUTDOWN || m_rptState == DSRS_LISTENING)
 		return new CDVRPTRRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
-				wxEmptyString, 0x00, 0x00, 0x00, m_tx, m_rxState, m_rptState, 0U, 0U, 0U, 0U, 0.0F,
+				wxEmptyString, 0x00, 0x00, 0x00, m_tx, m_rxState, m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, 0.0F,
 				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 	else
 		return new CDVRPTRRepeaterStatusData(m_rxHeader->getMyCall1(), m_rxHeader->getMyCall2(),
 				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
 				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_rxState,
-				m_rptState, 0U, 0U, 0U, 0U, (errors * 100.0F) / bits, wxEmptyString, wxEmptyString,
+				m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, (errors * 100.0F) / bits, wxEmptyString, wxEmptyString,
 				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 }
 

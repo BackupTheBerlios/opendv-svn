@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ public:
 							 const wxString& rptCall1, const wxString& rptCall2, unsigned char flag1,
 							 unsigned char flag2, unsigned char flag3, bool tx, bool squelch,
 							 DSTAR_RX_STATE rxState, DSTAR_RPT_STATE rptState, unsigned int timeoutTimer,
-							 unsigned int timeoutExpiry, unsigned int activeTimer, unsigned int activeExpiry,
-							 unsigned int beaconTimer, unsigned int beaconExpiry, float percent, float noise,
+							 unsigned int timeoutExpiry, unsigned int beaconTimer, unsigned int beaconExpiry,
+							 unsigned int announceTimer, unsigned int announceExpiry, float percent, float noise,
 							 const wxString& text, const wxString& status1, const wxString& status2,
 							 const wxString& status3, const wxString& status4, const wxString& status5);
 	~CSoundCardRepeaterStatusData();
@@ -54,11 +54,11 @@ public:
 	unsigned int  getTimeoutTimer() const;
 	unsigned int  getTimeoutExpiry() const;
 
-	unsigned int  getActiveTimer() const;
-	unsigned int  getActiveExpiry() const;
-
 	unsigned int  getBeaconTimer() const;
 	unsigned int  getBeaconExpiry() const;
+
+	unsigned int  getAnnounceTimer() const;
+	unsigned int  getAnnounceExpiry() const;
 
 	float         getPercent() const;
 
@@ -86,10 +86,10 @@ private:
 	DSTAR_RPT_STATE m_rptState;
 	unsigned int    m_timeoutTimer;
 	unsigned int    m_timeoutExpiry;
-	unsigned int    m_activeTimer;
-	unsigned int    m_activeExpiry;
 	unsigned int    m_beaconTimer;
 	unsigned int    m_beaconExpiry;
+	unsigned int    m_announceTimer;
+	unsigned int    m_announceExpiry;
 	float           m_percent;
 	float           m_noise;
 	wxString        m_text;

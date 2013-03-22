@@ -102,8 +102,8 @@ m_rpt2(NULL),
 m_flags(NULL),
 m_percent(NULL),
 m_timeout(NULL),
-m_active(NULL),
 m_beacon(NULL),
+m_announce(NULL),
 m_text(NULL),
 m_status1(NULL),
 m_status2(NULL),
@@ -228,17 +228,17 @@ m_updates(gui)
 	m_timeout = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	timer2Sizer->Add(m_timeout, 0, wxALL, BORDER_SIZE);
 
-	wxStaticText* activeLabel = new wxStaticText(panel, -1, _("Active:"), wxDefaultPosition, wxSize(LABEL_WIDTH, -1), wxALIGN_RIGHT);
-	timer2Sizer->Add(activeLabel, 0, wxALL, BORDER_SIZE);
-
-	m_active = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	timer2Sizer->Add(m_active, 0, wxALL, BORDER_SIZE);
-
 	wxStaticText* beaconLabel = new wxStaticText(panel, -1, _("Beacon:"), wxDefaultPosition, wxSize(LABEL_WIDTH, -1), wxALIGN_RIGHT);
 	timer2Sizer->Add(beaconLabel, 0, wxALL, BORDER_SIZE);
 
 	m_beacon = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	timer2Sizer->Add(m_beacon, 0, wxALL, BORDER_SIZE);
+
+	wxStaticText* announceLabel = new wxStaticText(panel, -1, _("Announce:"), wxDefaultPosition, wxSize(LABEL_WIDTH, -1), wxALIGN_RIGHT);
+	timer2Sizer->Add(announceLabel, 0, wxALL, BORDER_SIZE);
+
+	m_announce = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	timer2Sizer->Add(m_announce, 0, wxALL, BORDER_SIZE);
 
 	timer1Sizer->Add(timer2Sizer);
 	panelSizer->Add(timer1Sizer, 0, wxALL, BORDER_SIZE);
@@ -500,6 +500,12 @@ void CSoundCardRepeaterFrame::onPreferences(wxCommandEvent& event)
 	TEXT_LANG language;
 	::wxGetApp().getBeacon(beaconTime, beaconText, beaconVoice, language);
 
+	bool announcementEnabled;
+	unsigned int announcementTime;
+	wxString announcementRecordRPT1, announcementRecordRPT2;
+	wxString announcementDeleteRPT1, announcementDeleteRPT2;
+	::wxGetApp().getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+
 	wxString readDevice, writeDevice;
 	bool rxInvert, txInvert;
 	wxFloat32 rxLevel, txLevel, squelchLevel;
@@ -525,12 +531,12 @@ void CSoundCardRepeaterFrame::onPreferences(wxCommandEvent& event)
 	::wxGetApp().getActiveHang(activeHangTime);
 
 	CSoundCardRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
-		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, hangTime, beaconTime,
-		beaconText, beaconVoice, language, readDevice, writeDevice, rxInvert, txInvert, rxLevel, txLevel,
-		squelchMode, squelchLevel, interfaceType, interfaceConfig, pttDelay, pttInvert, enabled, rpt1Callsign,
-		rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line,
-		command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3,
-		output4, activeHangTime);
+		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, hangTime, beaconTime, beaconText, beaconVoice,
+		language, announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2,
+		announcementDeleteRPT1, announcementDeleteRPT2, readDevice, writeDevice, rxInvert, txInvert, rxLevel, txLevel,
+		squelchMode, squelchLevel, interfaceType, interfaceConfig, pttDelay, pttInvert, enabled, rpt1Callsign, rpt2Callsign,
+		shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line,
+		command3, command3Line, command4, command4Line, output1, output2, output3, output4, activeHangTime);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -559,6 +565,14 @@ void CSoundCardRepeaterFrame::onPreferences(wxCommandEvent& event)
 	beaconVoice = dialog1.getBeaconVoice();
 	language    = dialog1.getLanguage();
 	::wxGetApp().setBeacon(beaconTime, beaconText, beaconVoice, language);
+
+	announcementEnabled    = dialog1.getAnnouncementEnabled();
+	announcementTime       = dialog1.getAnnouncementTime();
+	announcementRecordRPT1 = dialog1.getAnnouncementRecordRPT1();
+	announcementRecordRPT2 = dialog1.getAnnouncementRecordRPT2();
+	announcementDeleteRPT1 = dialog1.getAnnouncementDeleteRPT1();
+	announcementDeleteRPT2 = dialog1.getAnnouncementDeleteRPT2();
+	::wxGetApp().setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 
 	readDevice   = dialog1.getReadDevice();
 	writeDevice  = dialog1.getWriteDevice();
@@ -701,11 +715,11 @@ void CSoundCardRepeaterFrame::onTimer(wxTimerEvent& event)
 	text.Printf(wxT("%u/%u"), status->getTimeoutTimer(), status->getTimeoutExpiry());
 	m_timeout->SetLabel(text);
 
-	text.Printf(wxT("%u/%u"), status->getActiveTimer(), status->getActiveExpiry());
-	m_active->SetLabel(text);
-
 	text.Printf(wxT("%u/%u"), status->getBeaconTimer(), status->getBeaconExpiry());
 	m_beacon->SetLabel(text);
+
+	text.Printf(wxT("%u/%u"), status->getAnnounceTimer(), status->getAnnounceExpiry());
+	m_announce->SetLabel(text);
 
 	m_text->SetLabel(status->getText());
 	m_status1->SetLabel(status->getStatus1());

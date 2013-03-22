@@ -50,6 +50,9 @@ public:
 	void getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const;
 	void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
 
+	void getAnnouncement(bool& enabled, unsigned int& time, wxString& recordRPT1, wxString& recordRPT2, wxString& deleteRPT1, wxString& deleteRPT2) const;
+	void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
+
 	void getLogging(bool& logging) const;
 	void setLogging(bool logging);
 
@@ -85,6 +88,12 @@ private:
 	wxString      m_beaconText;
 	bool          m_beaconVoice;
 	TEXT_LANG     m_language;
+	bool          m_announcementEnabled;
+	unsigned int  m_announcementTime;
+	wxString      m_announcementRecordRPT1;
+	wxString      m_announcementRecordRPT2;
+	wxString      m_announcementDeleteRPT1;
+	wxString      m_announcementDeleteRPT2;
 	bool          m_logging;
 	int           m_x;
 	int           m_y;

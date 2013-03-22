@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@ CSoundCardRepeaterStatusData::CSoundCardRepeaterStatusData(const wxString& myCal
 												   unsigned char flag2, unsigned char flag3, bool tx,
 												   bool squelch, DSTAR_RX_STATE rxState,
 												   DSTAR_RPT_STATE rptState, unsigned int timeoutTimer,
-												   unsigned int timeoutExpiry, unsigned int activeTimer,
-												   unsigned int activeExpiry, unsigned int beaconTimer,
-												   unsigned int beaconExpiry, float percent, float noise,
+												   unsigned int timeoutExpiry, unsigned int beaconTimer,
+												   unsigned int beaconExpiry, unsigned int announceTimer,
+												   unsigned int announceExpiry, float percent, float noise,
 												   const wxString& text, const wxString& status1,
 												   const wxString& status2, const wxString& status3,
 												   const wxString& status4, const wxString& status5) :
@@ -44,10 +44,10 @@ m_rxState(rxState),
 m_rptState(rptState),
 m_timeoutTimer(timeoutTimer),
 m_timeoutExpiry(timeoutExpiry),
-m_activeTimer(activeTimer),
-m_activeExpiry(activeExpiry),
 m_beaconTimer(beaconTimer),
 m_beaconExpiry(beaconExpiry),
+m_announceTimer(announceTimer),
+m_announceExpiry(announceExpiry),
 m_percent(percent),
 m_noise(noise),
 m_text(text),
@@ -133,16 +133,6 @@ unsigned int CSoundCardRepeaterStatusData::getTimeoutExpiry() const
 	return m_timeoutExpiry;
 }
 
-unsigned int CSoundCardRepeaterStatusData::getActiveTimer() const
-{
-	return m_activeTimer;
-}
-
-unsigned int CSoundCardRepeaterStatusData::getActiveExpiry() const
-{
-	return m_activeExpiry;
-}
-
 unsigned int CSoundCardRepeaterStatusData::getBeaconTimer() const
 {
 	return m_beaconTimer;
@@ -151,6 +141,16 @@ unsigned int CSoundCardRepeaterStatusData::getBeaconTimer() const
 unsigned int CSoundCardRepeaterStatusData::getBeaconExpiry() const
 {
 	return m_beaconExpiry;
+}
+
+unsigned int CSoundCardRepeaterStatusData::getAnnounceTimer() const
+{
+	return m_announceTimer;
+}
+
+unsigned int CSoundCardRepeaterStatusData::getAnnounceExpiry() const
+{
+	return m_announceExpiry;
 }
 
 float CSoundCardRepeaterStatusData::getPercent() const

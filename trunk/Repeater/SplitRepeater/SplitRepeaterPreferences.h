@@ -25,6 +25,7 @@
 #include "SplitRepeaterAddressSet.h"
 #include "SplitRepeaterTimesSet.h"
 #include "SplitRepeaterDefs.h"
+#include "AnnouncementSet.h"
 #include "DStarDefines.h"
 #include "NetworkSet.h"
 #include "BeaconSet.h"
@@ -37,7 +38,9 @@ public:
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 		const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort,
 		unsigned int timeout, unsigned int ackTime, unsigned int frameWaitTime, unsigned int beaconTime,
-		const wxString& beaconText, bool beaconVoice, TEXT_LANG language, const wxString& receiver1Address,
+		const wxString& beaconText, bool beaconVoice, TEXT_LANG language, bool announcementEnabled,
+		unsigned int announcementTime, const wxString& announcementRecordRPT1, const wxString& announcementRecordRPT2,
+		const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, const wxString& receiver1Address,
 		unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port,
 		const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address,
 		unsigned int transmitter2Port, bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign,
@@ -70,6 +73,13 @@ public:
 	virtual unsigned int getBeaconTime() const;
 	virtual bool         getBeaconVoice() const;
 	virtual TEXT_LANG    getLanguage() const;
+
+	virtual bool         getAnnouncementEnabled() const;
+	virtual unsigned int getAnnouncementTime() const;
+	virtual wxString     getAnnouncementRecordRPT1() const;
+	virtual wxString     getAnnouncementRecordRPT2() const;
+	virtual wxString     getAnnouncementDeleteRPT1() const;
+	virtual wxString     getAnnouncementDeleteRPT2() const;
 
 	virtual wxString     getReceiver1Address() const;
 	virtual unsigned int getReceiver1Port() const;
@@ -108,6 +118,7 @@ private:
 	CNetworkSet*               m_network;
 	CSplitRepeaterTimesSet*    m_times;
 	CBeaconSet*                m_beacon;
+	CAnnouncementSet*          m_announcement;
 	CSplitRepeaterAddressSet*  m_receiver1;
 	CSplitRepeaterAddressSet*  m_receiver2;
 	CSplitRepeaterAddressSet*  m_transmitter1;

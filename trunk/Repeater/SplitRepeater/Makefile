@@ -49,7 +49,7 @@ SplitRepeaterFrame.o:	SplitRepeaterFrame.cpp SplitRepeaterFrame.h SplitRepeaterD
 				$(CC) $(CFLAGS) -c SplitRepeaterFrame.cpp
 
 SplitRepeaterHeaderData.o:	SplitRepeaterHeaderData.cpp SplitRepeaterHeaderData.h ../Common/CCITTChecksumReverse.h ../Common/DStarDefines.h \
-							../Common/Utils.h
+							../Common/HeaderData.h ../Common/Utils.h
 				$(CC) $(CFLAGS) -c SplitRepeaterHeaderData.cpp
 
 SplitRepeaterLogger.o:	SplitRepeaterLogger.cpp SplitRepeaterLogger.h SplitRepeaterApp.h
@@ -57,7 +57,7 @@ SplitRepeaterLogger.o:	SplitRepeaterLogger.cpp SplitRepeaterLogger.h SplitRepeat
 
 SplitRepeaterPreferences.o:	SplitRepeaterPreferences.cpp SplitRepeaterPreferences.h SplitRepeaterDefs.h SplitRepeaterControl1Set.h \
 							SplitRepeaterControl2Set.h SplitRepeaterAddressSet.h SplitRepeaterApp.h SplitRepeaterTimesSet.h SplitRepeaterCallsignSet.h \
-							../Common/NetworkSet.h ../Common/BeaconSet.h ../Common/DStarDefines.h
+							../Common/NetworkSet.h ../Common/BeaconSet.h ../Common/AnnouncementSet.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c SplitRepeaterPreferences.cpp
 
 SplitRepeaterProtocolHandler.o:	SplitRepeaterProtocolHandler.cpp SplitRepeaterProtocolHandler.h SplitRepeaterUDPReaderWriter.h \
@@ -73,7 +73,7 @@ SplitRepeaterThreadHelper.o:	SplitRepeaterThreadHelper.cpp SplitRepeaterThreadHe
 SplitRepeaterThread.o:	SplitRepeaterThread.cpp SplitRepeaterThread.h SplitRepeaterDefs.h SplitRepeaterApp.h SplitRepeaterAMBEData.h \
 						SplitRepeaterHeaderData.h SplitRepeaterStatusData.h SplitRepeaterProtocolHandler.h ../Common/DStarDefines.h ../Common/Timer.h \
 						../Common/SlowDataEncoder.h ../Common/Version.h ../Common/DVTOOLFileWriter.h ../Common/CallsignList.h ../Common/BeaconUnit.h \
-						../Common/BeaconCallback.h
+						../Common/BeaconCallback.h ../Common/AnnouncementUnit.h ../Common/AnnouncementCallback.h ../Common/HeaderData.h
 				$(CC) $(CFLAGS) -c SplitRepeaterThread.cpp
 
 SplitRepeaterTimesSet.o:	SplitRepeaterTimesSet.cpp SplitRepeaterTimesSet.h
