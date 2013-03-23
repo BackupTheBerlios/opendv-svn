@@ -1,4 +1,4 @@
-Repeater - 20130315
+Repeater - 20130323
 ===================
 
 20090530
@@ -1817,7 +1817,7 @@ Allow for switching DTMF blanking off for duplex.
 Added XRF038.
 Allow for the new format of Danish callsigns.
 
-201303xx
+20130323
 --------
 
 Updated XRF003s IP address.

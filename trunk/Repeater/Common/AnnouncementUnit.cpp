@@ -102,6 +102,9 @@ void CAnnouncementUnit::startAnnouncement()
 		return;
 	}
 
+	// Remove the repeater bit
+	header->setFlag1(header->getFlag1() & ~REPEATER_MASK);
+
 	m_handler->transmitAnnouncementHeader(header);
 
 	m_time.Start();

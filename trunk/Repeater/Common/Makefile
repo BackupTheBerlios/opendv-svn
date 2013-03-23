@@ -25,7 +25,7 @@ AMBEFEC.o:	AMBEFEC.cpp AMBEFEC.h Golay.h
 AnnouncementSet.o:	AnnouncementSet.cpp AnnouncementSet.h CallsignTextCtrl.h DStarDefines.h
 		$(CC) $(CFLAGS) -c AnnouncementSet.cpp
 
-AnnouncementUnit.o:	AnnouncementUnit.cpp AnnouncementUnit.h AnnouncementCallback.h HeaderData.h DStarDefines.h
+AnnouncementUnit.o:	AnnouncementUnit.cpp AnnouncementUnit.h AnnouncementCallback.h HeaderData.h DStarDefines.h DVTOOLFileReader.h DVTOOLFileWriter.h
 		$(CC) $(CFLAGS) -c AnnouncementUnit.cpp
 
 AudioDelay.o:	AudioDelay.cpp AudioDelay.h

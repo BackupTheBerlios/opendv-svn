@@ -741,6 +741,13 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 							m_linkRepeater = command.Mid(4U);
 						}
 					}
+				} else if (command.IsSameAs(wxT("**"))) {
+					if (!m_linkStartup.IsEmpty()) {
+						wxString str = m_linkStartup.Left(LONG_CALLSIGN_LENGTH - 2U);
+						str.Append(m_linkStartup.GetChar(LONG_CALLSIGN_LENGTH - 1U));
+						str.Append(wxT('L'));
+						reflectorCommandHandler(str, m_myCall1, wxT("DTMF"));
+					}
 				} else if (command.IsSameAs(wxT("       I"))) {
 					m_infoNeeded = true;
 				} else {
@@ -959,6 +966,13 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 						m_ccsHandler->writeEnd();
 				} else if (command.IsSameAs(wxT("       I"))) {
 					// Do nothing
+				} else if (command.IsSameAs(wxT("**"))) {
+					if (!m_linkStartup.IsEmpty()) {
+						wxString str = m_linkStartup.Left(LONG_CALLSIGN_LENGTH - 2U);
+						str.Append(m_linkStartup.GetChar(LONG_CALLSIGN_LENGTH - 1U));
+						str.Append(wxT('L'));
+						reflectorCommandHandler(str, m_myCall1, wxT("background DTMF"));
+					}
 				} else {
 					reflectorCommandHandler(command, m_myCall1, wxT("background DTMF"));
 				}

@@ -158,6 +158,9 @@ wxString CDTMF::translate()
 	if (command.IsSameAs(wxT("00")))
 		return wxT("       I");
 
+	if (command.IsSameAs(wxT("**")))
+		return wxT("**");
+
 	if (command.GetChar(0U) == wxT('*'))
 		return processDPlus(command.Mid(1U));
 	else if (command.GetChar(0U) == wxT('B'))
