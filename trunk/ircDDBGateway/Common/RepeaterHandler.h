@@ -268,6 +268,7 @@ private:
 	CTimer                    m_heardTimer;
 
 	void g2CommandHandler(const wxString& callsign, const wxString& user, CHeaderData& header);
+	void ccsCommandHandler(const wxString& callsign, const wxString& user, const wxString& type);
 	void reflectorCommandHandler(const wxString& callsign, const wxString& user, const wxString& type);
 	void sendToOutgoing(const CHeaderData& header);
 	void sendToOutgoing(const CAMBEData& data);

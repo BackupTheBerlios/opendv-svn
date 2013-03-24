@@ -382,6 +382,18 @@ void CSoundCardRepeaterTRXThread::run()
 	delete m_audioDelay;
 	delete m_pttDelay;
 
+	if (m_logging != NULL) {
+		m_logging->close();
+		delete m_logging;
+	}
+
+	delete m_beacon;
+	delete m_announcement;
+
+	delete m_whiteList;
+	delete m_blackList;
+	delete m_greyList;
+
 	if (m_reader != NULL) {
 		m_reader->close();
 		delete m_reader;
@@ -1556,7 +1568,6 @@ bool CSoundCardRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 
 		case DSRS_LISTENING:
 			m_beaconTimer.stop();
-			m_announcementTimer.stop();
 			break;
 
 		default:
@@ -1589,7 +1600,6 @@ bool CSoundCardRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_watchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
-			m_announcementTimer.start();
 			m_rptState = DSRS_LISTENING;
 			if (m_protocolHandler != NULL)	// Tell the protocol handler
 				m_protocolHandler->reset();

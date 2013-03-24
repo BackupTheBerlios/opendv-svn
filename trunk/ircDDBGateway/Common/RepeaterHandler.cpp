@@ -654,7 +654,7 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	}
 
 	// Reject simple cases
-	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ")) || m_yourCall.IsSameAs(wxT("       L"))) {
+	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ"))) {
 		sendToOutgoing(header);
 		return;
 	}
@@ -686,11 +686,16 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 		return;
 	}
 
-	g2CommandHandler(m_yourCall, m_myCall1, header);
-
-	if (m_g2Status == G2_NONE) {
-		reflectorCommandHandler(m_yourCall, m_myCall1, wxT("UR Call"));
+	if (m_yourCall.Left(3U).IsSameAs(wxT("CCS"))) {
+		ccsCommandHandler(m_yourCall, m_myCall1, wxT("UR Call"));
 		sendToOutgoing(header);
+	} else {
+		g2CommandHandler(m_yourCall, m_myCall1, header);
+
+		if (m_g2Status == G2_NONE) {
+			reflectorCommandHandler(m_yourCall, m_myCall1, wxT("UR Call"));
+			sendToOutgoing(header);
+		}
 	}
 }
 
@@ -699,8 +704,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 	// AMBE data via RF resets the reconnect timer
 	m_linkReconnectTimer.reset();
 	m_watchdogTimer.reset();
-
-	wxString ccsDTMF = wxEmptyString;
 
 	m_frames++;
 	m_errors += data.getErrors();
@@ -729,25 +732,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-					if (command.IsSameAs(wxT("CCSA"))) {
-						m_ccsHandler->writeEnd();
-					} else {
-						CCS_STATUS status = m_ccsHandler->getStatus();
-						if (status == CS_CONNECTED) {
-							ccsDTMF = command.Mid(3U);
-							suspendLinks();
-							m_queryTimer.start();
-							m_linkStatus   = LS_LINKING_CCS;
-							m_linkRepeater = command.Mid(4U);
-						}
-					}
-				} else if (command.IsSameAs(wxT("**"))) {
-					if (!m_linkStartup.IsEmpty()) {
-						wxString str = m_linkStartup.Left(LONG_CALLSIGN_LENGTH - 2U);
-						str.Append(m_linkStartup.GetChar(LONG_CALLSIGN_LENGTH - 1U));
-						str.Append(wxT('L'));
-						reflectorCommandHandler(str, m_myCall1, wxT("DTMF"));
-					}
+					ccsCommandHandler(command, m_myCall1, wxT("DTMF"));
 				} else if (command.IsSameAs(wxT("       I"))) {
 					m_infoNeeded = true;
 				} else {
@@ -761,7 +746,7 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 	sendToIncoming(data);
 
 	// CCS gets everything
-	m_ccsHandler->writeAMBE(data, ccsDTMF);
+	m_ccsHandler->writeAMBE(data);
 
 	if (m_drats != NULL)
 		m_drats->writeData(data);
@@ -935,11 +920,13 @@ void CRepeaterHandler::processBusy(CHeaderData& header)
 	}
 
 	// Reject simple cases
-	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ")) || m_yourCall.IsSameAs(wxT("       L")) ||
-	    m_yourCall.IsSameAs(wxT("       E"))     || m_yourCall.IsSameAs(wxT("       I")))
+	if (m_yourCall.Left(4).IsSameAs(wxT("CQCQ")) || m_yourCall.IsSameAs(wxT("       E"))     || m_yourCall.IsSameAs(wxT("       I")))
 		return;
 
-	reflectorCommandHandler(m_yourCall, m_myCall1, wxT("background UR Call"));
+	if (m_yourCall.Left(3U).IsSameAs(wxT("CCS")))
+		ccsCommandHandler(m_yourCall, m_myCall1, wxT("background UR Call"));
+	else
+		reflectorCommandHandler(m_yourCall, m_myCall1, wxT("background UR Call"));
 }
 
 void CRepeaterHandler::processBusy(CAMBEData& data)
@@ -962,17 +949,9 @@ void CRepeaterHandler::processBusy(CAMBEData& data)
 				if (command.IsEmpty()) {
 					// Do nothing
 				} else if (command.Left(3U).IsSameAs(wxT("CCS"))) {
-					if (command.IsSameAs(wxT("CCSA")))
-						m_ccsHandler->writeEnd();
+					ccsCommandHandler(command, m_myCall1, wxT("background DTMF"));
 				} else if (command.IsSameAs(wxT("       I"))) {
 					// Do nothing
-				} else if (command.IsSameAs(wxT("**"))) {
-					if (!m_linkStartup.IsEmpty()) {
-						wxString str = m_linkStartup.Left(LONG_CALLSIGN_LENGTH - 2U);
-						str.Append(m_linkStartup.GetChar(LONG_CALLSIGN_LENGTH - 1U));
-						str.Append(wxT('L'));
-						reflectorCommandHandler(str, m_myCall1, wxT("background DTMF"));
-					}
 				} else {
 					reflectorCommandHandler(command, m_myCall1, wxT("background DTMF"));
 				}
@@ -1436,7 +1415,7 @@ void CRepeaterHandler::clockInt(unsigned int ms)
 			// CCS didn't reply in time
 			wxLogMessage(wxT("CCS did not reply within five seconds"));
 
-			m_ccsHandler->writeEnd();
+			m_ccsHandler->stopLink();
 
 			m_linkStatus = LS_NONE;
 			m_linkRepeater.Clear();
@@ -1687,7 +1666,7 @@ void CRepeaterHandler::link(RECONNECT reconnect, const wxString& reflector)
 	if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS) {
 		wxLogMessage(wxT("Dropping CCS link to %s"), m_linkRepeater.c_str());
 
-		m_ccsHandler->writeEnd();
+		m_ccsHandler->stopLink();
 
 		m_linkStatus = LS_NONE;
 		m_linkRepeater.Clear();
@@ -1965,6 +1944,22 @@ void CRepeaterHandler::g2CommandHandler(const wxString& callsign, const wxString
 	}
 }
 
+void CRepeaterHandler::ccsCommandHandler(const wxString& callsign, const wxString& user, const wxString& type)
+{
+	if (callsign.IsSameAs(wxT("CCSA    "))) {
+		m_ccsHandler->stopLink(user, type);
+	} else {
+		CCS_STATUS status = m_ccsHandler->getStatus();
+		if (status == CS_CONNECTED) {
+			suspendLinks();
+			m_queryTimer.start();
+			m_linkStatus   = LS_LINKING_CCS;
+			m_linkRepeater = callsign.Mid(3U);
+			m_ccsHandler->startLink(m_linkRepeater, user, type);
+		}
+	}
+}
+
 void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const wxString& user, const wxString& type)
 {
 	if (m_linkStatus == LS_LINKING_CCS || m_linkStatus == LS_LINKED_CCS)
@@ -1994,10 +1989,20 @@ void CRepeaterHandler::reflectorCommandHandler(const wxString& callsign, const w
 		writeNotLinked();
 		triggerInfo();
 	} else if (letter.IsSameAs(wxT("L"))) {
-		// Extract the callsign "1234567L" -> "123456 7"
-		wxString reflector = callsign.Left(LONG_CALLSIGN_LENGTH - 2U);
-		reflector.Append(wxT(" "));
-		reflector.Append(callsign.Mid(LONG_CALLSIGN_LENGTH - 2U, 1));
+		wxString reflector;
+
+		// Handle the special case of "       L"
+		if (callsign.IsSameAs(wxT("       L"))) {
+			if (m_linkStartup.IsEmpty())
+				return;
+
+			reflector = m_linkStartup;
+		} else {
+			// Extract the callsign "1234567L" -> "123456 7"
+			reflector = callsign.Left(LONG_CALLSIGN_LENGTH - 2U);
+			reflector.Append(wxT(" "));
+			reflector.Append(callsign.Mid(LONG_CALLSIGN_LENGTH - 2U, 1));
+		}
 
 		// Ensure duplicate link requests aren't acted on
 		if (m_linkStatus != LS_NONE && reflector.IsSameAs(m_linkRepeater)) {

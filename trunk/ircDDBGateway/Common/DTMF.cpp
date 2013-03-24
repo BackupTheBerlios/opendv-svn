@@ -153,13 +153,13 @@ wxString CDTMF::translate()
 		return wxT("       I");
 
 	if (command.IsSameAs(wxT("A")))
-		return wxT("CCSA");
+		return wxT("CCSA    ");
 
 	if (command.IsSameAs(wxT("00")))
 		return wxT("       I");
 
 	if (command.IsSameAs(wxT("**")))
-		return wxT("**");
+		return wxT("       L");
 
 	if (command.GetChar(0U) == wxT('*'))
 		return processDPlus(command.Mid(1U));
@@ -277,10 +277,10 @@ wxString CDTMF::processCCS(const wxString& command) const
 
 	switch (len) {
 		case 4U:
-			out.Printf(wxT("CCS*%04lu"), n);
+			out.Printf(wxT("CCS%04lu "), n);
 			break;
 		case 5U:
-			out.Printf(wxT("CCS*%05lu"), n);
+			out.Printf(wxT("CCS%05lu"), n);
 			break;
 		default:
 			break;

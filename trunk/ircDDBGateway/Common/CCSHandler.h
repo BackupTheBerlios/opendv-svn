@@ -56,8 +56,10 @@ public:
 
 	void writeHeard(CHeaderData& header);
 	void writeHeader(CHeaderData& header);
-	void writeAMBE(CAMBEData& data, const wxString& dtmf = wxEmptyString);
-	void writeEnd();
+	void writeAMBE(CAMBEData& data);
+
+	void startLink(const wxString& dtmf, const wxString& user, const wxString& type);
+	void stopLink(const wxString& user = wxEmptyString, const wxString& type = wxEmptyString);
 
 	void unlink(const wxString& callsign);
 

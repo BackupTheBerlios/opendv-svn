@@ -329,6 +329,18 @@ void CDVRPTRRepeaterTRXThread::run()
 
 	m_dvrptr->close();
 
+	if (m_logging != NULL) {
+		m_logging->close();
+		delete m_logging;
+	}
+
+	delete m_beacon;
+	delete m_announcement;
+
+	delete m_whiteList;
+	delete m_blackList;
+	delete m_greyList;
+
 	m_controller->setActive(false);
 	m_controller->setRadioTransmit(false);
 	m_controller->close();
@@ -1157,7 +1169,6 @@ bool CDVRPTRRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 
 		case DSRS_LISTENING:
 			m_beaconTimer.stop();
-			m_announcementTimer.stop();
 			break;
 
 		default:
@@ -1183,7 +1194,6 @@ bool CDVRPTRRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_watchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
-			m_announcementTimer.start();
 			m_rptState = DSRS_LISTENING;
 			if (m_protocolHandler != NULL)	// Tell the protocol handler
 				m_protocolHandler->reset();

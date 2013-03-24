@@ -385,12 +385,40 @@ void CCCSHandler::disconnectInt()
 	m_state = CS_DISABLED;
 }
 
-void CCCSHandler::writeEnd()
+void CCCSHandler::startLink(const wxString& dtmf, const wxString& user, const wxString& type)
+{
+	if (m_state != CS_CONNECTED)
+		return;
+
+	wxString callsign = findInCache(dtmf);
+	if (!callsign.IsEmpty()) {
+		wxLogMessage(wxT("CCS: New outgoing link to %s/%s via %s by %s"), dtmf.c_str(), callsign.c_str(), type.c_str(), user.c_str());
+		m_handler->ccsLinkMade(callsign, m_direction);
+		m_yourCall = callsign;
+	} else {
+		wxLogMessage(wxT("CCS: New outgoing link to %s via %s by %s"), dtmf.c_str(), type.c_str(), user.c_str());
+		m_yourCall = wxT("*");
+		m_yourCall.Append(dtmf);
+		m_yourCall.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
+	}
+
+	m_local = user;
+	m_seqNo = 0U;
+
+	m_time        = ::time(NULL);
+	m_stateChange = true;
+	m_state       = CS_ACTIVE;
+	m_direction   = DIR_OUTGOING;
+	m_inactivityTimer.start();
+}
+
+void CCCSHandler::stopLink(const wxString& user, const wxString& type)
 {
 	if (m_state != CS_ACTIVE)
 		return;
 
-	wxLogMessage(wxT("CCS: Link to %s from %s has been terminated locally"), m_yourCall.c_str(), m_local.c_str());
+	if (!user.IsEmpty() && !type.IsEmpty())
+		wxLogMessage(wxT("CCS: Link to %s from %s has been terminated via %s by %s"), m_yourCall.c_str(), m_local.c_str(), type.c_str(), user.c_str());
 
 	CCCSData data(m_local, m_yourCall, CT_TERMINATE);
 	data.setDestination(m_ccsAddress, CCS_PORT);
@@ -452,35 +480,10 @@ void CCCSHandler::writeHeader(CHeaderData& header)
 	m_seqNo = 0U;
 }
 
-void CCCSHandler::writeAMBE(CAMBEData& data, const wxString& dtmf)
+void CCCSHandler::writeAMBE(CAMBEData& data)
 {
-	if (m_state != CS_CONNECTED && m_state != CS_ACTIVE)
+	if (m_state != CS_ACTIVE)
 		return;
-
-	if (m_state == CS_CONNECTED) {
-		if (!dtmf.Left(1U).IsSameAs(wxT("*")))
-			return;
-
-		wxString callsign = findInCache(dtmf.Mid(1U));
-		if (!callsign.IsEmpty()) {
-			wxLogMessage(wxT("CCS: New outgoing link to %s/%s from %s"), dtmf.Mid(1U).c_str(), callsign.c_str(), m_myCall1.c_str());
-			m_handler->ccsLinkMade(callsign, m_direction);
-			m_yourCall = callsign;
-		} else {
-			wxLogMessage(wxT("CCS: New outgoing link to %s from %s"), dtmf.Mid(1U).c_str(), m_myCall1.c_str());
-			m_yourCall = dtmf;
-		}
-
-		m_local = m_myCall1;
-		m_seqNo = 0U;
-
-		m_time        = ::time(NULL);
-		m_stateChange = true;
-		m_state       = CS_ACTIVE;
-		m_direction   = DIR_OUTGOING;
-		m_inactivityTimer.start();
-
-	}
 
 	CAMBEData temp(data);
 

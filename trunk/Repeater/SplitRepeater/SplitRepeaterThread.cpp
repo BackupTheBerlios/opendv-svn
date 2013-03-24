@@ -296,8 +296,14 @@ void CSplitRepeaterThread::run()
 
 	CSplitRepeaterHeaderData::finalise();
 
-	m_protocolHandler->close();
+	delete m_beacon;
+	delete m_announcement;
 
+	delete m_whiteList;
+	delete m_blackList;
+	delete m_greyList;
+
+	m_protocolHandler->close();
 	delete m_protocolHandler;
 }
 
@@ -1051,7 +1057,6 @@ bool CSplitRepeaterThread::setRepeaterState(DSTAR_RPT_STATE state)
 
 		case DSRS_LISTENING:
 			m_beaconTimer.stop();
-			m_announcementTimer.stop();
 			break;
 
 		default:
@@ -1076,7 +1081,6 @@ bool CSplitRepeaterThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_networkWatchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
-			m_announcementTimer.start();
 			m_networkId = 0x00U;
 			m_state = DSRS_LISTENING;
 			break;

@@ -209,6 +209,18 @@ void CDVAPNodeTRXThread::run()
 
 	m_dvap->close();
 
+	if (m_logging != NULL) {
+		m_logging->close();
+		delete m_logging;
+	}
+
+	delete m_beacon;
+	delete m_announcement;
+
+	delete m_whiteList;
+	delete m_blackList;
+	delete m_greyList;
+
 	if (m_protocolHandler != NULL) {
 		m_protocolHandler->close();
 		delete m_protocolHandler;
@@ -709,7 +721,6 @@ bool CDVAPNodeTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 	// The "from" state
 	switch (m_state) {
 		case DSRS_LISTENING:
-			m_announcementTimer.stop();
 			m_beaconTimer.stop();
 			break;
 
@@ -724,7 +735,6 @@ bool CDVAPNodeTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			m_watchdogTimer.stop();
 			m_ackTimer.stop();
 			m_beaconTimer.start();
-			m_announcementTimer.start();
 			m_state = DSRS_LISTENING;
 			if (m_protocolHandler != NULL)	// Tell the protocol handler
 				m_protocolHandler->reset();
