@@ -43,7 +43,7 @@ DStarRepeaterFrame.o:	DStarRepeaterFrame.cpp DStarRepeaterFrame.h DStarRepeaterD
 DStarRepeaterLogger.o:	DStarRepeaterLogger.cpp DStarRepeaterLogger.h DStarRepeaterApp.h
 				$(CC) $(CFLAGS) -c DStarRepeaterLogger.cpp
 
-DStarRepeaterModemSet.o:	DStarRepeaterModemSet.cpp DStarRepeaterModemSet.h DStarRepeaterDefs.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h
+DStarRepeaterModemSet.o:	DStarRepeaterModemSet.cpp DStarRepeaterModemSet.h DStarRepeaterDefs.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h \
 					../Common/DStarDefines.h ../Common/AddressTextCtrl.h ../Common/PortTextCtrl.h
 				$(CC) $(CFLAGS) -c DStarRepeaterModemSet.cpp
 

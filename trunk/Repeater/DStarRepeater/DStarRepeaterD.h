@@ -24,23 +24,23 @@
 
 #include <wx/wx.h>
 
-class CStarRepeaterD {
+class CDStarRepeaterD {
 
 public:
-	CStarRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name);
-	~CStarRepeaterD();
+	CDStarRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name);
+	~CDStarRepeaterD();
 
 	bool init();
 
 	void run();
 
 private:
-	wxString               m_name;
-	bool                   m_nolog;
-	wxString               m_logDir;
-	wxString               m_confDir;
-	wxString               m_audioDir;
-	IDVRPTRRepeaterThread* m_thread;
+	wxString              m_name;
+	bool                  m_nolog;
+	wxString              m_logDir;
+	wxString              m_confDir;
+	wxString              m_audioDir;
+	IDStarRepeaterThread* m_thread;
 
 	bool createThread();
 };

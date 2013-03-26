@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 {
 	bool res = ::wxInitialize();
 	if (!res) {
-		::fprintf(stderr, "dvrptrrepeaterd: failed to initialise the wxWidgets library, exiting\n");
+		::fprintf(stderr, "dstarrepeaterd: failed to initialise the wxWidgets library, exiting\n");
 		return -1;
 	}
 
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 		pid_t pid = ::fork();
 
 		if (pid < 0) {
-			::fprintf(stderr, "dvrptrrepeaterd: error in fork(), exiting\n");
+			::fprintf(stderr, "dstarrepeaterd: error in fork(), exiting\n");
 			::wxUninitialize();
 			return 1;
 		}
@@ -264,7 +264,7 @@ bool CDStarRepeaterD::createThread()
 			IDVRPTRController* controller = NULL;
 			switch (modemVersion) {
 				case DVRPTR_V1:
-					controller = new CVRPTRControllerV1(modemUSBPort, modemUSBPath, rxInvert, txInvert, channel, modLevel, txDelay);
+					controller = new CDVRPTRControllerV1(modemUSBPort, modemUSBPath, rxInvert, txInvert, channel, modLevel, txDelay);
 					break;
 				case DVRPTR_V2:
 					controller = new CDVRPTRControllerV2(modemUSBPort, modemUSBPath, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
