@@ -13,6 +13,8 @@
 
 #include "UNIXSocketReaderWriter.h"
 
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <cerrno>
 
 CUNIXSocketReaderWriter::CUNIXSocketReaderWriter(const wxString& server, const wxString& client) :
@@ -86,12 +88,12 @@ int CUNIXSocketReaderWriter::read(unsigned char* buffer, unsigned int length)
 	wxASSERT(buffer != NULL);
 
 	struct timeval tv;
-	tv.tv_secs  = 0;
-	tv.tv_usecs = 0;
+	tv.tv_sec  = 0;
+	tv.tv_usec = 0;
 
 	fd_set fds;
 	FD_ZERO(&fds);
-	FD_SET(&fds, m_sockServer);
+	FD_SET(m_sockServer, &fds);
 
 	int n = ::select(m_sockServer + 1, &fds, NULL, NULL, &tv);
 	if (n < 0) {

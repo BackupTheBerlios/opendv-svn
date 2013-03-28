@@ -276,7 +276,7 @@ bool CDStarRepeaterD::createThread()
 		controller = new CExternalController(new CDummyController, false, false);
 	}
 
-	res = controller->open();
+	bool res = controller->open();
 	if (!res)
 		wxLogError(wxT("Cannot open the hardware interface - %s"), controllerType.c_str());
 	else

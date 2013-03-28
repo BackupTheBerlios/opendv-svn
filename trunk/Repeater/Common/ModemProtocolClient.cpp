@@ -38,8 +38,8 @@ m_length(0U)
 	wxString server = name;
 	wxString client = name;
 
-	server.Replace(wxT(' '), wxT('_'));
-	client.Replace(wxT(' '), wxT('_'));
+	server.Replace(wxT(" "), wxT("_"));
+	client.Replace(wxT(" "), wxT("_"));
 
 	server.Append(wxT("_B"));
 	client.Append(wxT("_A"));
