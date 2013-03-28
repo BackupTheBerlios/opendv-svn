@@ -22,7 +22,7 @@ CDStarRepeaterStatusData::CDStarRepeaterStatusData(const wxString& myCall1, cons
 													 const wxString& yourCall, const wxString& rptCall1,
 													 const wxString& rptCall2, unsigned char flag1,
 													 unsigned char flag2, unsigned char flag3, bool tx,
-													 DVRPTR_RX_STATE rxState, DSTAR_RPT_STATE rptState,
+													 DSTAR_RX_STATE rxState, DSTAR_RPT_STATE rptState,
 													 unsigned int timeoutTimer, unsigned int timeoutExpiry,
 													 unsigned int beaconTimer, unsigned int beaconExpiry,
 													 unsigned int announceTimer, unsigned int announceExpiry,
@@ -105,7 +105,7 @@ bool CDStarRepeaterStatusData::getTX() const
 	return m_tx;
 }
 
-DVRPTR_RX_STATE CDStarRepeaterStatusData::getRxState() const
+DSTAR_RX_STATE CDStarRepeaterStatusData::getRxState() const
 {
 	return m_rxState;
 }

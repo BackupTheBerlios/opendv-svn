@@ -319,7 +319,7 @@ wxMenuBar* CDStarRepeaterFrame::createMenuBar()
 	m_outputMenu->AppendCheckItem(Menu_Output_4, _("Output 4"));
 
 	wxMenu* helpMenu = new wxMenu();
-	helpMenu->Append(wxID_ABOUT, _("About DV-RPTR Repeater"));
+	helpMenu->Append(wxID_ABOUT, _("About D-Star Repeater"));
 
 	wxMenuBar* menuBar = new wxMenuBar();
 	menuBar->Append(fileMenu,     _("File"));
@@ -404,10 +404,10 @@ void CDStarRepeaterFrame::onAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
-	info.SetCopyright(wxT("(C) 2011-2013 using GPL v2 or later"));
+	info.SetCopyright(wxT("(C) 2013 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
-	info.SetDescription(_("This program allows a computer with a DV-RPTR modem\nand 9600Bd capable radios to act as a D-Star repeater."));
+	info.SetDescription(_("This program allows a computer with a suitable\nmodem driver to act as a D-Star repeater."));
 
 	::wxAboutBox(info);
 }

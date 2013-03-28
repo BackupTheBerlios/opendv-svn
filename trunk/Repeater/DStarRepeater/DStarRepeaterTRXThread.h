@@ -111,7 +111,7 @@ private:
 	CTimer                     m_beaconTimer;
 	CTimer                     m_announcementTimer;
 	DSTAR_RPT_STATE            m_rptState;
-	DVRPTR_RX_STATE             m_rxState;
+	DSTAR_RX_STATE             m_rxState;
 	CSlowDataDecoder           m_slowDataDecoder;
 	CSlowDataEncoder           m_ackEncoder;
 	CSlowDataEncoder           m_linkEncoder;
@@ -214,7 +214,7 @@ private:
 	unsigned int processNetworkFrame(unsigned char* data, unsigned int length, unsigned char seqNo);
 	void endOfRadioData();
 	void endOfNetworkData();
-	void setRadioState(DVRPTR_RX_STATE state);
+	void setRadioState(DSTAR_RX_STATE state);
 	bool setRepeaterState(DSTAR_RPT_STATE state);
 	bool checkControl(const CHeaderData& header);
 	bool checkAnnouncements(const CHeaderData& header);

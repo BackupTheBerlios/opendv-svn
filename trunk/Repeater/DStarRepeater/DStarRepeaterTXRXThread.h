@@ -80,7 +80,7 @@ private:
 	CTimer                     m_watchdogTimer;
 	CTimer                     m_pollTimer;
 	DSTAR_RPT_STATE            m_rptState;
-	DVRPTR_RX_STATE             m_rxState;
+	DSTAR_RX_STATE             m_rxState;
 	CSlowDataDecoder           m_slowDataDecoder;
 	bool                       m_tx;
 	unsigned int               m_space;
@@ -116,7 +116,7 @@ private:
 	unsigned int processNetworkFrame(unsigned char* data, unsigned int length, unsigned char seqNo);
 	void endOfRadioData();
 	void endOfNetworkData();
-	void setRadioState(DVRPTR_RX_STATE state);
+	void setRadioState(DSTAR_RX_STATE state);
 	bool setRepeaterState(DSTAR_RPT_STATE state);
 	unsigned int countBits(unsigned char byte);
 	void clock(unsigned int ms);

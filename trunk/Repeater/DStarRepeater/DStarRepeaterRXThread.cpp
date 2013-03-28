@@ -323,7 +323,7 @@ void CDStarRepeaterRXThread::receiveNetwork()
 	} while (type != NETWORK_NONE);
 }
 
-void CDStarRepeaterRXThread::setRadioState(DVRPTR_RX_STATE state)
+void CDStarRepeaterRXThread::setRadioState(DSTAR_RX_STATE state)
 {
 	// This is the too state
 	switch (state) {

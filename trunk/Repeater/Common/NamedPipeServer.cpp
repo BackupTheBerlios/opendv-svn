@@ -11,39 +11,58 @@
  *	GNU General Public License for more details.
  */
 
-#include "NamedPipeClient.h"
+#include "NamedPipeServer.h"
 
-CNamedPipeClient::CNamedPipeClient(const wxString& name) :
+CNamedPipeServer::CNamedPipeServer(const wxString& name) :
 m_name(name),
 m_handle(INVALID_HANDLE_VALUE),
 m_overlappedRead(),
-m_overlappedWrite()
+m_overlappedWrite(),
+m_overlappedConnect()
 {
 	wxASSERT(!name.IsEmpty());
 
 	::memset(&m_overlappedRead, 0x00U, sizeof(OVERLAPPED));
 	::memset(&m_overlappedWrite, 0x00U, sizeof(OVERLAPPED));
+	::memset(&m_overlappedConnect, 0x00U, sizeof(OVERLAPPED));
 }
 
-CNamedPipeClient::~CNamedPipeClient()
+CNamedPipeServer::~CNamedPipeServer()
 {
 }
 
-bool CNamedPipeClient::open()
+bool CNamedPipeServer::open()
 {
 	wxString fileName;
 	fileName.Printf(wxT("\\\\.\\pipe\\%s"), m_name.c_str());
 
-	m_handle = ::CreateFile(fileName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	m_handle = ::CreateNamedPipe(fileName.c_str(), PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE, 1, 200, 200, 10, NULL);
 	if (m_handle == INVALID_HANDLE_VALUE) {
-		wxLogError(wxT("CreateFile for the Named Pipe, %s, failed: err=%lu"), fileName.c_str(), ::GetLastError());
+		wxLogError(wxT("CreateNamedPipe for the Named Pipe, %s, failed: err=%lu"), fileName.c_str(), ::GetLastError());
 		return false;
 	}
 
 	return true;
 }
 
-bool CNamedPipeClient::write(const unsigned char* buffer, unsigned int length)
+bool CNamedPipeServer::hasClient()
+{
+	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
+
+	BOOL res = ::ConnectNamedPipe(m_handle, &m_overlappedConnect);
+	if (!res) {
+		DWORD err = ::GetLastError();
+		if (err == ERROR_IO_PENDING)
+			return true;
+
+		wxLogError(wxT("Error from Named Pipe ConnectNamedPipe: err=%lu"), err);
+		return false;
+	}
+
+	return true;
+}
+
+bool CNamedPipeServer::write(const unsigned char* buffer, unsigned int length)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 	wxASSERT(buffer != NULL);
@@ -62,7 +81,7 @@ bool CNamedPipeClient::write(const unsigned char* buffer, unsigned int length)
 	return true;
 }
 
-int CNamedPipeClient::read(unsigned char* buffer, unsigned int length)
+int CNamedPipeServer::read(unsigned char* buffer, unsigned int length)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 	wxASSERT(buffer != NULL);
@@ -81,7 +100,7 @@ int CNamedPipeClient::read(unsigned char* buffer, unsigned int length)
 	return int(bytes);
 }
 
-void CNamedPipeClient::close()
+void CNamedPipeServer::close()
 {
 	if (m_handle != INVALID_HANDLE_VALUE) {
 		::CloseHandle(m_handle);

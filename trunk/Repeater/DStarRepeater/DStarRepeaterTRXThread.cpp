@@ -1159,7 +1159,7 @@ void CDStarRepeaterTRXThread::repeaterStateMachine()
 	}
 }
 
-void CDStarRepeaterTRXThread::setRadioState(DVRPTR_RX_STATE state)
+void CDStarRepeaterTRXThread::setRadioState(DSTAR_RX_STATE state)
 {
 	// This is the too state
 	switch (state) {

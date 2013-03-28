@@ -28,7 +28,7 @@ class CDStarRepeaterStatusData {
 public:
 	CDStarRepeaterStatusData(const wxString& myCall1, const wxString& myCall2, const wxString& yourCall,
 							  const wxString& rptCall1, const wxString& rptCall2, unsigned char flag1,
-							  unsigned char flag2, unsigned char flag3, bool tx, DVRPTR_RX_STATE rxState,
+							  unsigned char flag2, unsigned char flag3, bool tx, DSTAR_RX_STATE rxState,
 							  DSTAR_RPT_STATE rptState, unsigned int timeoutTimer, unsigned int timeoutExpiry,
 							  unsigned int beaconTimer, unsigned int beaconExpiry, unsigned int announceTimer,
 							  unsigned int announceExpiry, float percent, const wxString& text,
@@ -48,7 +48,7 @@ public:
 	bool          getTX() const;
 
 	DSTAR_RPT_STATE getRptState() const;
-	DVRPTR_RX_STATE getRxState() const;
+	DSTAR_RX_STATE  getRxState() const;
 
 	unsigned int  getTimeoutTimer() const;
 	unsigned int  getTimeoutExpiry() const;
@@ -78,7 +78,7 @@ private:
 	unsigned char   m_flag2;
 	unsigned char   m_flag3;
 	bool            m_tx;
-	DVRPTR_RX_STATE m_rxState;
+	DSTAR_RX_STATE  m_rxState;
 	DSTAR_RPT_STATE m_rptState;
 	unsigned int    m_timeoutTimer;
 	unsigned int    m_timeoutExpiry;

@@ -34,8 +34,10 @@ public:
 	void close();
 
 private:
-	wxString m_name;
-	HANDLE   m_handle;
+	wxString   m_name;
+	HANDLE     m_handle;
+	OVERLAPPED m_overlappedRead;
+	OVERLAPPED m_overlappedWrite;
 };
 
 #endif

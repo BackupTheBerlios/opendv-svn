@@ -350,6 +350,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NamedPipeServer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NCO.cpp"
 				>
 			</File>
@@ -721,6 +725,10 @@
 			</File>
 			<File
 				RelativePath=".\NamedPipeClient.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NamedPipeServer.h"
 				>
 			</File>
 			<File

@@ -66,7 +66,7 @@ private:
 	unsigned char              m_radioSeqNo;
 	CTimer                     m_pollTimer;
 	DSTAR_RPT_STATE            m_rptState;
-	DVRPTR_RX_STATE             m_rxState;
+	DSTAR_RX_STATE             m_rxState;
 	CSlowDataDecoder           m_slowDataDecoder;
 	bool                       m_killed;
 	CAMBEFEC                   m_ambe;
@@ -86,7 +86,7 @@ private:
 	bool processRadioHeader(CHeaderData* header);
 	void processRadioFrame(unsigned char* data, FRAME_TYPE type);
 	void endOfRadioData();
-	void setRadioState(DVRPTR_RX_STATE state);
+	void setRadioState(DSTAR_RX_STATE state);
 	unsigned int countBits(unsigned char byte);
 	void clock(unsigned int ms);
 };
