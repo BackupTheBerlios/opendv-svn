@@ -41,11 +41,8 @@ public:
 	void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	void getModem(DVRPTR_VERSION& version, CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
-	void setModem(DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
-
-	void getModem(wxString& path) const;
-	void setModem(const wxString& path);
+	void getModem(wxString& name) const;
+	void setModem(const wxString& name);
 
 	void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
 	void setTimes(unsigned int timeout, unsigned int ackTime);
@@ -91,17 +88,7 @@ private:
 	unsigned int  m_gatewayPort;
 	wxString      m_localAddress;
 	unsigned int  m_localPort;
-	DVRPTR_VERSION  m_modemVersion;
-	CONNECTION_TYPE m_modemConnection;
-	wxString      m_modemUSBPort;
-	wxString      m_modemUSBPath;
-	wxString      m_modemAddress;
-	unsigned int  m_modemPort;
-	bool          m_rxInvert;
-	bool          m_txInvert;
-	bool          m_channel;
-	unsigned int  m_modLevel;
-	unsigned int  m_txDelay;
+	wxString      m_modemName;
 	unsigned int  m_timeout;
 	unsigned int  m_ackTime;
 	unsigned int  m_beaconTime;

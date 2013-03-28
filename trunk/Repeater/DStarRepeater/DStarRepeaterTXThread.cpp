@@ -32,10 +32,12 @@ const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
 const unsigned int SILENCE_THRESHOLD = 2U;
 
-const unsigned int CYCLE_TIME = 9U;
+const unsigned int STATUS_TIME = 100U;
+
+const unsigned int CYCLE_TIME  = 9U;
 
 CDStarRepeaterTXThread::CDStarRepeaterTXThread() :
-m_dvrptr(NULL),
+m_modem(NULL),
 m_protocolHandler(NULL),
 m_stopped(true),
 m_rptCallsign(),
@@ -48,6 +50,7 @@ m_watchdogTimer(1000U, 2U),			// 2s
 m_pollTimer(1000U, 60U),			// 60s
 m_state(DSRS_LISTENING),
 m_tx(false),
+m_space(0U),
 m_killed(false),
 m_lastData(NULL),
 m_ambe(),
@@ -75,7 +78,7 @@ CDStarRepeaterTXThread::~CDStarRepeaterTXThread()
 void CDStarRepeaterTXThread::run()
 {
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dvrptr == NULL  || m_protocolHandler == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
+	while (!m_killed && (m_modem == NULL  || m_protocolHandler == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -85,19 +88,24 @@ void CDStarRepeaterTXThread::run()
 
 	m_pollTimer.start();
 
-	wxLogMessage(wxT("Starting the DV-RPTR transmitter thread"));
+	wxLogMessage(wxT("Starting the D-Star transmitter thread"));
 
 	wxStopWatch stopWatch;
+
+	unsigned int count = 0U;
 
 	while (!m_killed) {
 		stopWatch.Start();
 
-		// Remove any received data from the modem
-		m_dvrptr->purgeRX();
+		count++;
+		if (count >= (STATUS_TIME / CYCLE_TIME)) {
+			m_modem->getStatus();
+			count = 0U;
+		}
 
 		receiveNetwork();
 
-		m_tx = m_dvrptr->getPTT();
+		receiveModem();
 
 		if (m_state == DSRS_NETWORK) {
 			if (m_watchdogTimer.hasExpired()) {
@@ -111,9 +119,9 @@ void CDStarRepeaterTXThread::run()
 		// Send the network poll if needed and restart the timer
 		if (m_pollTimer.hasExpired()) {
 #if defined(__WINDOWS__)
-			m_protocolHandler->writePoll(wxT("win_DStar-") + VERSION);
+			m_protocolHandler->writePoll(wxT("win_dstar-") + VERSION);
 #else
-			m_protocolHandler->writePoll(wxT("linux_DStar-") + VERSION);
+			m_protocolHandler->writePoll(wxT("linux_dstar-") + VERSION);
 #endif
 			m_pollTimer.reset();
 		}
@@ -132,9 +140,10 @@ void CDStarRepeaterTXThread::run()
 		}
 	}
 
-	wxLogMessage(wxT("Stopping the DV-RPTR transmitter thread"));
+	wxLogMessage(wxT("Stopping the D-Star transmitter thread"));
 
-	m_dvrptr->close();
+	m_modem->close();
+	delete m_modem;
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
@@ -159,11 +168,11 @@ void CDStarRepeaterTXThread::setProtocolHandler(CRepeaterProtocolHandler* handle
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTXThread::setModem(IDVRPTRController* controller)
+void CDStarRepeaterTXThread::setModem(CModemProtocolClient* modem)
 {
-	wxASSERT(controller != NULL);
+	wxASSERT(modem != NULL);
 
-	m_dvrptr = controller;
+	m_modem = modem;
 }
 
 void CDStarRepeaterTXThread::setTimes(unsigned int timeout, unsigned int ackTime)
@@ -204,6 +213,31 @@ void CDStarRepeaterTXThread::setBlackList(CCallsignList* list)
 
 void CDStarRepeaterTXThread::setGreyList(CCallsignList* list)
 {
+}
+
+void CDStarRepeaterTXThread::receiveModem()
+{
+	for (;;) {
+		MODEM_MSG_TYPE type = m_modem->read();
+		if (type == MMT_NONE)
+			return;
+
+		if (type == MMT_TEXT) {
+			wxString text = m_modem->readText();
+			wxLogMessage(text);
+			continue;
+		}
+
+		if (type == MMT_SPACE) {
+			m_space = m_modem->readSpace();
+			continue;
+		}
+
+		if (type == MMT_TX) {
+			m_tx = m_modem->readTX();
+			continue;
+		}
+	}
 }
 
 void CDStarRepeaterTXThread::receiveNetwork()
@@ -285,8 +319,7 @@ void CDStarRepeaterTXThread::transmitNetworkHeader(CHeaderData* header)
 			if (m_readNum >= NETWORK_QUEUE_COUNT)
 				m_readNum = 0U;
 		} else {
-			// Purge the currently transmitting buffer and append an end of stream
-			m_dvrptr->purgeTX();
+			// Append an end of stream
 			m_networkQueue[m_readNum]->reset();
 			m_networkQueue[m_readNum]->addData(END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES, true);
 		}
@@ -306,14 +339,15 @@ void CDStarRepeaterTXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeHeader(*header);
+	m_modem->writeTX(true);
+
+	m_modem->writeHeader(*header);
 	delete header;
 }
 
 void CDStarRepeaterTXThread::transmitNetworkData()
 {
-	bool space = m_dvrptr->hasSpace();
-	if (!space)
+	if (m_space < DV_FRAME_LENGTH_BYTES)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -323,9 +357,12 @@ void CDStarRepeaterTXThread::transmitNetworkData()
 	if (length == 0U)
 		return;
 
-	m_dvrptr->writeData(buffer, length, end);
+	m_modem->writeData(buffer, length, end);
+	m_space -= length;
 
 	if (end) {
+		m_modem->writeTX(false);
+
 		m_networkQueue[m_readNum]->reset();
 
 		m_readNum++;

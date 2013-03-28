@@ -16,9 +16,9 @@ dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterConfig.o DStarRepeaterTRXThread.o 
 
 DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterStatusData.h DStarRepeaterLogger.h DStarRepeaterConfig.h \
-					DStarRepeaterThreadHelper.h ../Common/DVRPTRController.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h ../Common/DStarDefines.h \
-					../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h \
-					../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h
+					DStarRepeaterThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h \
+					../Common/Version.h ../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h \
+					../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
 DStarRepeaterCallsignSet.o:	DStarRepeaterCallsignSet.cpp DStarRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -31,9 +31,9 @@ DStarRepeaterControllerSet.o:	DStarRepeaterControllerSet.cpp DStarRepeaterContro
 				$(CC) $(CFLAGS) -c DStarRepeaterControllerSet.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
-					DStarRepeaterRXThread.h DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/DVRPTRController.h \
-					../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h \
-					../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h
+					DStarRepeaterRXThread.h DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
+					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
+					../Common/RaspberryController.h ../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
 
 DStarRepeaterFrame.o:	DStarRepeaterFrame.cpp DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterApp.h DStarRepeaterStatusData.h DStarRepeaterPreferences.h \
@@ -43,8 +43,7 @@ DStarRepeaterFrame.o:	DStarRepeaterFrame.cpp DStarRepeaterFrame.h DStarRepeaterD
 DStarRepeaterLogger.o:	DStarRepeaterLogger.cpp DStarRepeaterLogger.h DStarRepeaterApp.h
 				$(CC) $(CFLAGS) -c DStarRepeaterLogger.cpp
 
-DStarRepeaterModemSet.o:	DStarRepeaterModemSet.cpp DStarRepeaterModemSet.h DStarRepeaterDefs.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h \
-					../Common/DStarDefines.h ../Common/AddressTextCtrl.h ../Common/PortTextCtrl.h
+DStarRepeaterModemSet.o:	DStarRepeaterModemSet.cpp DStarRepeaterModemSet.h DStarRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterModemSet.cpp
 
 DStarRepeaterPreferences.o:	DStarRepeaterPreferences.cpp DStarRepeaterPreferences.h DStarRepeaterDefs.h DStarRepeaterControllerSet.h DStarRepeaterModemSet.h \
@@ -56,27 +55,26 @@ DStarRepeaterStatusData.o:	DStarRepeaterStatusData.cpp DStarRepeaterStatusData.h
 				$(CC) $(CFLAGS) -c DStarRepeaterStatusData.cpp
 
 DStarRepeaterTRXThread.o:	DStarRepeaterTRXThread.cpp DStarRepeaterTRXThread.h DStarRepeaterThread.h DStarRepeaterDefs.h DStarRepeaterApp.h \
-					DStarRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/DVRPTRController.h ../Common/HeaderData.h ../Common/Timer.h \
-					../Common/RepeaterProtocolHandler.h ../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h ../Common/OutputQueue.h ../Common/Version.h \
-					../Common/DVTOOLFileWriter.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
-					../Common/BeaconUnit.h ../Common/BeaconCallback.h ../Common/AnnouncementUnit.h ../Common/AnnouncementCallback.h ../Common/Utils.h
+					DStarRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/HeaderData.h ../Common/Timer.h ../Common/RepeaterProtocolHandler.h \
+					../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h ../Common/OutputQueue.h ../Common/Version.h ../Common/DVTOOLFileWriter.h \
+					../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/BeaconUnit.h \
+					../Common/BeaconCallback.h ../Common/AnnouncementUnit.h ../Common/AnnouncementCallback.h ../Common/Utils.h ../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterTRXThread.cpp
 
 DStarRepeaterTXRXThread.o:	DStarRepeaterTXRXThread.cpp DStarRepeaterTXRXThread.h DStarRepeaterThread.h DStarRepeaterDefs.h DStarRepeaterApp.h \
-					DStarRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/DVRPTRController.h ../Common/HeaderData.h ../Common/Timer.h \
-					../Common/RepeaterProtocolHandler.h ../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h ../Common/OutputQueue.h ../Common/Version.h \
-					../Common/DVTOOLFileWriter.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
-					../Common/Utils.h
+					DStarRepeaterStatusData.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/HeaderData.h ../Common/Timer.h ../Common/RepeaterProtocolHandler.h \
+					../Common/SlowDataEncoder.h ../Common/SlowDataDecoder.h ../Common/OutputQueue.h ../Common/Version.h ../Common/DVTOOLFileWriter.h ../Common/CallsignList.h \
+					../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/Utils.h ../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterTXRXThread.cpp
 
 DStarRepeaterTXThread.o:	DStarRepeaterTXThread.cpp DStarRepeaterTXThread.h DStarRepeaterThread.h DStarRepeaterDefs.h DStarRepeaterApp.h DStarRepeaterStatusData.h \
-					../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/DVRPTRController.h ../Common/HeaderData.h ../Common/Timer.h ../Common/RepeaterProtocolHandler.h \
-					../Common/OutputQueue.h ../Common/Version.h
+					../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/HeaderData.h ../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/OutputQueue.h \
+					../Common/Version.h ../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterTXThread.cpp
 
 DStarRepeaterRXThread.o:	DStarRepeaterRXThread.cpp DStarRepeaterRXThread.h DStarRepeaterThread.h DStarRepeaterDefs.h DStarRepeaterApp.h DStarRepeaterStatusData.h \
-					../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/DVRPTRController.h ../Common/HeaderData.h ../Common/Timer.h ../Common/RepeaterProtocolHandler.h \
-					../Common/SlowDataDecoder.h ../Common/Version.h ../Common/Utils.h
+					../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/HeaderData.h ../Common/Timer.h ../Common/RepeaterProtocolHandler.h ../Common/SlowDataDecoder.h \
+					../Common/Version.h ../Common/Utils.h ../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterRXThread.cpp
 
 DStarRepeaterThreadHelper.o:	DStarRepeaterThreadHelper.cpp DStarRepeaterThreadHelper.h DStarRepeaterThread.h DStarRepeaterStatusData.h
@@ -86,8 +84,8 @@ DStarRepeaterTimesSet.o:	DStarRepeaterTimesSet.cpp DStarRepeaterTimesSet.h
 				$(CC) $(CFLAGS) -c DStarRepeaterTimesSet.cpp
 
 install:	all
-				install -g bin -o root -m 0775 dvrptrrepeater $(BINDIR)
-				install -g bin -o root -m 0775 dvrptrrepeaterd $(BINDIR)
+				install -g bin -o root -m 0775 dstarrepeater $(BINDIR)
+				install -g bin -o root -m 0775 dstarrepeaterd $(BINDIR)
 
 clean:
-				rm -f core dvrptrrepeater dvrptrrepeaterd *.o *~ *.bak
+				rm -f core dstarrepeater dstarrepeaterd *.o *~ *.bak

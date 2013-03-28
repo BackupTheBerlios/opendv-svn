@@ -32,10 +32,12 @@ const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
 const unsigned int SILENCE_THRESHOLD = 2U;
 
+const unsigned int STATUS_TIME = 100U;
+
 const unsigned int CYCLE_TIME = 9U;
 
 CDStarRepeaterTRXThread::CDStarRepeaterTRXThread() :
-m_dvrptr(NULL),
+m_modem(NULL),
 m_protocolHandler(NULL),
 m_controller(NULL),
 m_stopped(true),
@@ -78,6 +80,7 @@ m_status3Encoder(),
 m_status4Encoder(),
 m_status5Encoder(),
 m_tx(false),
+m_space(0U),
 m_killed(false),
 m_mode(MODE_DUPLEX),
 m_ack(AT_BER),
@@ -162,7 +165,7 @@ CDStarRepeaterTRXThread::~CDStarRepeaterTRXThread()
 void CDStarRepeaterTRXThread::run()
 {
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dvrptr == NULL || m_controller == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
+	while (!m_killed && (m_modem == NULL || m_controller == NULL || m_rptCallsign.IsEmpty() || m_rptCallsign.IsSameAs(wxT("        "))))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -178,29 +181,34 @@ void CDStarRepeaterTRXThread::run()
 	if (m_protocolHandler != NULL)
 		m_pollTimer.start();
 
-	wxLogMessage(wxT("Starting the DV-RPTR repeater thread"));
+	wxLogMessage(wxT("Starting the D-Star repeater thread"));
 
-	unsigned int count = 0U;
+	unsigned int heartbeatCount = 0U;
+	unsigned int statusCount = 0U;
 
 	wxStopWatch stopWatch;
 
 	while (!m_killed) {
 		stopWatch.Start();
 
-		receiveRadio();
+		statusCount++;
+		if (statusCount >= (STATUS_TIME / CYCLE_TIME)) {
+			m_modem->getStatus();
+			statusCount = 0U;
+		}
+
+		receiveModem();
 
 		receiveNetwork();
 
 		repeaterStateMachine();
 
-		m_tx = m_dvrptr->getPTT();
-
 		// Send the network poll if needed and restart the timer
 		if (m_pollTimer.hasExpired()) {
 #if defined(__WINDOWS__)
-			m_protocolHandler->writePoll(wxT("win_DStar-") + VERSION);
+			m_protocolHandler->writePoll(wxT("win_dstar-") + VERSION);
 #else
-			m_protocolHandler->writePoll(wxT("linux_DStar-") + VERSION);
+			m_protocolHandler->writePoll(wxT("linux_dstar-") + VERSION);
 #endif
 			m_pollTimer.reset();
 		}
@@ -253,10 +261,10 @@ void CDStarRepeaterTRXThread::run()
 		}
 
 		// Clock the heartbeat output every one second
-		count++;
-		if (count == 111U) {
+		heartbeatCount++;
+		if (heartbeatCount == (1000U / CYCLE_TIME)) {
 			m_controller->setHeartbeat();
-			count = 0U;
+			heartbeatCount = 0U;
 		}
 
 		// Set the output state
@@ -325,9 +333,10 @@ void CDStarRepeaterTRXThread::run()
 		}
 	}
 
-	wxLogMessage(wxT("Stopping the DV-RPTR repeater thread"));
+	wxLogMessage(wxT("Stopping the D-Star repeater thread"));
 
-	m_dvrptr->close();
+	m_modem->close();
+	delete m_modem;
 
 	if (m_logging != NULL) {
 		m_logging->close();
@@ -386,11 +395,11 @@ void CDStarRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* handl
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTRXThread::setModem(IDVRPTRController* controller)
+void CDStarRepeaterTRXThread::setModem(CModemProtocolClient* modem)
 {
-	wxASSERT(controller != NULL);
+	wxASSERT(modem != NULL);
 
-	m_dvrptr = controller;
+	m_modem = modem;
 }
 
 void CDStarRepeaterTRXThread::setTimes(unsigned int timeout, unsigned int ackTime)
@@ -553,74 +562,83 @@ void CDStarRepeaterTRXThread::setGreyList(CCallsignList* list)
 	m_greyList = list;
 }
 
-void CDStarRepeaterTRXThread::receiveRadio()
+void CDStarRepeaterTRXThread::receiveModem()
 {
 	for (;;) {
-		unsigned char data[50U];
-		unsigned int length;
-		DATA_QUEUE_TYPE type = m_dvrptr->readQueue(data, length);
+		MODEM_MSG_TYPE type = m_modem->read();
+		if (type == MMT_NONE)
+			return;
 
-		switch (type) {
-			case DQT_NONE:
-				return;
-			case DQT_HEADER:
-				// CUtils::dump(wxT("DQT_HEADER"), data, length);
-				break;
-			case DQT_DATA:
-				// CUtils::dump(wxT("DQT_DATA"), data, length);
-				break;
-			case DQT_EOT:
-				// wxLogMessage(wxT("DQT_EOT"));
-				break;
-			case DQT_LOST:
-				// wxLogMessage(wxT("DQT_LOST"));
-				break;
-			default:
-				wxLogMessage(wxT("type=%d"), int(type));
-				CUtils::dump(wxT("DQT_???"), data, length);
-				break;
+		if (type == MMT_TEXT) {
+			wxString text = m_modem->readText();
+			wxLogMessage(text);
+			continue;
+		}
+
+		if (type == MMT_TX) {
+			m_tx = m_modem->readTX();
+			continue;
+		}
+
+		if (type == MMT_SPACE) {
+			m_space = m_modem->readSpace();
+			continue;
 		}
 
 		switch (m_rxState) {
 			case DSRXS_LISTENING:
-				if (type == DQT_HEADER) {
-					receiveHeader(data, length);
-				} else if (type == DQT_DATA) {
-					setRadioState(DSRXS_PROCESS_SLOW_DATA);
+				if (type == MMT_HEADER) {
+					CHeaderData* header = m_modem->readHeader();
+					receiveHeader(header);
+				} else if (type == MMT_DATA) {
+					unsigned char data[20U];
+					bool end;
+					unsigned int length = m_modem->readData(data, 20U, end);
+
+					if (end) {
+						setRadioState(DSRXS_LISTENING);
+					} else {
+						setRadioState(DSRXS_PROCESS_SLOW_DATA);
+						receiveSlowData(data, length);
+					}
 				}
 				break;
 
-		case DSRXS_PROCESS_SLOW_DATA:
-				if (type == DQT_DATA) {
-					receiveSlowData(data, length);
-				} else if (type == DQT_EOT) {
-					setRadioState(DSRXS_LISTENING);
-				} else if (type == DQT_LOST) {
-					setRadioState(DSRXS_LISTENING);
+			case DSRXS_PROCESS_SLOW_DATA:
+				if (type == MMT_DATA) {
+					unsigned char data[20U];
+					bool end;
+					unsigned int length = m_modem->readData(data, 20U, end);
+
+					if (end)
+						setRadioState(DSRXS_LISTENING);
+					else
+						receiveSlowData(data, length);
 				}
 				break;
 
 			case DSRXS_PROCESS_DATA:
-				if (type == DQT_DATA) {
-					receiveRadioData(data, length);
-				} else if (type == DQT_EOT) {
-					processRadioFrame(data, FRAME_END);
-					setRadioState(DSRXS_LISTENING);
-					endOfRadioData();
-				} else if (type == DQT_LOST) {
-					::memcpy(data, NULL_FRAME_DATA_BYTES, DV_FRAME_LENGTH_BYTES);
-					processRadioFrame(data, FRAME_END);
-					setRadioState(DSRXS_LISTENING);
-					endOfRadioData();
+				if (type == MMT_DATA) {
+					unsigned char data[20U];
+					bool end;
+					unsigned int length = m_modem->readData(data, 20U, end);
+
+					if (end) {
+						processRadioFrame(data, FRAME_END);
+						setRadioState(DSRXS_LISTENING);
+						endOfRadioData();
+					} else {
+						receiveRadioData(data, length);
+					}
 				}
 				break;
 		}
 	}
 }
 
-void CDStarRepeaterTRXThread::receiveHeader(unsigned char* data, unsigned int length)
+void CDStarRepeaterTRXThread::receiveHeader(CHeaderData* header)
 {
-	CHeaderData* header = new CHeaderData(data, length, false);
+	wxASSERT(header != NULL);
 
 	wxLogMessage(wxT("Radio header decoded - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str(), header->getFlag1(), header->getFlag2(), header->getFlag3());
 
@@ -851,8 +869,7 @@ void CDStarRepeaterTRXThread::transmitNetworkHeader(CHeaderData* header)
 			if (m_readNum >= NETWORK_QUEUE_COUNT)
 				m_readNum = 0U;
 		} else {
-			// Purge the currently transmitting buffer and append an end of stream
-			m_dvrptr->purgeTX();
+			// Append an end of stream
 			m_networkQueue[m_readNum]->reset();
 			m_networkQueue[m_readNum]->addData(END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES, true);
 		}
@@ -983,14 +1000,15 @@ void CDStarRepeaterTRXThread::transmitLocalHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeHeader(*header);
+	m_modem->writeTX(true);
+
+	m_modem->writeHeader(*header);
 	delete header;
 }
 
 void CDStarRepeaterTRXThread::transmitLocalData()
 {
-	bool space = m_dvrptr->hasSpace();
-	if (!space)
+	if (m_space < DV_FRAME_LENGTH_BYTES)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -1000,10 +1018,14 @@ void CDStarRepeaterTRXThread::transmitLocalData()
 	if (length == 0U)
 		return;
 
-	m_dvrptr->writeData(buffer, length, end);
+	m_modem->writeData(buffer, length, end);
+	m_space -= length;
 
-	if (end)
+	if (end) {
+		m_modem->writeTX(false);
+
 		m_localQueue.reset();
+	}
 }
 
 void CDStarRepeaterTRXThread::transmitRadioHeader()
@@ -1016,14 +1038,15 @@ void CDStarRepeaterTRXThread::transmitRadioHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeHeader(*header);
+	m_modem->writeTX(true);
+
+	m_modem->writeHeader(*header);
 	delete header;
 }
 
 void CDStarRepeaterTRXThread::transmitRadioData()
 {
-	bool space = m_dvrptr->hasSpace();
-	if (!space)
+	if (m_space < DV_FRAME_LENGTH_BYTES)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -1033,10 +1056,14 @@ void CDStarRepeaterTRXThread::transmitRadioData()
 	if (length == 0U)
 		return;
 
-	m_dvrptr->writeData(buffer, length, end);
+	m_modem->writeData(buffer, length, end);
+	m_space -= length;
 
-	if (end)
+	if (end) {
+		m_modem->writeTX(false);
+
 		m_radioQueue.reset();
+	}
 }
 
 void CDStarRepeaterTRXThread::transmitNetworkHeader()
@@ -1049,14 +1076,15 @@ void CDStarRepeaterTRXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_dvrptr->writeHeader(*header);
+	m_modem->writeTX(true);
+
+	m_modem->writeHeader(*header);
 	delete header;
 }
 
 void CDStarRepeaterTRXThread::transmitNetworkData()
 {
-	bool space = m_dvrptr->hasSpace();
-	if (!space)
+	if (m_space < DV_FRAME_LENGTH_BYTES)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -1066,9 +1094,12 @@ void CDStarRepeaterTRXThread::transmitNetworkData()
 	if (length == 0U)
 		return;
 
-	m_dvrptr->writeData(buffer, length, end);
+	m_modem->writeData(buffer, length, end);
+	m_space -= length;
 
 	if (end) {
+		m_modem->writeTX(false);
+
 		m_networkQueue[m_readNum]->reset();
 
 		m_readNum++;

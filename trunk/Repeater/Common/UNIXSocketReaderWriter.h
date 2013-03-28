@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,28 +16,31 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterDefs_H
-#define	DStarRepeaterDefs_H
+#ifndef UNIXSocketReaderWriter_H
+#define UNIXSocketReaderWriter_H
 
 #include <wx/wx.h>
 
-const wxString APPLICATION_NAME    = wxT("D-Star Repeater");
-const wxString LOG_BASE_NAME       = wxT("DStarRepeater");
+#include <sys/un.h>
 
-#if !defined(__WINDOWS__)
-const wxString CONFIG_FILE_NAME = wxT("dstarrepeater");
-const wxString LOG_DIR  = wxT("/var/log");
-const wxString CONF_DIR = wxT("/etc");
-#endif
+class CUNIXSocketReaderWriter {
+public:
+	CUNIXSocketReaderWriter(const wxString& server, const wxString& client);
+	~CUNIXSocketReaderWriter();
 
-const wxString WHITELIST_FILE_NAME = wxT("whitelist.dat");
-const wxString BLACKLIST_FILE_NAME = wxT("blacklist.dat");
-const wxString GREYLIST_FILE_NAME  = wxT("greylist.dat");
+	bool open();
 
-enum DVRPTR_RX_STATE {
-	DSRXS_LISTENING,
-	DSRXS_PROCESS_DATA,
-	DSRXS_PROCESS_SLOW_DATA
+	int  read(unsigned char* buffer, unsigned int length);
+	bool write(const unsigned char* buffer, unsigned int length);
+
+	void close();
+
+private:
+	wxString           m_server;
+	wxString           m_client;
+	int                m_sockServer;
+	int                m_sockClient;
+	struct sockaddr_un m_dest;
 };
 
 #endif

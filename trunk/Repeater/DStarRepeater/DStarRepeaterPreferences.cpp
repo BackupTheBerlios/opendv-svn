@@ -30,9 +30,7 @@ CDStarRepeaterPreferences::CDStarRepeaterPreferences(wxWindow* parent, int id, c
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int beaconTime,
 	const wxString& beaconText, bool beaconVoice, TEXT_LANG language, bool announcementEnabled,
 	unsigned int announcementTime, const wxString& announcementRecordRPT1, const wxString& announcementRecordRPT2,
-	const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, DVRPTR_VERSION version,
-	CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, 
-	bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay, bool enabled,
+	const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2, const wxString& modemName, bool enabled,
 	const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown,
 	const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3,
 	const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line,
@@ -71,8 +69,8 @@ m_controller(NULL)
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
 
-	m_modem = new CDStarRepeaterModemSet(noteBook, -1, APPLICATION_NAME, version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
-	noteBook->AddPage(m_modem, _("DV-RPTR"), false);
+	m_modem = new CDStarRepeaterModemSet(noteBook, -1, APPLICATION_NAME, modemName);
+	noteBook->AddPage(m_modem, _("Modem"), false);
 
 	m_control1 = new CControl1Set(noteBook, -1, APPLICATION_NAME, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, output1, output2, output3, output4);
 	noteBook->AddPage(m_control1, _("Control 1"), false);
@@ -223,54 +221,9 @@ wxString CDStarRepeaterPreferences::getAnnouncementDeleteRPT2() const
 	return m_announcement->getDeleteRPT2();
 }
 
-DVRPTR_VERSION CDStarRepeaterPreferences::getVersion() const
+wxString CDStarRepeaterPreferences::getModemName() const
 {
-	return m_modem->getVersion();
-}
-
-CONNECTION_TYPE CDStarRepeaterPreferences::getConnectionType() const
-{
-	return m_modem->getConnectionType();
-}
-
-wxString CDStarRepeaterPreferences::getUSBPort() const
-{
-	return m_modem->getUSBPort();
-}
-
-wxString CDStarRepeaterPreferences::getAddress() const
-{
-	return m_modem->getAddress();
-}
-
-unsigned int CDStarRepeaterPreferences::getPort() const
-{
-	return m_modem->getPort();
-}
-
-bool CDStarRepeaterPreferences::getRXInvert() const
-{
-	return m_modem->getRXInvert();
-}
-
-bool CDStarRepeaterPreferences::getTXInvert() const
-{
-	return m_modem->getTXInvert();
-}
-
-bool CDStarRepeaterPreferences::getChannel() const
-{
-	return m_modem->getChannel();
-}
-
-unsigned int CDStarRepeaterPreferences::getModLevel() const
-{
-	return m_modem->getModLevel();
-}
-
-unsigned int CDStarRepeaterPreferences::getTXDelay() const
-{
-	return m_modem->getTXDelay();
+	return m_modem->getName();
 }
 
 bool CDStarRepeaterPreferences::getEnabled() const

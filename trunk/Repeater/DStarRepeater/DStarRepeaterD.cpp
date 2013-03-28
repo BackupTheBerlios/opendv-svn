@@ -23,9 +23,7 @@
 #include "DStarRepeaterTXThread.h"
 #include "DStarRepeaterConfig.h"
 #include "RaspberryController.h"
-#include "DVRPTRControllerV2.h"
-#include "DVRPTRControllerV1.h"
-#include "DVRPTRController.h"
+#include "ModemProtocolClient.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
 #include "DStarRepeaterD.h"
@@ -247,52 +245,17 @@ bool CDStarRepeaterD::createThread()
 	m_thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 	wxLogInfo(wxT("Announcement enabled: %d, time: %u mins, record RPT1: \"%s\", record RPT2: \"%s\", delete RPT1: \"%s\", delete RPT2: \"%s\""), int(announcementEnabled), announcementTime / 60U, announcementRecordRPT1.c_str(), announcementRecordRPT2.c_str(), announcementDeleteRPT1.c_str(), announcementDeleteRPT2.c_str());
 
-	DVRPTR_VERSION modemVersion;
-	CONNECTION_TYPE modemType;
-	wxString modemUSBPort, modemAddress, modemUSBPath;
-	bool rxInvert, txInvert, channel;
-	unsigned int modemPort, modLevel, txDelay;
-	config.getModem(modemVersion, modemType, modemUSBPort, modemAddress, modemPort, rxInvert, txInvert, channel, modLevel, txDelay);
-	wxLogInfo(wxT("DV-RPTR modem: version: %d, type: %d, USB port: %s, address: %s:%u, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), int(modemVersion), int(modemType), modemUSBPort.c_str(), modemAddress.c_str(), modemPort, int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+	wxString modemName;
+	config.getModem(modemName);
+	wxLogInfo(wxT("Modem set to \"%s\""), modemName.c_str());
 
-	if (modemType == CT_USB) {
-		if (!modemUSBPort.IsEmpty()) {
-			config.getModem(modemUSBPath);
-			if (!modemUSBPath.IsEmpty())
-				wxLogInfo(wxT("DV-RPTR modem: path: %s"), modemUSBPath.c_str());
-
-			IDVRPTRController* controller = NULL;
-			switch (modemVersion) {
-				case DVRPTR_V1:
-					controller = new CDVRPTRControllerV1(modemUSBPort, modemUSBPath, rxInvert, txInvert, channel, modLevel, txDelay);
-					break;
-				case DVRPTR_V2:
-					controller = new CDVRPTRControllerV2(modemUSBPort, modemUSBPath, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
-					break;
-				default:
-					wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(modemVersion));
-					break;
-			}
-
-			if (controller != NULL) {
-				bool res = controller->open();
-				if (!res) {
-					wxLogError(wxT("Cannot open the DV-RPTR modem"));
-				} else {
-					m_thread->setModem(controller);
-					config.setModem(controller->getPath());
-				}
-			}
-		}
-	} else if (modemType == CT_NETWORK) {
-		if (!modemAddress.IsEmpty()) {
-			CDVRPTRControllerV2* controller = new CDVRPTRControllerV2(modemAddress, modemPort, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
-			bool res = controller->open();
-			if (!res)
-				wxLogError(wxT("Cannot open the DV-RPTR modem"));
-			else
-				m_thread->setModem(controller);
-		}
+	if (!modemName.IsEmpty()) {
+		CModemProtocolClient* modem = new CModemProtocolClient(modemName);
+		bool res = modem->open();
+		if (!res)
+			wxLogError(wxT("Cannot open the modem"));
+		else
+			m_thread->setModem(modem);
 	}
 
 	wxString controllerType;
@@ -313,7 +276,7 @@ bool CDStarRepeaterD::createThread()
 		controller = new CExternalController(new CDummyController, false, false);
 	}
 
-	bool res = controller->open();
+	res = controller->open();
 	if (!res)
 		wxLogError(wxT("Cannot open the hardware interface - %s"), controllerType.c_str());
 	else

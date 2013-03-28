@@ -439,12 +439,8 @@ void CDStarRepeaterFrame::onPreferences(wxCommandEvent& event)
 	wxString announcementDeleteRPT1, announcementDeleteRPT2;
 	::wxGetApp().getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 
-	DVRPTR_VERSION version;
-	CONNECTION_TYPE connectionType;
-	wxString usbPort, address;
-	bool rxInvert, txInvert, channel;
-	unsigned int port, modLevel, txDelay;
-	::wxGetApp().getModem(version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	wxString modemName;
+	::wxGetApp().getModem(modemName);
 
 	bool enabled;
 	wxString rpt1Callsign, rpt2Callsign;
@@ -462,10 +458,9 @@ void CDStarRepeaterFrame::onPreferences(wxCommandEvent& event)
 	CDStarRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
 		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText, beaconVoice, language,
 		announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1,
-		announcementDeleteRPT2, version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel,
-		txDelay, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1,
-		command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3,
-		output4, controllerType, activeHangTime);
+		announcementDeleteRPT2, modemName, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3,
+		status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line,
+		output1, output2, output3, output4, controllerType, activeHangTime);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -502,17 +497,8 @@ void CDStarRepeaterFrame::onPreferences(wxCommandEvent& event)
 	announcementDeleteRPT2 = dialog1.getAnnouncementDeleteRPT2();
 	::wxGetApp().setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 
-	version        = dialog1.getVersion();
-	connectionType = dialog1.getConnectionType();
-	usbPort        = dialog1.getUSBPort();
-	address        = dialog1.getAddress();
-	port           = dialog1.getPort();
-	rxInvert       = dialog1.getRXInvert();
-	txInvert       = dialog1.getTXInvert();
-	channel        = dialog1.getChannel();
-	modLevel       = dialog1.getModLevel();
-	txDelay        = dialog1.getTXDelay();
-	::wxGetApp().setModem(version, connectionType, usbPort, address, port, rxInvert, txInvert, channel, modLevel, txDelay);
+	modemName    = dialog1.getModemName();
+	::wxGetApp().setModem(modemName);
 
 	enabled      = dialog1.getEnabled();
 	rpt1Callsign = dialog1.getRPT1Callsign();

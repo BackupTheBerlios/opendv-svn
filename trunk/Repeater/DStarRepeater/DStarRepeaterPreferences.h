@@ -41,14 +41,11 @@ public:
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
 		TEXT_LANG language, bool announcementEnabled, unsigned int announcementTime, const wxString& announcementRecordRPT1,
 		const wxString& announcementRecordRPT2, const wxString& announcementDeleteRPT1, const wxString& announcementDeleteRPT2,
-		DVRPTR_VERSION version, CONNECTION_TYPE connectionType, const wxString& usbPort,
-		const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel,
-		unsigned int modLevel, unsigned int txDelay, bool enabled, const wxString& rpt1Callsign,
-		const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1,
-		const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5,
-		const wxString& command1, const wxString& command1Line, const wxString& command2,
-		const wxString& command2Line, const wxString& command3, const wxString& command3Line,
-		const wxString& command4, const wxString& command4Line, const wxString& output1,
+		const wxString& modemName, bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign,
+		const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2,
+		const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1,
+		const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3,
+		const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1,
 		const wxString& output2, const wxString& output3, const wxString& output4,
 		const wxString& controllerType, unsigned int activeHangTime);
 	virtual ~CDStarRepeaterPreferences();
@@ -83,16 +80,7 @@ public:
 	virtual wxString     getAnnouncementDeleteRPT1() const;
 	virtual wxString     getAnnouncementDeleteRPT2() const;
 
-	virtual DVRPTR_VERSION  getVersion() const;
-	virtual CONNECTION_TYPE getConnectionType() const;
-	virtual wxString        getUSBPort() const;
-	virtual wxString        getAddress() const;
-	virtual unsigned int    getPort() const;
-	virtual bool            getRXInvert() const;
-	virtual bool            getTXInvert() const;
-	virtual bool            getChannel() const;
-	virtual unsigned int    getModLevel() const;
-	virtual unsigned int    getTXDelay() const;
+	virtual wxString     getModemName() const;
 
 	virtual bool         getEnabled() const;
 	virtual wxString     getRPT1Callsign() const;
@@ -123,13 +111,13 @@ public:
 
 private:
 	CDStarRepeaterCallsignSet*   m_callsign;
-	CNetworkSet*                  m_network;
+	CNetworkSet*                 m_network;
 	CDStarRepeaterTimesSet*      m_times;
-	CBeaconSet*                   m_beacon;
-	CAnnouncementSet*             m_announcement;
+	CBeaconSet*                  m_beacon;
+	CAnnouncementSet*            m_announcement;
 	CDStarRepeaterModemSet*      m_modem;
-	CControl1Set*                 m_control1;
-	CControl2Set*                 m_control2;
+	CControl1Set*                m_control1;
+	CControl2Set*                m_control2;
 	CDStarRepeaterControllerSet* m_controller;
 };
 

@@ -54,11 +54,8 @@ public:
 	virtual void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	virtual void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	virtual void getModem(DVRPTR_VERSION& version, CONNECTION_TYPE& connectionTYpe, wxString& usbPort, wxString& address, unsigned int& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
-	virtual void setModem(DVRPTR_VERSION version, CONNECTION_TYPE connectionTYpe, const wxString& usbPort, const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
-
-	virtual void getModem(wxString& path) const;
-	virtual void setModem(const wxString& path);
+	virtual void getModem(wxString& name) const;
+	virtual void setModem(const wxString& name);
 
 	virtual void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
@@ -94,16 +91,16 @@ public:
 	virtual void command4();
 
 private:
-	wxString                     m_name;
-	bool                         m_nolog;
-	bool                         m_gui;
-	wxString                     m_logDir;
-	wxString                     m_confDir;
-	wxString                     m_audioDir;
+	wxString                    m_name;
+	bool                        m_nolog;
+	bool                        m_gui;
+	wxString                    m_logDir;
+	wxString                    m_confDir;
+	wxString                    m_audioDir;
 	CDStarRepeaterFrame*        m_frame;
 	CDStarRepeaterThreadHelper* m_thread;
 	CDStarRepeaterConfig*       m_config;
-	wxLogChain*                  m_logChain;
+	wxLogChain*                 m_logChain;
 
 	void createThread();
 };

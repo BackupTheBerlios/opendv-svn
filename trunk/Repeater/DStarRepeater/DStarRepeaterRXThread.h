@@ -34,7 +34,7 @@ public:
 
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
-	virtual void setModem(IDVRPTRController* modem);
+	virtual void setModem(CModemProtocolClient* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
@@ -60,7 +60,7 @@ public:
 	virtual void kill();
 
 private:
-	IDVRPTRController*         m_dvrptr;
+	CModemProtocolClient*      m_modem;
 	CRepeaterProtocolHandler*  m_protocolHandler;
 	CHeaderData*               m_rxHeader;
 	unsigned char              m_radioSeqNo;
@@ -77,11 +77,11 @@ private:
 	unsigned int               m_lastAMBEBits;
 	unsigned int               m_lastAMBEErrors;
 
-	void receiveHeader(unsigned char* data, unsigned int length);
+	void receiveHeader(CHeaderData* header);
 	void receiveRadioData(unsigned char* data, unsigned int length);
 	void receiveSlowData(unsigned char* data, unsigned int length);
 
-	void receiveRadio();
+	void receiveModem();
 	void receiveNetwork();
 	bool processRadioHeader(CHeaderData* header);
 	void processRadioFrame(unsigned char* data, FRAME_TYPE type);

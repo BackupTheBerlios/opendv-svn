@@ -29,18 +29,7 @@ const wxString  KEY_GATEWAY_ADDRESS    = wxT("gatewayAddress");
 const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
 const wxString  KEY_LOCAL_PORT         = wxT("localPort");
-const wxString  KEY_MODEM_VERSION      = wxT("modemVersion");
-const wxString  KEY_MODEM_CONNECTION   = wxT("modemConnection");
-const wxString  KEY_MODEM_USBPORT      = wxT("modemUSBPort");
-const wxString  KEY_MODEM_USBPATH      = wxT("modemUSBPath");
-const wxString  KEY_MODEM_ADDRESS      = wxT("modemAddress");
-const wxString  KEY_MODEM_PATH         = wxT("modemPath");					// XXX
-const wxString  KEY_MODEM_PORT         = wxT("modemPort");
-const wxString  KEY_MODEM_RXINVERT     = wxT("modemRXInvert");
-const wxString  KEY_MODEM_TXINVERT     = wxT("modemTXInvert");
-const wxString  KEY_MODEM_CHANNEL      = wxT("modemChannel");
-const wxString  KEY_MODEM_MODLEVEL     = wxT("modemModLevel");
-const wxString  KEY_MODEM_TXDELAY      = wxT("modemTXDelay");
+const wxString  KEY_MODEM_NAME         = wxT("modemName");
 const wxString  KEY_TIMEOUT            = wxT("timeout");
 const wxString  KEY_ACK_TIME           = wxT("ackTime");
 const wxString  KEY_BEACON_TIME        = wxT("beaconTime");
@@ -96,21 +85,11 @@ const wxString        DEFAULT_GATEWAY_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
 const unsigned int    DEFAULT_LOCAL_PORT         = 20011U;
-const DVRPTR_VERSION  DEFAULT_MODEM_VERSION      = DVRPTR_V1;
-const CONNECTION_TYPE DEFAULT_MODEM_CONNECTION   = CT_USB;
-const wxString        DEFAULT_MODEM_USBPORT      = wxEmptyString;
-const wxString        DEFAULT_MODEM_USBPATH      = wxEmptyString;
-const wxString        DEFAULT_MODEM_ADDRESS      = wxT("127.0.0.1");
-const unsigned int    DEFAULT_MODEM_PORT         = 0U;
-const bool            DEFAULT_MODEM_RXINVERT     = false;
-const bool            DEFAULT_MODEM_TXINVERT     = false;
-const bool            DEFAULT_MODEM_CHANNEL      = false;
-const unsigned int    DEFAULT_MODEM_MODLEVEL     = 20U;
-const unsigned int    DEFAULT_MODEM_TXDELAY      = 150U;
+const wxString        DEFAULT_MODEM_NAME         = wxEmptyString;
 const unsigned int    DEFAULT_TIMEOUT            = 180U;
 const unsigned int    DEFAULT_ACK_TIME           = 500U;
 const unsigned int    DEFAULT_BEACON_TIME        = 600U;
-const wxString        DEFAULT_BEACON_TEXT        = wxT("DV-RPTR Repeater");
+const wxString        DEFAULT_BEACON_TEXT        = wxT("D-Star Repeater");
 const bool            DEFAULT_BEACON_VOICE       = false;
 const TEXT_LANG       DEFAULT_LANGUAGE           = TL_ENGLISH_UK;
 const bool            DEFAULT_ANNOUNCEMENT_ENABLED     = false;
@@ -168,17 +147,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
-m_modemVersion(DEFAULT_MODEM_VERSION),
-m_modemConnection(DEFAULT_MODEM_CONNECTION),
-m_modemUSBPort(DEFAULT_MODEM_USBPORT),
-m_modemUSBPath(DEFAULT_MODEM_USBPATH),
-m_modemAddress(DEFAULT_MODEM_ADDRESS),
-m_modemPort(DEFAULT_MODEM_PORT),
-m_rxInvert(DEFAULT_MODEM_RXINVERT),
-m_txInvert(DEFAULT_MODEM_TXINVERT),
-m_channel(DEFAULT_MODEM_CHANNEL),
-m_modLevel(DEFAULT_MODEM_MODLEVEL),
-m_txDelay(DEFAULT_MODEM_TXDELAY),
+m_modemName(DEFAULT_MODEM_NAME),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
@@ -256,56 +225,7 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_LOCAL_PORT, &temp, long(DEFAULT_LOCAL_PORT));
 	m_localPort = (unsigned int)temp;
 
-	m_config->Read(m_name + KEY_MODEM_VERSION, &temp, long(DEFAULT_MODEM_VERSION));
-	m_modemVersion = DVRPTR_VERSION(temp);
-
-	if (m_config->Exists(m_name + KEY_MODEM_PATH)) {
-		wxLogWarning(wxT("Found old configuration values, upgrading"));
-														
-		m_config->Read(m_name + KEY_MODEM_PORT, &m_modemUSBPort, DEFAULT_MODEM_USBPORT);
-
-		m_config->Read(m_name + KEY_MODEM_PATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
-
-		m_config->DeleteEntry(m_name + KEY_MODEM_PORT);
-		m_config->DeleteEntry(m_name + KEY_MODEM_PATH);
-
-		m_config->Write(m_name + KEY_MODEM_CONNECTION, long(DEFAULT_MODEM_CONNECTION));
-		m_modemConnection = DEFAULT_MODEM_CONNECTION;
-
-		m_config->Write(m_name + KEY_MODEM_USBPORT, m_modemUSBPort);
-
-		m_config->Write(m_name + KEY_MODEM_USBPATH, m_modemUSBPath);
-
-		m_config->Write(m_name + KEY_MODEM_ADDRESS, DEFAULT_MODEM_ADDRESS);
-		m_modemAddress = DEFAULT_MODEM_ADDRESS;
-
-		m_config->Write(m_name + KEY_MODEM_PORT, long(DEFAULT_MODEM_PORT));
-		m_modemPort = DEFAULT_MODEM_PORT;
-	} else {
-		m_config->Read(m_name + KEY_MODEM_CONNECTION, &temp, long(DEFAULT_MODEM_CONNECTION));
-		m_modemConnection = CONNECTION_TYPE(temp);
-
-		m_config->Read(m_name + KEY_MODEM_USBPORT, &m_modemUSBPort, DEFAULT_MODEM_USBPORT);
-
-		m_config->Read(m_name + KEY_MODEM_USBPATH, &m_modemUSBPath, DEFAULT_MODEM_USBPATH);
-
-		m_config->Read(m_name + KEY_MODEM_ADDRESS, &m_modemAddress, DEFAULT_MODEM_ADDRESS);
-
-		m_config->Read(m_name + KEY_MODEM_PORT, &temp, long(DEFAULT_MODEM_PORT));
-		m_modemPort = (unsigned int)temp;
-	}
-
-	m_config->Read(m_name + KEY_MODEM_RXINVERT, &m_rxInvert, DEFAULT_MODEM_RXINVERT);
-
-	m_config->Read(m_name + KEY_MODEM_TXINVERT, &m_txInvert, DEFAULT_MODEM_TXINVERT);
-
-	m_config->Read(m_name + KEY_MODEM_CHANNEL, &m_channel, DEFAULT_MODEM_CHANNEL);
-
-	m_config->Read(m_name + KEY_MODEM_MODLEVEL, &temp, long(DEFAULT_MODEM_MODLEVEL));
-	m_modLevel = (unsigned int)temp;
-
-	m_config->Read(m_name + KEY_MODEM_TXDELAY, &temp, long(DEFAULT_MODEM_TXDELAY));
-	m_txDelay = (unsigned int)temp;
+	m_config->Read(m_name + KEY_MODEM_NAME, &m_modemName, DEFAULT_MODEM_NAME);
 
 	m_config->Read(m_name + KEY_TIMEOUT, &temp, long(DEFAULT_TIMEOUT));
 	m_timeout = (unsigned int)temp;
@@ -422,17 +342,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
-m_modemVersion(DEFAULT_MODEM_VERSION),
-m_modemConnection(DEFAULT_MODEM_CONNECTION),
-m_modemUSBPort(DEFAULT_MODEM_USBPORT),
-m_modemUSBPath(DEFAULT_MODEM_USBPATH),
-m_modemAddress(DEFAULT_MODEM_ADDRESS),
-m_modemPort(DEFAULT_MODEM_PORT),
-m_rxInvert(DEFAULT_MODEM_RXINVERT),
-m_txInvert(DEFAULT_MODEM_TXINVERT),
-m_channel(DEFAULT_MODEM_CHANNEL),
-m_modLevel(DEFAULT_MODEM_MODLEVEL),
-m_txDelay(DEFAULT_MODEM_TXDELAY),
+m_modemName(DEFAULT_MODEM_NAME),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
@@ -546,36 +456,8 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_LOCAL_PORT)) {
 			val.ToULong(&temp2);
 			m_localPort = (unsigned int)temp2;
-		} else if (key.IsSameAs(KEY_MODEM_VERSION)) {
-			val.ToLong(&temp1);
-			m_modemVersion = DVRPTR_VERSION(temp1);
-		} else if (key.IsSameAs(KEY_MODEM_CONNECTION)) {
-			val.ToLong(&temp1);
-			m_modemConnection = CONNECTION_TYPE(temp1);
-		} else if (key.IsSameAs(KEY_MODEM_USBPORT)) {
-			m_modemUSBPort = val;
-		} else if (key.IsSameAs(KEY_MODEM_USBPATH)) {
-			m_modemUSBPath = val;
-		} else if (key.IsSameAs(KEY_MODEM_ADDRESS)) {
-			m_modemAddress = val;
-		} else if (key.IsSameAs(KEY_MODEM_PORT)) {
-			val.ToULong(&temp2);
-			m_modemPort = (unsigned int)temp2;
-		} else if (key.IsSameAs(KEY_MODEM_RXINVERT)) {
-			val.ToLong(&temp1);
-			m_rxInvert = temp1 == 1L;
-		} else if (key.IsSameAs(KEY_MODEM_TXINVERT)) {
-			val.ToLong(&temp1);
-			m_txInvert = temp1 == 1L;
-		} else if (key.IsSameAs(KEY_MODEM_CHANNEL)) {
-			val.ToLong(&temp1);
-			m_channel = temp1 == 1L;
-		} else if (key.IsSameAs(KEY_MODEM_MODLEVEL)) {
-			val.ToULong(&temp2);
-			m_modLevel = (unsigned int)temp2;
-		} else if (key.IsSameAs(KEY_MODEM_TXDELAY)) {
-			val.ToULong(&temp2);
-			m_txDelay = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_MODEM_NAME)) {
+			m_modemName = val;
 		} else if (key.IsSameAs(KEY_TIMEOUT)) {
 			val.ToULong(&temp2);
 			m_timeout = (unsigned int)temp2;
@@ -730,42 +612,14 @@ void CDStarRepeaterConfig::setNetwork(const wxString& gatewayAddress, unsigned i
 	m_localPort      = localPort;
 }
 
-void CDStarRepeaterConfig::getModem(DVRPTR_VERSION& version, CONNECTION_TYPE& connection, wxString& usbPort, wxString& address, unsigned int& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDStarRepeaterConfig::getModem(wxString& name) const
 {
-	version    = m_modemVersion;
-	connection = m_modemConnection;
-	usbPort    = m_modemUSBPort;
-	address    = m_modemAddress;
-	port       = m_modemPort;
-	rxInvert   = m_rxInvert;
-	txInvert   = m_txInvert;
-	channel    = m_channel;
-	modLevel   = m_modLevel;
-	txDelay    = m_txDelay;
+	name = m_modemName;
 }
 
-void CDStarRepeaterConfig::setModem(DVRPTR_VERSION version, CONNECTION_TYPE connection, const wxString& usbPort, const wxString& address, unsigned int port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+void CDStarRepeaterConfig::setModem(const wxString& name)
 {
-	m_modemVersion    = version;
-	m_modemConnection = connection;
-	m_modemUSBPort    = usbPort;
-	m_modemAddress    = address;
-	m_modemPort       = port;
-	m_rxInvert        = rxInvert;
-	m_txInvert        = txInvert;
-	m_channel         = channel;
-	m_modLevel        = modLevel;
-	m_txDelay         = txDelay;
-}
-
-void CDStarRepeaterConfig::getModem(wxString& path) const
-{
-	path = m_modemUSBPath;
-}
-
-void CDStarRepeaterConfig::setModem(const wxString& path)
-{
-	m_modemUSBPath = path;
+	m_modemName = name;
 }
 
 void CDStarRepeaterConfig::getTimes(unsigned int& timeout, unsigned int& ackTime) const
@@ -922,9 +776,6 @@ void CDStarRepeaterConfig::setPosition(int x, int y)
 
 bool CDStarRepeaterConfig::write()
 {
-	m_config->DeleteEntry(m_name + KEY_MODEM_PATH);
-	m_config->DeleteEntry(m_name + KEY_MODEM_PORT);
-
 	m_config->Write(m_name + KEY_CALLSIGN, m_callsign);
 	m_config->Write(m_name + KEY_GATEWAY, m_gateway);
 	m_config->Write(m_name + KEY_MODE, long(m_mode));
@@ -936,17 +787,7 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_GATEWAY_PORT, long(m_gatewayPort));
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
 	m_config->Write(m_name + KEY_LOCAL_PORT, long(m_localPort));
-	m_config->Write(m_name + KEY_MODEM_VERSION, long(m_modemVersion));
-	m_config->Write(m_name + KEY_MODEM_CONNECTION, long(m_modemConnection));
-	m_config->Write(m_name + KEY_MODEM_USBPORT, m_modemUSBPort);
-	m_config->Write(m_name + KEY_MODEM_USBPATH, m_modemUSBPath);
-	m_config->Write(m_name + KEY_MODEM_ADDRESS, m_modemAddress);
-	m_config->Write(m_name + KEY_MODEM_PORT, long(m_modemPort));
-	m_config->Write(m_name + KEY_MODEM_RXINVERT, m_rxInvert);
-	m_config->Write(m_name + KEY_MODEM_TXINVERT, m_txInvert);
-	m_config->Write(m_name + KEY_MODEM_CHANNEL, m_channel);
-	m_config->Write(m_name + KEY_MODEM_MODLEVEL, long(m_modLevel));
-	m_config->Write(m_name + KEY_MODEM_TXDELAY, long(m_txDelay));
+	m_config->Write(m_name + KEY_MODEM_NAME, m_modemName);
 	m_config->Write(m_name + KEY_TIMEOUT, long(m_timeout));
 	m_config->Write(m_name + KEY_ACK_TIME, long(m_ackTime));
 	m_config->Write(m_name + KEY_BEACON_TIME, long(m_beaconTime));
@@ -1031,17 +872,7 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_GATEWAY_PORT.c_str(), m_gatewayPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_LOCAL_PORT.c_str(), m_localPort); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_MODEM_VERSION.c_str(), int(m_modemVersion)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_MODEM_CONNECTION.c_str(), int(m_modemConnection)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_MODEM_USBPORT.c_str(), m_modemUSBPort.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_MODEM_USBPATH.c_str(), m_modemUSBPath.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_MODEM_ADDRESS.c_str(), m_modemAddress.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_MODEM_PORT.c_str(), m_modemPort); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_MODEM_RXINVERT.c_str(), m_rxInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_MODEM_TXINVERT.c_str(), m_txInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_MODEM_CHANNEL.c_str(), m_channel ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_MODEM_MODLEVEL.c_str(), m_modLevel); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_MODEM_TXDELAY.c_str(), m_txDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_MODEM_NAME.c_str(), m_modemName.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_TIMEOUT.c_str(), m_timeout); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_ACK_TIME.c_str(), m_ackTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BEACON_TIME.c_str(), m_beaconTime); file.AddLine(buffer);

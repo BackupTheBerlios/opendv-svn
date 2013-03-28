@@ -23,7 +23,6 @@
 #include "RepeaterProtocolHandler.h"
 #include "DStarRepeaterThread.h"
 #include "DStarRepeaterDefs.h"
-#include "DVRPTRController.h"
 #include "DVTOOLFileWriter.h"
 #include "SlowDataDecoder.h"
 #include "CallsignList.h"
@@ -41,7 +40,7 @@ public:
 
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
-	virtual void setModem(IDVRPTRController* modem);
+	virtual void setModem(CModemProtocolClient* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
@@ -67,7 +66,7 @@ public:
 	virtual void kill();
 
 private:
-	IDVRPTRController*         m_dvrptr;
+	CModemProtocolClient*      m_modem;
 	CRepeaterProtocolHandler*  m_protocolHandler;
 	CExternalController*       m_controller;
 	wxString                   m_rptCallsign;
@@ -84,6 +83,7 @@ private:
 	DVRPTR_RX_STATE             m_rxState;
 	CSlowDataDecoder           m_slowDataDecoder;
 	bool                       m_tx;
+	unsigned int               m_space;
 	bool                       m_killed;
 	CTimer                     m_activeHangTimer;
 	bool                       m_disable;
@@ -100,7 +100,7 @@ private:
 	unsigned int               m_packetCount;
 	unsigned int               m_packetSilence;
 
-	void receiveHeader(unsigned char* data, unsigned int length);
+	void receiveHeader(CHeaderData* header);
 	void receiveRadioData(unsigned char* data, unsigned int length);
 	void receiveSlowData(unsigned char* data, unsigned int length);
 	void transmitNetworkHeader(const CHeaderData& header);
@@ -108,7 +108,7 @@ private:
 	void transmitNetworkHeader();
 
 	void repeaterStateMachine();
-	void receiveRadio();
+	void receiveModem();
 	void receiveNetwork();
 	bool processRadioHeader(CHeaderData* header);
 	void processNetworkHeader(CHeaderData* header);
