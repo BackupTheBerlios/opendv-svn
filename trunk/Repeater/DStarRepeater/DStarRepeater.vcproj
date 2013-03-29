@@ -181,10 +181,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterConfig.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterFrame.cpp"
 				>
 			</File>
@@ -224,10 +220,6 @@
 			>
 			<File
 				RelativePath=".\DStarRepeaterApp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterConfig.h"
 				>
 			</File>
 			<File

@@ -39,7 +39,7 @@ CDStarRepeaterConfigPreferences::CDStarRepeaterConfigPreferences(wxWindow* paren
 	const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4,
 	const wxString& controllerType,
 	unsigned int activeHangTime) :
-wxDialog(parent, id, wxString(_("DV-RPTR Repeater Preferences"))),
+wxDialog(parent, id, wxString(_("D-Star Repeater Preferences"))),
 m_callsign(NULL),
 m_network(NULL),
 m_times(NULL),

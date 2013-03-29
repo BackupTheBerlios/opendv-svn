@@ -2,17 +2,14 @@ all:			ircddbgatewayconfig
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-ircddbgatewayconfig:	IRCDDBGatewayConfigApp.o IRCDDBGatewayConfig.o IRCDDBGatewayConfigFrame.o IRCDDBGatewayConfigGatewaySet.o IRCDDBGatewayConfigIrcDDBSet.o \
+ircddbgatewayconfig:	IRCDDBGatewayConfigApp.o IRCDDBGatewayConfigFrame.o IRCDDBGatewayConfigGatewaySet.o IRCDDBGatewayConfigIrcDDBSet.o \
 				IRCDDBGatewayConfigMiscellaneousSet.o IRCDDBGatewayConfigPreferences.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o ircddbgatewayconfig IRCDDBGatewayConfigApp.o IRCDDBGatewayConfig.o IRCDDBGatewayConfigFrame.o IRCDDBGatewayConfigGatewaySet.o \
+				$(CC) $(LDFLAGS) -o ircddbgatewayconfig IRCDDBGatewayConfigApp.o IRCDDBGatewayConfigFrame.o IRCDDBGatewayConfigGatewaySet.o \
 				IRCDDBGatewayConfigIrcDDBSet.o IRCDDBGatewayConfigMiscellaneousSet.o IRCDDBGatewayConfigPreferences.o ../Common/Common.a $(LIBS)
 
-IRCDDBGatewayConfigApp.o:		IRCDDBGatewayConfigApp.cpp IRCDDBGatewayConfigApp.h IRCDDBGatewayConfigFrame.h IRCDDBGatewayConfigConfig.h \
-				IRCDDBGatewayConfigDefs.h ../Common/Defs.h ../Common/Version.h ../Common/Utils.h
+IRCDDBGatewayConfigApp.o:		IRCDDBGatewayConfigApp.cpp IRCDDBGatewayConfigApp.h IRCDDBGatewayConfigFrame.h IRCDDBGatewayConfigDefs.h ../Common/Defs.h \
+				../Common/Version.h ../Common/Utils.h ../Common/IRCDDBGatewayConfigConfig.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayConfigApp.cpp
-
-IRCDDBGatewayConfigConfig.o:	IRCDDBGatewayConfigConfig.cpp IRCDDBGatewayConfigConfig.h IRCDDBGatewayConfigDefs.h ../Common/Defs.h
-				$(CC) $(CFLAGS) -c IRCDDBGatewayConfigConfig.cpp
 
 IRCDDBGatewayConfigFrame.o:	IRCDDBGatewayConfigFrame.cpp IRCDDBGatewayConfigFrame.h IRCDDBGatewayConfigPreferences.h IRCDDBGatewayConfigApp.h ../Common/Defs.h \
 				../Common/Version.h ../Common/LogEvent.h

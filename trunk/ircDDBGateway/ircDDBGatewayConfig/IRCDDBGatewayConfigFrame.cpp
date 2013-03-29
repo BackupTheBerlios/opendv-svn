@@ -46,12 +46,7 @@ wxFrame(NULL, -1, title)
 
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-	wxPanel* panel = new wxPanel(this);
-
-	wxBoxSizer* panelSizer = new wxBoxSizer(wxVERTICAL);
-
-	panel->SetSizer(panelSizer);
-	panelSizer->SetSizeHints(panel);
+	wxPanel* panel = new wxPanel(this, -1, wxDefaultPosition, wxSize(500, 300));
 
 	mainSizer->Add(panel);
 

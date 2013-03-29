@@ -158,7 +158,7 @@ m_reconnect(NULL)
 #endif
 		}
 
-		CHostFile file(fileName.GetFullPath(), true);
+		CHostFile file(fileName.GetFullPath(), false);
 
 		for (unsigned int i = 0U; i < file.getCount(); i++)
 			m_reflector->Append(file.getName(i));
@@ -174,7 +174,7 @@ m_reconnect(NULL)
 #endif
 		}
 
-		CHostFile file(fileName.GetFullPath(), true);
+		CHostFile file(fileName.GetFullPath(), false);
 
 		for (unsigned int i = 0U; i < file.getCount(); i++)
 			m_reflector->Append(file.getName(i));
@@ -190,7 +190,7 @@ m_reconnect(NULL)
 #endif
 		}
 
-		CHostFile file(fileName.GetFullPath(), true);
+		CHostFile file(fileName.GetFullPath(), false);
 
 		for (unsigned int i = 0U; i < file.getCount(); i++)
 			m_reflector->Append(file.getName(i));

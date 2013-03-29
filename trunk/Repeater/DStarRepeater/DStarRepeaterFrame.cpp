@@ -16,7 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterPreferences.h"
 #include "DStarRepeaterFrame.h"
 #include "DStarRepeaterApp.h"
 #include "DStarDefines.h"

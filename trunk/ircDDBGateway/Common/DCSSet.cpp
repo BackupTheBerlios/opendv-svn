@@ -75,7 +75,7 @@ m_ccsHosts(NULL)
 #endif
 	}
 
-	CHostFile file(fileName.GetFullPath(), true);
+	CHostFile file(fileName.GetFullPath(), false);
 
 	for (unsigned int i = 0U; i < file.getCount(); i++)
 		m_ccsHosts->Append(file.getName(i));

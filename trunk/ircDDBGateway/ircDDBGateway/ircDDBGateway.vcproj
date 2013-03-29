@@ -181,10 +181,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayConfig.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\IRCDDBGatewayFrame.cpp"
 				>
 			</File>
@@ -212,10 +208,6 @@
 			>
 			<File
 				RelativePath=".\IRCDDBGatewayApp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IRCDDBGatewayConfig.h"
 				>
 			</File>
 			<File

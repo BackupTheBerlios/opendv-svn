@@ -2,10 +2,10 @@ all:		Common.a
 
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o \
 		CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o \
-		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o \
-		DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o \
-		FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o NCO.o \
-		MessageTextCtrl.o ModemProtocolClient.o ModemProtocolServer.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o \
+		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o \
+		DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
+		FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o \
+		NCO.o MessageTextCtrl.o ModemProtocolClient.o ModemProtocolServer.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o \
 		RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o \
 		SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o UNIXSocketReaderWriter.o \
 		URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
@@ -78,6 +78,9 @@ DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h
 
 DStarInterleaver.o:	DStarInterleaver.cpp DStarInterleaver.h DStarDefines.h Interleaver.h
 		$(CC) $(CFLAGS) -c DStarInterleaver.cpp
+
+DStarRepeaterConfig.o:	DStarRepeaterConfig.cpp DStarRepeaterConfig.h DStarDefines.h
+		$(CC) $(CFLAGS) -c DStarRepeaterConfig.cpp
 
 DStarScrambler.o:	DStarScrambler.cpp DStarScrambler.h Scrambler.h
 		$(CC) $(CFLAGS) -c DStarScrambler.cpp

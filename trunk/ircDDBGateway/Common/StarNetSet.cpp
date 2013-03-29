@@ -222,7 +222,7 @@ m_txMsgSwitch(NULL)
 			wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
 	}
 
-	CHostFile file(fileName.GetFullPath(), true);
+	CHostFile file(fileName.GetFullPath(), false);
 
 	for (unsigned int i = 0U; i < file.getCount(); i++)
 		m_reflector->Append(file.getName(i));
@@ -270,7 +270,7 @@ m_txMsgSwitch(NULL)
 			wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
 	}
 
-	CHostFile file(fileName.GetFullPath(), true);
+	CHostFile file(fileName.GetFullPath(), false);
 
 	for (unsigned int i = 0U; i < file.getCount(); i++)
 		m_reflector->Append(file.getName(i));

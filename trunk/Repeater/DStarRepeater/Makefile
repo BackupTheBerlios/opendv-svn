@@ -2,25 +2,22 @@ all:			dstarrepeater dstarrepeaterd
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-dstarrepeater:	DStarRepeaterApp.o DStarRepeaterConfig.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o \
-					DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterConfig.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o \
-					DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
+dstarrepeater:	DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o \
+					DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o ../Common/Common.a
+				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o \
+					DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
 
-dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterConfig.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
+dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
 					DStarRepeaterStatusData.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarrepeaterd DStarRepeaterD.o DStarRepeaterConfig.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o \
-					DStarRepeaterRXThread.o DStarRepeaterStatusData.o ../Common/Common.a $(LIBS)
+				$(CC) $(LDFLAGS) -o dstarrepeaterd DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
+					DStarRepeaterStatusData.o ../Common/Common.a $(LIBS)
 
 DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
-					DStarRepeaterRXThread.h DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterStatusData.h DStarRepeaterLogger.h DStarRepeaterConfig.h \
-					DStarRepeaterThreadHelper.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h \
-					../Common/Version.h ../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h \
-					../Common/ModemProtocolClient.h
+					DStarRepeaterRXThread.h DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterStatusData.h DStarRepeaterLogger.h DStarRepeaterThreadHelper.h \
+					../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h \
+					../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h ../Common/ModemProtocolClient.h \
+					../Common/DStarRepeaterConfig.h 
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
-
-DStarRepeaterConfig.o:	DStarRepeaterConfig.cpp DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h
-				$(CC) $(CFLAGS) -c DStarRepeaterConfig.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \

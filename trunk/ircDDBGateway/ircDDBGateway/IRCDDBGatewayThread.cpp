@@ -558,7 +558,7 @@ void CIRCDDBGatewayThread::setCCS(bool enabled, const wxString& host)
 		}
 	}
 
-	CHostFile hostFile(fileName.GetFullPath(), false);
+	CHostFile hostFile(fileName.GetFullPath(), true);
 
 	m_ccsHost = hostFile.getAddress(host);
 }

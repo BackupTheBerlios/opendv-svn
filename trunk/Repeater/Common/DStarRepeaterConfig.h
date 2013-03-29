@@ -20,7 +20,6 @@
 #define	DStarRepeaterConfig_H
 
 #include "DStarDefines.h"
-#include "DStarRepeaterDefs.h"
 
 #include <wx/wx.h>
 #include <wx/config.h>

@@ -329,6 +329,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IRCDDBGatewayConfig.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LogEvent.cpp"
 				>
 			</File>
@@ -644,6 +648,10 @@
 			</File>
 			<File
 				RelativePath=".\IcomRepeaterProtocolHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IRCDDBGatewayConfig.h"
 				>
 			</File>
 			<File
