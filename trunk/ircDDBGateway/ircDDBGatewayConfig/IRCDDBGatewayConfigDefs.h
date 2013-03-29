@@ -16,19 +16,28 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	IRCDDBGatewayConfigDefs_H
+#define	IRCDDBGatewayConfigDefs_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+const wxString APPLICATION_NAME = wxT("ircDDB Gateway");
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+const wxString LOG_BASE_NAME    = wxT("ircDDBGateway");
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
+#if !defined(__WINDOWS__)
+const wxString CONFIG_FILE_NAME = wxT("ircddbgateway");
+const wxString LOG_DIR  = wxT("/var/log");
+const wxString CONF_DIR = wxT("/etc");
 #endif
+
+const unsigned int MAX_OUTGOING       = 6U;
+const unsigned int MAX_REPEATERS      = 4U;
+const unsigned int MAX_DEXTRA_LINKS   = 5U;
+const unsigned int MAX_DPLUS_LINKS    = 5U;
+const unsigned int MAX_DCS_LINKS      = 5U;
+const unsigned int MAX_STARNETS       = 5U;
+const unsigned int MAX_ROUTES         = MAX_REPEATERS + 5U;
+const unsigned int MAX_DD_ROUTES      = 20U;
 
 #endif

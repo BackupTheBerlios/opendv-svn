@@ -16,14 +16,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "IRCDDBGatewayMiscellaneousSet.h"
+#include "IRCDDBGatewayConfigMiscellaneousSet.h"
 #include "DStarDefines.h"
 
 const unsigned int CONTROL_WIDTH = 130U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CIRCDDBGatewayMiscellaneousSet::CIRCDDBGatewayMiscellaneousSet(wxWindow* parent, int id, const wxString& title, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled, bool dratsEnabled, bool dtmfEnabled) :
+CIRCDDBGatewayConfigMiscellaneousSet::CIRCDDBGatewayConfigMiscellaneousSet(wxWindow* parent, int id, const wxString& title, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled, bool dratsEnabled, bool dtmfEnabled) :
 wxPanel(parent, id),
 m_title(title),
 m_language(NULL),
@@ -106,11 +106,11 @@ m_dtmfEnabled(NULL)
 }
 
 
-CIRCDDBGatewayMiscellaneousSet::~CIRCDDBGatewayMiscellaneousSet()
+CIRCDDBGatewayConfigMiscellaneousSet::~CIRCDDBGatewayConfigMiscellaneousSet()
 {
 }
 
-bool CIRCDDBGatewayMiscellaneousSet::Validate()
+bool CIRCDDBGatewayConfigMiscellaneousSet::Validate()
 {
 	if (m_language->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
@@ -130,7 +130,7 @@ bool CIRCDDBGatewayMiscellaneousSet::Validate()
 	return m_dtmfEnabled->GetCurrentSelection() != wxNOT_FOUND;
 }
 
-TEXT_LANG CIRCDDBGatewayMiscellaneousSet::getLanguage() const
+TEXT_LANG CIRCDDBGatewayConfigMiscellaneousSet::getLanguage() const
 {
 	int c = m_language->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
@@ -139,7 +139,7 @@ TEXT_LANG CIRCDDBGatewayMiscellaneousSet::getLanguage() const
 	return TEXT_LANG(c);
 }
 
-bool CIRCDDBGatewayMiscellaneousSet::getInfoEnabled() const
+bool CIRCDDBGatewayConfigMiscellaneousSet::getInfoEnabled() const
 {
 	int c = m_infoEnabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
@@ -148,7 +148,7 @@ bool CIRCDDBGatewayMiscellaneousSet::getInfoEnabled() const
 	return c == 1;
 }
 
-bool CIRCDDBGatewayMiscellaneousSet::getEchoEnabled() const
+bool CIRCDDBGatewayConfigMiscellaneousSet::getEchoEnabled() const
 {
 	int c = m_echoEnabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
@@ -157,7 +157,7 @@ bool CIRCDDBGatewayMiscellaneousSet::getEchoEnabled() const
 	return c == 1;
 }
 
-bool CIRCDDBGatewayMiscellaneousSet::getLogEnabled() const
+bool CIRCDDBGatewayConfigMiscellaneousSet::getLogEnabled() const
 {
 	int c = m_logEnabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
@@ -166,7 +166,7 @@ bool CIRCDDBGatewayMiscellaneousSet::getLogEnabled() const
 	return c == 1;
 }
 
-bool CIRCDDBGatewayMiscellaneousSet::getDRATSEnabled() const
+bool CIRCDDBGatewayConfigMiscellaneousSet::getDRATSEnabled() const
 {
 	int c = m_dratsEnabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
@@ -175,7 +175,7 @@ bool CIRCDDBGatewayMiscellaneousSet::getDRATSEnabled() const
 	return c == 1;
 }
 
-bool CIRCDDBGatewayMiscellaneousSet::getDTMFEnabled() const
+bool CIRCDDBGatewayConfigMiscellaneousSet::getDTMFEnabled() const
 {
 	int c = m_dtmfEnabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)

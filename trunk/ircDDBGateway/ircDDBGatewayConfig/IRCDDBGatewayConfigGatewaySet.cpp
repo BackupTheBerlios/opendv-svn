@@ -17,7 +17,7 @@
  */
 
 #include "DStarDefines.h"
-#include "IRCDDBGatewayGatewaySet.h"
+#include "IRCDDBGatewayConfigGatewaySet.h"
 #include <cctype>
 
 const unsigned int DESCRIPTION_WIDTH = 120U;
@@ -30,7 +30,7 @@ const unsigned int PORT_LENGTH        = 5U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CIRCDDBGatewayGatewaySet::CIRCDDBGatewayGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url) :
+CIRCDDBGatewayConfigGatewaySet::CIRCDDBGatewayConfigGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
@@ -170,11 +170,11 @@ m_url(NULL)
 }
 
 
-CIRCDDBGatewayGatewaySet::~CIRCDDBGatewayGatewaySet()
+CIRCDDBGatewayConfigGatewaySet::~CIRCDDBGatewayConfigGatewaySet()
 {
 }
 
-bool CIRCDDBGatewayGatewaySet::Validate()
+bool CIRCDDBGatewayConfigGatewaySet::Validate()
 {
 	wxString callsign = getCallsign();
 
@@ -219,7 +219,7 @@ bool CIRCDDBGatewayGatewaySet::Validate()
 	return true;
 }
 
-wxString CIRCDDBGatewayGatewaySet::getCallsign() const
+wxString CIRCDDBGatewayConfigGatewaySet::getCallsign() const
 {
 	wxString callsign = m_callsign->GetValue();
 
@@ -228,17 +228,17 @@ wxString CIRCDDBGatewayGatewaySet::getCallsign() const
 	return callsign;
 }
 
-wxString CIRCDDBGatewayGatewaySet::getAddress() const
+wxString CIRCDDBGatewayConfigGatewaySet::getAddress() const
 {
 	return m_address->GetValue();
 }
 
-wxString CIRCDDBGatewayGatewaySet::getIcomAddress() const
+wxString CIRCDDBGatewayConfigGatewaySet::getIcomAddress() const
 {
 	return m_icomAddress->GetValue();
 }
 
-unsigned int CIRCDDBGatewayGatewaySet::getIcomPort() const
+unsigned int CIRCDDBGatewayConfigGatewaySet::getIcomPort() const
 {
 	unsigned long n;
 	m_icomPort->GetValue().ToULong(&n);
@@ -246,12 +246,12 @@ unsigned int CIRCDDBGatewayGatewaySet::getIcomPort() const
 	return n;
 }
 
-wxString CIRCDDBGatewayGatewaySet::getHBAddress() const
+wxString CIRCDDBGatewayConfigGatewaySet::getHBAddress() const
 {
 	return m_hbAddress->GetValue();
 }
 
-unsigned int CIRCDDBGatewayGatewaySet::getHBPort() const
+unsigned int CIRCDDBGatewayConfigGatewaySet::getHBPort() const
 {
 	unsigned long n;
 	m_hbPort->GetValue().ToULong(&n);
@@ -259,7 +259,7 @@ unsigned int CIRCDDBGatewayGatewaySet::getHBPort() const
 	return n;
 }
 
-double CIRCDDBGatewayGatewaySet::getLatitude() const
+double CIRCDDBGatewayConfigGatewaySet::getLatitude() const
 {
 	double val;
 	
@@ -268,7 +268,7 @@ double CIRCDDBGatewayGatewaySet::getLatitude() const
 	return val;
 }
 
-double CIRCDDBGatewayGatewaySet::getLongitude() const
+double CIRCDDBGatewayConfigGatewaySet::getLongitude() const
 {
 	double val;
 	
@@ -277,17 +277,17 @@ double CIRCDDBGatewayGatewaySet::getLongitude() const
 	return val;
 }
 
-wxString CIRCDDBGatewayGatewaySet::getDescription1() const
+wxString CIRCDDBGatewayConfigGatewaySet::getDescription1() const
 {
 	return m_description1->GetValue();
 }
 
-wxString CIRCDDBGatewayGatewaySet::getDescription2() const
+wxString CIRCDDBGatewayConfigGatewaySet::getDescription2() const
 {
 	return m_description2->GetValue();
 }
 
-wxString CIRCDDBGatewayGatewaySet::getURL() const
+wxString CIRCDDBGatewayConfigGatewaySet::getURL() const
 {
 	return m_url->GetValue();
 }

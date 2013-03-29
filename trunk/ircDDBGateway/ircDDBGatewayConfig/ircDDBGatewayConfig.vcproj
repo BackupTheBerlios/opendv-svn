@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="ircDDBGateway"
-	ProjectGUID="{6DDA3497-66A3-4856-BAD4-1DDCDBDFF959}"
-	RootNamespace="ircDDBGateway"
+	Name="ircDDBGatewayConfig"
+	ProjectGUID="{D0A32505-822B-4936-A61B-A5151966AEAA}"
+	RootNamespace="ircDDBGatewayConfig"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -177,31 +177,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\IRCDDBGatewayApp.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\IRCDDBGatewayConfig.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayFrame.cpp"
+				RelativePath=".\IRCDDBGatewayConfigApp.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayLogRedirect.cpp"
+				RelativePath=".\IRCDDBGatewayConfigFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayStatusData.cpp"
+				RelativePath=".\IRCDDBGatewayConfigGatewaySet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayThread.cpp"
+				RelativePath=".\IRCDDBGatewayConfigIrcDDBSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayThreadHelper.cpp"
+				RelativePath=".\IRCDDBGatewayConfigMiscellaneousSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IRCDDBGatewayConfigPreferences.cpp"
 				>
 			</File>
 		</Filter>
@@ -211,35 +211,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\IRCDDBGatewayApp.h"
-				>
-			</File>
-			<File
 				RelativePath=".\IRCDDBGatewayConfig.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayDefs.h"
+				RelativePath=".\IRCDDBGatewayConfigApp.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayFrame.h"
+				RelativePath=".\IRCDDBGatewayConfigDefs.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayLogRedirect.h"
+				RelativePath=".\IRCDDBGatewayConfigFrame.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayStatusData.h"
+				RelativePath=".\IRCDDBGatewayConfigGatewaySet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayThread.h"
+				RelativePath=".\IRCDDBGatewayConfigIrcDDBSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IRCDDBGatewayThreadHelper.h"
+				RelativePath=".\IRCDDBGatewayConfigMiscellaneousSet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IRCDDBGatewayConfigPreferences.h"
 				>
 			</File>
 		</Filter>

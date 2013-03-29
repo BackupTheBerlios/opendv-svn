@@ -16,15 +16,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	IRCDDBGatewayIrcDDBSet_H
-#define	IRCDDBGatewayIrcDDBSet_H
+#ifndef	IRCDDBGatewayConfigIrcDDBSet_H
+#define	IRCDDBGatewayConfigIrcDDBSet_H
 
 #include <wx/wx.h>
 
-class CIRCDDBGatewayIrcDDBSet : public wxPanel {
+class CIRCDDBGatewayConfigIrcDDBSet : public wxPanel {
 public:
-	CIRCDDBGatewayIrcDDBSet(wxWindow* parent, int id, const wxString& title, bool enabled, const wxString& hostname, const wxString& username, const wxString& password);
-	virtual ~CIRCDDBGatewayIrcDDBSet();
+	CIRCDDBGatewayConfigIrcDDBSet(wxWindow* parent, int id, const wxString& title, bool enabled, const wxString& hostname, const wxString& username, const wxString& password);
+	virtual ~CIRCDDBGatewayConfigIrcDDBSet();
 
 	virtual bool Validate();
 

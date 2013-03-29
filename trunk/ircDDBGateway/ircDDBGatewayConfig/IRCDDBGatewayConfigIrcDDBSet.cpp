@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "IRCDDBGatewayIrcDDBSet.h"
+#include "IRCDDBGatewayConfigIrcDDBSet.h"
 
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 200U;
@@ -24,7 +24,7 @@ const unsigned int CONTROL_WIDTH2 = 80U;
 
 const unsigned int PORT_LENGTH   = 5U;
 
-CIRCDDBGatewayIrcDDBSet::CIRCDDBGatewayIrcDDBSet(wxWindow* parent, int id, const wxString& title, bool enabled, const wxString& hostname, const wxString& username, const wxString& password) :
+CIRCDDBGatewayConfigIrcDDBSet::CIRCDDBGatewayConfigIrcDDBSet(wxWindow* parent, int id, const wxString& title, bool enabled, const wxString& hostname, const wxString& username, const wxString& password) :
 wxPanel(parent, id),
 m_title(title),
 m_enabled(NULL),
@@ -76,11 +76,11 @@ m_password(NULL)
 }
 
 
-CIRCDDBGatewayIrcDDBSet::~CIRCDDBGatewayIrcDDBSet()
+CIRCDDBGatewayConfigIrcDDBSet::~CIRCDDBGatewayConfigIrcDDBSet()
 {
 }
 
-bool CIRCDDBGatewayIrcDDBSet::Validate()
+bool CIRCDDBGatewayConfigIrcDDBSet::Validate()
 {
 	int n = m_enabled->GetCurrentSelection();
 	if (n == wxNOT_FOUND)
@@ -107,7 +107,7 @@ bool CIRCDDBGatewayIrcDDBSet::Validate()
 	return true;
 }
 
-bool CIRCDDBGatewayIrcDDBSet::getEnabled() const
+bool CIRCDDBGatewayConfigIrcDDBSet::getEnabled() const
 {
 	int c = m_enabled->GetCurrentSelection();
 	if (c == wxNOT_FOUND)
@@ -116,17 +116,17 @@ bool CIRCDDBGatewayIrcDDBSet::getEnabled() const
 	return c == 1;
 }
 
-wxString CIRCDDBGatewayIrcDDBSet::getHostname() const
+wxString CIRCDDBGatewayConfigIrcDDBSet::getHostname() const
 {
 	return m_hostname->GetStringSelection();
 }
 
-wxString CIRCDDBGatewayIrcDDBSet::getUsername() const
+wxString CIRCDDBGatewayConfigIrcDDBSet::getUsername() const
 {
 	return m_username->GetValue();
 }
 
-wxString CIRCDDBGatewayIrcDDBSet::getPassword() const
+wxString CIRCDDBGatewayConfigIrcDDBSet::getPassword() const
 {
 	return m_password->GetValue();
 }

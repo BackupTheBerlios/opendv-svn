@@ -16,15 +16,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	IRCDDBGatewayPreferences_H
-#define	IRCDDBGatewayPreferences_H
+#ifndef	IRCDDBGatewayConfigPreferences_H
+#define	IRCDDBGatewayConfigPreferences_H
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
 
-#include "IRCDDBGatewayMiscellaneousSet.h"
-#include "IRCDDBGatewayGatewaySet.h"
-#include "IRCDDBGatewayIrcDDBSet.h"
+#include "IRCDDBGatewayConfigMiscellaneousSet.h"
+#include "IRCDDBGatewayConfigGatewaySet.h"
+#include "IRCDDBGatewayConfigIrcDDBSet.h"
 #include "RepeaterInfoSet.h"
 #include "RepeaterDataSet.h"
 #include "StarNetSet.h"
@@ -34,9 +34,9 @@
 #include "DPRSSet.h"
 #include "DCSSet.h"
 
-class CIRCDDBGatewayPreferences : public wxDialog {
+class CIRCDDBGatewayConfigPreferences : public wxDialog {
 public:
-	CIRCDDBGatewayPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress,
+	CIRCDDBGatewayConfigPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress,
 				 unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude,
 				 const wxString& description1, const wxString& description2, const wxString& url,
 				 const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1, const wxString& description11, const wxString& description12, const wxString& url1,
@@ -62,7 +62,7 @@ public:
 				 const wxString& starNetBand5, const wxString& callsign5, const wxString& logoff5, const wxString& info5, const wxString& permanent5, unsigned int userTimeout5, unsigned int groupTimeout5, STARNET_CALLSIGN_SWITCH callsignSwitch5, bool txMsgSwitch5,
 #endif
 				 bool remoteEnabled, const wxString& remotePassword, unsigned int remotePort);
-	virtual ~CIRCDDBGatewayPreferences();
+	virtual ~CIRCDDBGatewayConfigPreferences();
 
 	virtual bool Validate();
 
@@ -259,7 +259,7 @@ public:
 	virtual unsigned int getRemotePort() const;
 
 private:
-	CIRCDDBGatewayGatewaySet*       m_gateway;
+	CIRCDDBGatewayConfigGatewaySet*       m_gateway;
 	CRepeaterDataSet*               m_repeaterData1;
 	CRepeaterInfoSet*               m_repeaterInfo1;
 	CRepeaterDataSet*               m_repeaterData2;
@@ -268,7 +268,7 @@ private:
 	CRepeaterInfoSet*               m_repeaterInfo3;
 	CRepeaterDataSet*               m_repeaterData4;
 	CRepeaterInfoSet*               m_repeaterInfo4;
-	CIRCDDBGatewayIrcDDBSet*        m_ircDDB;
+	CIRCDDBGatewayConfigIrcDDBSet*        m_ircDDB;
 	CDPRSSet*                       m_dprs;
 	CDExtraSet*                     m_dextra;
 	CDPlusSet*                      m_dplus;
@@ -279,7 +279,7 @@ private:
 	CStarNetSet*                    m_starNet4;
 	CStarNetSet*                    m_starNet5;
 	CRemoteSet*                     m_remote;
-	CIRCDDBGatewayMiscellaneousSet* m_miscellaneous;
+	CIRCDDBGatewayConfigMiscellaneousSet* m_miscellaneous;
 };
 
 #endif

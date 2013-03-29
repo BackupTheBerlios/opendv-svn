@@ -2,12 +2,10 @@ all:			ircddbgateway ircddbgatewayd
 
 CFLAGS :=		-I../ircDDB -I../Common $(CFLAGS)
 
-ircddbgateway:	IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o IRCDDBGatewayIrcDDBSet.o IRCDDBGatewayLogRedirect.o \
-				IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o IRCDDBGatewayThreadHelper.o \
-				../ircDDB/libircDDB.a ../Common/Common.a
-				$(CC) $(LDFLAGS) -o ircddbgateway IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayGatewaySet.o IRCDDBGatewayIrcDDBSet.o \
-				IRCDDBGatewayLogRedirect.o IRCDDBGatewayMiscellaneousSet.o IRCDDBGatewayPreferences.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o \
-				IRCDDBGatewayThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
+ircddbgateway:	IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayLogRedirect.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o \
+				IRCDDBGatewayThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a
+				$(CC) $(LDFLAGS) -o ircddbgateway IRCDDBGatewayApp.o IRCDDBGatewayConfig.o IRCDDBGatewayFrame.o IRCDDBGatewayLogRedirect.o IRCDDBGatewayStatusData.o \
+				IRCDDBGatewayThread.o IRCDDBGatewayThreadHelper.o ../ircDDB/libircDDB.a ../Common/Common.a $(LIBS)
 
 ircddbgatewayd:	IRCDDBGatewayAppD.o IRCDDBGatewayConfig.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o ../ircDDB/libircDDB.a ../Common/Common.a
 				$(CC) $(LDFLAGS) -o ircddbgatewayd IRCDDBGatewayAppD.o IRCDDBGatewayConfig.o IRCDDBGatewayStatusData.o IRCDDBGatewayThread.o \
@@ -27,27 +25,12 @@ IRCDDBGatewayAppD.o:	IRCDDBGatewayAppD.cpp IRCDDBGatewayAppD.h IRCDDBGatewayThre
 IRCDDBGatewayConfig.o:	IRCDDBGatewayConfig.cpp IRCDDBGatewayConfig.h IRCDDBGatewayDefs.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayConfig.cpp
 
-IRCDDBGatewayFrame.o:	IRCDDBGatewayFrame.cpp IRCDDBGatewayFrame.h IRCDDBGatewayPreferences.h IRCDDBGatewayStatusData.h IRCDDBGatewayApp.h \
-				../Common/Defs.h ../Common/Version.h ../Common/LogEvent.h
+IRCDDBGatewayFrame.o:	IRCDDBGatewayFrame.cpp IRCDDBGatewayFrame.h IRCDDBGatewayStatusData.h IRCDDBGatewayApp.h ../Common/Defs.h ../Common/Version.h \
+				../Common/LogEvent.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayFrame.cpp
-
-IRCDDBGatewayGatewaySet.o:	IRCDDBGatewayGatewaySet.cpp IRCDDBGatewayGatewaySet.h ../Common/DStarDefines.h ../Common/AddressTextCtrl.h \
-				../Common/PortTextCtrl.h ../Common/CallsignTextCtrl.h ../Common/DescriptionTextCtrl.h ../Common/Defs.h
-				$(CC) $(CFLAGS) -c IRCDDBGatewayGatewaySet.cpp
-
-IRCDDBGatewayIrcDDBSet.o:	IRCDDBGatewayIrcDDBSet.cpp IRCDDBGatewayIrcDDBSet.h
-				$(CC) $(CFLAGS) -c IRCDDBGatewayIrcDDBSet.cpp
 
 IRCDDBGatewayLogRedirect.o:	IRCDDBGatewayLogRedirect.cpp IRCDDBGatewayLogRedirect.h IRCDDBGatewayApp.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayLogRedirect.cpp
-
-IRCDDBGatewayMiscellaneousSet.o:	IRCDDBGatewayMiscellaneousSet.cpp IRCDDBGatewayMiscellaneousSet.h ../Common/Defs.h ../Common/DStarDefines.h
-				$(CC) $(CFLAGS) -c IRCDDBGatewayMiscellaneousSet.cpp
-
-IRCDDBGatewayPreferences.o:	IRCDDBGatewayPreferences.cpp IRCDDBGatewayPreferences.h  IRCDDBGatewayMiscellaneousSet.h IRCDDBGatewayGatewaySet.h \
-				IRCDDBGatewayIrcDDBSet.h ../Common/Defs.h ../Common/RepeaterDataSet.h ../Common/DPRSSet.h ../Common/DPlusSet.h ../Common/RemoteSet.h \
-				../Common/StarNetSet.h ../Common/DExtraSet.h ../Common/DCSSet.h ../Common/RepeaterInfoSet.h
-				$(CC) $(CFLAGS) -c IRCDDBGatewayPreferences.cpp
 
 IRCDDBGatewayStatusData.o:	IRCDDBGatewayStatusData.cpp IRCDDBGatewayStatusData.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayStatusData.cpp
@@ -73,4 +56,3 @@ install:		ircddbgateway ircddbgatewayd
 
 clean:
 				rm -f core ircddbgateway ircddbgatewayd *.o *~ *.bak
-

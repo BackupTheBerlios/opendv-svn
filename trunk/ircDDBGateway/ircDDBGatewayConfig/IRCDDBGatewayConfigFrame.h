@@ -16,19 +16,27 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	IRCDDBGatewayConfigFrame_H
+#define	IRCDDBGatewayConfigFrame_H
+
+#include "Defs.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CIRCDDBGatewayConfigFrame : public wxFrame {
+public:
+	CIRCDDBGatewayConfigFrame(const wxString& title);
+	virtual ~CIRCDDBGatewayConfigFrame();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual void onQuit(wxCommandEvent& event);
+	virtual void onPreferences(wxCommandEvent& event);
+	virtual void onAbout(wxCommandEvent& event);
+	virtual void onClose(wxCloseEvent& event);
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
-#endif
+private:
+	DECLARE_EVENT_TABLE()
+
+	wxMenuBar* createMenuBar();
+};
 
 #endif

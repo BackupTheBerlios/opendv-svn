@@ -1274,5 +1274,6 @@ Updated XRF003s IP address.
 201303xx
 --------
 
+Split the configuration of the ircDDB Gateway into a seperate program.
 Allow your call command to link to the default reflector.
 Allow CCS commands in the your call.

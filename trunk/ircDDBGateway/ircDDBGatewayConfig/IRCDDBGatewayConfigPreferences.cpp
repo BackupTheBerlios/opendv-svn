@@ -16,12 +16,12 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "IRCDDBGatewayPreferences.h"
-#include "IRCDDBGatewayDefs.h"
+#include "IRCDDBGatewayConfigPreferences.h"
+#include "IRCDDBGatewayConfigDefs.h"
 
 const unsigned int BORDER_SIZE = 5U;
 
-CIRCDDBGatewayPreferences::CIRCDDBGatewayPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url, 
+CIRCDDBGatewayConfigPreferences::CIRCDDBGatewayConfigPreferences(wxWindow* parent, int id, const wxString& gatewayCallsign, const wxString& gatewayAddress, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url, 
 						   const wxString& repeaterBand1, HW_TYPE repeaterType1, const wxString& repeaterAddress1, unsigned int repeaterPort1, unsigned char band11, unsigned char band12, unsigned char band13, const wxString& reflector1, bool atStartup1, RECONNECT reconnect1, double frequency1, double offset1, double range1, double latitude1, double longitude1, double agl1, const wxString& description11, const wxString& description12, const wxString& url1,
 						   const wxString& repeaterBand2, HW_TYPE repeaterType2, const wxString& repeaterAddress2, unsigned int repeaterPort2, unsigned char band21, unsigned char band22, unsigned char band23, const wxString& reflector2, bool atStartup2, RECONNECT reconnect2, double frequency2, double offset2, double range2, double latitude2, double longitude2, double agl2, const wxString& description21, const wxString& description22, const wxString& url2,
 						   const wxString& repeaterBand3, HW_TYPE repeaterType3, const wxString& repeaterAddress3, unsigned int repeaterPort3, unsigned char band31, unsigned char band32, unsigned char band33, const wxString& reflector3, bool atStartup3, RECONNECT reconnect3, double frequency3, double offset3, double range3, double latitude3, double longitude3, double agl3, const wxString& description31, const wxString& description32, const wxString& url3,
@@ -70,7 +70,7 @@ m_miscellaneous(NULL)
 
 	wxNotebook* noteBook = new wxNotebook(this, -1);
 
-	m_gateway = new CIRCDDBGatewayGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_gateway = new CIRCDDBGatewayConfigGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 	noteBook->AddPage(m_gateway, _("Gateway"), true);
 
 	m_repeaterData1 = new CRepeaterDataSet(noteBook, -1, APPLICATION_NAME, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, dplusEnabled, dextraEnabled, dcsEnabled, reflector1, atStartup1, reconnect1);
@@ -97,7 +97,7 @@ m_miscellaneous(NULL)
 	m_repeaterInfo4 = new CRepeaterInfoSet(noteBook, -1, APPLICATION_NAME, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 	noteBook->AddPage(m_repeaterInfo4, _("Repeater 4"), false);
 
-	m_ircDDB = new CIRCDDBGatewayIrcDDBSet(noteBook, -1, APPLICATION_NAME, ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
+	m_ircDDB = new CIRCDDBGatewayConfigIrcDDBSet(noteBook, -1, APPLICATION_NAME, ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
 	noteBook->AddPage(m_ircDDB, wxT("ircDDB"), false);
 
 	m_dprs = new CDPRSSet(noteBook, -1, APPLICATION_NAME, aprsEnabled, aprsHostname, aprsPort);
@@ -147,7 +147,7 @@ m_miscellaneous(NULL)
 	m_remote = new CRemoteSet(noteBook, -1, APPLICATION_NAME, remoteEnabled, remotePassword, remotePort);
 	noteBook->AddPage(m_remote, wxT("Remote"), false);
 
-	m_miscellaneous = new CIRCDDBGatewayMiscellaneousSet(noteBook, -1, APPLICATION_NAME, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
+	m_miscellaneous = new CIRCDDBGatewayConfigMiscellaneousSet(noteBook, -1, APPLICATION_NAME, language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
 	noteBook->AddPage(m_miscellaneous, wxT("Misc"), false);
 
 	mainSizer->Add(noteBook, 1, wxALL | wxGROW, BORDER_SIZE);
@@ -163,11 +163,11 @@ m_miscellaneous(NULL)
 	SetSizer(mainSizer);
 }
 
-CIRCDDBGatewayPreferences::~CIRCDDBGatewayPreferences()
+CIRCDDBGatewayConfigPreferences::~CIRCDDBGatewayConfigPreferences()
 {
 }
 
-bool CIRCDDBGatewayPreferences::Validate()
+bool CIRCDDBGatewayConfigPreferences::Validate()
 {
 	if (!m_gateway->Validate())
 		return false;
@@ -229,817 +229,817 @@ bool CIRCDDBGatewayPreferences::Validate()
 	return m_miscellaneous->Validate();
 }
 
-wxString CIRCDDBGatewayPreferences::getGatewayCallsign() const
+wxString CIRCDDBGatewayConfigPreferences::getGatewayCallsign() const
 {
 	return m_gateway->getCallsign();
 }
 
-wxString CIRCDDBGatewayPreferences::getGatewayAddress() const
+wxString CIRCDDBGatewayConfigPreferences::getGatewayAddress() const
 {
 	return m_gateway->getAddress();
 }
 
-wxString CIRCDDBGatewayPreferences::getIcomAddress() const
+wxString CIRCDDBGatewayConfigPreferences::getIcomAddress() const
 {
 	return m_gateway->getIcomAddress();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getIcomPort() const
+unsigned int CIRCDDBGatewayConfigPreferences::getIcomPort() const
 {
 	return m_gateway->getIcomPort();
 }
 
-wxString CIRCDDBGatewayPreferences::getHBAddress() const
+wxString CIRCDDBGatewayConfigPreferences::getHBAddress() const
 {
 	return m_gateway->getHBAddress();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getHBPort() const
+unsigned int CIRCDDBGatewayConfigPreferences::getHBPort() const
 {
 	return m_gateway->getHBPort();
 }
 
-double CIRCDDBGatewayPreferences::getLatitude() const
+double CIRCDDBGatewayConfigPreferences::getLatitude() const
 {
 	return m_gateway->getLatitude();
 }
 
-double CIRCDDBGatewayPreferences::getLongitude() const
+double CIRCDDBGatewayConfigPreferences::getLongitude() const
 {
 	return m_gateway->getLongitude();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription1() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription1() const
 {
 	return m_gateway->getDescription1();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription2() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription2() const
 {
 	return m_gateway->getDescription2();
 }
 
-wxString CIRCDDBGatewayPreferences::getURL() const
+wxString CIRCDDBGatewayConfigPreferences::getURL() const
 {
 	return m_gateway->getURL();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterBand1() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterBand1() const
 {
 	return m_repeaterData1->getBand();
 }
 
-HW_TYPE CIRCDDBGatewayPreferences::getRepeaterType1() const
+HW_TYPE CIRCDDBGatewayConfigPreferences::getRepeaterType1() const
 {
 	return m_repeaterData1->getType();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterAddress1() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterAddress1() const
 {
 	return m_repeaterData1->getAddress();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getRepeaterPort1() const
+unsigned int CIRCDDBGatewayConfigPreferences::getRepeaterPort1() const
 {
 	return m_repeaterData1->getPort();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand11() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand11() const
 {
 	return m_repeaterData1->getBand1();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand12() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand12() const
 {
 	return m_repeaterData1->getBand2();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand13() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand13() const
 {
 	return m_repeaterData1->getBand3();
 }
 
-wxString CIRCDDBGatewayPreferences::getReflector1() const
+wxString CIRCDDBGatewayConfigPreferences::getReflector1() const
 {
 	return m_repeaterData1->getReflector();
 }
 
-bool CIRCDDBGatewayPreferences::atStartup1() const
+bool CIRCDDBGatewayConfigPreferences::atStartup1() const
 {
 	return m_repeaterData1->atStartup();
 }
 
-RECONNECT CIRCDDBGatewayPreferences::getReconnect1() const
+RECONNECT CIRCDDBGatewayConfigPreferences::getReconnect1() const
 {
 	return m_repeaterData1->getReconnect();
 }
 
-double CIRCDDBGatewayPreferences::getFrequency1() const
+double CIRCDDBGatewayConfigPreferences::getFrequency1() const
 {
 	return m_repeaterInfo1->getFrequency();
 }
 
-double CIRCDDBGatewayPreferences::getOffset1() const
+double CIRCDDBGatewayConfigPreferences::getOffset1() const
 {
 	return m_repeaterInfo1->getOffset();
 }
 
-double CIRCDDBGatewayPreferences::getRange1() const
+double CIRCDDBGatewayConfigPreferences::getRange1() const
 {
 	return m_repeaterInfo1->getRange();
 }
 
-double CIRCDDBGatewayPreferences::getLatitude1() const
+double CIRCDDBGatewayConfigPreferences::getLatitude1() const
 {
 	return m_repeaterInfo1->getLatitude();
 }
 
-double CIRCDDBGatewayPreferences::getLongitude1() const
+double CIRCDDBGatewayConfigPreferences::getLongitude1() const
 {
 	return m_repeaterInfo1->getLongitude();
 }
 
-double CIRCDDBGatewayPreferences::getAGL1() const
+double CIRCDDBGatewayConfigPreferences::getAGL1() const
 {
 	return m_repeaterInfo1->getAGL();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription11() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription11() const
 {
 	return m_repeaterInfo1->getDescription1();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription12() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription12() const
 {
 	return m_repeaterInfo1->getDescription2();
 }
 
-wxString CIRCDDBGatewayPreferences::getURL1() const
+wxString CIRCDDBGatewayConfigPreferences::getURL1() const
 {
 	return m_repeaterInfo1->getURL();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterBand2() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterBand2() const
 {
 	return m_repeaterData2->getBand();
 }
 
-HW_TYPE CIRCDDBGatewayPreferences::getRepeaterType2() const
+HW_TYPE CIRCDDBGatewayConfigPreferences::getRepeaterType2() const
 {
 	return m_repeaterData2->getType();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterAddress2() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterAddress2() const
 {
 	return m_repeaterData2->getAddress();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getRepeaterPort2() const
+unsigned int CIRCDDBGatewayConfigPreferences::getRepeaterPort2() const
 {
 	return m_repeaterData2->getPort();
 }
 
-wxString CIRCDDBGatewayPreferences::getReflector2() const
+wxString CIRCDDBGatewayConfigPreferences::getReflector2() const
 {
 	return m_repeaterData2->getReflector();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand21() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand21() const
 {
 	return m_repeaterData2->getBand1();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand22() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand22() const
 {
 	return m_repeaterData2->getBand2();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand23() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand23() const
 {
 	return m_repeaterData2->getBand3();
 }
 
-bool CIRCDDBGatewayPreferences::atStartup2() const
+bool CIRCDDBGatewayConfigPreferences::atStartup2() const
 {
 	return m_repeaterData2->atStartup();
 }
 
-RECONNECT CIRCDDBGatewayPreferences::getReconnect2() const
+RECONNECT CIRCDDBGatewayConfigPreferences::getReconnect2() const
 {
 	return m_repeaterData2->getReconnect();
 }
 
-double CIRCDDBGatewayPreferences::getFrequency2() const
+double CIRCDDBGatewayConfigPreferences::getFrequency2() const
 {
 	return m_repeaterInfo2->getFrequency();
 }
 
-double CIRCDDBGatewayPreferences::getOffset2() const
+double CIRCDDBGatewayConfigPreferences::getOffset2() const
 {
 	return m_repeaterInfo2->getOffset();
 }
 
-double CIRCDDBGatewayPreferences::getRange2() const
+double CIRCDDBGatewayConfigPreferences::getRange2() const
 {
 	return m_repeaterInfo2->getRange();
 }
 
-double CIRCDDBGatewayPreferences::getLatitude2() const
+double CIRCDDBGatewayConfigPreferences::getLatitude2() const
 {
 	return m_repeaterInfo2->getLatitude();
 }
 
-double CIRCDDBGatewayPreferences::getLongitude2() const
+double CIRCDDBGatewayConfigPreferences::getLongitude2() const
 {
 	return m_repeaterInfo2->getLongitude();
 }
 
-double CIRCDDBGatewayPreferences::getAGL2() const
+double CIRCDDBGatewayConfigPreferences::getAGL2() const
 {
 	return m_repeaterInfo2->getAGL();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription21() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription21() const
 {
 	return m_repeaterInfo2->getDescription1();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription22() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription22() const
 {
 	return m_repeaterInfo2->getDescription2();
 }
 
-wxString CIRCDDBGatewayPreferences::getURL2() const
+wxString CIRCDDBGatewayConfigPreferences::getURL2() const
 {
 	return m_repeaterInfo2->getURL();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterBand3() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterBand3() const
 {
 	return m_repeaterData3->getBand();
 }
 
-HW_TYPE CIRCDDBGatewayPreferences::getRepeaterType3() const
+HW_TYPE CIRCDDBGatewayConfigPreferences::getRepeaterType3() const
 {
 	return m_repeaterData3->getType();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterAddress3() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterAddress3() const
 {
 	return m_repeaterData3->getAddress();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getRepeaterPort3() const
+unsigned int CIRCDDBGatewayConfigPreferences::getRepeaterPort3() const
 {
 	return m_repeaterData3->getPort();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand31() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand31() const
 {
 	return m_repeaterData3->getBand1();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand32() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand32() const
 {
 	return m_repeaterData3->getBand2();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand33() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand33() const
 {
 	return m_repeaterData3->getBand3();
 }
 
-wxString CIRCDDBGatewayPreferences::getReflector3() const
+wxString CIRCDDBGatewayConfigPreferences::getReflector3() const
 {
 	return m_repeaterData3->getReflector();
 }
 
-bool CIRCDDBGatewayPreferences::atStartup3() const
+bool CIRCDDBGatewayConfigPreferences::atStartup3() const
 {
 	return m_repeaterData3->atStartup();
 }
 
-RECONNECT CIRCDDBGatewayPreferences::getReconnect3() const
+RECONNECT CIRCDDBGatewayConfigPreferences::getReconnect3() const
 {
 	return m_repeaterData3->getReconnect();
 }
 
-double CIRCDDBGatewayPreferences::getFrequency3() const
+double CIRCDDBGatewayConfigPreferences::getFrequency3() const
 {
 	return m_repeaterInfo3->getFrequency();
 }
 
-double CIRCDDBGatewayPreferences::getOffset3() const
+double CIRCDDBGatewayConfigPreferences::getOffset3() const
 {
 	return m_repeaterInfo3->getOffset();
 }
 
-double CIRCDDBGatewayPreferences::getRange3() const
+double CIRCDDBGatewayConfigPreferences::getRange3() const
 {
 	return m_repeaterInfo3->getRange();
 }
 
-double CIRCDDBGatewayPreferences::getLatitude3() const
+double CIRCDDBGatewayConfigPreferences::getLatitude3() const
 {
 	return m_repeaterInfo3->getLatitude();
 }
 
-double CIRCDDBGatewayPreferences::getLongitude3() const
+double CIRCDDBGatewayConfigPreferences::getLongitude3() const
 {
 	return m_repeaterInfo3->getLongitude();
 }
 
-double CIRCDDBGatewayPreferences::getAGL3() const
+double CIRCDDBGatewayConfigPreferences::getAGL3() const
 {
 	return m_repeaterInfo3->getAGL();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription31() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription31() const
 {
 	return m_repeaterInfo3->getDescription1();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription32() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription32() const
 {
 	return m_repeaterInfo3->getDescription2();
 }
 
-wxString CIRCDDBGatewayPreferences::getURL3() const
+wxString CIRCDDBGatewayConfigPreferences::getURL3() const
 {
 	return m_repeaterInfo3->getURL();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterBand4() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterBand4() const
 {
 	return m_repeaterData4->getBand();
 }
 
-HW_TYPE CIRCDDBGatewayPreferences::getRepeaterType4() const
+HW_TYPE CIRCDDBGatewayConfigPreferences::getRepeaterType4() const
 {
 	return m_repeaterData4->getType();
 }
 
-wxString CIRCDDBGatewayPreferences::getRepeaterAddress4() const
+wxString CIRCDDBGatewayConfigPreferences::getRepeaterAddress4() const
 {
 	return m_repeaterData4->getAddress();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getRepeaterPort4() const
+unsigned int CIRCDDBGatewayConfigPreferences::getRepeaterPort4() const
 {
 	return m_repeaterData4->getPort();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand41() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand41() const
 {
 	return m_repeaterData4->getBand1();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand42() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand42() const
 {
 	return m_repeaterData4->getBand2();
 }
 
-unsigned char CIRCDDBGatewayPreferences::getBand43() const
+unsigned char CIRCDDBGatewayConfigPreferences::getBand43() const
 {
 	return m_repeaterData4->getBand3();
 }
 
-wxString CIRCDDBGatewayPreferences::getReflector4() const
+wxString CIRCDDBGatewayConfigPreferences::getReflector4() const
 {
 	return m_repeaterData4->getReflector();
 }
 
-bool CIRCDDBGatewayPreferences::atStartup4() const
+bool CIRCDDBGatewayConfigPreferences::atStartup4() const
 {
 	return m_repeaterData4->atStartup();
 }
 
-RECONNECT CIRCDDBGatewayPreferences::getReconnect4() const
+RECONNECT CIRCDDBGatewayConfigPreferences::getReconnect4() const
 {
 	return m_repeaterData4->getReconnect();
 }
 
-double CIRCDDBGatewayPreferences::getFrequency4() const
+double CIRCDDBGatewayConfigPreferences::getFrequency4() const
 {
 	return m_repeaterInfo4->getFrequency();
 }
 
-double CIRCDDBGatewayPreferences::getOffset4() const
+double CIRCDDBGatewayConfigPreferences::getOffset4() const
 {
 	return m_repeaterInfo4->getOffset();
 }
 
-double CIRCDDBGatewayPreferences::getRange4() const
+double CIRCDDBGatewayConfigPreferences::getRange4() const
 {
 	return m_repeaterInfo4->getRange();
 }
 
-double CIRCDDBGatewayPreferences::getLatitude4() const
+double CIRCDDBGatewayConfigPreferences::getLatitude4() const
 {
 	return m_repeaterInfo4->getLatitude();
 }
 
-double CIRCDDBGatewayPreferences::getLongitude4() const
+double CIRCDDBGatewayConfigPreferences::getLongitude4() const
 {
 	return m_repeaterInfo4->getLongitude();
 }
 
-double CIRCDDBGatewayPreferences::getAGL4() const
+double CIRCDDBGatewayConfigPreferences::getAGL4() const
 {
 	return m_repeaterInfo4->getAGL();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription41() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription41() const
 {
 	return m_repeaterInfo4->getDescription1();
 }
 
-wxString CIRCDDBGatewayPreferences::getDescription42() const
+wxString CIRCDDBGatewayConfigPreferences::getDescription42() const
 {
 	return m_repeaterInfo4->getDescription2();
 }
 
-wxString CIRCDDBGatewayPreferences::getURL4() const
+wxString CIRCDDBGatewayConfigPreferences::getURL4() const
 {
 	return m_repeaterInfo4->getURL();
 }
 
-bool CIRCDDBGatewayPreferences::getIrcDDBEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getIrcDDBEnabled() const
 {
 	return m_ircDDB->getEnabled();
 }
 
-wxString CIRCDDBGatewayPreferences::getIrcDDBHostname() const
+wxString CIRCDDBGatewayConfigPreferences::getIrcDDBHostname() const
 {
 	return m_ircDDB->getHostname();
 }
 
-wxString CIRCDDBGatewayPreferences::getIrcDDBUsername() const
+wxString CIRCDDBGatewayConfigPreferences::getIrcDDBUsername() const
 {
 	return m_ircDDB->getUsername();
 }
 
-wxString CIRCDDBGatewayPreferences::getIrcDDBPassword() const
+wxString CIRCDDBGatewayConfigPreferences::getIrcDDBPassword() const
 {
 	return m_ircDDB->getPassword();
 }
 
-TEXT_LANG CIRCDDBGatewayPreferences::getLanguage() const
+TEXT_LANG CIRCDDBGatewayConfigPreferences::getLanguage() const
 {
 	return m_miscellaneous->getLanguage();
 }
 
-bool CIRCDDBGatewayPreferences::getInfoEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getInfoEnabled() const
 {
 	return m_miscellaneous->getInfoEnabled();
 }
 
-bool CIRCDDBGatewayPreferences::getEchoEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getEchoEnabled() const
 {
 	return m_miscellaneous->getEchoEnabled();
 }
 
-bool CIRCDDBGatewayPreferences::getLogEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getLogEnabled() const
 {
 	return m_miscellaneous->getLogEnabled();
 }
 
-bool CIRCDDBGatewayPreferences::getDRATSEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getDRATSEnabled() const
 {
 	return m_miscellaneous->getDRATSEnabled();
 }
 
-bool CIRCDDBGatewayPreferences::getDTMFEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getDTMFEnabled() const
 {
 	return m_miscellaneous->getDTMFEnabled();
 }
 
-bool CIRCDDBGatewayPreferences::getDExtraEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getDExtraEnabled() const
 {
 	return m_dextra->getEnabled();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getMaxDExtraDongles() const
+unsigned int CIRCDDBGatewayConfigPreferences::getMaxDExtraDongles() const
 {
 	return m_dextra->getMaxDongles();
 }
 
-bool CIRCDDBGatewayPreferences::getDPlusEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getDPlusEnabled() const
 {
 	return m_dplus->getEnabled();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getMaxDPlusDongles() const
+unsigned int CIRCDDBGatewayConfigPreferences::getMaxDPlusDongles() const
 {
 	return m_dplus->getMaxDongles();
 }
 
-wxString CIRCDDBGatewayPreferences::getDPlusLogin() const
+wxString CIRCDDBGatewayConfigPreferences::getDPlusLogin() const
 {
 	return m_dplus->getLogin();
 }
 
-bool CIRCDDBGatewayPreferences::getDCSEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getDCSEnabled() const
 {
 	return m_dcs->getDCSEnabled();
 }
 
-bool CIRCDDBGatewayPreferences::getCCSEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getCCSEnabled() const
 {
 	return m_dcs->getCCSEnabled();
 }
 
-wxString CIRCDDBGatewayPreferences::getCCSHost() const
+wxString CIRCDDBGatewayConfigPreferences::getCCSHost() const
 {
 	return m_dcs->getCCSHost();
 }
 
-bool CIRCDDBGatewayPreferences::getAPRSEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getAPRSEnabled() const
 {
 	return m_dprs->getEnabled();
 }
 
-wxString CIRCDDBGatewayPreferences::getAPRSHostname() const
+wxString CIRCDDBGatewayConfigPreferences::getAPRSHostname() const
 {
 	return m_dprs->getHostname();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getAPRSPort() const
+unsigned int CIRCDDBGatewayConfigPreferences::getAPRSPort() const
 {
 	return m_dprs->getPort();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetBand1() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetBand1() const
 {
 	return m_starNet1->getBand();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetCallsign1() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetCallsign1() const
 {
 	return m_starNet1->getCallsign();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetLogoff1() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLogoff1() const
 {
 	return m_starNet1->getLogoff();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetInfo1() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetInfo1() const
 {
 	return m_starNet1->getInfo();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetPermanent1() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetPermanent1() const
 {
 	return m_starNet1->getPermanent();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetUserTimeout1() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetUserTimeout1() const
 {
 	return m_starNet1->getUserTimeout();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetGroupTimeout1() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetGroupTimeout1() const
 {
 	return m_starNet1->getGroupTimeout();
 }
 
-STARNET_CALLSIGN_SWITCH CIRCDDBGatewayPreferences::getStarNetCallsignSwitch1() const
+STARNET_CALLSIGN_SWITCH CIRCDDBGatewayConfigPreferences::getStarNetCallsignSwitch1() const
 {
 	return m_starNet1->getCallsignSwitch();
 }
 
-bool CIRCDDBGatewayPreferences::getStarNetTXMsgSwitch1() const
+bool CIRCDDBGatewayConfigPreferences::getStarNetTXMsgSwitch1() const
 {
 	return m_starNet1->getTXMsgSwitch();
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-wxString CIRCDDBGatewayPreferences::getStarNetLink1() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLink1() const
 {
 	return m_starNet1->getReflector();
 }
 #endif
 
-wxString CIRCDDBGatewayPreferences::getStarNetBand2() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetBand2() const
 {
 	return m_starNet2->getBand();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetCallsign2() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetCallsign2() const
 {
 	return m_starNet2->getCallsign();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetLogoff2() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLogoff2() const
 {
 	return m_starNet2->getLogoff();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetInfo2() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetInfo2() const
 {
 	return m_starNet2->getInfo();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetPermanent2() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetPermanent2() const
 {
 	return m_starNet2->getPermanent();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetUserTimeout2() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetUserTimeout2() const
 {
 	return m_starNet2->getUserTimeout();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetGroupTimeout2() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetGroupTimeout2() const
 {
 	return m_starNet2->getGroupTimeout();
 }
 
-STARNET_CALLSIGN_SWITCH CIRCDDBGatewayPreferences::getStarNetCallsignSwitch2() const
+STARNET_CALLSIGN_SWITCH CIRCDDBGatewayConfigPreferences::getStarNetCallsignSwitch2() const
 {
 	return m_starNet2->getCallsignSwitch();
 }
 
-bool CIRCDDBGatewayPreferences::getStarNetTXMsgSwitch2() const
+bool CIRCDDBGatewayConfigPreferences::getStarNetTXMsgSwitch2() const
 {
 	return m_starNet2->getTXMsgSwitch();
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-wxString CIRCDDBGatewayPreferences::getStarNetLink2() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLink2() const
 {
 	return m_starNet2->getReflector();
 }
 #endif
 
-wxString CIRCDDBGatewayPreferences::getStarNetBand3() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetBand3() const
 {
 	return m_starNet3->getBand();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetCallsign3() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetCallsign3() const
 {
 	return m_starNet3->getCallsign();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetLogoff3() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLogoff3() const
 {
 	return m_starNet3->getLogoff();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetInfo3() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetInfo3() const
 {
 	return m_starNet3->getInfo();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetPermanent3() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetPermanent3() const
 {
 	return m_starNet3->getPermanent();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetUserTimeout3() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetUserTimeout3() const
 {
 	return m_starNet3->getUserTimeout();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetGroupTimeout3() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetGroupTimeout3() const
 {
 	return m_starNet3->getGroupTimeout();
 }
 
-STARNET_CALLSIGN_SWITCH CIRCDDBGatewayPreferences::getStarNetCallsignSwitch3() const
+STARNET_CALLSIGN_SWITCH CIRCDDBGatewayConfigPreferences::getStarNetCallsignSwitch3() const
 {
 	return m_starNet3->getCallsignSwitch();
 }
 
-bool CIRCDDBGatewayPreferences::getStarNetTXMsgSwitch3() const
+bool CIRCDDBGatewayConfigPreferences::getStarNetTXMsgSwitch3() const
 {
 	return m_starNet3->getTXMsgSwitch();
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-wxString CIRCDDBGatewayPreferences::getStarNetLink3() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLink3() const
 {
 	return m_starNet3->getReflector();
 }
 #endif
 
-wxString CIRCDDBGatewayPreferences::getStarNetBand4() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetBand4() const
 {
 	return m_starNet4->getBand();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetCallsign4() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetCallsign4() const
 {
 	return m_starNet4->getCallsign();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetLogoff4() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLogoff4() const
 {
 	return m_starNet4->getLogoff();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetInfo4() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetInfo4() const
 {
 	return m_starNet4->getInfo();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetPermanent4() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetPermanent4() const
 {
 	return m_starNet4->getPermanent();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetUserTimeout4() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetUserTimeout4() const
 {
 	return m_starNet4->getUserTimeout();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetGroupTimeout4() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetGroupTimeout4() const
 {
 	return m_starNet4->getGroupTimeout();
 }
 
-STARNET_CALLSIGN_SWITCH CIRCDDBGatewayPreferences::getStarNetCallsignSwitch4() const
+STARNET_CALLSIGN_SWITCH CIRCDDBGatewayConfigPreferences::getStarNetCallsignSwitch4() const
 {
 	return m_starNet4->getCallsignSwitch();
 }
 
-bool CIRCDDBGatewayPreferences::getStarNetTXMsgSwitch4() const
+bool CIRCDDBGatewayConfigPreferences::getStarNetTXMsgSwitch4() const
 {
 	return m_starNet4->getTXMsgSwitch();
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-wxString CIRCDDBGatewayPreferences::getStarNetLink4() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLink4() const
 {
 	return m_starNet4->getReflector();
 }
 #endif
 
-wxString CIRCDDBGatewayPreferences::getStarNetBand5() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetBand5() const
 {
 	return m_starNet5->getBand();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetCallsign5() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetCallsign5() const
 {
 	return m_starNet5->getCallsign();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetLogoff5() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLogoff5() const
 {
 	return m_starNet5->getLogoff();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetInfo5() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetInfo5() const
 {
 	return m_starNet5->getInfo();
 }
 
-wxString CIRCDDBGatewayPreferences::getStarNetPermanent5() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetPermanent5() const
 {
 	return m_starNet5->getPermanent();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetUserTimeout5() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetUserTimeout5() const
 {
 	return m_starNet5->getUserTimeout();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getStarNetGroupTimeout5() const
+unsigned int CIRCDDBGatewayConfigPreferences::getStarNetGroupTimeout5() const
 {
 	return m_starNet5->getGroupTimeout();
 }
 
-STARNET_CALLSIGN_SWITCH CIRCDDBGatewayPreferences::getStarNetCallsignSwitch5() const
+STARNET_CALLSIGN_SWITCH CIRCDDBGatewayConfigPreferences::getStarNetCallsignSwitch5() const
 {
 	return m_starNet5->getCallsignSwitch();
 }
 
-bool CIRCDDBGatewayPreferences::getStarNetTXMsgSwitch5() const
+bool CIRCDDBGatewayConfigPreferences::getStarNetTXMsgSwitch5() const
 {
 	return m_starNet5->getTXMsgSwitch();
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-wxString CIRCDDBGatewayPreferences::getStarNetLink5() const
+wxString CIRCDDBGatewayConfigPreferences::getStarNetLink5() const
 {
 	return m_starNet5->getReflector();
 }
 #endif
 
-bool CIRCDDBGatewayPreferences::getRemoteEnabled() const
+bool CIRCDDBGatewayConfigPreferences::getRemoteEnabled() const
 {
 	return m_remote->getEnabled();
 }
 
-wxString CIRCDDBGatewayPreferences::getRemotePassword() const
+wxString CIRCDDBGatewayConfigPreferences::getRemotePassword() const
 {
 	return m_remote->getPassword();
 }
 
-unsigned int CIRCDDBGatewayPreferences::getRemotePort() const
+unsigned int CIRCDDBGatewayConfigPreferences::getRemotePort() const
 {
 	return m_remote->getPort();
 }

@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	IRCDDBGatewayGatewaySet_H
-#define	IRCDDBGatewayGatewaySet_H
+#ifndef	IRCDDBGatewayConfigGatewaySet_H
+#define	IRCDDBGatewayConfigGatewaySet_H
 
 #include "DescriptionTextCtrl.h"
 #include "CallsignTextCtrl.h"
@@ -27,10 +27,10 @@
 
 #include <wx/wx.h>
 
-class CIRCDDBGatewayGatewaySet : public wxPanel {
+class CIRCDDBGatewayConfigGatewaySet : public wxPanel {
 public:
-	CIRCDDBGatewayGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
-	virtual ~CIRCDDBGatewayGatewaySet();
+	CIRCDDBGatewayConfigGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
+	virtual ~CIRCDDBGatewayConfigGatewaySet();
 
 	virtual bool Validate();
 

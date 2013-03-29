@@ -5,10 +5,14 @@
 
 include settings.mk
 
-all:	ircDDBGateway/ircddbgateway RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol TimeServer/timeserver
+all:	ircDDBGateway/ircddbgateway ircDDBGatewayConfig/ircddbgatewayconfig RemoteControl/remotecontrol StarNetServer/starnetserver TimerControl/timercontrol \
+			TimeServer/timeserver
 
 ircDDBGateway/ircddbgateway:	ircDDB/libircDDB.a Common/Common.a
 		make -C ircDDBGateway
+
+ircDDBGatewayConfig/ircddbgatewayconfig:	Common/Common.a
+		make -C ircDDBGatewayConfig
 
 RemoteControl/remotecontrol:	Common/Common.a
 		make -C RemoteControl
@@ -30,6 +34,7 @@ ircDDB/libircDDB.a:
 
 install:	all
 		make -C ircDDBGateway install
+		make -C ircDDBGatewayConfig install
 		make -C RemoteControl install
 		make -C StarNetServer install
 		make -C TimerControl install
@@ -41,6 +46,7 @@ clean:
 		make -C ircDDB clean
 		make -C Common clean
 		make -C ircDDBGateway clean
+		make -C ircDDBGatewayConfig clean
 		make -C RemoteControl clean
 		make -C StarNetServer clean
 		make -C TimerControl clean

@@ -16,17 +16,17 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	IRCDDBGatewayMiscellaneousSet_H
-#define	IRCDDBGatewayMiscellaneousSet_H
+#ifndef	IRCDDBGatewayConfigMiscellaneousSet_H
+#define	IRCDDBGatewayConfigMiscellaneousSet_H
 
 #include "Defs.h"
 
 #include <wx/wx.h>
 
-class CIRCDDBGatewayMiscellaneousSet : public wxPanel {
+class CIRCDDBGatewayConfigMiscellaneousSet : public wxPanel {
 public:
-	CIRCDDBGatewayMiscellaneousSet(wxWindow* parent, int id, const wxString& title, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled, bool dratsEnabled, bool dtmfEnabled);
-	virtual ~CIRCDDBGatewayMiscellaneousSet();
+	CIRCDDBGatewayConfigMiscellaneousSet(wxWindow* parent, int id, const wxString& title, TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled, bool dratsEnabled, bool dtmfEnabled);
+	virtual ~CIRCDDBGatewayConfigMiscellaneousSet();
 
 	virtual bool Validate();
 

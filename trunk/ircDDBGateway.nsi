@@ -47,6 +47,7 @@ Section "Repeater Program Files" SecProgram
   SetOutPath "$INSTDIR"
   
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\ircDDBGateway.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\ircDDBGatewayConfig.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\RemoteControl.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\StarNetServer.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Release\TimerControl.exe"
@@ -91,14 +92,15 @@ Section "Repeater Program Files" SecProgram
 
   ;Create start menu entry
   CreateDirectory "$SMPROGRAMS\ircDDBGateway"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\ircDDB Gateway.lnk"   "$INSTDIR\ircDDBGateway.exe"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Remote Control.lnk"   "$INSTDIR\RemoteControl.exe"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\StarNet Server.lnk"   "$INSTDIR\StarNetServer.exe"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Timer Control.lnk"    "$INSTDIR\TimerControl.exe"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Time Server.lnk"      "$INSTDIR\TimeServer.exe"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Changes.lnk"          "$INSTDIR\CHANGES.txt"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Licence.lnk"          "$INSTDIR\COPYING.txt"
-  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Uninstall.lnk"        "$INSTDIR\Uninstall.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\ircDDB Gateway.lnk"        "$INSTDIR\ircDDBGateway.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\ircDDB Gateway Config.lnk" "$INSTDIR\ircDDBGatewayConfig.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Remote Control.lnk"        "$INSTDIR\RemoteControl.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\StarNet Server.lnk"        "$INSTDIR\StarNetServer.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Timer Control.lnk"         "$INSTDIR\TimerControl.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Time Server.lnk"           "$INSTDIR\TimeServer.exe"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Changes.lnk"               "$INSTDIR\CHANGES.txt"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Licence.lnk"               "$INSTDIR\COPYING.txt"
+  CreateShortCut "$SMPROGRAMS\ircDDBGateway\Uninstall.lnk"             "$INSTDIR\Uninstall.exe"
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
