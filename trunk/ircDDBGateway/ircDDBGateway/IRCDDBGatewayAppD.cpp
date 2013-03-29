@@ -166,7 +166,7 @@ void CIRCDDBGatewayAppD::run()
 
 bool CIRCDDBGatewayAppD::createThread()
 {
-	CIRCDDBGatewayConfig config(m_confDir, m_name);
+	CIRCDDBGatewayConfig config(m_confDir, CONFIG_FILE_NAME, m_name);
 
 	m_thread = new CIRCDDBGatewayThread(m_logDir, m_name);
 

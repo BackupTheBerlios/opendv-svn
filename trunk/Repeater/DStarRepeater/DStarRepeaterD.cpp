@@ -177,7 +177,7 @@ void CDStarRepeaterD::run()
 
 bool CDStarRepeaterD::createThread()
 {
-	CDStarRepeaterConfig config(m_confDir, m_name);
+	CDStarRepeaterConfig config(m_confDir, CONFIG_FILE_NAME, m_name);
 
 	wxString callsign, gateway;
 	DSTAR_MODE mode;

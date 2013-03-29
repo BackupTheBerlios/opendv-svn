@@ -20,9 +20,9 @@ DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
-					DStarRepeaterRXThread.h DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
+					DStarRepeaterRXThread.h DStarRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
 					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
-					../Common/RaspberryController.h ../Common/ModemProtocolClient.h
+					../Common/RaspberryController.h ../Common/ModemProtocolClient.h ../Common/DStarRepeaterConfig.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
 
 DStarRepeaterFrame.o:	DStarRepeaterFrame.cpp DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterApp.h DStarRepeaterStatusData.h ../Common/DStarDefines.h \

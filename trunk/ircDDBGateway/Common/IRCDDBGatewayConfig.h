@@ -30,7 +30,7 @@ public:
 #if defined(__WINDOWS__)
 	CIRCDDBGatewayConfig(wxConfigBase* config, const wxString& name);
 #else
-	CIRCDDBGatewayConfig(const wxString& dir, const wxString& name);
+	CIRCDDBGatewayConfig(const wxString& dir, const wxString& configName, const wxString& name);
 #endif
 	~CIRCDDBGatewayConfig();
 

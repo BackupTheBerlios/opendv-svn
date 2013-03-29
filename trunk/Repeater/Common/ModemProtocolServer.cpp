@@ -36,7 +36,7 @@ m_length(0U)
 	m_server = new CNamedPipeServer(name);
 #else
 	wxString server = name;
-	wxString Server = name;
+	wxString client = name;
 
 	server.Replace(wxT(" "), wxT("_"));
 	client.Replace(wxT(" "), wxT("_"));

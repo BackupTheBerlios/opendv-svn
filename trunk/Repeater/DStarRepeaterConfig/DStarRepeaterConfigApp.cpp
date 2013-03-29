@@ -55,7 +55,7 @@ bool CDStarRepeaterConfigApp::OnInit()
 	if (m_confDir.IsEmpty())
 		m_confDir = CONF_DIR;
 
-	m_config = new CDStarRepeaterConfig(m_confDir, m_name);
+	m_config = new CDStarRepeaterConfig(m_confDir, CONFIG_FILE_NAME, m_name);
 #endif
 
 	wxString frameName = APPLICATION_NAME + wxT(" - ");
@@ -64,8 +64,6 @@ bool CDStarRepeaterConfigApp::OnInit()
 		frameName.Append(wxT(" - "));
 	}
 	frameName.Append(VERSION);
-
-	wxPoint position = wxDefaultPosition;
 
 	m_frame = new CDStarRepeaterConfigFrame(frameName);
 	m_frame->Show();

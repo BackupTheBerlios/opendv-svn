@@ -823,7 +823,7 @@ CIRCDDBGatewayConfig::~CIRCDDBGatewayConfig()
 
 #else
 
-CIRCDDBGatewayConfig::CIRCDDBGatewayConfig(const wxString& dir, const wxString& name) :
+CIRCDDBGatewayConfig::CIRCDDBGatewayConfig(const wxString& dir, const wxString& configName, const wxString& name) :
 m_fileName(),
 m_callsign(DEFAULT_GATEWAY_CALLSIGN),
 m_address(DEFAULT_GATEWAY_ADDRESS),
@@ -995,9 +995,9 @@ m_y(DEFAULT_WINDOW_Y)
 {
 	wxASSERT(!dir.IsEmpty());
 
-	wxString fileName = CONFIG_FILE_NAME;
+	wxString fileName = configName;
 	if (!name.IsEmpty())
-		fileName = CONFIG_FILE_NAME + wxT("_") + name;
+		fileName = configName + wxT("_") + name;
 
 	m_fileName.Assign(dir, fileName);
 

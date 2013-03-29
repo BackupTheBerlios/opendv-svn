@@ -30,7 +30,7 @@ public:
 #if defined(__WINDOWS__)
 	CDStarRepeaterConfig(wxConfigBase* config, const wxString& name);
 #else
-	CDStarRepeaterConfig(const wxString& dir, const wxString& name);
+	CDStarRepeaterConfig(const wxString& dir, const wxString& configName, const wxString& name);
 #endif
 	~CDStarRepeaterConfig();
 

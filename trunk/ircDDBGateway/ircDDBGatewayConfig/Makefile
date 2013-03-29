@@ -7,8 +7,8 @@ ircddbgatewayconfig:	IRCDDBGatewayConfigApp.o IRCDDBGatewayConfigFrame.o IRCDDBG
 				$(CC) $(LDFLAGS) -o ircddbgatewayconfig IRCDDBGatewayConfigApp.o IRCDDBGatewayConfigFrame.o IRCDDBGatewayConfigGatewaySet.o \
 				IRCDDBGatewayConfigIrcDDBSet.o IRCDDBGatewayConfigMiscellaneousSet.o IRCDDBGatewayConfigPreferences.o ../Common/Common.a $(LIBS)
 
-IRCDDBGatewayConfigApp.o:		IRCDDBGatewayConfigApp.cpp IRCDDBGatewayConfigApp.h IRCDDBGatewayConfigFrame.h IRCDDBGatewayConfigDefs.h ../Common/Defs.h \
-				../Common/Version.h ../Common/Utils.h ../Common/IRCDDBGatewayConfigConfig.h
+IRCDDBGatewayConfigApp.o:	IRCDDBGatewayConfigApp.cpp IRCDDBGatewayConfigApp.h IRCDDBGatewayConfigFrame.h IRCDDBGatewayConfigDefs.h ../Common/Defs.h \
+				../Common/Version.h ../Common/Utils.h ../Common/IRCDDBGatewayConfig.h
 				$(CC) $(CFLAGS) -c IRCDDBGatewayConfigApp.cpp
 
 IRCDDBGatewayConfigFrame.o:	IRCDDBGatewayConfigFrame.cpp IRCDDBGatewayConfigFrame.h IRCDDBGatewayConfigPreferences.h IRCDDBGatewayConfigApp.h ../Common/Defs.h \
