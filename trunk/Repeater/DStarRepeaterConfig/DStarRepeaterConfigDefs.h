@@ -16,26 +16,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterModemSet_H
-#define	DStarRepeaterModemSet_H
-
-#include "DStarRepeaterDefs.h"
-#include "DStarDefines.h"
+#ifndef	DStarRepeaterConfigDefs_H
+#define	DStarRepeaterConfigDefs_H
 
 #include <wx/wx.h>
 
-class CDStarRepeaterModemSet : public wxPanel {
-public:
-	CDStarRepeaterModemSet(wxWindow* parent, int id, const wxString& title, const wxString& name);
-	virtual ~CDStarRepeaterModemSet();
+const wxString APPLICATION_NAME    = wxT("D-Star Repeater");
+const wxString LOG_BASE_NAME       = wxT("DStarRepeater");
 
-	virtual bool Validate();
-
-	virtual wxString getName() const;
-
-private:
-	wxString  m_title;
-	wxChoice* m_name;
-};
+#if !defined(__WINDOWS__)
+const wxString CONFIG_FILE_NAME = wxT("dstarrepeater");
+const wxString LOG_DIR  = wxT("/var/log");
+const wxString CONF_DIR = wxT("/etc");
+#endif
 
 #endif

@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterCallsignSet.h"
+#include "DStarRepeaterConfigCallsignSet.h"
 
 const unsigned int CALLSIGN_WIDTH  = 80U;
 const unsigned int SUFFIX_WIDTH    = 50U;
@@ -25,12 +25,12 @@ const unsigned int BORDER_SIZE = 5U;
 
 const int CHOICE_MODE = 8745;
 
-BEGIN_EVENT_TABLE(CDStarRepeaterCallsignSet, wxPanel)
-	EVT_CHOICE(CHOICE_MODE, CDStarRepeaterCallsignSet::onMode)
+BEGIN_EVENT_TABLE(CDStarRepeaterConfigCallsignSet, wxPanel)
+	EVT_CHOICE(CHOICE_MODE, CDStarRepeaterConfigCallsignSet::onMode)
 END_EVENT_TABLE()
 
 
-CDStarRepeaterCallsignSet::CDStarRepeaterCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) :
+CDStarRepeaterConfigCallsignSet::CDStarRepeaterConfigCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
@@ -156,11 +156,11 @@ m_dtmfBlanking(NULL)
 }
 
 
-CDStarRepeaterCallsignSet::~CDStarRepeaterCallsignSet()
+CDStarRepeaterConfigCallsignSet::~CDStarRepeaterConfigCallsignSet()
 {
 }
 
-bool CDStarRepeaterCallsignSet::Validate()
+bool CDStarRepeaterConfigCallsignSet::Validate()
 {
 	bool res = getCallsign().IsEmpty();
 	if (res) {
@@ -215,7 +215,7 @@ bool CDStarRepeaterCallsignSet::Validate()
 	return true;
 }
 
-wxString CDStarRepeaterCallsignSet::getCallsign() const
+wxString CDStarRepeaterConfigCallsignSet::getCallsign() const
 {
 	wxString callsign = m_callsign->GetValue().MakeUpper();
 	wxString suffix   = m_suffix->GetStringSelection();
@@ -227,7 +227,7 @@ wxString CDStarRepeaterCallsignSet::getCallsign() const
 	return callsign;
 }
 
-wxString CDStarRepeaterCallsignSet::getGateway() const
+wxString CDStarRepeaterConfigCallsignSet::getGateway() const
 {
 	wxString gateway = m_gateway->GetValue().MakeUpper();
 
@@ -238,14 +238,14 @@ wxString CDStarRepeaterCallsignSet::getGateway() const
 	return gateway;
 }
 
-DSTAR_MODE CDStarRepeaterCallsignSet::getMode() const
+DSTAR_MODE CDStarRepeaterConfigCallsignSet::getMode() const
 {
 	int n = m_mode->GetCurrentSelection();
 
 	return DSTAR_MODE(n);
 }
 
-ACK_TYPE CDStarRepeaterCallsignSet::getAck() const
+ACK_TYPE CDStarRepeaterConfigCallsignSet::getAck() const
 {
 	int n = m_ack->GetCurrentSelection();
 	if (n == wxNOT_FOUND)
@@ -254,14 +254,14 @@ ACK_TYPE CDStarRepeaterCallsignSet::getAck() const
 	return ACK_TYPE(n);
 }
 
-bool CDStarRepeaterCallsignSet::getRestriction() const
+bool CDStarRepeaterConfigCallsignSet::getRestriction() const
 {
 	int n = m_restriction->GetCurrentSelection();
 
 	return n == 1;
 }
 
-void CDStarRepeaterCallsignSet::onMode(wxCommandEvent &event)
+void CDStarRepeaterConfigCallsignSet::onMode(wxCommandEvent &event)
 {
 	DSTAR_MODE mode = DSTAR_MODE(event.GetSelection());
 
@@ -287,14 +287,14 @@ void CDStarRepeaterCallsignSet::onMode(wxCommandEvent &event)
 	}
 }
 
-bool CDStarRepeaterCallsignSet::getRPT1Validation() const
+bool CDStarRepeaterConfigCallsignSet::getRPT1Validation() const
 {
 	int n = m_rpt1Validation->GetCurrentSelection();
 
 	return n == 1;
 }
 
-bool CDStarRepeaterCallsignSet::getDTMFBlanking() const
+bool CDStarRepeaterConfigCallsignSet::getDTMFBlanking() const
 {
 	int n = m_dtmfBlanking->GetCurrentSelection();
 

@@ -16,13 +16,13 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterModemSet.h"
+#include "DStarRepeaterConfigModemSet.h"
 
 const unsigned int BORDER_SIZE   = 5U;
 const unsigned int CONTROL_WIDTH = 100U;
 
 
-CDStarRepeaterModemSet::CDStarRepeaterModemSet(wxWindow* parent, int id, const wxString& title, const wxString& name) :
+CDStarRepeaterConfigModemSet::CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, const wxString& name) :
 wxPanel(parent, id),
 m_title(title),
 m_name(NULL)
@@ -55,16 +55,16 @@ m_name(NULL)
 	SetSizer(sizer);
 }
 
-CDStarRepeaterModemSet::~CDStarRepeaterModemSet()
+CDStarRepeaterConfigModemSet::~CDStarRepeaterConfigModemSet()
 {
 }
 
-bool CDStarRepeaterModemSet::Validate()
+bool CDStarRepeaterConfigModemSet::Validate()
 {
 	return m_name->GetCurrentSelection() != wxNOT_FOUND;
 }
 
-wxString CDStarRepeaterModemSet::getName() const
+wxString CDStarRepeaterConfigModemSet::getName() const
 {
 	int n = m_name->GetCurrentSelection();
 

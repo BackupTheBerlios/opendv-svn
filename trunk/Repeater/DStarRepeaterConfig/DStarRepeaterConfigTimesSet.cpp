@@ -16,13 +16,13 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterTimesSet.h"
+#include "DStarRepeaterConfigTimesSet.h"
 
 const unsigned int TIMES_WIDTH  = 300U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CDStarRepeaterTimesSet::CDStarRepeaterTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime) :
+CDStarRepeaterConfigTimesSet::CDStarRepeaterConfigTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime) :
 wxPanel(parent, id),
 m_title(title),
 m_timeout(NULL),
@@ -51,21 +51,21 @@ m_ackTime(NULL)
 }
 
 
-CDStarRepeaterTimesSet::~CDStarRepeaterTimesSet()
+CDStarRepeaterConfigTimesSet::~CDStarRepeaterConfigTimesSet()
 {
 }
 
-bool CDStarRepeaterTimesSet::Validate()
+bool CDStarRepeaterConfigTimesSet::Validate()
 {
 	return true;
 }
 
-unsigned int CDStarRepeaterTimesSet::getTimeout() const
+unsigned int CDStarRepeaterConfigTimesSet::getTimeout() const
 {
 	return m_timeout->GetValue();
 }
 
-unsigned int CDStarRepeaterTimesSet::getAckTime() const
+unsigned int CDStarRepeaterConfigTimesSet::getAckTime() const
 {
 	return m_ackTime->GetValue();
 }

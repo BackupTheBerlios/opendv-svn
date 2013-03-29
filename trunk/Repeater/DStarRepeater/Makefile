@@ -2,12 +2,10 @@ all:			dstarrepeater dstarrepeaterd
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-dstarrepeater:	DStarRepeaterApp.o DStarRepeaterCallsignSet.o DStarRepeaterConfig.o DStarRepeaterControllerSet.o DStarRepeaterFrame.o DStarRepeaterLogger.o \
-					DStarRepeaterModemSet.o DStarRepeaterPreferences.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o \
-					DStarRepeaterRXThread.o DStarRepeaterTimesSet.o DStarRepeaterThreadHelper.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterCallsignSet.o DStarRepeaterConfig.o DStarRepeaterControllerSet.o DStarRepeaterFrame.o \
-					DStarRepeaterLogger.o DStarRepeaterModemSet.o DStarRepeaterPreferences.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o \
-					DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterTimesSet.o DStarRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
+dstarrepeater:	DStarRepeaterApp.o DStarRepeaterConfig.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o \
+					DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o ../Common/Common.a
+				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterConfig.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o \
+					DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o ../Common/Common.a $(LIBS)
 
 dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterConfig.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
 					DStarRepeaterStatusData.o ../Common/Common.a
@@ -21,14 +19,8 @@ DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.
 					../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
-DStarRepeaterCallsignSet.o:	DStarRepeaterCallsignSet.cpp DStarRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
-				$(CC) $(CFLAGS) -c DStarRepeaterCallsignSet.cpp
-
 DStarRepeaterConfig.o:	DStarRepeaterConfig.cpp DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfig.cpp
-
-DStarRepeaterControllerSet.o:	DStarRepeaterControllerSet.cpp DStarRepeaterControllerSet.h
-				$(CC) $(CFLAGS) -c DStarRepeaterControllerSet.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterConfig.h DStarRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
@@ -36,20 +28,12 @@ DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DSta
 					../Common/RaspberryController.h ../Common/ModemProtocolClient.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
 
-DStarRepeaterFrame.o:	DStarRepeaterFrame.cpp DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterApp.h DStarRepeaterStatusData.h DStarRepeaterPreferences.h \
-					../Common/DStarDefines.h ../Common/LogEvent.h ../Common/Version.h
+DStarRepeaterFrame.o:	DStarRepeaterFrame.cpp DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterApp.h DStarRepeaterStatusData.h ../Common/DStarDefines.h \
+					../Common/LogEvent.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DStarRepeaterFrame.cpp
 
 DStarRepeaterLogger.o:	DStarRepeaterLogger.cpp DStarRepeaterLogger.h DStarRepeaterApp.h
 				$(CC) $(CFLAGS) -c DStarRepeaterLogger.cpp
-
-DStarRepeaterModemSet.o:	DStarRepeaterModemSet.cpp DStarRepeaterModemSet.h DStarRepeaterDefs.h ../Common/DStarDefines.h
-				$(CC) $(CFLAGS) -c DStarRepeaterModemSet.cpp
-
-DStarRepeaterPreferences.o:	DStarRepeaterPreferences.cpp DStarRepeaterPreferences.h DStarRepeaterDefs.h DStarRepeaterControllerSet.h DStarRepeaterModemSet.h \
-					DStarRepeaterApp.h DStarRepeaterTimesSet.h DStarRepeaterCallsignSet.h ../Common/NetworkSet.h ../Common/BeaconSet.h ../Common/AnnouncementSet.h \
-					../Common/DStarDefines.h ../Common/Control1Set.h ../Common/Control2Set.h
-				$(CC) $(CFLAGS) -c DStarRepeaterPreferences.cpp
 
 DStarRepeaterStatusData.o:	DStarRepeaterStatusData.cpp DStarRepeaterStatusData.h DStarRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterStatusData.cpp
@@ -79,9 +63,6 @@ DStarRepeaterRXThread.o:	DStarRepeaterRXThread.cpp DStarRepeaterRXThread.h DStar
 
 DStarRepeaterThreadHelper.o:	DStarRepeaterThreadHelper.cpp DStarRepeaterThreadHelper.h DStarRepeaterThread.h DStarRepeaterStatusData.h
 				$(CC) $(CFLAGS) -c DStarRepeaterThreadHelper.cpp
-
-DStarRepeaterTimesSet.o:	DStarRepeaterTimesSet.cpp DStarRepeaterTimesSet.h
-				$(CC) $(CFLAGS) -c DStarRepeaterTimesSet.cpp
 
 install:	all
 				install -g bin -o root -m 0775 dstarrepeater $(BINDIR)

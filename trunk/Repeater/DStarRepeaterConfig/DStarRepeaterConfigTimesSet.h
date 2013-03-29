@@ -16,15 +16,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterTimesSet_H
-#define	DStarRepeaterTimesSet_H
+#ifndef	DStarRepeaterConfigTimesSet_H
+#define	DStarRepeaterConfigTimesSet_H
 
 #include <wx/wx.h>
 
-class CDStarRepeaterTimesSet : public wxPanel {
+class CDStarRepeaterConfigTimesSet : public wxPanel {
 public:
-	CDStarRepeaterTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime);
-	virtual ~CDStarRepeaterTimesSet();
+	CDStarRepeaterConfigTimesSet(wxWindow* parent, int id, const wxString& title, unsigned int timeout, unsigned int ackTime);
+	virtual ~CDStarRepeaterConfigTimesSet();
 
 	virtual bool Validate();
 

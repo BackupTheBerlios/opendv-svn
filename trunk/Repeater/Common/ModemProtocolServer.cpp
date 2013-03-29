@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "ModemProtocolClient.h"
+#include "ModemProtocolServer.h"
 #include "DStarDefines.h"
 #include "Utils.h"
 
@@ -24,8 +24,8 @@
 
 const unsigned int BUFFER_LENGTH = 255U;
 
-CModemProtocolClient::CModemProtocolClient(const wxString& name) :
-m_client(NULL),
+CModemProtocolServer::CModemProtocolServer(const wxString& name) :
+m_server(NULL),
 m_type(MMT_NONE),
 m_buffer(NULL),
 m_length(0U)
@@ -33,53 +33,52 @@ m_length(0U)
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 
 #if defined(__WINDOWS__)
-	m_client = new CNamedPipeClient(name);
+	m_server = new CNamedPipeServer(name);
 #else
 	wxString server = name;
-	wxString client = name;
+	wxString Server = name;
 
 	server.Replace(wxT(" "), wxT("_"));
 	client.Replace(wxT(" "), wxT("_"));
 
-	server.Append(wxT("_B"));
-	client.Append(wxT("_A"));
+	server.Append(wxT("_A"));
+	client.Append(wxT("_B"));
 
-	m_client = new CUNIXSocketReaderWriter(server, client);
+	m_server = new CUNIXSocketReaderWriter(server, client);
 #endif
 }
 
-CModemProtocolClient::~CModemProtocolClient()
+CModemProtocolServer::~CModemProtocolServer()
 {
-	delete m_client;
+	delete m_server;
 
 	delete[] m_buffer;
 }
 
-bool CModemProtocolClient::open()
+bool CModemProtocolServer::open()
 {
-	bool ret = m_client->open();
+	bool ret = m_server->open();
 	if (!ret)
 		return false;
 
-	for (unsigned int i = 0U; i < 10U; i++) {
-		unsigned char buffer[100U];
-		buffer[0U] = 0x00U;
-		m_client->write(buffer, 1U);
-
-		unsigned int length = m_client->read(buffer, 100U);
-		if (length == 1U && m_buffer[0U] == 0x00U)
-			return true;
-
-		wxMilliSleep(100UL);
-	}
-
-	wxLogError(wxT("No reply to the modem initialisation command"));
-
-	m_client->close();
-	return false;
+	return true;
 }
 
-bool CModemProtocolClient::writeHeader(const CHeaderData& header)
+bool CModemProtocolServer::writeBegin()
+{
+	unsigned char buffer[2U];
+
+	buffer[0U] = 0x00U;
+
+#if defined(DUMP_TX)
+	CUtils::dump(wxT("Sending Begin"), buffer, 1U);
+	return true;
+#else
+	return m_server->write(buffer, 1U);
+#endif
+}
+
+bool CModemProtocolServer::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer[50U];
 
@@ -108,11 +107,11 @@ bool CModemProtocolClient::writeHeader(const CHeaderData& header)
 	CUtils::dump(wxT("Sending Header"), buffer, 40U);
 	return true;
 #else
-	return m_client->write(buffer, 40U);
+	return m_server->write(buffer, 40U);
 #endif
 }
 
-bool CModemProtocolClient::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CModemProtocolServer::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length == DV_FRAME_LENGTH_BYTES || length == DV_FRAME_MAX_LENGTH_BYTES);
@@ -129,15 +128,31 @@ bool CModemProtocolClient::writeData(const unsigned char* data, unsigned int len
 	CUtils::dump(wxT("Sending Data"), buffer, length + 2U);
 	return true;
 #else
-	return m_client->write(buffer, length + 2U);
+	return m_server->write(buffer, length + 2U);
 #endif
 }
 
-bool CModemProtocolClient::writeTX(bool on)
+bool CModemProtocolServer::writeSpace(unsigned int space)
+{
+	unsigned char buffer[10U];
+
+	buffer[0U] = 0x05U;
+
+	::memcpy(buffer + 1U, &space, sizeof(unsigned int));
+
+#if defined(DUMP_TX)
+	CUtils::dump(wxT("Sending Space"), buffer, 1U + sizeof(unsigned int));
+	return true;
+#else
+	return m_server->write(buffer, 1U + sizeof(unsigned int));
+#endif
+}
+
+bool CModemProtocolServer::writeTX(bool on)
 {
 	unsigned char buffer[5U];
 
-	buffer[0U] = 0x03U;
+	buffer[0U] = 0x06U;
 
 	buffer[1U] = on ? 1U : 0U;
 
@@ -145,25 +160,44 @@ bool CModemProtocolClient::writeTX(bool on)
 	CUtils::dump(wxT("Sending TX"), buffer, 2U);
 	return true;
 #else
-	return m_client->write(buffer, 2U);
+	return m_server->write(buffer, 2U);
 #endif
 }
 
-bool CModemProtocolClient::getStatus()
+bool CModemProtocolServer::writeText(const wxString& text)
 {
-	unsigned char buffer[5U];
+	unsigned char buffer[200U];
 
-	buffer[0] = 0x04U;
+	unsigned int length = text.Len();
+
+	buffer[0U] = 0x10U;
+
+	for (unsigned int i = 0U; i < length; i++)
+		buffer[i + 1U] = text.GetChar(i);
 
 #if defined(DUMP_TX)
-	CUtils::dump(wxT("Sending Status"), buffer, 1U);
+	CUtils::dump(wxT("Sending Text"), buffer, length + 1U);
 	return true;
 #else
-	return m_client->write(buffer, 1U);
+	return m_server->write(buffer, length + 1U);
 #endif
 }
 
-MODEM_MSG_TYPE CModemProtocolClient::read()
+bool CModemProtocolServer::writeEnd()
+{
+	unsigned char buffer[2U];
+
+	buffer[0U] = 0xFFU;
+
+#if defined(DUMP_TX)
+	CUtils::dump(wxT("Sending End"), buffer, 1U);
+	return true;
+#else
+	return m_server->write(buffer, 1U);
+#endif
+}
+
+MODEM_MSG_TYPE CModemProtocolServer::read()
 {
 	bool res = true;
 
@@ -174,18 +208,22 @@ MODEM_MSG_TYPE CModemProtocolClient::read()
 	return m_type;
 }
 
-bool CModemProtocolClient::readPackets()
+bool CModemProtocolServer::readPackets()
 {
 	m_type = MMT_NONE;
 
 	// No more data?
-	int length = m_client->read(m_buffer, BUFFER_LENGTH);
+	int length = m_server->read(m_buffer, BUFFER_LENGTH);
 	if (length <= 0)
 		return false;
 
 	m_length = length;
 
 	switch (m_buffer[0U]) {
+		case 0x00U:
+			m_type = MMT_BEGIN;
+			return false;
+
 		case 0x01U:
 			m_type = MMT_HEADER;
 			return false;
@@ -194,25 +232,25 @@ bool CModemProtocolClient::readPackets()
 			m_type = MMT_DATA;
 			return false;
 
-		case 0x05U:
-			m_type = MMT_SPACE;
-			return false;
-
-		case 0x06U:
+		case 0x03U:
 			m_type = MMT_TX;
 			return false;
 
-		case 0x10U:
-			m_type = MMT_TEXT;
+		case 0x04U:
+			m_type = MMT_STATUS;
+			return false;
+
+		case 0xFFU:
+			m_type = MMT_END;
 			return false;
 
 		default:
-			CUtils::dump(wxT("Unknown packet from the modem"), m_buffer, m_length);
+			CUtils::dump(wxT("Unknown packet from the repeater"), m_buffer, m_length);
 			return true;
 	}
 }
 
-CHeaderData* CModemProtocolClient::readHeader()
+CHeaderData* CModemProtocolServer::readHeader()
 {
 	if (m_type != MMT_HEADER)
 		return NULL;
@@ -220,7 +258,7 @@ CHeaderData* CModemProtocolClient::readHeader()
 	return new CHeaderData(m_buffer + 1U, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CModemProtocolClient::readData(unsigned char* buffer, unsigned int length, bool& end)
+unsigned int CModemProtocolServer::readData(unsigned char* buffer, unsigned int length, bool& end)
 {
 	if (m_type != MMT_DATA)
 		return 0U;
@@ -238,26 +276,7 @@ unsigned int CModemProtocolClient::readData(unsigned char* buffer, unsigned int 
 	return dataLen;
 }
 
-wxString CModemProtocolClient::readText()
-{
-	if (m_type != MMT_TEXT)
-		return wxEmptyString;
-
-	return wxString((char*)(m_buffer + 1U), wxConvLocal, m_length - 1U);
-}
-
-unsigned int CModemProtocolClient::readSpace()
-{
-	if (m_type != MMT_SPACE)
-		return 0U;
-
-	unsigned int space;
-	::memcpy(&space, m_buffer + 1U, sizeof(unsigned int));
-
-	return space;
-}
-
-bool CModemProtocolClient::readTX()
+bool CModemProtocolServer::readTX()
 {
 	if (m_type != MMT_TX)
 		return false;
@@ -265,19 +284,7 @@ bool CModemProtocolClient::readTX()
 	return m_buffer[1U] == 1U;
 }
 
-void CModemProtocolClient::close()
+void CModemProtocolServer::close()
 {
-	for (unsigned int i = 0U; i < 10U; i++) {
-		unsigned char buffer[100U];
-		buffer[0U] = 0xFFU;
-		m_client->write(buffer, 1U);
-
-		unsigned int length = m_client->read(buffer, 100U);
-		if (length == 1U && m_buffer[0U] == 0xFFU)
-			break;
-
-		wxMilliSleep(100UL);
-	}
-
-	m_client->close();
+	m_server->close();
 }

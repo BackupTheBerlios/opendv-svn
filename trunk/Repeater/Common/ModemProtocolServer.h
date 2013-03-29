@@ -16,14 +16,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	ModemProtocolClient_H
-#define	ModemProtocolClient_H
+#ifndef	ModemProtocolServer_H
+#define	ModemProtocolServer_H
 
 #include "DStarDefines.h"
 #include "HeaderData.h"
 
 #if defined(__WINDOWS__)
-#include "NamedPipeClient.h"
+#include "NamedPipeServer.h"
 #else
 #include "UNIXSocketReaderWriter.h"
 #endif
@@ -32,28 +32,30 @@
 
 enum MODEM_MSG_TYPE {
 	MMT_NONE,
+	MMT_BEGIN,		// 0x00
 	MMT_HEADER,		// 0x01
 	MMT_DATA,		// 0x02
-	MMT_SPACE,		// 0x05
-	MMT_TX,			// 0x06
-	MMT_TEXT		// 0x10
+	MMT_TX,			// 0x03
+	MMT_STATUS,		// 0x04
+	MMT_END			// 0xFF
 };
 
-class CModemProtocolClient {
+class CModemProtocolServer {
 public:
-	CModemProtocolClient(const wxString& name);
-	~CModemProtocolClient();
+	CModemProtocolServer(const wxString& name);
+	~CModemProtocolServer();
 
 	bool open();
 
+	bool writeBegin();
 	bool writeHeader(const CHeaderData& header);
 	bool writeData(const unsigned char* data, unsigned int length, bool end);
 	bool writeTX(bool on);
-	bool getStatus();
+	bool writeSpace(unsigned int space);
+	bool writeText(const wxString& text);
+	bool writeEnd();
 
 	MODEM_MSG_TYPE read();
-	wxString       readText();
-	unsigned int   readSpace();
 	CHeaderData*   readHeader();
 	unsigned int   readData(unsigned char* data, unsigned int length, bool& end);
 	bool           readTX();
@@ -62,9 +64,9 @@ public:
 
 private:
 #if defined(__WINDOWS__)
-	CNamedPipeClient*        m_client;
+	CNamedPipeServer*        m_server;
 #else
-	CUNIXSocketReaderWriter* m_client;
+	CUNIXSocketReaderWriter* m_server;
 #endif
 	MODEM_MSG_TYPE           m_type;
 	unsigned char*           m_buffer;

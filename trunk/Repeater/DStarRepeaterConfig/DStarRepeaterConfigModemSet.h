@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,27 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DStarRepeaterConfigModemSet_H
+#define	DStarRepeaterConfigModemSet_H
+
+#include "DStarRepeaterConfigDefs.h"
+#include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDStarRepeaterConfigModemSet : public wxPanel {
+public:
+	CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, const wxString& name);
+	virtual ~CDStarRepeaterConfigModemSet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
-#endif
+	virtual wxString getName() const;
+
+private:
+	wxString  m_title;
+	wxChoice* m_name;
+};
 
 #endif

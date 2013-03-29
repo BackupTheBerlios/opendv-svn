@@ -5,7 +5,9 @@
 
 include settings.mk
 
-all:	AnalogueRepeater/analoguerepeater DCSGateway/dcsgateway DExtraGateway/dextragateway DStarRepeater/dstarrepeater DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
+all:	AnalogueRepeater/analoguerepeater DCSGateway/dcsgateway DExtraGateway/dextragateway DStarRepeater/dstarrepeater DStarRepeaterConfig/dstarrepeaterconfig \
+			DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater ParrotController/parrotcontroller \
+			SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
 
 AnalogueRepeater/analoguerepeater:	Common/Common.a
 		make -C AnalogueRepeater
@@ -18,6 +20,9 @@ DCSGateway/dcsgateway:	Common/Common.a
 
 DStarRepeater/dstarrepeater:	Common/Common.a
 		make -C DStarRepeater
+
+DStarRepeaterConfig/dstarrepeaterconfig:	Common/Common.a
+		make -C DStarRepeaterConfig
 
 DummyRepeater/dummyrepeater:	Common/Common.a
 		make -C DummyRepeater
@@ -49,6 +54,7 @@ install:	all
 		make -C Data install
 		make -C DCSGateway install
 		make -C DStarRepeater install
+		make -C DStarRepeaterConfig install
 		make -C DExtraGateway install
 		make -C DummyRepeater install
 		make -C DVAPNode install
@@ -64,6 +70,7 @@ clean:
 		make -C AnalogueRepeater clean
 		make -C DCSGateway clean
 		make -C DStarRepeater clean
+		make -C DStarRepeaterConfig clean
 		make -C DExtraGateway clean
 		make -C DummyRepeater clean
 		make -C DVAPNode clean

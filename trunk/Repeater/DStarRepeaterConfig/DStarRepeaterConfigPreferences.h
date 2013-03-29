@@ -16,14 +16,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterPreferences_H
-#define	DStarRepeaterPreferences_H
+#ifndef	DStarRepeaterConfigPreferences_H
+#define	DStarRepeaterConfigPreferences_H
 
-#include "DStarRepeaterControllerSet.h"
-#include "DStarRepeaterCallsignSet.h"
-#include "DStarRepeaterModemSet.h"
-#include "DStarRepeaterTimesSet.h"
-#include "DStarRepeaterDefs.h"
+#include "DStarRepeaterConfigControllerSet.h"
+#include "DStarRepeaterConfigCallsignSet.h"
+#include "DStarRepeaterConfigModemSet.h"
+#include "DStarRepeaterConfigTimesSet.h"
+#include "DStarRepeaterConfigDefs.h"
 #include "AnnouncementSet.h"
 #include "DStarDefines.h"
 #include "Control1Set.h"
@@ -33,9 +33,9 @@
 
 #include <wx/wx.h>
 
-class CDStarRepeaterPreferences : public wxDialog {
+class CDStarRepeaterConfigPreferences : public wxDialog {
 public:
-	CDStarRepeaterPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& gateway,
+	CDStarRepeaterConfigPreferences(wxWindow* parent, int id, const wxString& callsign, const wxString& gateway,
 		DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, const wxString& gatewayAddress,
 		unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort, unsigned int timeout,
 		unsigned int ackTime, unsigned int beaconTime, const wxString& beaconText, bool beaconVoice,
@@ -48,7 +48,7 @@ public:
 		const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1,
 		const wxString& output2, const wxString& output3, const wxString& output4,
 		const wxString& controllerType, unsigned int activeHangTime);
-	virtual ~CDStarRepeaterPreferences();
+	virtual ~CDStarRepeaterConfigPreferences();
 
 	virtual bool Validate();
 
@@ -110,15 +110,15 @@ public:
 	virtual unsigned int getActiveHangTime() const;
 
 private:
-	CDStarRepeaterCallsignSet*   m_callsign;
+	CDStarRepeaterConfigCallsignSet*   m_callsign;
 	CNetworkSet*                 m_network;
-	CDStarRepeaterTimesSet*      m_times;
+	CDStarRepeaterConfigTimesSet*      m_times;
 	CBeaconSet*                  m_beacon;
 	CAnnouncementSet*            m_announcement;
-	CDStarRepeaterModemSet*      m_modem;
+	CDStarRepeaterConfigModemSet*      m_modem;
 	CControl1Set*                m_control1;
 	CControl2Set*                m_control2;
-	CDStarRepeaterControllerSet* m_controller;
+	CDStarRepeaterConfigControllerSet* m_controller;
 };
 
 #endif

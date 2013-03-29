@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterPreferences.h"
+#include "DStarRepeaterConfigPreferences.h"
 #include "DStarDefines.h"
 
 const unsigned int BORDER_SIZE   = 5U;
@@ -24,7 +24,7 @@ const unsigned int BORDER_SIZE   = 5U;
 #include <wx/gbsizer.h>
 #include <wx/notebook.h>
 
-CDStarRepeaterPreferences::CDStarRepeaterPreferences(wxWindow* parent, int id, const wxString& callsign,
+CDStarRepeaterConfigPreferences::CDStarRepeaterConfigPreferences(wxWindow* parent, int id, const wxString& callsign,
 	const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking,
 	const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress,
 	unsigned int localPort, unsigned int timeout, unsigned int ackTime, unsigned int beaconTime,
@@ -54,13 +54,13 @@ m_controller(NULL)
 
 	wxNotebook* noteBook = new wxNotebook(this, -1);
 
-	m_callsign = new CDStarRepeaterCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	m_callsign = new CDStarRepeaterConfigCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 	noteBook->AddPage(m_callsign, _("Callsign"), true);
 
 	m_network = new CNetworkSet(noteBook, -1, APPLICATION_NAME, gatewayAddress, gatewayPort, localAddress, localPort);
 	noteBook->AddPage(m_network, _("Network"), false);
 
-	m_times = new CDStarRepeaterTimesSet(noteBook, -1, APPLICATION_NAME, timeout, ackTime);
+	m_times = new CDStarRepeaterConfigTimesSet(noteBook, -1, APPLICATION_NAME, timeout, ackTime);
 	noteBook->AddPage(m_times, _("Timers"), false);
 
 	m_announcement = new CAnnouncementSet(noteBook, -1, APPLICATION_NAME, announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
@@ -69,7 +69,7 @@ m_controller(NULL)
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
 
-	m_modem = new CDStarRepeaterModemSet(noteBook, -1, APPLICATION_NAME, modemName);
+	m_modem = new CDStarRepeaterConfigModemSet(noteBook, -1, APPLICATION_NAME, modemName);
 	noteBook->AddPage(m_modem, _("Modem"), false);
 
 	m_control1 = new CControl1Set(noteBook, -1, APPLICATION_NAME, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, output1, output2, output3, output4);
@@ -78,7 +78,7 @@ m_controller(NULL)
 	m_control2 = new CControl2Set(noteBook, -1, APPLICATION_NAME, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line);
 	noteBook->AddPage(m_control2, _("Control 2"), false);
 
-	m_controller = new CDStarRepeaterControllerSet(noteBook, -1, APPLICATION_NAME, controllerType, activeHangTime);
+	m_controller = new CDStarRepeaterConfigControllerSet(noteBook, -1, APPLICATION_NAME, controllerType, activeHangTime);
 	noteBook->AddPage(m_controller, _("Controller"), false);
 
 	mainSizer->Add(noteBook, 1, wxALL | wxGROW, BORDER_SIZE);
@@ -94,11 +94,11 @@ m_controller(NULL)
 	SetSizer(mainSizer);
 }
 
-CDStarRepeaterPreferences::~CDStarRepeaterPreferences()
+CDStarRepeaterConfigPreferences::~CDStarRepeaterConfigPreferences()
 {
 }
 
-bool CDStarRepeaterPreferences::Validate()
+bool CDStarRepeaterConfigPreferences::Validate()
 {
 	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() || !m_announcement->Validate() || !m_modem->Validate() || !m_control1->Validate() || !m_control2->Validate() || !m_controller->Validate())
 		return false;
@@ -106,242 +106,242 @@ bool CDStarRepeaterPreferences::Validate()
 	return true;	
 }
 
-wxString CDStarRepeaterPreferences::getCallsign() const
+wxString CDStarRepeaterConfigPreferences::getCallsign() const
 {
 	return m_callsign->getCallsign();
 }
 
-wxString CDStarRepeaterPreferences::getGateway() const
+wxString CDStarRepeaterConfigPreferences::getGateway() const
 {
 	return m_callsign->getGateway();
 }
 
-DSTAR_MODE CDStarRepeaterPreferences::getMode() const
+DSTAR_MODE CDStarRepeaterConfigPreferences::getMode() const
 {
 	return m_callsign->getMode();
 }
 
-ACK_TYPE CDStarRepeaterPreferences::getAck() const
+ACK_TYPE CDStarRepeaterConfigPreferences::getAck() const
 {
 	return m_callsign->getAck();
 }
 
-bool CDStarRepeaterPreferences::getRestriction() const
+bool CDStarRepeaterConfigPreferences::getRestriction() const
 {
 	return m_callsign->getRestriction();
 }
 
-bool CDStarRepeaterPreferences::getRPT1Validation() const
+bool CDStarRepeaterConfigPreferences::getRPT1Validation() const
 {
 	return m_callsign->getRPT1Validation();
 }
 
-bool CDStarRepeaterPreferences::getDTMFBlanking() const
+bool CDStarRepeaterConfigPreferences::getDTMFBlanking() const
 {
 	return m_callsign->getDTMFBlanking();
 }
 
-wxString CDStarRepeaterPreferences::getGatewayAddress() const
+wxString CDStarRepeaterConfigPreferences::getGatewayAddress() const
 {
 	return m_network->getGatewayAddress();
 }
 
-unsigned int CDStarRepeaterPreferences::getGatewayPort() const
+unsigned int CDStarRepeaterConfigPreferences::getGatewayPort() const
 {
 	return m_network->getGatewayPort();
 }
 
-wxString CDStarRepeaterPreferences::getLocalAddress() const
+wxString CDStarRepeaterConfigPreferences::getLocalAddress() const
 {
 	return m_network->getLocalAddress();
 }
 
-unsigned int CDStarRepeaterPreferences::getLocalPort() const
+unsigned int CDStarRepeaterConfigPreferences::getLocalPort() const
 {
 	return m_network->getLocalPort();
 }
 
-unsigned int CDStarRepeaterPreferences::getTimeout() const
+unsigned int CDStarRepeaterConfigPreferences::getTimeout() const
 {
 	return m_times->getTimeout();
 }
 
-unsigned int CDStarRepeaterPreferences::getAckTime() const
+unsigned int CDStarRepeaterConfigPreferences::getAckTime() const
 {
 	return m_times->getAckTime();
 }
 
-unsigned int CDStarRepeaterPreferences::getBeaconTime() const
+unsigned int CDStarRepeaterConfigPreferences::getBeaconTime() const
 {
 	return m_beacon->getTime();
 }
 
-wxString CDStarRepeaterPreferences::getBeaconText() const
+wxString CDStarRepeaterConfigPreferences::getBeaconText() const
 {
 	return m_beacon->getText();
 }
 
-bool CDStarRepeaterPreferences::getBeaconVoice() const
+bool CDStarRepeaterConfigPreferences::getBeaconVoice() const
 {
 	return m_beacon->getVoice();
 }
 
-TEXT_LANG CDStarRepeaterPreferences::getLanguage() const
+TEXT_LANG CDStarRepeaterConfigPreferences::getLanguage() const
 {
 	return m_beacon->getLanguage();
 }
 
-bool CDStarRepeaterPreferences::getAnnouncementEnabled() const
+bool CDStarRepeaterConfigPreferences::getAnnouncementEnabled() const
 {
 	return m_announcement->getEnabled();
 }
 
-unsigned int CDStarRepeaterPreferences::getAnnouncementTime() const
+unsigned int CDStarRepeaterConfigPreferences::getAnnouncementTime() const
 {
 	return m_announcement->getTime();
 }
 
-wxString CDStarRepeaterPreferences::getAnnouncementRecordRPT1() const
+wxString CDStarRepeaterConfigPreferences::getAnnouncementRecordRPT1() const
 {
 	return m_announcement->getRecordRPT1();
 }
 
-wxString CDStarRepeaterPreferences::getAnnouncementRecordRPT2() const
+wxString CDStarRepeaterConfigPreferences::getAnnouncementRecordRPT2() const
 {
 	return m_announcement->getRecordRPT2();
 }
 
-wxString CDStarRepeaterPreferences::getAnnouncementDeleteRPT1() const
+wxString CDStarRepeaterConfigPreferences::getAnnouncementDeleteRPT1() const
 {
 	return m_announcement->getDeleteRPT1();
 }
 
-wxString CDStarRepeaterPreferences::getAnnouncementDeleteRPT2() const
+wxString CDStarRepeaterConfigPreferences::getAnnouncementDeleteRPT2() const
 {
 	return m_announcement->getDeleteRPT2();
 }
 
-wxString CDStarRepeaterPreferences::getModemName() const
+wxString CDStarRepeaterConfigPreferences::getModemName() const
 {
 	return m_modem->getName();
 }
 
-bool CDStarRepeaterPreferences::getEnabled() const
+bool CDStarRepeaterConfigPreferences::getEnabled() const
 {
 	return m_control1->getEnabled();
 }
 
-wxString CDStarRepeaterPreferences::getRPT1Callsign() const
+wxString CDStarRepeaterConfigPreferences::getRPT1Callsign() const
 {
 	return m_control1->getRPT1Callsign();
 }
 
-wxString CDStarRepeaterPreferences::getRPT2Callsign() const
+wxString CDStarRepeaterConfigPreferences::getRPT2Callsign() const
 {
 	return m_control1->getRPT2Callsign();
 }
 
-wxString CDStarRepeaterPreferences::getShutdown() const
+wxString CDStarRepeaterConfigPreferences::getShutdown() const
 {
 	return m_control1->getShutdown();
 }
 
-wxString CDStarRepeaterPreferences::getStartup() const
+wxString CDStarRepeaterConfigPreferences::getStartup() const
 {
 	return m_control1->getStartup();
 }
 
-wxString CDStarRepeaterPreferences::getStatus1() const
+wxString CDStarRepeaterConfigPreferences::getStatus1() const
 {
 	return m_control1->getStatus1();
 }
 
-wxString CDStarRepeaterPreferences::getStatus2() const
+wxString CDStarRepeaterConfigPreferences::getStatus2() const
 {
 	return m_control1->getStatus2();
 }
 
-wxString CDStarRepeaterPreferences::getStatus3() const
+wxString CDStarRepeaterConfigPreferences::getStatus3() const
 {
 	return m_control1->getStatus3();
 }
 
-wxString CDStarRepeaterPreferences::getStatus4() const
+wxString CDStarRepeaterConfigPreferences::getStatus4() const
 {
 	return m_control1->getStatus4();
 }
 
-wxString CDStarRepeaterPreferences::getStatus5() const
+wxString CDStarRepeaterConfigPreferences::getStatus5() const
 {
 	return m_control1->getStatus5();
 }
 
-wxString CDStarRepeaterPreferences::getOutput1() const
+wxString CDStarRepeaterConfigPreferences::getOutput1() const
 {
 	return m_control1->getOutput1();
 }
 
-wxString CDStarRepeaterPreferences::getOutput2() const
+wxString CDStarRepeaterConfigPreferences::getOutput2() const
 {
 	return m_control1->getOutput2();
 }
 
-wxString CDStarRepeaterPreferences::getOutput3() const
+wxString CDStarRepeaterConfigPreferences::getOutput3() const
 {
 	return m_control1->getOutput3();
 }
 
-wxString CDStarRepeaterPreferences::getOutput4() const
+wxString CDStarRepeaterConfigPreferences::getOutput4() const
 {
 	return m_control1->getOutput4();
 }
 
-wxString CDStarRepeaterPreferences::getCommand1() const
+wxString CDStarRepeaterConfigPreferences::getCommand1() const
 {
 	return m_control2->getCommand1();
 }
 
-wxString CDStarRepeaterPreferences::getCommand1Line() const
+wxString CDStarRepeaterConfigPreferences::getCommand1Line() const
 {
 	return m_control2->getCommand1Line();
 }
 
-wxString CDStarRepeaterPreferences::getCommand2() const
+wxString CDStarRepeaterConfigPreferences::getCommand2() const
 {
 	return m_control2->getCommand2();
 }
 
-wxString CDStarRepeaterPreferences::getCommand2Line() const
+wxString CDStarRepeaterConfigPreferences::getCommand2Line() const
 {
 	return m_control2->getCommand2Line();
 }
 
-wxString CDStarRepeaterPreferences::getCommand3() const
+wxString CDStarRepeaterConfigPreferences::getCommand3() const
 {
 	return m_control2->getCommand3();
 }
 
-wxString CDStarRepeaterPreferences::getCommand3Line() const
+wxString CDStarRepeaterConfigPreferences::getCommand3Line() const
 {
 	return m_control2->getCommand3Line();
 }
 
-wxString CDStarRepeaterPreferences::getCommand4() const
+wxString CDStarRepeaterConfigPreferences::getCommand4() const
 {
 	return m_control2->getCommand4();
 }
 
-wxString CDStarRepeaterPreferences::getCommand4Line() const
+wxString CDStarRepeaterConfigPreferences::getCommand4Line() const
 {
 	return m_control2->getCommand4Line();
 }
 
-wxString CDStarRepeaterPreferences::getControllerType() const
+wxString CDStarRepeaterConfigPreferences::getControllerType() const
 {
 	return m_controller->getType();
 }
 
-unsigned int CDStarRepeaterPreferences::getActiveHangTime() const
+unsigned int CDStarRepeaterConfigPreferences::getActiveHangTime() const
 {
 	return m_controller->getTime();
 }

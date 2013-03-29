@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,26 +16,27 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterControllerSet_H
-#define	DStarRepeaterControllerSet_H
+#ifndef	DStarRepeaterConfigFrame_H
+#define	DStarRepeaterConfigFrame_H
+
+#include "DStarRepeaterConfigDefs.h"
 
 #include <wx/wx.h>
 
-class CDStarRepeaterControllerSet : public wxPanel {
+class CDStarRepeaterConfigFrame : public wxFrame {
 public:
-	CDStarRepeaterControllerSet(wxWindow* parent, int id, const wxString& title, const wxString& type, unsigned int time);
-	virtual ~CDStarRepeaterControllerSet();
+	CDStarRepeaterConfigFrame(const wxString& title);
+	virtual ~CDStarRepeaterConfigFrame();
 
-	virtual bool Validate();
-
-	virtual wxString getType() const;
-
-	virtual unsigned int getTime() const;
+	virtual void onQuit(wxCommandEvent& event);
+	virtual void onPreferences(wxCommandEvent& event);
+	virtual void onAbout(wxCommandEvent& event);
+	virtual void onClose(wxCloseEvent& event);
 
 private:
-	wxString  m_title;
-	wxChoice* m_type;
-	wxSlider* m_time;
+	DECLARE_EVENT_TABLE()
+
+	wxMenuBar* createMenuBar();
 };
 
 #endif

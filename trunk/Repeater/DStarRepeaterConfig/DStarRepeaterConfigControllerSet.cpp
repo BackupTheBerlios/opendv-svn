@@ -16,13 +16,13 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterControllerSet.h"
+#include "DStarRepeaterConfigControllerSet.h"
 
 const unsigned int CONTROL_WIDTH = 300U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CDStarRepeaterControllerSet::CDStarRepeaterControllerSet(wxWindow* parent, int id, const wxString& title, const wxString& type, unsigned int time) :
+CDStarRepeaterConfigControllerSet::CDStarRepeaterConfigControllerSet(wxWindow* parent, int id, const wxString& title, const wxString& type, unsigned int time) :
 wxPanel(parent, id),
 m_title(title),
 m_type(NULL),
@@ -69,11 +69,11 @@ m_time(NULL)
 }
 
 
-CDStarRepeaterControllerSet::~CDStarRepeaterControllerSet()
+CDStarRepeaterConfigControllerSet::~CDStarRepeaterConfigControllerSet()
 {
 }
 
-bool CDStarRepeaterControllerSet::Validate()
+bool CDStarRepeaterConfigControllerSet::Validate()
 {
 	if (m_type->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
@@ -81,7 +81,7 @@ bool CDStarRepeaterControllerSet::Validate()
 	return true;
 }
 
-wxString CDStarRepeaterControllerSet::getType() const
+wxString CDStarRepeaterConfigControllerSet::getType() const
 {
 	wxString type = m_type->GetStringSelection();
 
@@ -91,7 +91,7 @@ wxString CDStarRepeaterControllerSet::getType() const
 		return type;
 }
 
-unsigned int CDStarRepeaterControllerSet::getTime() const
+unsigned int CDStarRepeaterConfigControllerSet::getTime() const
 {
 	return m_time->GetValue();
 }

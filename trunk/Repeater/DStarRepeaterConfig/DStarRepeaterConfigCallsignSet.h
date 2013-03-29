@@ -16,18 +16,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterCallsignSet_H
-#define	DStarRepeaterCallsignSet_H
+#ifndef	DStarRepeaterConfigCallsignSet_H
+#define	DStarRepeaterConfigCallsignSet_H
 
 #include "CallsignTextCtrl.h"
 #include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-class CDStarRepeaterCallsignSet : public wxPanel {
+class CDStarRepeaterConfigCallsignSet : public wxPanel {
 public:
-	CDStarRepeaterCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
-	virtual ~CDStarRepeaterCallsignSet();
+	CDStarRepeaterConfigCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
+	virtual ~CDStarRepeaterConfigCallsignSet();
 
 	virtual bool Validate();
 

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="DStarRepeater"
-	ProjectGUID="{E3458953-FC3D-47AF-A245-A1A87DC2BC7E}"
-	RootNamespace="DStarRepeater"
+	Name="DStarRepeaterConfig"
+	ProjectGUID="{FBAE8201-11CC-4256-BF39-A860B9DF963C}"
+	RootNamespace="DStarRepeaterConfig"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -177,43 +177,35 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\DStarRepeaterApp.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfig.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterFrame.cpp"
+				RelativePath=".\DStarRepeaterConfigApp.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterLogger.cpp"
+				RelativePath=".\DStarRepeaterConfigCallsignSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterRXThread.cpp"
+				RelativePath=".\DStarRepeaterConfigControllerSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterStatusData.cpp"
+				RelativePath=".\DStarRepeaterConfigFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterThreadHelper.cpp"
+				RelativePath=".\DStarRepeaterConfigModemSet.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterTRXThread.cpp"
+				RelativePath=".\DStarRepeaterConfigPreferences.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterTXRXThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterTXThread.cpp"
+				RelativePath=".\DStarRepeaterConfigTimesSet.cpp"
 				>
 			</File>
 		</Filter>
@@ -223,51 +215,39 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\DStarRepeaterApp.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfig.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterDefs.h"
+				RelativePath=".\DStarRepeaterConfigApp.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterFrame.h"
+				RelativePath=".\DStarRepeaterConfigCallsignSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterLogger.h"
+				RelativePath=".\DStarRepeaterConfigControllerSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterRXThread.h"
+				RelativePath=".\DStarRepeaterConfigDefs.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterStatusData.h"
+				RelativePath=".\DStarRepeaterConfigFrame.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterThread.h"
+				RelativePath=".\DStarRepeaterConfigModemSet.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterThreadHelper.h"
+				RelativePath=".\DStarRepeaterConfigPreferences.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterTRXThread.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterTXRXThread.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterTXThread.h"
+				RelativePath=".\DStarRepeaterConfigTimesSet.h"
 				>
 			</File>
 		</Filter>

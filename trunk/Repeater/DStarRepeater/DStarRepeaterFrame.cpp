@@ -30,8 +30,6 @@ DEFINE_EVENT_TYPE(LOG_EVENT)
 enum {
 	Menu_File_Logging = 6000,
 
-	Menu_Edit_Preferences,
-
 	Menu_View_Updates,
 
 	Menu_Action_Shutdown,
@@ -51,7 +49,6 @@ BEGIN_EVENT_TABLE(CDStarRepeaterFrame, wxFrame)
 	EVT_MENU(Menu_File_Logging,     CDStarRepeaterFrame::onLogging)
 	EVT_MENU(wxID_EXIT,             CDStarRepeaterFrame::onQuit)
 	EVT_MENU(Menu_View_Updates,     CDStarRepeaterFrame::onUpdates)
-	EVT_MENU(Menu_Edit_Preferences, CDStarRepeaterFrame::onPreferences)
 	EVT_MENU(wxID_ABOUT,            CDStarRepeaterFrame::onAbout)
 
 	EVT_MENU(Menu_Action_Startup,   CDStarRepeaterFrame::onActions)
@@ -297,9 +294,6 @@ wxMenuBar* CDStarRepeaterFrame::createMenuBar()
 	fileMenu->AppendSeparator();
 	fileMenu->Append(wxID_EXIT, _("Exit"));
 
-	wxMenu* editMenu = new wxMenu();
-	editMenu->Append(Menu_Edit_Preferences, _("Preferences..."));
-
 	wxMenu* viewMenu = new wxMenu();
 	viewMenu->AppendCheckItem(Menu_View_Updates, _("GUI Updates"));
 	viewMenu->Check(Menu_View_Updates, m_updates);
@@ -323,7 +317,6 @@ wxMenuBar* CDStarRepeaterFrame::createMenuBar()
 
 	wxMenuBar* menuBar = new wxMenuBar();
 	menuBar->Append(fileMenu,     _("File"));
-	menuBar->Append(editMenu,     _("Edit"));
 	menuBar->Append(viewMenu,     _("View"));
 	menuBar->Append(actionMenu,   _("Action"));
 	menuBar->Append(m_outputMenu, _("Outputs"));
@@ -410,128 +403,6 @@ void CDStarRepeaterFrame::onAbout(wxCommandEvent& event)
 	info.SetDescription(_("This program allows a computer with a suitable\nmodem driver to act as a D-Star repeater."));
 
 	::wxAboutBox(info);
-}
-
-void CDStarRepeaterFrame::onPreferences(wxCommandEvent& event)
-{
-	wxString callsign, gateway;
-	DSTAR_MODE mode;
-	ACK_TYPE ack;
-	bool restriction, rpt1Validation, dtmfBlanking;
-	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
-
-	wxString gatewayAddress, localAddress;
-	unsigned int gatewayPort, localPort;
-	::wxGetApp().getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
-
-	unsigned int timeout, ackTime;
-	::wxGetApp().getTimes(timeout, ackTime);
-
-	unsigned int beaconTime;
-	wxString beaconText;
-	bool beaconVoice;
-	TEXT_LANG language;
-	::wxGetApp().getBeacon(beaconTime, beaconText, beaconVoice, language);
-
-	bool announcementEnabled;
-	unsigned int announcementTime;
-	wxString announcementRecordRPT1, announcementRecordRPT2;
-	wxString announcementDeleteRPT1, announcementDeleteRPT2;
-	::wxGetApp().getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
-
-	wxString modemName;
-	::wxGetApp().getModem(modemName);
-
-	bool enabled;
-	wxString rpt1Callsign, rpt2Callsign;
-	wxString shutdown, startup;
-	wxString status1, status2, status3, status4, status5;
-	wxString command1, command1Line, command2, command2Line;
-	wxString command3, command3Line, command4, command4Line;
-	wxString output1, output2, output3, output4;
-	::wxGetApp().getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
-
-	wxString controllerType;
-	unsigned int activeHangTime;
-	::wxGetApp().getController(controllerType, activeHangTime);
-
-	CDStarRepeaterPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
-		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText, beaconVoice, language,
-		announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1,
-		announcementDeleteRPT2, modemName, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3,
-		status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line,
-		output1, output2, output3, output4, controllerType, activeHangTime);
-	if (dialog1.ShowModal() != wxID_OK)
-		return;
-
-	callsign       = dialog1.getCallsign();
-	gateway        = dialog1.getGateway();
-	mode           = dialog1.getMode();
-	ack            = dialog1.getAck();
-	restriction    = dialog1.getRestriction();
-	rpt1Validation = dialog1.getRPT1Validation();
-	dtmfBlanking   = dialog1.getDTMFBlanking();
-	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
-
-	gatewayAddress = dialog1.getGatewayAddress();
-	gatewayPort    = dialog1.getGatewayPort();
-	localAddress   = dialog1.getLocalAddress();
-	localPort      = dialog1.getLocalPort();
-	::wxGetApp().setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
-
-	timeout    = dialog1.getTimeout();
-	ackTime    = dialog1.getAckTime();
-	::wxGetApp().setTimes(timeout, ackTime);
-
-	beaconTime  = dialog1.getBeaconTime();
-	beaconText  = dialog1.getBeaconText();
-	beaconVoice = dialog1.getBeaconVoice();
-	language    = dialog1.getLanguage();
-	::wxGetApp().setBeacon(beaconTime, beaconText, beaconVoice, language);
-
-	announcementEnabled    = dialog1.getAnnouncementEnabled();
-	announcementTime       = dialog1.getAnnouncementTime();
-	announcementRecordRPT1 = dialog1.getAnnouncementRecordRPT1();
-	announcementRecordRPT2 = dialog1.getAnnouncementRecordRPT2();
-	announcementDeleteRPT1 = dialog1.getAnnouncementDeleteRPT1();
-	announcementDeleteRPT2 = dialog1.getAnnouncementDeleteRPT2();
-	::wxGetApp().setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
-
-	modemName    = dialog1.getModemName();
-	::wxGetApp().setModem(modemName);
-
-	enabled      = dialog1.getEnabled();
-	rpt1Callsign = dialog1.getRPT1Callsign();
-	rpt2Callsign = dialog1.getRPT2Callsign();
-	shutdown     = dialog1.getShutdown();
-	startup      = dialog1.getStartup();
-	status1      = dialog1.getStatus1();
-	status2      = dialog1.getStatus2();
-	status3      = dialog1.getStatus3();
-	status4      = dialog1.getStatus4();
-	status5      = dialog1.getStatus5();
-	output1      = dialog1.getOutput1();
-	output2      = dialog1.getOutput2();
-	output3      = dialog1.getOutput3();
-	output4      = dialog1.getOutput4();
-	command1     = dialog1.getCommand1();
-	command1Line = dialog1.getCommand1Line();
-	command2     = dialog1.getCommand2();
-	command2Line = dialog1.getCommand2Line();
-	command3     = dialog1.getCommand3();
-	command3Line = dialog1.getCommand3Line();
-	command4     = dialog1.getCommand4();
-	command4Line = dialog1.getCommand4Line();
-	::wxGetApp().setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
-
-	controllerType = dialog1.getControllerType();
-	activeHangTime = dialog1.getActiveHangTime();
-	::wxGetApp().setController(controllerType, activeHangTime);
-
-	::wxGetApp().writeConfig();
-
-	wxMessageDialog dialog2(this, _("The changes made will not take effect\nuntil the application is restarted"), _("DV-RPTR Repeater Information"), wxICON_INFORMATION);
-	dialog2.ShowModal();
 }
 
 void CDStarRepeaterFrame::onTimer(wxTimerEvent& event)

@@ -346,6 +346,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ModemProtocolServer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NamedPipeClient.cpp"
 				>
 			</File>
@@ -717,6 +721,10 @@
 			</File>
 			<File
 				RelativePath=".\ModemProtocolClient.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ModemProtocolServer.h"
 				>
 			</File>
 			<File

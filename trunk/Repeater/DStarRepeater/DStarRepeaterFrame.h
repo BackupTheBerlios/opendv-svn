@@ -32,7 +32,6 @@ public:
 
 	virtual void onLogging(wxCommandEvent& event);
 	virtual void onQuit(wxCommandEvent& event);
-	virtual void onPreferences(wxCommandEvent& event);
 	virtual void onUpdates(wxCommandEvent& event);
 	virtual void onAbout(wxCommandEvent& event);
 	virtual void onClose(wxCloseEvent& event);
