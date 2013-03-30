@@ -16,31 +16,33 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef UNIXSocketReaderWriter_H
-#define UNIXSocketReaderWriter_H
+#ifndef UNIXSocketServer_H
+#define UNIXSocketServer_H
+
+#include "UNIXSocketClient.h"
 
 #include <wx/wx.h>
 
-#include <sys/un.h>
-
-class CUNIXSocketReaderWriter {
+class CUNIXSocketServer {
 public:
-	CUNIXSocketReaderWriter(const wxString& server, const wxString& client);
-	~CUNIXSocketReaderWriter();
+	CUNIXSocketServer(const wxString& name);
+	~CUNIXSocketServer();
 
-	bool open();
+	bool start();
+
+	bool isConnected() const;
 
 	int  read(unsigned char* buffer, unsigned int length);
 	bool write(const unsigned char* buffer, unsigned int length);
 
 	void close();
 
+	void stop();
+
 private:
-	wxString           m_server;
-	wxString           m_client;
-	int                m_sockServer;
-	int                m_sockClient;
-	struct sockaddr_un m_dest;
+	wxString           m_name;
+	int                m_sock;
+	CUNIXSocketClient* m_client;
 };
 
 #endif

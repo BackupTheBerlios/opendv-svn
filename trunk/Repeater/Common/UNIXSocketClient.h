@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,27 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef UNIXSocketClient_H
+#define UNIXSocketClient_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CUNIXSocketClient {
+public:
+	CUNIXSocketClient(const wxString& name);
+	CUNIXSocketClient(int fd);
+	~CUNIXSocketClient();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	bool open();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
-#endif
+	int  read(unsigned char* buffer, unsigned int length);
+	bool write(const unsigned char* buffer, unsigned int length);
+
+	void close();
+
+private:
+	wxString m_name;
+	int      m_sock;
+};
 
 #endif

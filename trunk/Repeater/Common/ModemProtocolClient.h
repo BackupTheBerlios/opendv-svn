@@ -25,7 +25,7 @@
 #if defined(__WINDOWS__)
 #include "NamedPipeClient.h"
 #else
-#include "UNIXSocketReaderWriter.h"
+#include "UNIXSocketClient.h"
 #endif
 
 #include <wx/wx.h>
@@ -62,13 +62,13 @@ public:
 
 private:
 #if defined(__WINDOWS__)
-	CNamedPipeClient*        m_client;
+	CNamedPipeClient*  m_client;
 #else
-	CUNIXSocketReaderWriter* m_client;
+	CUNIXSocketClient* m_client;
 #endif
-	MODEM_MSG_TYPE           m_type;
-	unsigned char*           m_buffer;
-	unsigned int             m_length;
+	MODEM_MSG_TYPE     m_type;
+	unsigned char*     m_buffer;
+	unsigned int       m_length;
 
 	bool readPackets();
 };

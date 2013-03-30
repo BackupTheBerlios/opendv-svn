@@ -35,16 +35,12 @@ m_length(0U)
 #if defined(__WINDOWS__)
 	m_server = new CNamedPipeServer(name);
 #else
-	wxString server = name;
-	wxString client = name;
+	wxString path = wxT("/tmp/");
+	path.Append(name);
 
-	server.Replace(wxT(" "), wxT("_"));
-	client.Replace(wxT(" "), wxT("_"));
+	path.Replace(wxT(" "), wxT("_"));
 
-	server.Append(wxT("_A"));
-	client.Append(wxT("_B"));
-
-	m_server = new CUNIXSocketReaderWriter(server, client);
+	m_server = new CUNIXSocket(path);
 #endif
 }
 
