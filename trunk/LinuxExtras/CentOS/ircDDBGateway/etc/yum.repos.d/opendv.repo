@@ -5,7 +5,8 @@ name=openDV Repository
 ## please activate only one of the following 2 baseurl options!
 #
 ## uncomment the following line to use the internet for opendv updates
-baseurl=http://group1-update.ircddb.net/ircDDB/centos55/repo
+#baseurl=http://group1-update.ircddb.net/ircDDB/centos55/repo
+baseurl=http://centos.nh6z.net
 baseurl=ftp://141.75.245.226:8021/centos5
 baseurl=http://soft.mgw.ch/centos5
 #
