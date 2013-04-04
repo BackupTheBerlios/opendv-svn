@@ -31,7 +31,7 @@ CNamedPipeServer::~CNamedPipeServer()
 {
 }
 
-bool CNamedPipeServer::open()
+bool CNamedPipeServer::start()
 {
 	wxString fileName;
 	fileName.Printf(wxT("\\\\.\\pipe\\%s"), m_name.c_str());
@@ -45,7 +45,7 @@ bool CNamedPipeServer::open()
 	return true;
 }
 
-bool CNamedPipeServer::hasClient()
+bool CNamedPipeServer::isConnected()
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -100,7 +100,7 @@ int CNamedPipeServer::read(unsigned char* buffer, unsigned int length)
 	return int(bytes);
 }
 
-void CNamedPipeServer::close()
+void CNamedPipeServer::stop()
 {
 	if (m_handle != INVALID_HANDLE_VALUE) {
 		::CloseHandle(m_handle);

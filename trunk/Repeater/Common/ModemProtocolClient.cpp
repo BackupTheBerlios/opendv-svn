@@ -35,7 +35,7 @@ m_length(0U)
 #if defined(__WINDOWS__)
 	m_client = new CNamedPipeClient(name);
 #else
-	wxString path = wxT("/tmp/";
+	wxString path = wxT("/tmp/");
 	path.Append(name);
 
 	path.Replace(wxT(" "), wxT("_"));

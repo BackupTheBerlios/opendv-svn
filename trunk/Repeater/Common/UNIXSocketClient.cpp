@@ -58,6 +58,8 @@ bool CUNIXSocketClient::open()
 		return false;
 	}
 
+	wxLogMessage(wxT("Connected on UNIX socket \"%s\""), m_name.c_str());
+
 	return true;
 }
 
@@ -66,9 +68,9 @@ bool CUNIXSocketClient::write(const unsigned char* buffer, unsigned int length)
 	wxASSERT(m_sock != -1);
 	wxASSERT(buffer != NULL);
 
-	int ret = ::sendto(m_sock, buffer, length, 0, (struct sockaddr*)&m_dest, sizeof(struct sockaddr_un));
+	int ret = ::write(m_sock, buffer, length);
 	if (ret < 0) {
-		wxLogError(wxT("Error from sendto to the UNIX socket, err=%d"), errno);
+		wxLogError(wxT("Error from write to the UNIX socket, err=%d"), errno);
 		return false;
 	}
 

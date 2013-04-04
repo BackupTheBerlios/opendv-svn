@@ -43,7 +43,11 @@ bool CUNIXSocketServer::start()
 	for (unsigned int i = 0U; i < m_name.Len(); i++)
 		serv.sun_path[i] = m_name.GetChar(i);
 
-	int ret = ::bind(m_sock, (struct sockaddr*)&serv, sizeof(struct sockaddr_un));
+	socklen_t len = ::strlen(serv.sun_path) + sizeof(serv.sun_family);
+
+	::unlink(serv.sun_path);
+
+	int ret = ::bind(m_sock, (struct sockaddr*)&serv, len);
 	if (ret < 0) {
 		wxLogError(wxT("Binding to the UNIX server socket (%s) failed: err=%d"), m_name.c_str(), errno);
 		close();
@@ -52,10 +56,12 @@ bool CUNIXSocketServer::start()
 
 	::listen(m_sock, 1);
 
+	wxLogMessage(wxT("Listening on UNIX socket \"%s\""), m_name.c_str());
+
 	return true;
 }
 
-bool CUNIXSocketServer::isConnected() const
+bool CUNIXSocketServer::isConnected()
 {
 	if (m_client != NULL)
 		return true;
@@ -66,7 +72,7 @@ bool CUNIXSocketServer::isConnected() const
 
 	fd_set fds;
 	FD_ZERO(&fds);
-	FD_SET(&fds, m_sock);
+	FD_SET(m_sock, &fds);
 
 	int n = ::select(m_sock + 1, &fds, NULL, NULL, &tv);
 	if (n < 0) {
@@ -78,7 +84,7 @@ bool CUNIXSocketServer::isConnected() const
 		return false;
 
 	struct sockaddr_un addr;
-	int len = sizeof(struct sockaddr_un);
+	socklen_t len = sizeof(struct sockaddr_un);
 	int fd = ::accept(m_sock, (struct sockaddr*)&addr, &len);
 	if (fd < 0) {
 		wxLogError(wxT("Accepting to the UNIX server socket failed: err=%d"), errno);
@@ -87,6 +93,8 @@ bool CUNIXSocketServer::isConnected() const
 
 	::close(m_sock);
 	m_sock = -1;
+
+	wxLogMessage(wxT("Accepted incoming UNIX socket connection"));
 
 	m_client = new CUNIXSocketClient(fd);
 

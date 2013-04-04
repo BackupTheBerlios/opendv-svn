@@ -40,7 +40,7 @@ m_length(0U)
 
 	path.Replace(wxT(" "), wxT("_"));
 
-	m_server = new CUNIXSocket(path);
+	m_server = new CUNIXSocketServer(path);
 #endif
 }
 
@@ -53,11 +53,7 @@ CModemProtocolServer::~CModemProtocolServer()
 
 bool CModemProtocolServer::open()
 {
-	bool ret = m_server->open();
-	if (!ret)
-		return false;
-
-	return true;
+	return m_server->start();
 }
 
 bool CModemProtocolServer::writeBegin()
@@ -208,6 +204,9 @@ bool CModemProtocolServer::readPackets()
 {
 	m_type = MMT_NONE;
 
+	if (!m_server->isConnected())
+		return false;
+
 	// No more data?
 	int length = m_server->read(m_buffer, BUFFER_LENGTH);
 	if (length <= 0)
@@ -282,5 +281,5 @@ bool CModemProtocolServer::readTX()
 
 void CModemProtocolServer::close()
 {
-	m_server->close();
+	m_server->stop();
 }

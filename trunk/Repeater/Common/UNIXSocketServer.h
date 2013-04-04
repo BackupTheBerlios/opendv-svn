@@ -30,7 +30,7 @@ public:
 
 	bool start();
 
-	bool isConnected() const;
+	bool isConnected();
 
 	int  read(unsigned char* buffer, unsigned int length);
 	bool write(const unsigned char* buffer, unsigned int length);

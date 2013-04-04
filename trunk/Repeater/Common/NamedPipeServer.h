@@ -26,14 +26,14 @@ public:
 	CNamedPipeServer(const wxString& name);
 	~CNamedPipeServer();
 
-	bool open();
+	bool start();
 
-	bool hasClient();
+	bool isConnected();
 
 	int  read(unsigned char* buffer, unsigned int length);
 	bool write(const unsigned char* buffer, unsigned int length);
 
-	void close();
+	void stop();
 
 private:
 	wxString   m_name;
