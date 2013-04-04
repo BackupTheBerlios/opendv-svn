@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 	wxString pidFileName;
 	if (!name.IsEmpty())
 		pidFileName.Printf(wxT("/var/run/ircddbgateway_%s.pid"), name.c_str());
-	else {
+	else
 		pidFileName = wxT("/var/run/ircddbgateway.pid");
 	pidFileName.Replace(wxT(" "), wxT("_"));
 
