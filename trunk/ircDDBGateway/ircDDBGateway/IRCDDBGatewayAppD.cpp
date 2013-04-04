@@ -825,3 +825,10 @@ bool CIRCDDBGatewayAppD::createThread()
 
 	return true;
 }
+
+void CIRCDDBGatewayAppD::kill()
+{
+	wxASSERT(m_thread != NULL);
+
+	m_thread->kill();
+}

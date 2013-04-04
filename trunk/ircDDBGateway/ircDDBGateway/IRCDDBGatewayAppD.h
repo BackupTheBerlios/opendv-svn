@@ -35,6 +35,8 @@ public:
 
 	void run();
 
+	void kill();
+
 private:
 	wxString                 m_name;
 	bool                     m_nolog;

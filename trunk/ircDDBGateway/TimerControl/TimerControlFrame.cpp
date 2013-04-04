@@ -121,8 +121,10 @@ void CTimerControlFrame::onClose(wxCloseEvent& event)
 {
 	int x, y;
 	GetPosition(&x, &y);
-	if (x >= 0 && y >= 0)
+	if (x >= 0 && y >= 0) {
 		::wxGetApp().setPosition(x, y);
+		::wxGetApp().writeConfig();
+	}
 
 	m_timer1.Stop();
 	m_timer2.Stop();
