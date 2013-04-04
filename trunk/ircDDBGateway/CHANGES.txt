@@ -1283,3 +1283,8 @@ Allow CCS commands in the your call.
 The config directory and file name for the Timer Control are now correct in daemon mode.
 The -confdir option now works for the Linux GUI version of the Timer Control.
 Check that all repeater modules have seperate callsigns and modules.
+
+201304xx
+--------
+
+Added CCS011 and CCS017.
