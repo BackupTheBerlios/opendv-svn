@@ -132,7 +132,7 @@ m_y(DEFAULT_WINDOW_Y)
 			m_password = val;
 		} else if (key.IsSameAs(KEY_DELAY)) {
 			val.ToLong(&temp);
-			m_delay = temp == 1L
+			m_delay = temp == 1L;
 		} else if (key.IsSameAs(KEY_WINDOW_X)) {
 			val.ToLong(&temp);
 			m_x = int(temp);
