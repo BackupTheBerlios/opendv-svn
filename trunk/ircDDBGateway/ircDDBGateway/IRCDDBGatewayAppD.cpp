@@ -461,11 +461,11 @@ bool CIRCDDBGatewayAppD::createThread()
 
 		if (callsign1.IsSameAs(callsign3) && repeaterBand1.IsSameAs(repeaterBand3)) {
 			wxLogError(wxT("Repeater 3 has the same callsign and module as repeater 1, exiting"));
-			return;
+			return false;
 		}
 		if (callsign2.IsSameAs(callsign3) && repeaterBand2.IsSameAs(repeaterBand3)) {
 			wxLogError(wxT("Repeater 3 has the same callsign and module as repeater 2, exiting"));
-			return;
+			return false;
 		}
 
 		if (repeaterType3 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
@@ -553,15 +553,15 @@ bool CIRCDDBGatewayAppD::createThread()
 
 		if (callsign1.IsSameAs(callsign4) && repeaterBand1.IsSameAs(repeaterBand4)) {
 			wxLogError(wxT("Repeater 4 has the same callsign and module as repeater 1, exiting"));
-			return;
+			return false;
 		}
 		if (callsign2.IsSameAs(callsign4) && repeaterBand2.IsSameAs(repeaterBand4)) {
 			wxLogError(wxT("Repeater 4 has the same callsign and module as repeater 2, exiting"));
-			return;
+			return false;
 		}
 		if (callsign3.IsSameAs(callsign4) && repeaterBand3.IsSameAs(repeaterBand4)) {
 			wxLogError(wxT("Repeater 4 has the same callsign and module as repeater 3, exiting"));
-			return;
+			return false;
 		}
 
 		if (repeaterType4 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {

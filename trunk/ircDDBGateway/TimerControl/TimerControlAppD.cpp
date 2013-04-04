@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -127,10 +127,18 @@ bool CTimerControlAppD::init()
 		fileBase.Append(m_name);
 		fileBase.Replace(wxT(" "), wxT("_"));
 
-		wxFileName fileName(wxFileName::GetHomeDir(), fileBase, wxT("dat"));
+		wxString dir = m_confDir;
+		if (dir.IsEmpty())
+			dir = wxFileName::GetHomeDir();
+
+		wxFileName fileName(dir, fileBase, wxT("dat"));
 		m_fileName = fileName.GetFullPath();
 	} else {
-		wxFileName fileName(wxFileName::GetHomeDir(), SCHEDULE_BASE_NAME, wxT("dat"));
+		wxString dir = m_confDir;
+		if (dir.IsEmpty())
+			dir = wxFileName::GetHomeDir();
+
+		wxFileName fileName(dir, SCHEDULE_BASE_NAME, wxT("dat"));
 		m_fileName = fileName.GetFullPath();
 	}
 

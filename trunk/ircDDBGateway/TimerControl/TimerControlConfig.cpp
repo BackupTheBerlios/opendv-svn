@@ -17,6 +17,7 @@
  */
 
 #include "TimerControlConfig.h"
+#include "TimerControlDefs.h"
 
 const wxString  KEY_ADDRESS  = wxT("address");
 const wxString  KEY_PORT     = wxT("port");

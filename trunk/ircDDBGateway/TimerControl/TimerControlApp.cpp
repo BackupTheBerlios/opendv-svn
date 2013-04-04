@@ -95,10 +95,18 @@ bool CTimerControlApp::OnInit()
 		fileBase.Append(m_name);
 		fileBase.Replace(wxT(" "), wxT("_"));
 
-		wxFileName fileName(wxFileName::GetHomeDir(), fileBase, wxT("dat"));
+		wxString dir = m_confDir;
+		if (dir.IsEmpty())
+			dir = wxFileName::GetHomeDir();
+
+		wxFileName fileName(dir, fileBase, wxT("dat"));
 		m_fileName = fileName.GetFullPath();
 	} else {
-		wxFileName fileName(wxFileName::GetHomeDir(), SCHEDULE_BASE_NAME, wxT("dat"));
+		wxString dir = m_confDir;
+		if (dir.IsEmpty())
+			dir = wxFileName::GetHomeDir();
+
+		wxFileName fileName(dir, SCHEDULE_BASE_NAME, wxT("dat"));
 		m_fileName = fileName.GetFullPath();
 	}
 
