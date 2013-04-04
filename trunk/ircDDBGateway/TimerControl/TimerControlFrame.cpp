@@ -156,6 +156,7 @@ void CTimerControlFrame::onPreferences(wxCommandEvent& event)
 
 	::wxGetApp().setGateway(address, port, password);
 	::wxGetApp().setDelay(delay);
+	::wxGetApp().writeConfig();
 
 	wxMessageDialog dialog2(this, _("The changes made will not take effect\nuntil the application is restarted"), _("Timer Control Information"), wxICON_INFORMATION);
 	dialog2.ShowModal();

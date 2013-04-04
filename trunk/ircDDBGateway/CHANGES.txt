@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130323
+ircDDB Gateway - 20130404
 =========================
 
 20101010
@@ -1271,9 +1271,15 @@ Allow DTMF "**" to re-link to the default reflector.
 Fixed the retry backoff calculation.
 Updated XRF003s IP address.
 
-201303xx
+20130404
 --------
 
+Write a .pid file for the gateway (Linux daemon version only).
+SIGUSR1 causes the gateway to exit cleanly (Linux daemon version only).
+Include code to stop multiple copies of the gateway from running.
 Split the configuration of the ircDDB Gateway into a seperate program.
 Allow your call command to link to the default reflector.
 Allow CCS commands in the your call.
+The config directory and file name for the Timer Control are now correct in daemon mode.
+The -confdir option now works for the Linux GUI version of the Timer Control.
+Check that all repeater modules have seperate callsigns and modules.

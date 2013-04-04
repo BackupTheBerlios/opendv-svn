@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ IMPLEMENT_APP(CTimerControlApp)
 const wxChar*       NAME_PARAM = wxT("Name");
 const wxChar* NOLOGGING_SWITCH = wxT("nolog");
 const wxChar*    LOGDIR_OPTION = wxT("logdir");
+const wxChar*   CONFDIR_OPTION = wxT("confdir");
 
 CTimerControlApp::CTimerControlApp() :
 wxApp(),
@@ -38,6 +39,7 @@ m_name(),
 m_fileName(),
 m_nolog(false),
 m_logDir(),
+m_confDir(),
 m_frame(NULL),
 m_config(NULL),
 m_thread(NULL)
@@ -71,7 +73,14 @@ bool CTimerControlApp::OnInit()
 		new wxLogNull;
 	}
 
+#if defined(__WINDOWS__)
 	m_config = new CTimerControlConfig(new wxConfig(APPLICATION_NAME), m_name);
+#else
+	if (m_confDir.IsEmpty())
+		m_confDir = CONF_DIR;
+
+	m_config = new CTimerControlConfig(m_confDir, m_name);
+#endif
 
 	wxString frameName = APPLICATION_NAME + wxT(" - ");
 	if (!m_name.IsEmpty()) {
@@ -134,6 +143,7 @@ void CTimerControlApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
 	parser.AddSwitch(NOLOGGING_SWITCH, wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddOption(LOGDIR_OPTION,    wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddOption(CONFDIR_OPTION,   wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddParam(NAME_PARAM, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
 	wxApp::OnInitCmdLine(parser);
@@ -150,6 +160,11 @@ bool CTimerControlApp::OnCmdLineParsed(wxCmdLineParser& parser)
 	bool found = parser.Found(LOGDIR_OPTION, &logDir);
 	if (found)
 		m_logDir = logDir;
+
+	wxString confDir;
+	found = parser.Found(CONFDIR_OPTION, &confDir);
+	if (found)
+		m_confDir = confDir;
 
 	if (parser.GetParamCount() > 0U)
 		m_name = parser.GetParam(0U);
@@ -169,7 +184,7 @@ void CTimerControlApp::getGateway(wxString& address, unsigned int& port, wxStrin
 	m_config->getGateway(address, port, password);
 }
 
-void CTimerControlApp::setGateway(const wxString& address, unsigned int port, const wxString& password) const
+void CTimerControlApp::setGateway(const wxString& address, unsigned int port, const wxString& password)
 {
 	m_config->setGateway(address, port, password);
 }
@@ -179,7 +194,7 @@ void CTimerControlApp::getDelay(bool& delay) const
 	m_config->getDelay(delay);
 }
 
-void CTimerControlApp::setDelay(bool delay) const
+void CTimerControlApp::setDelay(bool delay)
 {
 	m_config->setDelay(delay);
 }
@@ -192,6 +207,11 @@ void CTimerControlApp::getPosition(int& x, int& y) const
 void CTimerControlApp::setPosition(int x, int y)
 {
 	m_config->setPosition(x, y);
+}
+
+void CTimerControlApp::writeConfig()
+{
+	m_config->write();
 }
 
 void CTimerControlApp::writeItems()

@@ -52,6 +52,7 @@ m_confDir(),
 m_frame(NULL),
 m_thread(NULL),
 m_config(NULL),
+m_checker(NULL),
 m_logChain(NULL)
 {
 }
@@ -89,6 +90,25 @@ bool CIRCDDBGatewayApp::OnInit()
 	}
 
 	m_logChain = new wxLogChain(new CIRCDDBGatewayLogRedirect);
+
+	wxString appName;
+	if (!m_name.IsEmpty())
+		appName = APPLICATION_NAME + wxT(" ") + m_name;
+	else
+		appName = APPLICATION_NAME;
+
+#if !defined(__WINDOWS__)
+	appName.Replace(wxT(" "), wxT("_"));
+	m_checker = new wxSingleInstanceChecker(appName, wxT("/tmp"));
+#else
+	m_checker = new wxSingleInstanceChecker(appName);
+#endif
+
+	bool ret = m_checker->IsAnotherRunning();
+	if (ret) {
+		wxLogError(wxT("Another copy of the ircDDB Gateway is running, exiting"));
+		return false;
+	}
 
 #if defined(__WINDOWS__)
 	m_config = new CIRCDDBGatewayConfig(new wxConfig(APPLICATION_NAME), m_name);
@@ -138,6 +158,8 @@ int CIRCDDBGatewayApp::OnExit()
 	m_thread->kill();
 
 	delete m_config;
+
+	delete m_checker;
 
 	return 0;
 }
@@ -494,8 +516,8 @@ void CIRCDDBGatewayApp::createThread()
 	CUtils::clean(description12, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(url1, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 
+	wxString callsign1 = callsign;
 	if (!repeaterBand1.IsSameAs(wxT(" "))) {
-		wxString callsign1 = callsign;
 		if (!repeaterCall1.IsEmpty()) {
 			callsign1 = repeaterCall1;
 			callsign1.Append(wxT("        "));
@@ -577,8 +599,8 @@ void CIRCDDBGatewayApp::createThread()
 	CUtils::clean(description22, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(url2, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 
+	wxString callsign2 = callsign;
 	if (!repeaterBand2.IsSameAs(wxT(" "))) {
-		wxString callsign2 = callsign;
 		if (!repeaterCall2.IsEmpty()) {
 			callsign2 = repeaterCall2;
 			callsign2.Append(wxT("        "));
@@ -589,6 +611,11 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 2 reflector: %s, at startup: %d, reconnect: %d"), reflector2.c_str(), atStartup2, reconnect2);
 		wxLogInfo(wxT("Repeater 2 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude2, longitude2, range2, agl2, frequency2, offset2);
 		wxLogInfo(wxT("Repeater 2 description: \"%s %s\", URL: \"%s\""), description21.c_str(), description22.c_str(), url2.c_str());
+
+		if (callsign1.IsSameAs(callsign2) && repeaterBand1.IsSameAs(repeaterBand2)) {
+			wxLogError(wxT("Repeater 2 has the same callsign and module as repeater 1, exiting"));
+			return;
+		}
 
 		if (repeaterType2 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress2, repeaterPort2);
@@ -660,8 +687,8 @@ void CIRCDDBGatewayApp::createThread()
 	CUtils::clean(description32, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(url3, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 
+	wxString callsign3 = callsign;
 	if (!repeaterBand3.IsSameAs(wxT(" "))) {
-		wxString callsign3 = callsign;
 		if (!repeaterCall3.IsEmpty()) {
 			callsign3 = repeaterCall3;
 			callsign3.Append(wxT("        "));
@@ -672,6 +699,15 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 3 reflector: %s, at startup: %d, reconnect: %d"), reflector3.c_str(), atStartup3, reconnect3);
 		wxLogInfo(wxT("Repeater 3 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude3, longitude3, range3, agl3, frequency3, offset3);
 		wxLogInfo(wxT("Repeater 3 description: \"%s %s\", URL: \"%s\""), description31.c_str(), description32.c_str(), url3.c_str());
+
+		if (callsign1.IsSameAs(callsign3) && repeaterBand1.IsSameAs(repeaterBand3)) {
+			wxLogError(wxT("Repeater 3 has the same callsign and module as repeater 1, exiting"));
+			return;
+		}
+		if (callsign2.IsSameAs(callsign3) && repeaterBand2.IsSameAs(repeaterBand3)) {
+			wxLogError(wxT("Repeater 3 has the same callsign and module as repeater 2, exiting"));
+			return;
+		}
 
 		if (repeaterType3 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress3, repeaterPort3);
@@ -743,8 +779,8 @@ void CIRCDDBGatewayApp::createThread()
 	CUtils::clean(description42, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(url4, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 
+	wxString callsign4 = callsign;
 	if (!repeaterBand4.IsSameAs(wxT(" "))) {
-		wxString callsign4 = callsign;
 		if (!repeaterCall4.IsEmpty()) {
 			callsign4 = repeaterCall4;
 			callsign4.Append(wxT("        "));
@@ -755,6 +791,19 @@ void CIRCDDBGatewayApp::createThread()
 		wxLogInfo(wxT("Repeater 4 reflector: %s, at startup: %d, reconnect: %d"), reflector4.c_str(), atStartup4, reconnect4);
 		wxLogInfo(wxT("Repeater 4 latitude: %lf, longitude: %lf, range: %.0lf kms, height: %.0lf m, frequency: %.4lf MHz, offset: %.4lf MHz"), latitude4, longitude4, range4, agl4, frequency4, offset4);
 		wxLogInfo(wxT("Repeater 4 description: \"%s %s\", URL: \"%s\""), description41.c_str(), description42.c_str(), url4.c_str());
+
+		if (callsign1.IsSameAs(callsign4) && repeaterBand1.IsSameAs(repeaterBand4)) {
+			wxLogError(wxT("Repeater 4 has the same callsign and module as repeater 1, exiting"));
+			return;
+		}
+		if (callsign2.IsSameAs(callsign4) && repeaterBand2.IsSameAs(repeaterBand4)) {
+			wxLogError(wxT("Repeater 4 has the same callsign and module as repeater 2, exiting"));
+			return;
+		}
+		if (callsign3.IsSameAs(callsign4) && repeaterBand3.IsSameAs(repeaterBand4)) {
+			wxLogError(wxT("Repeater 4 has the same callsign and module as repeater 3, exiting"));
+			return;
+		}
 
 		if (repeaterType4 == HW_ICOM && !icomAddress.IsEmpty() && icomRepeaterHandler == NULL) {
 			icomRepeaterHandler = new CIcomRepeaterProtocolHandler(icomAddress, icomPort, repeaterAddress4, repeaterPort4);

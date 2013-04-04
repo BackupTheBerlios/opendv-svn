@@ -26,6 +26,7 @@
 #include "Defs.h"
 
 #include <wx/wx.h>
+#include <wx/snglinst.h>
 
 class CIRCDDBGatewayApp : public wxApp {
 
@@ -130,6 +131,7 @@ private:
 	CIRCDDBGatewayFrame*        m_frame;
 	CIRCDDBGatewayThreadHelper* m_thread;
 	CIRCDDBGatewayConfig*       m_config;
+	wxSingleInstanceChecker*    m_checker;
 	wxLogChain*                 m_logChain;
 
 	void createThread();

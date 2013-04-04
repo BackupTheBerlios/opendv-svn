@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 	wxString confDir;
 	found = parser.Found(CONFDIR_OPTION, &confDir);
 	if (!found)
-		confDir = wxFileName::GetHomeDir();
+		confDir = CONF_DIR;
 
 	wxString name;
 	if (parser.GetParamCount() > 0U)
@@ -168,14 +168,7 @@ void CTimerControlAppD::run()
 
 bool CTimerControlAppD::createThread()
 {
-	wxFileName fileName(m_confDir, CONFIG_FILE_NAME);
-	wxFileInputStream stream(fileName.GetFullPath());
-	if (!stream.IsOk()) {
-		wxLogError(wxT("Cannot open the config file - %s"), fileName.GetFullPath().c_str());
-		return false;
-	}
-
-	CTimerControlConfig config(new wxFileConfig(stream), m_name);
+	CTimerControlConfig config(m_confDir, m_name);
 
 	m_thread = new CTimerControlThread;
 

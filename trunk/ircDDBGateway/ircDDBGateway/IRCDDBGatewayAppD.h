@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/config.h>
+#include <wx/snglinst.h>
 
 class CIRCDDBGatewayAppD {
 
@@ -35,11 +36,12 @@ public:
 	void run();
 
 private:
-	wxString              m_name;
-	bool                  m_nolog;
-	wxString              m_logDir;
-	wxString              m_confDir;
-	CIRCDDBGatewayThread* m_thread;
+	wxString                 m_name;
+	bool                     m_nolog;
+	wxString                 m_logDir;
+	wxString                 m_confDir;
+	CIRCDDBGatewayThread*    m_thread;
+	wxSingleInstanceChecker* m_checker;
 
 	bool createThread();
 };

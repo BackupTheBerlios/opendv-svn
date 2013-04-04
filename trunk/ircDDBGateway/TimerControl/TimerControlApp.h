@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,13 +44,15 @@ public:
 #endif
 
 	virtual void getGateway(wxString& address, unsigned int& port, wxString& password) const;
-	virtual void setGateway(const wxString& address, unsigned int port, const wxString& password) const;
+	virtual void setGateway(const wxString& address, unsigned int port, const wxString& password);
 
 	virtual void getDelay(bool& enabled) const;
-	virtual void setDelay(bool enabled) const;
+	virtual void setDelay(bool enabled);
 
 	virtual void getPosition(int& x, int& y) const;
 	virtual void setPosition(int x, int y);
+
+	virtual void writeConfig();
 
 	virtual void writeItems();
 
@@ -59,6 +61,7 @@ private:
 	wxString                   m_fileName;
 	bool                       m_nolog;
 	wxString                   m_logDir;
+	wxString                   m_confDir;
 	CTimerControlFrame*        m_frame;
 	CTimerControlConfig*       m_config;
 	CTimerControlThreadHelper* m_thread;

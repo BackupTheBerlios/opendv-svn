@@ -25,7 +25,10 @@ const wxString APPLICATION_NAME = wxT("Timer Control");
 
 const wxString LOG_BASE_NAME    = wxT("TimerControl");
 
-const wxString CONFIG_FILE_NAME = wxT(".Timer Control");
+#if !defined(__WINDOWS__)
+const wxString CONFIG_FILE_NAME = wxT("timercontrol");
+const wxString CONF_DIR = wxT("/etc");
+#endif
 
 const wxString SCHEDULE_BASE_NAME = wxT("Schedule");
 
