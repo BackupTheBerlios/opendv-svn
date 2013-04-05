@@ -16,7 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "IRCDDBGatewayConfigPreferences.h"
 #include "IRCDDBGatewayConfigFrame.h"
 #include "IRCDDBGatewayConfigDefs.h"
 #include "Version.h"
@@ -25,6 +24,7 @@ const unsigned int BORDER_SIZE = 5U;
 
 #include <wx/gbsizer.h>
 #include <wx/aboutdlg.h>
+#include <wx/notebook.h>
 
 enum {
 	Menu_File_Save = 6000
