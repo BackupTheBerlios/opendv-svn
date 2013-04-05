@@ -47,7 +47,11 @@ bool CDStarModemConfigApp::OnInit()
 		return false;
 
 	wxString frameName = APPLICATION_NAME + wxT(" - ") + VERSION;
+#if defined(__WINDOWS__)
 	m_frame = new CDStarModemConfigFrame(frameName);
+#else
+	m_frame = new CDStarModemConfigFrame(frameName, m_confDir);
+#endif
 	m_frame->Show();
 
 	SetTopWindow(m_frame);

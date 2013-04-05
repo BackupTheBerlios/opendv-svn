@@ -47,8 +47,14 @@ const unsigned int CONTROL_WIDTH  = 300U;
 const unsigned int LABEL_WIDTH    = 70U;
 #endif
 
+#if defined(__WINDOWS__)
 CDStarModemConfigFrame::CDStarModemConfigFrame(const wxString& title) :
 wxFrame(NULL, -1, title),
+#else
+CDStarModemConfigFrame::CDStarModemConfigFrame(const wxString& title, const wxString& confDir) :
+wxFrame(NULL, -1, title),
+m_confDir(confDir),
+#endif
 m_name(NULL),
 m_type(NULL)
 {

@@ -25,7 +25,11 @@
 
 class CDStarModemConfigFrame : public wxFrame {
 public:
+#if defined(__WINDOWS__)
 	CDStarModemConfigFrame(const wxString& title);
+#else
+	CDStarModemConfigFrame(const wxString& title, const wxString& confDir);
+#endif
 	virtual ~CDStarModemConfigFrame();
 
 	virtual void onQuit(wxCommandEvent& event);
@@ -35,6 +39,9 @@ public:
 	virtual void onConfigure(wxCommandEvent& event);
 
 private:
+#if defined(__WINDOWS__)
+	wxString  m_confDir;
+#endif
 	wxChoice* m_name;
 	wxChoice* m_type;
 
