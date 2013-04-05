@@ -197,10 +197,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterConfigPreferences.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfigTimesSet.cpp"
 				>
 			</File>
@@ -232,10 +228,6 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterConfigModemSet.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterConfigPreferences.h"
 				>
 			</File>
 			<File

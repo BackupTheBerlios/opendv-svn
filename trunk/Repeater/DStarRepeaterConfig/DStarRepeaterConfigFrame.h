@@ -19,21 +19,47 @@
 #ifndef	DStarRepeaterConfigFrame_H
 #define	DStarRepeaterConfigFrame_H
 
+#include "DStarRepeaterConfigControllerSet.h"
+#include "DStarRepeaterConfigCallsignSet.h"
+#include "DStarRepeaterConfigModemSet.h"
+#include "DStarRepeaterConfigTimesSet.h"
 #include "DStarRepeaterConfigDefs.h"
+#include "DStarRepeaterConfig.h"
+#include "AnnouncementSet.h"
+#include "DStarDefines.h"
+#include "Control1Set.h"
+#include "Control2Set.h"
+#include "NetworkSet.h"
+#include "BeaconSet.h"
 
 #include <wx/wx.h>
 
 class CDStarRepeaterConfigFrame : public wxFrame {
 public:
-	CDStarRepeaterConfigFrame(const wxString& title);
+#if defined(__WINDOWS__)
+	CDStarRepeaterConfigFrame(const wxString& title, const wxString& name);
+#else
+	CDStarRepeaterConfigFrame(const wxString& title, const wxString& confDir, const wxString& name);
+#endif
 	virtual ~CDStarRepeaterConfigFrame();
 
 	virtual void onQuit(wxCommandEvent& event);
-	virtual void onPreferences(wxCommandEvent& event);
+	virtual void onSave(wxCommandEvent& event);
 	virtual void onAbout(wxCommandEvent& event);
 	virtual void onClose(wxCloseEvent& event);
 
 private:
+	CDStarRepeaterConfig*              m_config;
+	CDStarRepeaterConfigCallsignSet*   m_callsign;
+	CNetworkSet*                       m_network;
+	CDStarRepeaterConfigTimesSet*      m_times;
+	CBeaconSet*                        m_beacon;
+	CAnnouncementSet*                  m_announcement;
+	CDStarRepeaterConfigModemSet*      m_modem;
+	CControl1Set*                      m_control1;
+	CControl2Set*                      m_control2;
+	CDStarRepeaterConfigControllerSet* m_controller;
+
 	DECLARE_EVENT_TABLE()
 
 	wxMenuBar* createMenuBar();

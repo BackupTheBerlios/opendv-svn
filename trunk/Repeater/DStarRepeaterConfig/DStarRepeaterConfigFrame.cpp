@@ -16,22 +16,20 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterConfigPreferences.h"
 #include "DStarRepeaterConfigFrame.h"
-#include "DStarRepeaterConfigApp.h"
-#include "DStarDefines.h"
 #include "Version.h"
 
+#include <wx/notebook.h>
 #include <wx/aboutdlg.h>
 
 enum {
-	Menu_Edit_Preferences = 6000,
+	Menu_File_Save = 6000
 };
 
 BEGIN_EVENT_TABLE(CDStarRepeaterConfigFrame, wxFrame)
-	EVT_MENU(wxID_EXIT,             CDStarRepeaterConfigFrame::onQuit)
-	EVT_MENU(Menu_Edit_Preferences, CDStarRepeaterConfigFrame::onPreferences)
-	EVT_MENU(wxID_ABOUT,            CDStarRepeaterConfigFrame::onAbout)
+	EVT_MENU(wxID_EXIT,      CDStarRepeaterConfigFrame::onQuit)
+	EVT_MENU(Menu_File_Save, CDStarRepeaterConfigFrame::onSave)
+	EVT_MENU(wxID_ABOUT,     CDStarRepeaterConfigFrame::onAbout)
 
 	EVT_CLOSE(CDStarRepeaterConfigFrame::onClose)
 END_EVENT_TABLE()
@@ -46,39 +44,137 @@ const unsigned int CONTROL_WIDTH  = 150U;
 const unsigned int LABEL_WIDTH    = 70U;
 #endif
 
-CDStarRepeaterConfigFrame::CDStarRepeaterConfigFrame(const wxString& title) :
-wxFrame(NULL, -1, title)
+#if defined(__WINDOWS__)
+CDStarRepeaterConfigFrame::CDStarRepeaterConfigFrame(const wxString& title, const wxString& name) :
+#else
+CDStarRepeaterConfigFrame::CDStarRepeaterConfigFrame(const wxString& title, const wxString& confDir, const wxString& name) :
+#endif
+wxFrame(NULL, -1, title),
+m_config(NULL),
+m_callsign(NULL),
+m_network(NULL),
+m_times(NULL),
+m_beacon(NULL),
+m_announcement(NULL),
+m_modem(NULL),
+m_control1(NULL),
+m_control2(NULL),
+m_controller(NULL)
 {
 	SetMenuBar(createMenuBar());
 
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-	wxPanel* panel = new wxPanel(this, -1, wxDefaultPosition, wxSize(500, 300));
+	wxPanel* panel = new wxPanel(this, -1);
+
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxNotebook* noteBook = new wxNotebook(panel, -1);
+
+#if defined(__WINDOWS__)
+	m_config = new CDStarRepeaterConfig(new wxConfig(APPLICATION_NAME), name);
+#else
+	if (m_confDir.IsEmpty())
+		m_confDir = CONF_DIR;
+
+	m_config = new CDStarRepeaterConfig(confDir, CONFIG_FILE_NAME, name);
+#endif
+
+	wxString callsign, gateway;
+	DSTAR_MODE mode;
+	ACK_TYPE ack;
+	bool restriction, rpt1Validation, dtmfBlanking;
+	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+
+	m_callsign = new CDStarRepeaterConfigCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	noteBook->AddPage(m_callsign, _("Callsign"), true);
+
+	wxString gatewayAddress, localAddress;
+	unsigned int gatewayPort, localPort;
+	m_config->getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
+
+	m_network = new CNetworkSet(noteBook, -1, APPLICATION_NAME, gatewayAddress, gatewayPort, localAddress, localPort);
+	noteBook->AddPage(m_network, _("Network"), false);
+
+	unsigned int timeout, ackTime;
+	m_config->getTimes(timeout, ackTime);
+
+	m_times = new CDStarRepeaterConfigTimesSet(noteBook, -1, APPLICATION_NAME, timeout, ackTime);
+	noteBook->AddPage(m_times, _("Timers"), false);
+
+	bool announcementEnabled;
+	unsigned int announcementTime;
+	wxString announcementRecordRPT1, announcementRecordRPT2;
+	wxString announcementDeleteRPT1, announcementDeleteRPT2;
+	m_config->getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+
+	m_announcement = new CAnnouncementSet(noteBook, -1, APPLICATION_NAME, announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	noteBook->AddPage(m_announcement, _("Announcement"), false);
+
+	unsigned int beaconTime;
+	wxString beaconText;
+	bool beaconVoice;
+	TEXT_LANG language;
+	m_config->getBeacon(beaconTime, beaconText, beaconVoice, language);
+
+	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
+	noteBook->AddPage(m_beacon, _("Beacon"), false);
+
+	wxString modemName;
+	m_config->getModem(modemName);
+
+	m_modem = new CDStarRepeaterConfigModemSet(noteBook, -1, APPLICATION_NAME, modemName);
+	noteBook->AddPage(m_modem, _("Modem"), false);
+
+	bool enabled;
+	wxString rpt1Callsign, rpt2Callsign;
+	wxString shutdown, startup;
+	wxString status1, status2, status3, status4, status5;
+	wxString command1, command1Line, command2, command2Line;
+	wxString command3, command3Line, command4, command4Line;
+	wxString output1, output2, output3, output4;
+	m_config->getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
+
+	m_control1 = new CControl1Set(noteBook, -1, APPLICATION_NAME, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, output1, output2, output3, output4);
+	noteBook->AddPage(m_control1, _("Control 1"), false);
+
+	m_control2 = new CControl2Set(noteBook, -1, APPLICATION_NAME, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line);
+	noteBook->AddPage(m_control2, _("Control 2"), false);
+
+	wxString controllerType;
+	unsigned int activeHangTime;
+	m_config->getController(controllerType, activeHangTime);
+
+	m_controller = new CDStarRepeaterConfigControllerSet(noteBook, -1, APPLICATION_NAME, controllerType, activeHangTime);
+	noteBook->AddPage(m_controller, _("Controller"), false);
+
+	sizer->Add(noteBook, 1, wxALL | wxGROW, BORDER_SIZE);
+
+	panel->SetSizer(sizer);
 
 	mainSizer->Add(panel);
 
 	SetSizer(mainSizer);
+
 	mainSizer->SetSizeHints(this);
 }
 
 CDStarRepeaterConfigFrame::~CDStarRepeaterConfigFrame()
 {
+	delete m_config;
 }
 
 wxMenuBar* CDStarRepeaterConfigFrame::createMenuBar()
 {
 	wxMenu* fileMenu = new wxMenu();
-	fileMenu->Append(wxID_EXIT, _("Exit"));
-
-	wxMenu* editMenu = new wxMenu();
-	editMenu->Append(Menu_Edit_Preferences, _("Preferences..."));
+	fileMenu->Append(Menu_File_Save, _("Save"));
+	fileMenu->Append(wxID_EXIT,      _("Exit"));
 
 	wxMenu* helpMenu = new wxMenu();
 	helpMenu->Append(wxID_ABOUT, _("About D-Star Repeater Config"));
 
 	wxMenuBar* menuBar = new wxMenuBar();
 	menuBar->Append(fileMenu,     _("File"));
-	menuBar->Append(editMenu,     _("Edit"));
 	menuBar->Append(helpMenu,     _("Help"));
 
 	return menuBar;
@@ -106,124 +202,71 @@ void CDStarRepeaterConfigFrame::onAbout(wxCommandEvent& event)
 	::wxAboutBox(info);
 }
 
-void CDStarRepeaterConfigFrame::onPreferences(wxCommandEvent& event)
+void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
 {
-	wxString callsign, gateway;
-	DSTAR_MODE mode;
-	ACK_TYPE ack;
-	bool restriction, rpt1Validation, dtmfBlanking;
-	::wxGetApp().getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	wxString callsign   = m_callsign->getCallsign();
+	wxString gateway    = m_callsign->getGateway();
+	DSTAR_MODE mode     = m_callsign->getMode();
+	ACK_TYPE ack        = m_callsign->getAck();
+	bool restriction    = m_callsign->getRestriction();
+	bool rpt1Validation = m_callsign->getRPT1Validation();
+	bool dtmfBlanking   = m_callsign->getDTMFBlanking();
+	m_config->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
-	wxString gatewayAddress, localAddress;
-	unsigned int gatewayPort, localPort;
-	::wxGetApp().getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
+	wxString gatewayAddress  = m_network->getGatewayAddress();
+	unsigned int gatewayPort = m_network->getGatewayPort();
+	wxString localAddress    = m_network->getLocalAddress();
+	unsigned int localPort   = m_network->getLocalPort();
+	m_config->setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 
-	unsigned int timeout, ackTime;
-	::wxGetApp().getTimes(timeout, ackTime);
+	unsigned int timeout = m_times->getTimeout();
+	unsigned int ackTime = m_times->getAckTime();
+	m_config->setTimes(timeout, ackTime);
 
-	unsigned int beaconTime;
-	wxString beaconText;
-	bool beaconVoice;
-	TEXT_LANG language;
-	::wxGetApp().getBeacon(beaconTime, beaconText, beaconVoice, language);
+	unsigned int beaconTime = m_beacon->getTime();
+	wxString beaconText     = m_beacon->getText();
+	bool beaconVoice        = m_beacon->getVoice();
+	TEXT_LANG language      = m_beacon->getLanguage();
+	m_config->setBeacon(beaconTime, beaconText, beaconVoice, language);
 
-	bool announcementEnabled;
-	unsigned int announcementTime;
-	wxString announcementRecordRPT1, announcementRecordRPT2;
-	wxString announcementDeleteRPT1, announcementDeleteRPT2;
-	::wxGetApp().getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	bool announcementEnabled        = m_announcement->getEnabled();
+	unsigned int announcementTime   = m_announcement->getTime();
+	wxString announcementRecordRPT1 = m_announcement->getRecordRPT1();
+	wxString announcementRecordRPT2 = m_announcement->getRecordRPT2();
+	wxString announcementDeleteRPT1 = m_announcement->getDeleteRPT1();
+	wxString announcementDeleteRPT2 = m_announcement->getDeleteRPT2();
+	m_config->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 
-	wxString modemName;
-	::wxGetApp().getModem(modemName);
+	wxString modemName = m_modem->getName();
+	m_config->setModem(modemName);
 
-	bool enabled;
-	wxString rpt1Callsign, rpt2Callsign;
-	wxString shutdown, startup;
-	wxString status1, status2, status3, status4, status5;
-	wxString command1, command1Line, command2, command2Line;
-	wxString command3, command3Line, command4, command4Line;
-	wxString output1, output2, output3, output4;
-	::wxGetApp().getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
+	bool enabled          = m_control1->getEnabled();
+	wxString rpt1Callsign = m_control1->getRPT1Callsign();
+	wxString rpt2Callsign = m_control1->getRPT2Callsign();
+	wxString shutdown     = m_control1->getShutdown();
+	wxString startup      = m_control1->getStartup();
+	wxString status1      = m_control1->getStatus1();
+	wxString status2      = m_control1->getStatus2();
+	wxString status3      = m_control1->getStatus3();
+	wxString status4      = m_control1->getStatus4();
+	wxString status5      = m_control1->getStatus5();
+	wxString output1      = m_control1->getOutput1();
+	wxString output2      = m_control1->getOutput2();
+	wxString output3      = m_control1->getOutput3();
+	wxString output4      = m_control1->getOutput4();
+	wxString command1     = m_control2->getCommand1();
+	wxString command1Line = m_control2->getCommand1Line();
+	wxString command2     = m_control2->getCommand2();
+	wxString command2Line = m_control2->getCommand2Line();
+	wxString command3     = m_control2->getCommand3();
+	wxString command3Line = m_control2->getCommand3Line();
+	wxString command4     = m_control2->getCommand4();
+	wxString command4Line = m_control2->getCommand4Line();
+	m_config->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 
-	wxString controllerType;
-	unsigned int activeHangTime;
-	::wxGetApp().getController(controllerType, activeHangTime);
+	wxString controllerType     = m_controller->getType();
+	unsigned int activeHangTime = m_controller->getTime();
+	m_config->setController(controllerType, activeHangTime);
 
-	CDStarRepeaterConfigPreferences dialog1(this, -1, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking,
-		gatewayAddress, gatewayPort, localAddress, localPort, timeout, ackTime, beaconTime, beaconText, beaconVoice, language,
-		announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1,
-		announcementDeleteRPT2, modemName, enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3,
-		status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line,
-		output1, output2, output3, output4, controllerType, activeHangTime);
-	if (dialog1.ShowModal() != wxID_OK)
-		return;
-
-	callsign       = dialog1.getCallsign();
-	gateway        = dialog1.getGateway();
-	mode           = dialog1.getMode();
-	ack            = dialog1.getAck();
-	restriction    = dialog1.getRestriction();
-	rpt1Validation = dialog1.getRPT1Validation();
-	dtmfBlanking   = dialog1.getDTMFBlanking();
-	::wxGetApp().setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
-
-	gatewayAddress = dialog1.getGatewayAddress();
-	gatewayPort    = dialog1.getGatewayPort();
-	localAddress   = dialog1.getLocalAddress();
-	localPort      = dialog1.getLocalPort();
-	::wxGetApp().setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
-
-	timeout    = dialog1.getTimeout();
-	ackTime    = dialog1.getAckTime();
-	::wxGetApp().setTimes(timeout, ackTime);
-
-	beaconTime  = dialog1.getBeaconTime();
-	beaconText  = dialog1.getBeaconText();
-	beaconVoice = dialog1.getBeaconVoice();
-	language    = dialog1.getLanguage();
-	::wxGetApp().setBeacon(beaconTime, beaconText, beaconVoice, language);
-
-	announcementEnabled    = dialog1.getAnnouncementEnabled();
-	announcementTime       = dialog1.getAnnouncementTime();
-	announcementRecordRPT1 = dialog1.getAnnouncementRecordRPT1();
-	announcementRecordRPT2 = dialog1.getAnnouncementRecordRPT2();
-	announcementDeleteRPT1 = dialog1.getAnnouncementDeleteRPT1();
-	announcementDeleteRPT2 = dialog1.getAnnouncementDeleteRPT2();
-	::wxGetApp().setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
-
-	modemName    = dialog1.getModemName();
-	::wxGetApp().setModem(modemName);
-
-	enabled      = dialog1.getEnabled();
-	rpt1Callsign = dialog1.getRPT1Callsign();
-	rpt2Callsign = dialog1.getRPT2Callsign();
-	shutdown     = dialog1.getShutdown();
-	startup      = dialog1.getStartup();
-	status1      = dialog1.getStatus1();
-	status2      = dialog1.getStatus2();
-	status3      = dialog1.getStatus3();
-	status4      = dialog1.getStatus4();
-	status5      = dialog1.getStatus5();
-	output1      = dialog1.getOutput1();
-	output2      = dialog1.getOutput2();
-	output3      = dialog1.getOutput3();
-	output4      = dialog1.getOutput4();
-	command1     = dialog1.getCommand1();
-	command1Line = dialog1.getCommand1Line();
-	command2     = dialog1.getCommand2();
-	command2Line = dialog1.getCommand2Line();
-	command3     = dialog1.getCommand3();
-	command3Line = dialog1.getCommand3Line();
-	command4     = dialog1.getCommand4();
-	command4Line = dialog1.getCommand4Line();
-	::wxGetApp().setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
-
-	controllerType = dialog1.getControllerType();
-	activeHangTime = dialog1.getActiveHangTime();
-	::wxGetApp().setController(controllerType, activeHangTime);
-
-	::wxGetApp().writeConfig();
-
-	wxMessageDialog dialog2(this, _("The changes made will not take effect\nuntil the application is restarted"), _("D-Star Repeater Information"), wxICON_INFORMATION);
-	dialog2.ShowModal();
+	m_config->write();
 }

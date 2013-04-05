@@ -2,13 +2,15 @@ all:			dstarmodemconfig
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-dstarmodemconfig:	DStarModemConfigApp.o DStarModemConfigFrame.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarmodemconfig DStarModemConfigApp.o DStarModemConfigFrame.o ../Common/Common.a $(LIBS)
+dstarmodemconfig:	DStarModemConfigApp.o DStarModemConfigFrame.o DStarModemDVAPSet.o DStarModemDVRPTR1Set.o DStarModemDVRPTR2Set.o DStarModemGMSKSet.o \
+						../Common/Common.a
+				$(CC) $(LDFLAGS) -o dstarmodemconfig DStarModemConfigApp.o DStarModemConfigFrame.o DStarModemDVAPSet.o DStarModemDVRPTR1Set.o DStarModemDVRPTR2Set.o \
+						DStarModemGMSKSet.o ../Common/Common.a $(LIBS)
 
 DStarModemConfigApp.o:	DStarModemConfigApp.cpp DStarModemConfigApp.h DStarModemConfigFrame.h DStarModemConfigDefs.h ../Common/DStarDefines.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DStarModemConfigApp.cpp
 
-DStarModemConfigFrame.o:	DStarModemConfigFrame.cpp DStarModemConfigFrame.h DStarModemConfigDefs.h DStarModemDVAPSet.h DStarModemDVRPTR1.h DStarModemDVRPTR2Set.h \
+DStarModemConfigFrame.o:	DStarModemConfigFrame.cpp DStarModemConfigFrame.h DStarModemConfigDefs.h DStarModemDVAPSet.h DStarModemDVRPTR1Set.h DStarModemDVRPTR2Set.h \
 					DStarModemGMSKSet.h ../Common/DStarModemConfig.h ../Common/DStarDefines.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DStarModemConfigFrame.cpp
 
