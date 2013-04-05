@@ -184,6 +184,22 @@
 				RelativePath=".\DStarModemConfigFrame.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\DStarModemDVAPSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTR1Set.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTR2Set.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemGMSKSet.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -200,6 +216,22 @@
 			</File>
 			<File
 				RelativePath=".\DStarModemConfigFrame.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVAPSet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTR1Set.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTR2Set.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemGMSKSet.h"
 				>
 			</File>
 		</Filter>

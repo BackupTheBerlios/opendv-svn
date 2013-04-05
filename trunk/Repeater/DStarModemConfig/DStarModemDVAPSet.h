@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,33 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	DStarModemDVAPSet_H
+#define	DStarModemDVAPSet_H
+
+#include "DStarModemConfigDefs.h"
+#include "DStarDefines.h"
 
 #include <wx/wx.h>
+#include <wx/spinctrl.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDStarModemDVAPSet : public wxDialog {
+public:
+	CDStarModemDVAPSet(wxWindow* parent, int id, const wxString& port, unsigned int frequency, int power, int squelch);
+	virtual ~CDStarModemDVAPSet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
-#endif
+	virtual wxString     getPort() const;
+	virtual unsigned int getFrequency() const;
+	virtual int          getPower() const;
+	virtual int          getSquelch() const;
+
+private:
+	wxChoice*   m_port;
+	wxChoice*   m_band;
+	wxTextCtrl* m_frequency;
+	wxSpinCtrl* m_power;
+	wxSpinCtrl* m_squelch;
+};
 
 #endif

@@ -16,40 +16,35 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarModemConfigFrame_H
-#define	DStarModemConfigFrame_H
+#ifndef	DStarModemDVRPTR1Set_H
+#define	DStarModemDVRPTR1Set_H
 
 #include "DStarModemConfigDefs.h"
+#include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-class CDStarModemConfigFrame : public wxFrame {
+class CDStarModemDVRPTR1Set : public wxDialog {
 public:
-#if defined(__WINDOWS__)
-	CDStarModemConfigFrame(const wxString& title);
-#else
-	CDStarModemConfigFrame(const wxString& title, const wxString& confDir);
-#endif
-	virtual ~CDStarModemConfigFrame();
+	CDStarModemDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	virtual ~CDStarModemDVRPTR1Set();
 
-	virtual void onQuit(wxCommandEvent& event);
-	virtual void onAbout(wxCommandEvent& event);
-	virtual void onClose(wxCloseEvent& event);
+	virtual bool Validate();
 
-	virtual void onName(wxCommandEvent& event);
-
-	virtual void onConfigure(wxCommandEvent& event);
+	virtual wxString     getPort() const;
+	virtual bool         getRXInvert() const;
+	virtual bool         getTXInvert() const;
+	virtual bool         getChannel() const;
+	virtual unsigned int getModLevel() const;
+	virtual unsigned int getTXDelay() const;
 
 private:
-#if !defined(__WINDOWS__)
-	wxString  m_confDir;
-#endif
-	wxChoice* m_name;
-	wxChoice* m_type;
-
-	DECLARE_EVENT_TABLE()
-
-	wxMenuBar* createMenuBar();
+	wxChoice* m_port;
+	wxChoice* m_txInvert;
+	wxChoice* m_rxInvert;
+	wxChoice* m_channel;
+	wxSlider* m_modLevel;
+	wxSlider* m_txDelay;
 };
 
 #endif
