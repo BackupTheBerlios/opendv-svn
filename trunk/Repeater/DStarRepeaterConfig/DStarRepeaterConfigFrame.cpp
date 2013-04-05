@@ -74,10 +74,10 @@ m_controller(NULL)
 #if defined(__WINDOWS__)
 	m_config = new CDStarRepeaterConfig(new wxConfig(APPLICATION_NAME), name);
 #else
-	if (m_confDir.IsEmpty())
-		m_confDir = CONF_DIR;
-
-	m_config = new CDStarRepeaterConfig(confDir, CONFIG_FILE_NAME, name);
+	if (confDir.IsEmpty())
+		m_config = new CDStarRepeaterConfig(CONF_DIR, CONFIG_FILE_NAME, name);
+	else
+		m_config = new CDStarRepeaterConfig(confDir, CONFIG_FILE_NAME, name);
 #endif
 
 	wxString callsign, gateway;
@@ -204,6 +204,11 @@ void CDStarRepeaterConfigFrame::onAbout(wxCommandEvent& event)
 
 void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
 {
+	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() ||
+		!m_announcement->Validate() || !m_modem->Validate() || !m_control1->Validate() || !m_control2->Validate() ||
+		!m_controller->Validate())
+		return;
+
 	wxString callsign   = m_callsign->getCallsign();
 	wxString gateway    = m_callsign->getGateway();
 	DSTAR_MODE mode     = m_callsign->getMode();
