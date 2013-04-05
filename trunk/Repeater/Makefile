@@ -5,7 +5,7 @@
 
 include settings.mk
 
-all:	AnalogueRepeater/analoguerepeater DCSGateway/dcsgateway DExtraGateway/dextragateway DStarRepeater/dstarrepeater \
+all:	AnalogueRepeater/analoguerepeater DCSGateway/dcsgateway DExtraGateway/dextragateway DStarModemConfig/dstarmodemconfig DStarRepeater/dstarrepeater \
 			DStarRepeaterConfig/dstarrepeaterconfig DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater \
 			ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
 

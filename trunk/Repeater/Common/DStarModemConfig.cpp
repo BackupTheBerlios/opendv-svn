@@ -228,10 +228,10 @@ m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
 		wxString val = str.Mid(n + 1U);
 
 		if (key.IsSameAs(KEY_MODEM_NAME)) {
-			m_callsign = val;
+			m_modemName = val;
 		} else if (key.IsSameAs(KEY_MODEM_TYPE)) {
 			val.ToLong(&temp1);
-			m_modemType = DSTAR_MODEM_TYPE(temp1);
+			m_modemType = MODEM_TYPE(temp1);
 		} else if (key.IsSameAs(KEY_DVAP_PORT)) {
 			m_dvapPort = val;
 		} else if (key.IsSameAs(KEY_DVAP_FREQUENCY)) {

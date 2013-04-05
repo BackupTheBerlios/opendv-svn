@@ -40,12 +40,10 @@ END_EVENT_TABLE()
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH  = 100U;
 const unsigned int LABEL_WIDTH    = 70U;
-const unsigned int LOGTEXT_WIDTH  = 560U;
 #else
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH  = 150U;
 const unsigned int LABEL_WIDTH    = 70U;
-const unsigned int LOGTEXT_WIDTH  = 710U;
 #endif
 
 CDStarRepeaterConfigFrame::CDStarRepeaterConfigFrame(const wxString& title) :
@@ -103,7 +101,7 @@ void CDStarRepeaterConfigFrame::onAbout(wxCommandEvent& event)
 	info.SetCopyright(wxT("(C) 2013 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
-	info.SetDescription(_("This program configures the D-Star repeater."));
+	info.SetDescription(_("This program configures the D-Star Repeater."));
 
 	::wxAboutBox(info);
 }

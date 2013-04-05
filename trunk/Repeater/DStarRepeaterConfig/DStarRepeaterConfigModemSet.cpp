@@ -33,10 +33,10 @@ m_name(NULL)
 	sizer->Add(versionLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	m_name = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	m_name->Append(_("GMSK 1"));
-	m_name->Append(_("GMSK 2"));
-	m_name->Append(_("GMSK 3"));
-	m_name->Append(_("GMSK 4"));
+	m_name->Append(wxT("GMSK 1"));
+	m_name->Append(wxT("GMSK 2"));
+	m_name->Append(wxT("GMSK 3"));
+	m_name->Append(wxT("GMSK 4"));
 	sizer->Add(m_name, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	if (name.IsEmpty()) {
