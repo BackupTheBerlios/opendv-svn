@@ -48,6 +48,12 @@ const wxChar*   CONFDIR_OPTION = wxT("confdir");
 const wxChar*  AUDIODIR_OPTION = wxT("audiodir");
 const wxChar*    DAEMON_SWITCH = wxT("daemon");
 
+static CDStarRepeaterD* m_repeater = NULL;
+
+static void handler(int signum)
+{
+	m_repeater->kill();
+}
 
 int main(int argc, char** argv)
 {
@@ -114,16 +120,41 @@ int main(int argc, char** argv)
 		::umask(0);
 	}
 
-	CDStarRepeaterD repeater(nolog, logDir, confDir, audioDir, name);
+	wxString pidFileName;
+	if (!name.IsEmpty())
+		pidFileName.Printf(wxT("/var/run/dstarrepeater_%s.pid"), name.c_str());
+	else
+		pidFileName = wxT("/var/run/dstarrepeater.pid");
+	pidFileName.Replace(wxT(" "), wxT("_"));
 
-	if (!repeater.init()) {
+	char fileName[128U];
+	::memset(fileName, 0x00U, 128U);
+	for (unsigned int i = 0U; i < pidFileName.Len(); i++)
+		fileName[i] = pidFileName.GetChar(i);
+
+	FILE* fp = ::fopen(fileName, "wt");
+	if (fp != NULL) {
+		::fprintf(fp, "%u\n", ::getpid());
+		::fclose(fp);
+	}
+
+	::signal(SIGUSR1, handler);
+
+	m_repeater = new CDStarRepeaterD(nolog, logDir, confDir, audioDir, name);
+
+	if (!m_repeater->init()) {
 		::wxUninitialize();
 		return 1;
 	}
 
-	repeater.run();
+	m_repeater->run();
+
+	delete m_repeater;
+
+	::unlink(fileName);
 
 	::wxUninitialize();
+
 	return 0;
 }
 
@@ -133,7 +164,8 @@ m_nolog(nolog),
 m_logDir(logDir),
 m_confDir(confDir),
 m_audioDir(audioDir),
-m_thread(NULL)
+m_thread(NULL),
+m_checker(NULL)
 {
 }
 
@@ -159,6 +191,20 @@ bool CDStarRepeaterD::init()
 		new wxLogNull;
 	}
 
+	wxString appName;
+	if (!m_name.IsEmpty())
+		appName = APPLICATION_NAME + wxT(" ") + m_name;
+	else
+		appName = APPLICATION_NAME;
+	appName.Replace(wxT(" "), wxT("_"));
+
+	m_checker = new wxSingleInstanceChecker(appName, wxT("/tmp"));
+	bool ret = m_checker->IsAnotherRunning();
+	if (ret) {
+		wxLogError(wxT("Another copy of the D-Star Repeater is running, exiting"));
+		return false;
+	}
+
 	wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" - ") + VERSION);
 
 	// Log the SVN revsion and the version of wxWidgets and the Operating System
@@ -171,6 +217,8 @@ bool CDStarRepeaterD::init()
 void CDStarRepeaterD::run()
 {
 	m_thread->run();
+
+	delete m_checker;
 
 	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
 }

@@ -242,6 +242,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarModemConfig.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterConfig.cpp"
 				>
 			</File>
@@ -585,6 +589,10 @@
 			</File>
 			<File
 				RelativePath=".\DStarInterleaver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemConfig.h"
 				>
 			</File>
 			<File

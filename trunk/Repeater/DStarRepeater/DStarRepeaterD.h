@@ -23,6 +23,7 @@
 #include "DStarRepeaterDefs.h"
 
 #include <wx/wx.h>
+#include <wx/snglinst.h>
 
 class CDStarRepeaterD {
 
@@ -34,13 +35,16 @@ public:
 
 	void run();
 
+	void kill();
+
 private:
-	wxString              m_name;
-	bool                  m_nolog;
-	wxString              m_logDir;
-	wxString              m_confDir;
-	wxString              m_audioDir;
-	IDStarRepeaterThread* m_thread;
+	wxString                 m_name;
+	bool                     m_nolog;
+	wxString                 m_logDir;
+	wxString                 m_confDir;
+	wxString                 m_audioDir;
+	IDStarRepeaterThread*    m_thread;
+	wxSingleInstanceChecker* m_checker;
 
 	bool createThread();
 };

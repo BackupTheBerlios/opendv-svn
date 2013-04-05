@@ -1288,3 +1288,4 @@ Check that all repeater modules have seperate callsigns and modules.
 --------
 
 Added CCS011 and CCS017.
+Tweaked GPS-A handling a little with extra debugging.

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "Utils.h"
 
 const unsigned int APRS_CSUM_LENGTH = 4U;
-const unsigned int APRS_DATA_LENGTH = 100U;
+const unsigned int APRS_DATA_LENGTH = 300U;
 const unsigned int SLOW_DATA_BLOCK_LENGTH = 6U;
 
 CAPRSCollector::CAPRSCollector() :
@@ -224,11 +224,12 @@ bool CAPRSCollector::addCRCData(const unsigned char* data)
 	for (unsigned int i = 0U; i < 5U; i++) {
 		unsigned char c = data[i];
 
-		m_crcData[m_crcLength] = c & 0x7FU;
+		// m_crcData[m_crcLength] = c & 0x7FU;		// XXX
+		m_crcData[m_crcLength] = c;
 		m_crcLength++;
 
 		if (m_crcLength >= APRS_DATA_LENGTH) {
-			// CUtils::dump(wxT("Missed end of $$CRC data"), m_crcData, m_crcLength);
+			CUtils::dump(wxT("Missed end of $$CRC data"), m_crcData, m_crcLength);
 			m_state     = AS_NONE;
 			m_crcLength = 0U;
 			m_crcValid  = false;
@@ -243,7 +244,7 @@ bool CAPRSCollector::addCRCData(const unsigned char* data)
 				m_crcValid = true;
 				return true;
 			} else {
-				// CUtils::dump(wxT("$$CRC Bad checksum"), m_crcData, m_crcLength);
+				CUtils::dump(wxT("$$CRC Bad checksum"), m_crcData, m_crcLength);
 				m_state     = AS_NONE;
 				m_crcLength = 0U;
 				m_crcValid  = false;

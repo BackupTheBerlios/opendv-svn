@@ -26,6 +26,7 @@
 #include "DStarRepeaterDefs.h"
 
 #include <wx/wx.h>
+#include <wx/snglinst.h>
 
 class CDStarRepeaterApp : public wxApp {
 
@@ -100,6 +101,7 @@ private:
 	CDStarRepeaterFrame*        m_frame;
 	CDStarRepeaterThreadHelper* m_thread;
 	CDStarRepeaterConfig*       m_config;
+	wxSingleInstanceChecker*    m_checker;
 	wxLogChain*                 m_logChain;
 
 	void createThread();

@@ -141,6 +141,8 @@ int main(int argc, char** argv)
 
 	delete m_gateway;
 
+	::unlink(fileName);
+
 	::wxUninitialize();
 
 	return 0;

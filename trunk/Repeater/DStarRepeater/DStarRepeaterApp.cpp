@@ -56,6 +56,7 @@ m_audioDir(),
 m_frame(NULL),
 m_thread(NULL),
 m_config(NULL),
+m_checker(NULL),
 m_logChain(NULL)
 {
 }
@@ -93,6 +94,25 @@ bool CDStarRepeaterApp::OnInit()
 	}
 
 	m_logChain = new wxLogChain(new CDStarRepeaterLogger);
+
+	wxString appName;
+	if (!m_name.IsEmpty())
+		appName = APPLICATION_NAME + wxT(" ") + m_name;
+	else
+		appName = APPLICATION_NAME;
+
+#if !defined(__WINDOWS__)
+	appName.Replace(wxT(" "), wxT("_"));
+	m_checker = new wxSingleInstanceChecker(appName, wxT("/tmp"));
+#else
+	m_checker = new wxSingleInstanceChecker(appName);
+#endif
+
+	bool ret = m_checker->IsAnotherRunning();
+	if (ret) {
+		wxLogError(wxT("Another copy of the D-Star Repeater is running, exiting"));
+		return false;
+	}
 
 #if defined(__WINDOWS__)
 	m_config = new CDStarRepeaterConfig(new wxConfig(APPLICATION_NAME), m_name);
