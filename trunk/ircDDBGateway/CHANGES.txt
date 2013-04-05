@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130404
+ircDDB Gateway - 20130405
 =========================
 
 20101010
@@ -1284,8 +1284,9 @@ The config directory and file name for the Timer Control are now correct in daem
 The -confdir option now works for the Linux GUI version of the Timer Control.
 Check that all repeater modules have seperate callsigns and modules.
 
-201304xx
+20130405
 --------
 
 Added CCS011 and CCS017.
 Tweaked GPS-A handling a little with extra debugging.
+Makefiles fixed :-)

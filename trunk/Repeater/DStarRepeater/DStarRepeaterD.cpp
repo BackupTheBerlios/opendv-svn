@@ -396,3 +396,10 @@ bool CDStarRepeaterD::createThread()
 
 	return true;
 }
+
+void CDStarRepeaterD::kill()
+{
+	wxASSERT(m_thread != NULL);
+
+	m_thread->kill();
+}

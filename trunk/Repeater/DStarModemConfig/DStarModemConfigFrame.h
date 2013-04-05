@@ -39,7 +39,7 @@ public:
 	virtual void onConfigure(wxCommandEvent& event);
 
 private:
-#if defined(__WINDOWS__)
+#if !defined(__WINDOWS__)
 	wxString  m_confDir;
 #endif
 	wxChoice* m_name;
