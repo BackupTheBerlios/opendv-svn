@@ -114,7 +114,11 @@ int CUNIXSocketServer::read(unsigned char* buffer, unsigned int length)
 	wxASSERT(m_client != NULL);
 	wxASSERT(buffer != NULL);
 
-	return m_client->read(buffer, length);
+	int ret = m_client->read(buffer, length);
+	if (ret == -2)
+		close();
+
+	return ret;
 }
 
 void CUNIXSocketServer::close()

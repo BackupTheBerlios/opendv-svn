@@ -168,6 +168,7 @@ wxMenuBar* CDStarRepeaterConfigFrame::createMenuBar()
 {
 	wxMenu* fileMenu = new wxMenu();
 	fileMenu->Append(Menu_File_Save, _("Save"));
+	fileMenu->AppendSeparator();
 	fileMenu->Append(wxID_EXIT,      _("Exit"));
 
 	wxMenu* helpMenu = new wxMenu();
@@ -274,4 +275,7 @@ void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
 	m_config->setController(controllerType, activeHangTime);
 
 	m_config->write();
+
+	wxMessageDialog dialog(this, _("The changes made will not take effect\nuntil the D-Star Repeater is (re)started"), _("Information"), wxICON_INFORMATION);
+	dialog.ShowModal();
 }

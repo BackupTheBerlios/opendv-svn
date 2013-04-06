@@ -68,7 +68,17 @@ bool CUNIXSocketClient::write(const unsigned char* buffer, unsigned int length)
 	wxASSERT(m_sock != -1);
 	wxASSERT(buffer != NULL);
 
-	int ret = ::write(m_sock, buffer, length);
+	if (length > 255U)
+		length = 255U;
+
+	unsigned char c = length;
+	int ret = ::write(m_sock, &c, 1);
+	if (ret < 0) {
+		wxLogError(wxT("Error from write to the UNIX socket, err=%d"), errno);
+		return false;
+	}
+
+	ret = ::write(m_sock, buffer, length);
 	if (ret < 0) {
 		wxLogError(wxT("Error from write to the UNIX socket, err=%d"), errno);
 		return false;
@@ -99,7 +109,8 @@ int CUNIXSocketClient::read(unsigned char* buffer, unsigned int length)
 	if (n == 0)
 		return 0;
 
-	n = ::read(m_sock, buffer, length);
+	unsigned char c;
+	n = ::read(m_sock, &c , 1);
 	if (n == 0)
 		return -2;
 	if (n < 0) {
@@ -107,7 +118,41 @@ int CUNIXSocketClient::read(unsigned char* buffer, unsigned int length)
 		return -1;
 	}
 
-	return int(n);
+	if (c > length) {
+		wxLogError(wxT("Data length exceeds buffer length, %u > %u"), c, length);
+
+		// Drain the data
+		unsigned int offset = 0U;
+		while (offset < c) {
+			unsigned char b;
+			n = ::read(m_sock, &b, 1);
+			if (n == 0)
+				return -2;
+			if (n < 0) {
+				wxLogError(wxT("Error from read on the UNIX socket, err=%d"), errno);
+				return -1;
+			}
+
+			offset += 1U;
+		}
+
+		return 0;
+	}
+
+	unsigned char offset = 0U;
+	while (offset < c) {
+		n = ::read(m_sock, buffer + offset, c - offset);
+		if (n == 0)
+			return -2;
+		if (n < 0) {
+			wxLogError(wxT("Error from read on the UNIX socket, err=%d"), errno);
+			return -1;
+		}
+
+		offset += n;
+	}
+
+	return int(c);
 }
 
 void CUNIXSocketClient::close()

@@ -318,6 +318,7 @@ wxMenuBar* CIRCDDBGatewayConfigFrame::createMenuBar()
 {
 	wxMenu* fileMenu = new wxMenu();
 	fileMenu->Append(Menu_File_Save, _("Save"));
+	fileMenu->AppendSeparator();
 	fileMenu->Append(wxID_EXIT,      _("Exit"));
 
 	wxMenu* helpMenu = new wxMenu();
@@ -565,6 +566,9 @@ void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent& event)
 	m_config->setMiscellaneous(language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
 
 	m_config->write();
+
+	wxMessageDialog dialog(this, _("The changes made will not take effect\nuntil the ircDDB Gateway is (re)started"), _("Information"), wxICON_INFORMATION);
+	dialog.ShowModal();
 }
 
 void CIRCDDBGatewayConfigFrame::onAbout(wxCommandEvent& event)

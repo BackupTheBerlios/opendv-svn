@@ -36,11 +36,15 @@ public:
 	void stop();
 
 private:
-	wxString   m_name;
-	HANDLE     m_handle;
-	OVERLAPPED m_overlappedRead;
-	OVERLAPPED m_overlappedWrite;
-	OVERLAPPED m_overlappedConnect;
+	wxString       m_name;
+	HANDLE         m_handle;
+	bool           m_waitConnect;
+	bool           m_connected;
+	bool           m_readPending;
+	unsigned char* m_readBuffer;
+	OVERLAPPED     m_overlappedRead;
+	OVERLAPPED     m_overlappedWrite;
+	OVERLAPPED     m_overlappedConnect;
 };
 
 #endif

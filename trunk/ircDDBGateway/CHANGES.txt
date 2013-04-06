@@ -1290,3 +1290,8 @@ Check that all repeater modules have seperate callsigns and modules.
 Added CCS011 and CCS017.
 Tweaked GPS-A handling a little with extra debugging.
 Makefiles fixed :-)
+
+201304xx
+--------
+
+Cleaned up the ircDDB Gateway Config program.
