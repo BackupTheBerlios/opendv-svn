@@ -473,6 +473,14 @@
 				RelativePath=".\WAVFileWriter.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\WinServiceApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\WinServiceEvent.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -873,6 +881,18 @@
 			</File>
 			<File
 				RelativePath=".\WAVFileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WinServiceApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WinServiceDef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WinServiceEvent.h"
 				>
 			</File>
 		</Filter>
