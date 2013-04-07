@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-#
 # Configure script for G4KLX ircDDBGateway and G4KLX Repeater
 #
 # Copyright (C) 2012, 2013   Hans-J. Barthen, DL5DI (dl5di@gmx.de)
@@ -38,17 +37,18 @@
 # 2013-01-29 dl5di    bugfix
 # 2013-02-09 dl5di    fix permissions on exit for those who started the software accidently from root
 # 2013-02-21 dl5di    CCS enable/disable
-# 2013-02-22 dl5di	  CCS Host
+# 2013-02-22 dl5di    CCS Host
 # 2013-02-24 dl5di    bugfix CCS_Hosts.txt and language files
 # 2013-03-03 dl5di    fix upgrade
 # 2013-03-12 dl5di    bugfix in request_selection calls
 # 2013-03-15 dl5di    allow new OZ callsign format
+# 2013-04-07 dl5di    removing repeater modules added
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="Debian-20130315"
+rev="Debian-20130407"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -300,7 +300,7 @@ function request_callsign(){
     else
 		pattern=$(echo "$INPUT" | cut -c -7 | tr -d [[:space:]] | tr "[[:alpha:]]" "A" | tr "[[:digit:]]" "N")
 		case $pattern in
-				"ANA")
+			"ANA")
 				RETVAL=1
 				;;
 			"ANAA")
@@ -604,33 +604,45 @@ function valid_offset()
     return $stat
 }
 
-
 function valid_band()
 #
-# 2 parameter: param band 
+# 2 parameter: mod idx
 # return: 0=OK, 1=error, 2=already in use
 #
 {
-    local  band=$2
-    local  stat=1
+    local stat=1
 
     echo " - valid_band: $1 $2" >> $LOG
     echo ""
-    echo ""
-    if [[ $band =~ ^[A-E]{1}$ ]] || [[ $band =~ ^[A-E]D$ ]]; then
-		echo " - valid_band: $band" >> $LOG
-		cat $IRCDDBGWCONFIG | grep -v "$1" | grep "repeaterBand.=$2$" || stat=0
-		if [ $stat = 1 ]; then
-			print_text "band_in_use"
-			stat=2
-		fi
+    if [[ $1 =~ ^[A-E]{1}$ ]] || [[ $1 =~ ^[A-E]D$ ]]; then
+        echo " - valid_band: $1 is valid" >> $LOG
+        stat=0
+        read_value ${IRCDDBGWCONFIG} "repeaterCall$2"
+        local owncall=$VALUE
+        for (( i=1; i<5; i++ ))
+        do
+            $i -eq $2 ] && (( i++ ))
+            read_value ${IRCDDBGWCONFIG} "repeaterCall$i"
+            local chkcall=$VALUE
+            read_value ${IRCDDBGWCONFIG} "repeaterBand$i"
+            local chkmod=$VALUE
+
+            if [ "$chkmod" == "$1" ] && [ "$chkcall" == "$owncall" ]; then
+                print_text "band_in_use"
+                stat=2
+                i=5
+            elif [ "$chkmod" == "$1" ] && [ "$chkcall" == "" ] && [ "$owncall" == "" ]; then
+                print_text "band_in_use"
+                stat=2
+                i=5
+            fi
+        done
     else
-		print_text "invalid_band"
+        print_text "invalid_band"
     fi
     echo " - valid_band: stat $stat" >> $LOG
     return $stat
 }
-
 
 function reset_value(){
 #
@@ -638,7 +650,7 @@ function reset_value(){
 # 1 parameter: parametername
 #
   RETVAL=0
-    
+
   if [ $# != 1 ]; then
     return $RETVAL
   fi
@@ -744,22 +756,87 @@ function set_language(){
     write_value $IRCDDBGWCONFIG $var "$VALUE"
     HELPFILE="$DATAPATH/ircddbgw_conf.$VALUE.hlp"
     if [ ! -f "$HELPFILE" ]; then
-		HELPFILE="$DATAPATH/ircddbgw_conf.0.hlp"
+        HELPFILE="$DATAPATH/ircddbgw_conf.0.hlp"
     fi
 
     MENUFILE="$DATAPATH/ircddbgw_conf.$VALUE.menu"
     if [ ! -f "$MENUFILE" ]; then
-		MENUFILE="$DATAPATH/ircddbgw_conf.0.menu"
+        MENUFILE="$DATAPATH/ircddbgw_conf.0.menu"
     fi
 
 }
-										
+
+function remove_module(){
+#
+# remove all paarameters of a given repeater module and move
+# settings of following modules one down
+#
+# 1 parameter: index of module to remove
+# return: 0=OK, 1=error
+#
+    RETVAL=1
+
+    if [ $# != 1 ]; then
+        return $RETVAL
+    fi
+    declare -i remmod=$1
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: remove_module: ${remmod}" >> $LOG
+
+    cp ${IRCDDBGWCONFIG} ${IRCDDBGWCONFIG}.${Dat}
+
+    sed -i "/repeaterCall${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/repeaterBand${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/repeaterType${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/repeaterAddress${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/repeaterPort${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/reflector${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/atStartup${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/reconnect${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/frequency${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/offset${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/rangeKms${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/latitude${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/longitude${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/agl${remmod}=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/band${remmod}_1=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/band${remmod}_2=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/band${remmod}_3=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/description${remmod}_1=/d" ${IRCDDBGWCONFIG} 
+    sed -i "/description${remmod}_2=/d" ${IRCDDBGWCONFIG} 
+
+    for (( i=${remmod}; i<5; i++ ))
+    do
+        if [ $i -lt 4 ]; then
+            declare -i j=${i}+1
+            sed -i -e "s/repeaterCall${j}=/repeaterCall${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/repeaterBand${j}=/repeaterBand${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/repeaterType${j}=/repeaterType${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/repeaterAddress${j}=/repeaterAddress${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/repeaterPort${j}=/repeaterPort${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/reflector${j}=/reflector${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/atStartup${j}=/atStartup${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/reconnect${j}=/reconnect${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/frequency${j}=/frequency${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/offset${j}=/offset${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/rangeKms${j}=/rangeKms${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/latitude${j}=/latitude${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/longitude${j}=/longitude${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/agl${j}=/agl${i}=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/band${j}_1=/band${i}_1=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/band${j}_2=/band${i}_2=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/band${j}_3=/band${i}_3=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/description${j}_1=/description${i}_1=/g" ${IRCDDBGWCONFIG} 
+            sed -i -e "s/description${j}_2=/description${i}_2=/g" ${IRCDDBGWCONFIG} 
+        fi
+    done
+}
+
 ##################### basic setup  ####################
 
 function basic_setup(){
     print_text basic_setup 
-    
-# 				
+#
 # first choice for default values is always an exiting own configfile
 # 2nd and 3rd choice - if no better available:
 #
@@ -771,7 +848,7 @@ function basic_setup(){
     echo "$Dat: $var" >> $LOG
     read_value $IRCDDBGWCONFIG $var
     if [ "$?" = 0 ]; then
-		DEFAULT=$VALUE
+        DEFAULT=$VALUE
     fi
     if [ "$FOUND" = 0 ]; then
 		$VALUE=$DEFAULT
@@ -1201,7 +1278,31 @@ function repeater_setup(){
 # returns 0=error 1=OK
 #
     rptr=$1
-    
+#
+# repeaterCall=DB0LJ
+# ONLY IF DIFFERENT FROM GATEWAY BASE CALLSIGN
+#
+    var="repeaterCall$rptr"
+    Dat=`date +%Y%m%d%H%M`
+    echo "$Dat: $var" >> $LOG
+    read_value ${IRCDDBGWCONFIG} "gatewayCallsign"
+    GWCALL=$VALUE
+    read_default $var
+    print_text "repeaterCall"
+    read_value ${IRCDDBGWCONFIG} $var
+    if [ "$?" = 0 ]; then
+        VALUE=$DEFAULT
+    fi
+    request_callsign $var 0 0 "$VALUE"
+    if [ "$?" = 1 ]; then
+        INPUT=$(echo $INPUT | awk '{print toupper($0)}')
+#'
+        if [ $INPUT == $GWCALL ]; then
+            reset_value $var
+        else
+            write_value ${IRCDDBGWCONFIG} $var "$INPUT"
+        fi
+    fi
 #
 # repeaterBand#=A
 # (A, B, C, D, E, AD, BD, CD, DD, ED)
@@ -1210,56 +1311,37 @@ function repeater_setup(){
     Dat=`date +%Y%m%d%H%M`
     echo "$Dat: $var" >> $LOG
     read_default $var
-    read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ]; then
-	VALUE=$DEFAULT
-    fi
     VALID=1
     while [ "$VALID" != 0 ]; do
-	print_text "repeaterBand" 
-	request_input $var 1 2 1 "$VALUE"
-	if [ "$?" = 3 ]; then
-	    echo "(Repeater Modul $rptr) "
-	    print_text "repeaterReset"
-	    request_selection "Delete Repeater Modul $rptr?" 0 0
-	    INPUT=$?
-	    case $INPUT in
-		0)
-    		return 0
-		    ;;
-		1)
-		    reset_value "repeaterBand$rptr"
-		    reset_value "repeaterType$rptr"
-		    reset_value "repeaterAddress$rptr"
-		    reset_value "repeaterPort$rptr"
-		    reset_value "repeaterCall$rptr"
-		    reset_value "description1_$rptr"
-		    reset_value "description2_$rptr"
-		    reset_value "url$rptr"
-		    reset_value "frequency$rptr"
-		    reset_value "offset$rptr"
-		    reset_value "rangeKms$rptr"
-		    reset_value "latitude$rptr"
-		    reset_value "longitude$rptr"
-		    reset_value "agl$rptr"
-		    reset_value "reflector$rptr"
-		    reset_value "atStartup$rptr"
-		    reset_value "reconnect$rptr"
-    		return 1
-		    ;;
-		*)
-
-		    ;;
-	    esac
-    	    return 0
-	else
-	    INPUT=$(echo $INPUT | tr "[[:lower:]]" "[[:upper:]]")    
-	    valid_band $var $INPUT
-	    VALID=$?
-	fi
+        read_value ${IRCDDBGWCONFIG} $var
+        if [ "$?" = 0 ]; then
+            VALUE=$DEFAULT
+        fi
+        print_text "repeaterBand"
+        request_input $var 1 2 2 "$VALUE"
+        if [ "$?" = 3 ]; then
+            print_text "repeaterReset"
+            request_selection "DEL Repeater $rptr: 0/1" 0 0
+            INPUT=$?
+            case $INPUT in
+                0)
+                    return 0
+                    ;;
+                1)
+                    remove_module $rptr
+                    return 1
+                    ;;
+                *)
+                    ;;
+            esac
+                return 0
+            else
+                INPUT=$(echo $INPUT | tr "[[:lower:]]" "[[:upper:]]")
+                valid_band "$INPUT" "$rptr"
+                VALID=$?
+        fi
     done
-    write_value $IRCDDBGWCONFIG $var "$INPUT"
-
+    write_value ${IRCDDBGWCONFIG} $var "$INPUT"
 #
 # repeaterType#=0
 #
@@ -1347,11 +1429,14 @@ function repeater_setup(){
 	read_default $var
 	read_value $IRCDDBGWCONFIG $var
 	if [ "$?" = 0 ]; then
-    	  VALUE=$DEFAULT
+    	VALUE=$DEFAULT
+		grep "repeaterPort" ${IRCDDBGWCONFIG} | grep -v "repeaterPort$rptr" | grep -q "$VALUE" && VALUE=""
 	fi
 	VALID=1
 	while [ "$VALID" != 0 ]; do
 	    print_text "repeaterPort" 
+		grep "repeaterPort" ${IRCDDBGWCONFIG}
+		echo""
 	    request_input $var 3 5 2 "$VALUE"
 	    if [ "$?" = 3 ]; then
 			VALID=0
@@ -1492,7 +1577,6 @@ function repeater_setup(){
     request_selection "ExtraOptions" 0 0
     EXTRAS=$?
     if [ $EXTRAS = 0 ]; then
-		reset_value "repeaterCall$rptr"
 		reset_value "description1_$rptr"
 		reset_value "description2_$rptr"
 		reset_value "url$rptr"
@@ -1501,25 +1585,6 @@ function repeater_setup(){
 		return 1
     fi
 
-#
-# repeaterCall=DB0LJ
-# ONLY IF DIFFERENT FROM BASIC CALLSIGN
-#
-    var="repeaterCall$rptr"
-    Dat=`date +%Y%m%d%H%M`
-    read_default $var
-    echo "$Dat: $var" >> $LOG
-    print_text "repeaterCall"
-    read_value $IRCDDBGWCONFIG $var
-    if [ "$?" = 0 ]; then
-    	VALUE=$DEFAULT
-    fi
-    request_callsign $var 0 0 "$VALUE"
-    if [ "$?" = 1 ]; then
-		INPUT=$(echo $INPUT | awk '{print toupper($0)}') 
-#'
-		write_value $IRCDDBGWCONFIG $var "$INPUT"
-    fi
 #
 # description1_1=Kruft
 # ONLY IF DIFFERENT FROM GATEWAY

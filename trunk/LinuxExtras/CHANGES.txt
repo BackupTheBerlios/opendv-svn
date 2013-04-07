@@ -2,6 +2,16 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Option to remove repeater modules
+FOUND: 2013-03-10
+REPORTED: DL5DI
+SOLVED: 2013-04-07
+COMMIT: 2013-04-07
+
+ircddbgw_conf / repeater_conf:
+- add option to remove repeater modules
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: CCS and ircDDB status in dashboard
 FOUND: 2013-03-12
 REPORTED: DL5DI

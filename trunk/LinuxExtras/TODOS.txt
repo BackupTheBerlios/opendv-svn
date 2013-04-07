@@ -26,7 +26,6 @@ Update of documentation required:
 
 2013-03-10
 ircddbgw_conf / repeater_conf:
-- add option to remove repeater modules 
 - add option to configure remote repeater modules
 - add option to configure non-daemon repeater modules (dummyrepeater) 
  

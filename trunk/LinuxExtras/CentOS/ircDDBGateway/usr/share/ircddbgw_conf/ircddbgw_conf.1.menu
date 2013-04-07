@@ -60,7 +60,7 @@ reset_value:
 
 band_in_use:FEHLER !  Diese Band-Kennung wird bereits verwendet !
 
-invalid_band:FEHLER !  Unueltige Band-Kennung !
+invalid_band:FEHLER !  Ungueltige Band-Kennung !
 
 
 basic_setup: 
@@ -423,9 +423,12 @@ repeaterBand:
 repeaterBand:'-' wird das Modul loeschen, alle Einstellungen zuruecksetzen.
 repeaterBand: 
 
-repeaterReset: 
-repeaterReset:Willst Du dieses Repeater-Modul loeschen?
-repeaterReset: 
+repeaterReset:
+repeaterReset:Willst Du dieses Repeater-Modul wirklich loeschen?
+repeaterReset:
+repeaterReset:  0   NEIN
+repeaterReset:  1   JA
+repeaterReset
 
 repeaterType: 
 repeaterType:Waehle den Typ dieses Repeater-Moduls:
@@ -453,8 +456,15 @@ repeaterPort:
 repeaterPort:Gib die Portnummer des Repeater-Moduls ein. 
 repeaterPort:Dies ist der UDP-Port unter dem das Gateway das Repeatermodul erreicht.
 repeaterPort:Diese Portnummer darf nicht mehrfach vorkommen. 
-repeaterPort:Es ist sicher den vorgegebenen Wert zu uebernehmen. 
+repeaterPort:Falls verfuegbar ist es sicher den vorgegebenen Wert zu uebernehmen. 
 repeaterPort: 
+repeaterPort:Uebliche Werte sind:
+repeaterPort: 20011
+repeaterPort: 20012
+repeaterPort: 20012
+repeaterPort: 20013
+repeaterPort: 
+repeaterPort:Aktuell zugewiesen sind:
 
 extraOptions:
 extraOptions: ircDDBGateway erlaubt den Anschluss von abgesetzten Repeatern.
