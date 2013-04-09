@@ -649,7 +649,7 @@ wxArrayString CTimeServerThread::sendTimeFrFR(unsigned int hour, unsigned int mi
 		words.Add(wxT("midi"));
 	}
 
-	if (hour == 1U)
+	if (hour == 1U || hour == 13U)
 		words.Add(wxT("heure"));
 	else if (hour != 12U && hour != 0U)
 		words.Add(wxT("heures"));

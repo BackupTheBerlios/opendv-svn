@@ -126,14 +126,7 @@ bool CIRCDDBGatewayApp::OnInit()
 	}
 	frameName.Append(VERSION);
 
-	wxPoint position = wxDefaultPosition;
-
-	int x, y;
-	getPosition(x, y);
-	if (x >= 0 && y >= 0)
-		position = wxPoint(x, y);
-
-	m_frame = new CIRCDDBGatewayFrame(frameName, position, m_gui);
+	m_frame = new CIRCDDBGatewayFrame(frameName, m_gui);
 	m_frame->Show();
 
 	SetTopWindow(m_frame);
@@ -216,251 +209,16 @@ CIRCDDBGatewayStatusData* CIRCDDBGatewayApp::getStatus() const
 	return m_thread->getStatus();
 }
 
-void CIRCDDBGatewayApp::getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort, double& latitude, double& longitude, wxString& description1, wxString& description2, wxString& url) const
-{
-	m_config->getGateway(callsign, address, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url)
-{
-	m_config->setGateway(callsign, address, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::getRepeater1(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
-{
-	m_config->getRepeater1(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::setRepeater1(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
-{
-	m_config->setRepeater1(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::getRepeater2(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
-{
-	m_config->getRepeater2(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::setRepeater2(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
-{
-	m_config->setRepeater2(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::getRepeater3(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
-{
-	m_config->getRepeater3(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::setRepeater3(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
-{
-	m_config->setRepeater3(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::getRepeater4(wxString& callsign, wxString& band, HW_TYPE& type, wxString& address, unsigned int& port, unsigned char& band1, unsigned char& band2, unsigned char& band3, wxString& reflector, bool& atStartup, RECONNECT& reconnect, double& frequency, double& offset, double& range, double& latitude, double& longitude, double& agl, wxString& description1, wxString& description2, wxString& url) const
-{
-	m_config->getRepeater4(callsign, band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::setRepeater4(const wxString& band, HW_TYPE type, const wxString& address, unsigned int port, unsigned char band1, unsigned char band2, unsigned char band3, const wxString& reflector, bool atStartup, RECONNECT reconnect, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url)
-{
-	m_config->setRepeater4(band, type, address, port, band1, band2, band3, reflector, atStartup, reconnect, frequency, offset, range, latitude, longitude, agl, description1, description2, url);
-}
-
-void CIRCDDBGatewayApp::getIrcDDB(bool& enabled, wxString& hostname, wxString& username, wxString& password) const
-{
-	m_config->getIrcDDB(enabled, hostname, username, password);
-}
-
-void CIRCDDBGatewayApp::setIrcDDB(bool enabled, const wxString& hostname, const wxString& username, const wxString& password)
-{
-	m_config->setIrcDDB(enabled, hostname, username, password);
-}
-
-void CIRCDDBGatewayApp::getDPRS(bool& enabled, wxString& hostname, unsigned int& port) const
-{
-	m_config->getDPRS(enabled, hostname, port);
-}
-
-void CIRCDDBGatewayApp::setDPRS(bool enabled, const wxString& hostname, unsigned int port)
-{
-	m_config->setDPRS(enabled, hostname, port);
-}
-
-void CIRCDDBGatewayApp::getDExtra(bool& enabled, unsigned int& maxDongles) const
-{
-	m_config->getDExtra(enabled, maxDongles);
-}
-
-void CIRCDDBGatewayApp::setDExtra(bool enabled, unsigned int maxDongles)
-{
-	m_config->setDExtra(enabled, maxDongles);
-}
-
-void CIRCDDBGatewayApp::getDPlus(bool& enabled, unsigned int& maxDongles, wxString& login) const
-{
-	m_config->getDPlus(enabled, maxDongles, login);
-}
-
-void CIRCDDBGatewayApp::setDPlus(bool enabled, unsigned int maxDongles, const wxString& login)
-{
-	m_config->setDPlus(enabled, maxDongles, login);
-}
-
-void CIRCDDBGatewayApp::getDCS(bool& dcsEnabled, bool& ccsEnabled, wxString& ccsHost) const
-{
-	m_config->getDCS(dcsEnabled, ccsEnabled, ccsHost);
-}
-
-void CIRCDDBGatewayApp::setDCS(bool dcsEnabled, bool ccsEnabled, const wxString& ccsHost)
-{
-	m_config->setDCS(dcsEnabled, ccsEnabled, ccsHost);
-}
-
-#if defined(DEXTRA_LINK) || defined(DCS_LINK)
-void CIRCDDBGatewayApp::getStarNet1(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const
-{
-	m_config->getStarNet1(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::setStarNet1(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector)
-{
-	m_config->setStarNet1(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::getStarNet2(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const
-{
-	m_config->getStarNet2(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::setStarNet2(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector)
-{
-	m_config->setStarNet2(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::getStarNet3(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const
-{
-	m_config->getStarNet3(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::setStarNet3(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector)
-{
-	m_config->setStarNet3(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::getStarNet4(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const
-{
-	m_config->getStarNet4(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::setStarNet4(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector)
-{
-	m_config->setStarNet4(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::getStarNet5(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch, wxString& reflector) const
-{
-	m_config->getStarNet5(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-
-void CIRCDDBGatewayApp::setStarNet5(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector)
-{
-	m_config->setStarNet5(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch, reflector);
-}
-#else
-void CIRCDDBGatewayApp::getStarNet1(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch) const
-{
-	m_config->getStarNet1(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::setStarNet1(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch)
-{
-	m_config->setStarNet1(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::getStarNet2(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch) const
-{
-	m_config->getStarNet2(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::setStarNet2(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch)
-{
-	m_config->setStarNet2(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::getStarNet3(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch) const
-{
-	m_config->getStarNet3(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::setStarNet3(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch)
-{
-	m_config->setStarNet3(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::getStarNet4(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch) const
-{
-	m_config->getStarNet4(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::setStarNet4(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch)
-{
-	m_config->setStarNet4(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::getStarNet5(wxString& band, wxString& callsign, wxString& logoff, wxString& info, wxString& permanent, unsigned int& userTimeout, unsigned int& groupTimeout, STARNET_CALLSIGN_SWITCH& callsignSwitch, bool& txMsgSwitch) const
-{
-	m_config->getStarNet5(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-
-void CIRCDDBGatewayApp::setStarNet5(const wxString& band, const wxString& callsign, const wxString& logoff, const wxString& info, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch)
-{
-	m_config->setStarNet5(band, callsign, logoff, info, permanent, userTimeout, groupTimeout, callsignSwitch, txMsgSwitch);
-}
-#endif
-
-void CIRCDDBGatewayApp::getRemote(bool& enabled, wxString& password, unsigned int& port) const
-{
-	m_config->getRemote(enabled, password, port);
-}
-
-void CIRCDDBGatewayApp::setRemote(bool enabled, const wxString& password, unsigned int port)
-{
-	m_config->setRemote(enabled, password, port);
-}
-
-void CIRCDDBGatewayApp::getMiscellaneous(TEXT_LANG& language, bool& infoEnabled, bool& echoEnabled, bool& logEnabled, bool& dratsEnabled, bool& dtmfEnabled) const
-{
-	m_config->getMiscellaneous(language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
-}
-
-void CIRCDDBGatewayApp::setMiscellaneous(TEXT_LANG language, bool infoEnabled, bool echoEnabled, bool logEnabled, bool dratsEnabled, bool dtmfEnabled)
-{
-	m_config->setMiscellaneous(language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
-}
-
-void CIRCDDBGatewayApp::getPosition(int& x, int& y) const
-{
-	m_config->getPosition(x, y);
-}
-
-void CIRCDDBGatewayApp::setPosition(int x, int y)
-{
-	m_config->setPosition(x, y);
-}
-
-bool CIRCDDBGatewayApp::writeConfig()
-{
-	return m_config->write();
-}
-
 void CIRCDDBGatewayApp::createThread()
 {
+	wxASSERT(m_config != NULL);
+
 	CIRCDDBGatewayThread* thread = new CIRCDDBGatewayThread(m_logDir, m_name);
 
 	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress, description1, description2, url;
 	unsigned int icomPort, hbPort;
 	double latitude, longitude;
-	getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_config->getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 
 	gatewayCallsign.MakeUpper();
 	gatewayCallsign.Append(wxT("        "));
@@ -478,7 +236,7 @@ void CIRCDDBGatewayApp::createThread()
 	wxString aprsHostname;
 	unsigned int aprsPort;
 	bool aprsEnabled;
-	getDPRS(aprsEnabled, aprsHostname, aprsPort);
+	m_config->getDPRS(aprsEnabled, aprsHostname, aprsPort);
 	wxLogInfo(wxT("APRS enabled: %d, host: %s:%u"), int(aprsEnabled), aprsHostname.c_str(), aprsPort);
 
 	CAPRSWriter* aprs = NULL;
@@ -494,7 +252,7 @@ void CIRCDDBGatewayApp::createThread()
 
 	TEXT_LANG language;
 	bool infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled;
-	getMiscellaneous(language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
+	m_config->getMiscellaneous(language, infoEnabled, echoEnabled, logEnabled, dratsEnabled, dtmfEnabled);
 	wxLogInfo(wxT("Language: %d, info enabled: %d, echo enabled: %d, log enabled : %d, D-RATS enabled: %d, DTMF control enabled: %d"), int(language), int(infoEnabled), int(echoEnabled), int(logEnabled), int(dratsEnabled), int(dtmfEnabled));
 
 	CIcomRepeaterProtocolHandler* icomRepeaterHandler = NULL;
@@ -510,7 +268,7 @@ void CIRCDDBGatewayApp::createThread()
 	HW_TYPE repeaterType1;
 	bool atStartup1;
 	RECONNECT reconnect1;
-	getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
+	m_config->getRepeater1(repeaterCall1, repeaterBand1, repeaterType1, repeaterAddress1, repeaterPort1, band11, band12, band13, reflector1, atStartup1, reconnect1, frequency1, offset1, range1, latitude1, longitude1, agl1, description11, description12, url1);
 
 	CUtils::clean(description11, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(description12, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
@@ -593,7 +351,7 @@ void CIRCDDBGatewayApp::createThread()
 	HW_TYPE repeaterType2;
 	bool atStartup2;
 	RECONNECT reconnect2;
-	getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
+	m_config->getRepeater2(repeaterCall2, repeaterBand2, repeaterType2, repeaterAddress2, repeaterPort2, band21, band22, band23, reflector2, atStartup2, reconnect2, frequency2, offset2, range2, latitude2, longitude2, agl2, description21, description22, url2);
 
 	CUtils::clean(description21, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(description22, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
@@ -681,7 +439,7 @@ void CIRCDDBGatewayApp::createThread()
 	HW_TYPE repeaterType3;
 	bool atStartup3;
 	RECONNECT reconnect3;
-	getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
+	m_config->getRepeater3(repeaterCall3, repeaterBand3, repeaterType3, repeaterAddress3, repeaterPort3, band31, band32, band33, reflector3, atStartup3, reconnect3, frequency3, offset3, range3, latitude3, longitude3, agl3, description31, description32, url3);
 
 	CUtils::clean(description31, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(description32, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
@@ -773,7 +531,7 @@ void CIRCDDBGatewayApp::createThread()
 	HW_TYPE repeaterType4;
 	bool atStartup4;
 	RECONNECT reconnect4;
-	getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
+	m_config->getRepeater4(repeaterCall4, repeaterBand4, repeaterType4, repeaterAddress4, repeaterPort4, band41, band42, band43, reflector4, atStartup4, reconnect4, frequency4, offset4, range4, latitude4, longitude4, agl4, description41, description42, url4);
 
 	CUtils::clean(description41, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
 	CUtils::clean(description42, wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,&*()-+=@/?:;"));
@@ -867,7 +625,7 @@ void CIRCDDBGatewayApp::createThread()
 
 	bool ircDDBEnabled;
 	wxString ircDDBHostname, ircDDBUsername, ircDDBPassword;
-	getIrcDDB(ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
+	m_config->getIrcDDB(ircDDBEnabled, ircDDBHostname, ircDDBUsername, ircDDBPassword);
 	wxLogInfo(wxT("ircDDB enabled: %d, host: %s, username: %s"), int(ircDDBEnabled), ircDDBHostname.c_str(), ircDDBUsername.c_str());
 
 	if (ircDDBEnabled) {
@@ -890,7 +648,7 @@ void CIRCDDBGatewayApp::createThread()
 		unsigned int starNetUserTimeout1, starNetGroupTimeout1;
 		STARNET_CALLSIGN_SWITCH starNetCallsignSwitch1;
 		bool starNetTXMsgSwitch1;
-		getStarNet1(starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1
+		m_config->getStarNet1(starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetPermanent1, starNetUserTimeout1, starNetGroupTimeout1, starNetCallsignSwitch1, starNetTXMsgSwitch1
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 				,link1
 #endif
@@ -914,7 +672,7 @@ void CIRCDDBGatewayApp::createThread()
 		unsigned int starNetUserTimeout2, starNetGroupTimeout2;
 		STARNET_CALLSIGN_SWITCH starNetCallsignSwitch2;
 		bool starNetTXMsgSwitch2;
-		getStarNet2(starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2
+		m_config->getStarNet2(starNetBand2, starNetCallsign2, starNetLogoff2, starNetInfo2, starNetPermanent2, starNetUserTimeout2, starNetGroupTimeout2, starNetCallsignSwitch2, starNetTXMsgSwitch2
 #if	defined(DEXTRA_LINK) || defined(DCS_LINK)
 			,link2
 #endif
@@ -938,7 +696,7 @@ void CIRCDDBGatewayApp::createThread()
 		unsigned int starNetUserTimeout3, starNetGroupTimeout3;
 		STARNET_CALLSIGN_SWITCH starNetCallsignSwitch3;
 		bool starNetTXMsgSwitch3;
-		getStarNet3(starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3
+		m_config->getStarNet3(starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 				,link3
 #endif
@@ -962,7 +720,7 @@ void CIRCDDBGatewayApp::createThread()
 		unsigned int starNetUserTimeout4, starNetGroupTimeout4;
 		STARNET_CALLSIGN_SWITCH starNetCallsignSwitch4;
 		bool starNetTXMsgSwitch4;
-		getStarNet4(starNetBand4, starNetCallsign4, starNetLogoff4, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4
+		m_config->getStarNet4(starNetBand4, starNetCallsign4, starNetLogoff4, starNetInfo4, starNetPermanent4, starNetUserTimeout4, starNetGroupTimeout4, starNetCallsignSwitch4, starNetTXMsgSwitch4
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 				,link4
 #endif
@@ -986,7 +744,7 @@ void CIRCDDBGatewayApp::createThread()
 		unsigned int starNetUserTimeout5, starNetGroupTimeout5;
 		STARNET_CALLSIGN_SWITCH starNetCallsignSwitch5;
 		bool starNetTXMsgSwitch5;
-		getStarNet5(starNetBand5, starNetCallsign5, starNetLogoff5, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5
+		m_config->getStarNet5(starNetBand5, starNetCallsign5, starNetLogoff5, starNetInfo5, starNetPermanent5, starNetUserTimeout5, starNetGroupTimeout5, starNetCallsignSwitch5, starNetTXMsgSwitch5
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 				,link5
 #endif
@@ -1009,25 +767,25 @@ void CIRCDDBGatewayApp::createThread()
 
 	bool dextraEnabled;
 	unsigned int dextraMaxDongles;
-	getDExtra(dextraEnabled, dextraMaxDongles);
+	m_config->getDExtra(dextraEnabled, dextraMaxDongles);
 	wxLogInfo(wxT("DExtra enabled: %d, max. dongles: %u"), int(dextraEnabled), dextraMaxDongles);
 
 	bool remoteEnabled;
 	wxString remotePassword;
 	unsigned int remotePort;
-	getRemote(remoteEnabled, remotePassword, remotePort);
+	m_config->getRemote(remoteEnabled, remotePassword, remotePort);
 	wxLogInfo(wxT("Remote enabled: %d, port: %u"), int(remoteEnabled), remotePort);
 	thread->setRemote(remoteEnabled, remotePassword, remotePort);
 
 	wxString dplusLogin;
 	unsigned int dplusMaxDongles;
 	bool dplusEnabled;
-	getDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
+	m_config->getDPlus(dplusEnabled, dplusMaxDongles, dplusLogin);
 	wxLogInfo(wxT("D-Plus enabled: %d, max. dongles; %u, login: %s"), int(dplusEnabled), dplusMaxDongles, dplusLogin.c_str());
 
 	bool dcsEnabled, ccsEnabled;
 	wxString ccsHost;
-	getDCS(dcsEnabled, ccsEnabled, ccsHost);
+	m_config->getDCS(dcsEnabled, ccsEnabled, ccsHost);
 	wxLogInfo(wxT("DCS enabled: %d, CCS enabled: %d, server: %s"), int(dcsEnabled), int(ccsEnabled), ccsHost.c_str());
 
 	if (repeaterBand1.Len() > 1U || repeaterBand2.Len() > 1U ||

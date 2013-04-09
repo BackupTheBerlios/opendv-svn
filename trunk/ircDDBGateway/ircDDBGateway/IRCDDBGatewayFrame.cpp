@@ -61,8 +61,8 @@ BEGIN_EVENT_TABLE(CIRCDDBGatewayFrame, wxFrame)
 	EVT_CUSTOM(LOG_EVENT, wxID_ANY, CIRCDDBGatewayFrame::onLog)
 END_EVENT_TABLE()
 
-CIRCDDBGatewayFrame::CIRCDDBGatewayFrame(const wxString& title, const wxPoint& position, bool gui) :
-wxFrame(NULL, -1, title, position),
+CIRCDDBGatewayFrame::CIRCDDBGatewayFrame(const wxString& title, bool gui) :
+wxFrame(NULL, -1, title),
 m_timer(this),
 m_ircDDBStatus(NULL),
 m_dprsStatus(NULL),
@@ -181,13 +181,6 @@ void CIRCDDBGatewayFrame::onQuit(wxCommandEvent& event)
 
 void CIRCDDBGatewayFrame::onClose(wxCloseEvent& event)
 {
-	int x, y;
-	GetPosition(&x, &y);
-	if (x >= 0 && y >= 0) {
-		::wxGetApp().setPosition(x, y);
-		::wxGetApp().writeConfig();
-	}
-
 	Destroy();
 }
 

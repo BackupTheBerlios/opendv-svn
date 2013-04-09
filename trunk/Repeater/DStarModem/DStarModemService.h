@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,24 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef DStarModemService_H
+#define	DStarModemService_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDStarModemService: public wxApp
+{
+public:
+	CDStarModemService();
+	virtual ~CDStarModemService();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool OnInit();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130405 - DEBUG");
-#else
-const wxString VERSION = wxT("20130405");
-#endif
+private:
+	bool isInstalled();
+	void install();
+	void uninstall();
+};
 
 #endif

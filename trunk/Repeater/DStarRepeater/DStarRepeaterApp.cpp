@@ -130,14 +130,7 @@ bool CDStarRepeaterApp::OnInit()
 	}
 	frameName.Append(VERSION);
 
-	wxPoint position = wxDefaultPosition;
-
-	int x, y;
-	getPosition(x, y);
-	if (x >= 0 && y >= 0)
-		position = wxPoint(x, y);
-
-	m_frame = new CDStarRepeaterFrame(frameName, position, m_gui);
+	m_frame = new CDStarRepeaterFrame(frameName, m_gui);
 	m_frame->Show();
 
 	SetTopWindow(m_frame);
@@ -226,125 +219,18 @@ void CDStarRepeaterApp::showLog(const wxString& text)
 	m_frame->showLog(text);
 }
 
-void CDStarRepeaterApp::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation, bool& dtmfBlanking) const
-{
-	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
-}
-
-void CDStarRepeaterApp::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
-{
-	m_config->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
-}
-
-void CDStarRepeaterApp::getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const
-{
-	m_config->getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
-}
-
-void CDStarRepeaterApp::setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort)
-{
-	m_config->setNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
-}
-
-void CDStarRepeaterApp::getModem(wxString& name) const
-{
-	m_config->getModem(name);
-}
-
-void CDStarRepeaterApp::setModem(const wxString& name)
-{
-	m_config->setModem(name);
-}
-
-void CDStarRepeaterApp::getTimes(unsigned int& timeout, unsigned int& ackTime) const
-{
-	m_config->getTimes(timeout, ackTime);
-}
-
-void CDStarRepeaterApp::setTimes(unsigned int timeout, unsigned int ackTime)
-{
-	m_config->setTimes(timeout, ackTime);
-}
-
-void CDStarRepeaterApp::getBeacon(unsigned int& time, wxString& text, bool& voice, TEXT_LANG& language) const
-{
-	m_config->getBeacon(time, text, voice, language);
-}
-
-void CDStarRepeaterApp::setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language)
-{
-	m_config->setBeacon(time, text, voice, language);
-}
-
-void CDStarRepeaterApp::getAnnouncement(bool& enabled, unsigned int& time, wxString& recordRPT1, wxString& recordRPT2, wxString& deleteRPT1, wxString& deleteRPT2) const
-{
-	m_config->getAnnouncement(enabled, time, recordRPT1, recordRPT2, deleteRPT1, deleteRPT2);
-}
-
-void CDStarRepeaterApp::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
-{
-	m_config->setAnnouncement(enabled, time, recordRPT1, recordRPT2, deleteRPT1, deleteRPT2);
-}
-
-void CDStarRepeaterApp::getControl(bool& enabled, wxString& rpt1Callsign, wxString& rpt2Callsign, wxString& shutdown, wxString& startup, wxString& status1, wxString& status2, wxString& status3, wxString& status4, wxString& status5, wxString& command1, wxString& command1Line, wxString& command2, wxString& command2Line, wxString& command3, wxString& command3Line, wxString& command4, wxString& command4Line, wxString& output1, wxString& output2, wxString& output3, wxString& output4) const
-{
-	m_config->getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
-}
-
-void CDStarRepeaterApp::setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4)
-{
-	m_config->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
-}
-
-void CDStarRepeaterApp::getController(wxString& type, unsigned int& activeHangTime) const
-{
-	m_config->getController(type, activeHangTime);
-}
-
-void CDStarRepeaterApp::setController(const wxString& type, unsigned int activeHangTime)
-{
-	m_config->setController(type, activeHangTime);
-}
-
-void CDStarRepeaterApp::getOutputs(bool& out1, bool& out2, bool& out3, bool& out4) const
-{
-	m_config->getOutputs(out1, out2, out3, out4);
-}
-
 void CDStarRepeaterApp::setOutputs(bool out1, bool out2, bool out3, bool out4)
 {
-	m_config->setOutputs(out1, out2, out3, out4);
+	wxLogInfo(wxT("Output 1 = %d, output 2 = %d, output 3 = %d, output 4 = %d"), int(out1), int(out2), int(out3), int(out4));
+
 	m_thread->setOutputs(out1, out2, out3, out4);
-
-	wxLogInfo(wxT("Output 1 = %d, output 2 = %d, output 3 = %d, output 4 = %d"), out1, out2, out3, out4);
-}
-
-void CDStarRepeaterApp::getLogging(bool& logging) const
-{
-	m_config->getLogging(logging);
 }
 
 void CDStarRepeaterApp::setLogging(bool logging)
 {
 	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());
 
-	m_config->setLogging(logging);
 	m_thread->setLogging(logging, m_audioDir);
-}
-
-void CDStarRepeaterApp::getPosition(int& x, int& y) const
-{
-	m_config->getPosition(x, y);
-}
-
-void CDStarRepeaterApp::setPosition(int x, int y)
-{
-	m_config->setPosition(x, y);
-}
-
-bool CDStarRepeaterApp::writeConfig()
-{
-	return m_config->write();
 }
 
 void CDStarRepeaterApp::shutdown()
@@ -379,11 +265,13 @@ void CDStarRepeaterApp::command4()
 
 void CDStarRepeaterApp::createThread()
 {
+	wxASSERT(m_config != NULL);
+
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
 	ACK_TYPE ack;
 	bool restriction, rpt1Validation, dtmfBlanking;
-	getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
 	IDStarRepeaterThread* thread = NULL;
 	switch (mode) {
@@ -406,7 +294,7 @@ void CDStarRepeaterApp::createThread()
 
 	wxString gatewayAddress, localAddress;
 	unsigned int gatewayPort, localPort;
-	getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
+	m_config->getNetwork(gatewayAddress, gatewayPort, localAddress, localPort);
 	wxLogInfo(wxT("Gateway set to %s:%u, local set to %s:%u"), gatewayAddress.c_str(), gatewayPort, localAddress.c_str(), localPort);
 
 	if (!gatewayAddress.IsEmpty()) {
@@ -420,7 +308,7 @@ void CDStarRepeaterApp::createThread()
 	}
 
 	unsigned int timeout, ackTime;
-	getTimes(timeout, ackTime);
+	m_config->getTimes(timeout, ackTime);
 	thread->setTimes(timeout, ackTime);
 	wxLogInfo(wxT("Timeout set to %u secs, ack time set to %u ms"), timeout, ackTime);
 
@@ -428,7 +316,7 @@ void CDStarRepeaterApp::createThread()
 	wxString beaconText;
 	bool beaconVoice;
 	TEXT_LANG language;
-	getBeacon(beaconTime, beaconText, beaconVoice, language);
+	m_config->getBeacon(beaconTime, beaconText, beaconVoice, language);
 	if (mode == MODE_GATEWAY)
 		beaconTime = 0U;
 	thread->setBeacon(beaconTime, beaconText, beaconVoice, language);
@@ -438,14 +326,14 @@ void CDStarRepeaterApp::createThread()
 	unsigned int announcementTime;
 	wxString announcementRecordRPT1, announcementRecordRPT2;
 	wxString announcementDeleteRPT1, announcementDeleteRPT2;
-	getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
+	m_config->getAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 	if (mode == MODE_GATEWAY)
 		announcementEnabled = false;
 	thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 	wxLogInfo(wxT("Announcement enabled: %d, time: %u mins, record RPT1: \"%s\", record RPT2: \"%s\", delete RPT1: \"%s\", delete RPT2: \"%s\""), int(announcementEnabled), announcementTime / 60U, announcementRecordRPT1.c_str(), announcementRecordRPT2.c_str(), announcementDeleteRPT1.c_str(), announcementDeleteRPT2.c_str());
 
 	wxString modemName;
-	getModem(modemName);
+	m_config->getModem(modemName);
 	wxLogInfo(wxT("Modem set to \"%s\""), modemName.c_str());
 
 	if (!modemName.IsEmpty()) {
@@ -459,7 +347,7 @@ void CDStarRepeaterApp::createThread()
 
 	wxString controllerType;
 	unsigned int activeHangTime;
-	getController(controllerType, activeHangTime);
+	m_config->getController(controllerType, activeHangTime);
 	wxLogInfo(wxT("Controller set to %s, active hang time: %u ms"), controllerType.c_str(), activeHangTime);
 
 	CExternalController* controller = NULL;
@@ -482,10 +370,10 @@ void CDStarRepeaterApp::createThread()
 		thread->setController(controller, activeHangTime);
 
 	bool out1, out2, out3, out4;
-	getOutputs(out1, out2, out3, out4);
+	m_config->getOutputs(out1, out2, out3, out4);
 	thread->setOutputs(out1, out2, out3, out4);
 	m_frame->setOutputs(out1, out2, out3, out4);
-	wxLogInfo(wxT("Output 1 = %d, output 2 = %d, output 3 = %d, output 4 = %d"), out1, out2, out3, out4);
+	wxLogInfo(wxT("Output 1 = %d, output 2 = %d, output 3 = %d, output 4 = %d"), int(out1), int(out2), int(out3), int(out4));
 
 	bool enabled;
 	wxString rpt1Callsign, rpt2Callsign;
@@ -494,12 +382,12 @@ void CDStarRepeaterApp::createThread()
 	wxString command1, command1Line, command2, command2Line;
 	wxString command3, command3Line, command4, command4Line;
 	wxString output1, output2, output3, output4;
-	getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
+	m_config->getControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 	thread->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 	wxLogInfo(wxT("Control: enabled: %d, RPT1: %s, RPT2: %s, shutdown: %s, startup: %s, status1: %s, status2: %s, status3: %s, status4: %s, status5: %s, command1: %s = %s, command2: %s = %s, command3: %s = %s, command4: %s = %s, output1: %s, output2: %s, output3: %s, output4: %s"), enabled, rpt1Callsign.c_str(), rpt2Callsign.c_str(), shutdown.c_str(), startup.c_str(), status1.c_str(), status2.c_str(), status3.c_str(), status4.c_str(), status5.c_str(), command1.c_str(), command1Line.c_str(), command2.c_str(), command2Line.c_str(), command3.c_str(), command3Line.c_str(), command4.c_str(), command4Line.c_str(), output1.c_str(), output2.c_str(), output3.c_str(), output4.c_str());
 
 	bool logging;
-	getLogging(logging);
+	m_config->getLogging(logging);
 	thread->setLogging(logging, m_audioDir);
 	m_frame->setLogging(logging);
 	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());

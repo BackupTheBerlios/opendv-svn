@@ -663,7 +663,6 @@ void CRepeaterHandler::processRepeater(CHeaderData& header)
 	if (m_echoEnabled && m_yourCall.IsSameAs(wxT("       E"))) {
 		m_g2Status = G2_ECHO;
 		m_echo->writeHeader(header);
-		sendToOutgoing(header);
 		return;
 	}
 
@@ -837,7 +836,6 @@ void CRepeaterHandler::processRepeater(CAMBEData& data)
 
 		case G2_ECHO:
 			m_echo->writeData(data);
-			sendToOutgoing(data);
 
 			if (data.isEnd()) {
 				m_repeaterId = 0x00U;
