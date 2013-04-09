@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -148,11 +148,14 @@ CHeaderData* CDVTOOLFileReader::readHeader()
 	if (m_type != DVTFR_HEADER)
 		return NULL;
 
+	if (m_buffer[39U] == 0xFFU && m_buffer[40U] == 0xFFU)
+		return new CHeaderData(m_buffer, RADIO_HEADER_LENGTH_BYTES, false);
+
 	// Header checksum testing is enabled
 	CHeaderData* header = new CHeaderData(m_buffer, RADIO_HEADER_LENGTH_BYTES, true);
 
 	if (!header->isValid()) {
-		CUtils::dump(wxT("Header checksum failure from the Repeater"), m_buffer, RADIO_HEADER_LENGTH_BYTES);
+		CUtils::dump(wxT("Header checksum failure"), m_buffer, RADIO_HEADER_LENGTH_BYTES);
 		delete header;
 		return NULL;
 	}

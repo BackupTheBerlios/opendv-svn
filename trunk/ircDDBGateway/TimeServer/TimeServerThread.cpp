@@ -611,12 +611,12 @@ wxArrayString CTimeServerThread::sendTimeFrFR(unsigned int hour, unsigned int mi
 {
 	wxArrayString words;
 
-	if (hour > 17U)
-		words.Add(wxT("bonsoir"));
-	else
-		words.Add(wxT("bonjour"));
+	// if (hour > 17U)
+	//	words.Add(wxT("bonsoir"));
+	// else
+	//	words.Add(wxT("bonjour"));
 
-	words.Add(wxT("Il_est"));
+	words.Add(wxT("il_est"));
 
 	if (min == 45U)
 		hour++;
@@ -630,7 +630,7 @@ wxArrayString CTimeServerThread::sendTimeFrFR(unsigned int hour, unsigned int mi
 	} else if (hour == 3U || hour == 15U) {
 		words.Add(wxT("trois"));
 	} else if (hour == 4U || hour == 16U) {
-		words.Add(wxT("quatre"));
+		words.Add(wxT("quattre"));
 	} else if (hour == 5U || hour == 17U) {
 		words.Add(wxT("cinq"));
 	} else if (hour == 6U || hour == 18U) {

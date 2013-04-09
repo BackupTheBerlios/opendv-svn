@@ -67,6 +67,8 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_en_GB.indx"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_en_US.ambe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_en_US.indx"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_fr_FR.ambe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_fr_FR.indx"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_se_SE.ambe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\TIME_se_SE.indx"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\ircDDBGateway\Data\de_DE.ambe"
