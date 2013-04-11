@@ -139,6 +139,7 @@ private:
 	wxString            m_yourCall;
 	wxString            m_myCall1;
 	wxString            m_myCall2;
+	wxString            m_rptCall1;
 
 	void process(CAMBEData& header);
 	void process(CPollData& data);

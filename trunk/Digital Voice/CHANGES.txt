@@ -309,8 +309,8 @@ Fixed GMSK modem space reporting.
 Added DCS021.
 Added XRF333.
 
-201303xx
+201304xx
 --------
 
-Added XRF038.
+Added XRF038 and XRF851.
 Updated XRF003s IP address.

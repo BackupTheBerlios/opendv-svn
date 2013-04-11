@@ -1829,3 +1829,4 @@ Added the recording and playback of announcements.
 Split the configuration of the D-Star Repeater into its own program.
 Don't reset the announcement timer on transmissions.
 Added the generic D-Star Repeater.
+Added XRF851.

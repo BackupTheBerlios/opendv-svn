@@ -149,7 +149,8 @@ m_time(),
 m_direction(DIR_OUTGOING),
 m_yourCall(),
 m_myCall1(),
-m_myCall2()
+m_myCall2(),
+m_rptCall1()
 {
 	wxASSERT(handler != NULL);
 
@@ -228,6 +229,9 @@ void CCCSHandler::processInt()
 void CCCSHandler::process(CAMBEData& data)
 {
 	CHeaderData& header = data.getHeader();
+	wxString myCall1 = header.getMyCall1();
+	wxString rptCall1 = header.getRptCall1();
+	wxString yourCall = header.getYourCall();
 	unsigned int seqNo = data.getSeq();
 	unsigned int id = data.getId();
 
@@ -236,8 +240,9 @@ void CCCSHandler::process(CAMBEData& data)
 
 	// This is a new incoming CCS call
 	if (m_state == CS_CONNECTED) {
-		m_yourCall    = header.getMyCall1();
-		m_local       = header.getYourCall();
+		m_yourCall    = myCall1;
+		m_local       = yourCall;
+		m_rptCall1    = rptCall1;
 		m_direction   = DIR_INCOMING;
 		m_time        = ::time(NULL);
 		m_state       = CS_ACTIVE;
@@ -246,7 +251,32 @@ void CCCSHandler::process(CAMBEData& data)
 
 		m_handler->ccsLinkMade(m_yourCall, m_direction);
 
-		wxLogMessage(wxT("CCS: New incoming link to %s from %s"), m_local.c_str(), m_yourCall.c_str());
+		wxLogMessage(wxT("CCS: New incoming link to %s from %s @ %s"), m_local.c_str(), m_yourCall.c_str(), m_rptCall1.c_str());
+	} else {
+		// Allow for the fact that the distant repeater may change during the QSO
+		if (m_yourCall.IsSameAs(myCall1) && !m_rptCall1.IsSameAs(rptCall1)) {
+			if (m_rptCall1.IsEmpty())
+				wxLogMessage(wxT("CCS: %s is at repeater %s"), m_yourCall.c_str(), rptCall1.c_str());
+			else
+				wxLogMessage(wxT("CCS: %s has moved from repeater %s to %s"), m_yourCall.c_str(), m_rptCall1.c_str(), rptCall1.c_str());
+
+			m_rptCall1 = rptCall1;
+		}
+
+		if (!m_rptCall1.IsSameAs(rptCall1)) {
+			wxLogMessage(wxT("CCS: Rejecting new incoming CCS link from %s @ %s to %s"), myCall1.c_str(), rptCall1.c_str(), yourCall.c_str());
+
+			CCCSData data(yourCall, myCall1, CT_TERMINATE);
+			data.setDestination(m_ccsAddress, CCS_PORT);
+
+			m_protocol.writeMisc(data);
+			m_protocol.writeMisc(data);
+			m_protocol.writeMisc(data);
+			m_protocol.writeMisc(data);
+			m_protocol.writeMisc(data);
+
+			return;
+		}
 	}
 
 	m_pollInactivityTimer.reset();
@@ -409,6 +439,7 @@ void CCCSHandler::startLink(const wxString& dtmf, const wxString& user, const wx
 	m_stateChange = true;
 	m_state       = CS_ACTIVE;
 	m_direction   = DIR_OUTGOING;
+	m_rptCall1.Clear();
 	m_inactivityTimer.start();
 }
 

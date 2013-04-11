@@ -1297,4 +1297,6 @@ Makefiles fixed :-)
 Cleaned up the ircDDB Gateway Config program.
 Local echos are not now sent to linked reflectors.
 The ircDDB Gateway no longer overwrites the config in GUI mode.
+Stop multiple incoming CCS links.
 Added French as a language for the Time Server.
+Added XRF851.
