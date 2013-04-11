@@ -68,27 +68,27 @@ void* CDPlusAuthenticator::Entry()
 	wxLogMessage(wxT("Starting the D-Plus authentication thread"));
 
 	authenticate(m_loginCallsign, OPENDSTAR_HOSTNAME, OPENDSTAR_PORT, '2', true);
-	authenticate(m_gatewayCallsign, DUTCHSTAR_HOSTNAME, DUTCHSTAR_PORT, 'K', false);
+	// authenticate(m_gatewayCallsign, DUTCHSTAR_HOSTNAME, DUTCHSTAR_PORT, 'K', false);
 
 	m_timer.start();
-	m_pollTimer.start();
+	// m_pollTimer.start();
 
 	while (!m_killed) {
-		if (m_pollTimer.hasExpired()) {
-			poll(m_gatewayCallsign, DUTCHSTAR_HOSTNAME, DUTCHSTAR_PORT, 'K');
-			m_pollTimer.reset();
-		}
+		// if (m_pollTimer.hasExpired()) {
+		//	poll(m_gatewayCallsign, DUTCHSTAR_HOSTNAME, DUTCHSTAR_PORT, 'K');
+		//	m_pollTimer.reset();
+		// }
 
 		if (m_timer.hasExpired()) {
 			authenticate(m_loginCallsign, OPENDSTAR_HOSTNAME, OPENDSTAR_PORT, '2', true);
-			authenticate(m_gatewayCallsign, DUTCHSTAR_HOSTNAME, DUTCHSTAR_PORT, 'K', false);
+			// authenticate(m_gatewayCallsign, DUTCHSTAR_HOSTNAME, DUTCHSTAR_PORT, 'K', false);
 			m_timer.reset();
 		}
 
 		Sleep(1000UL);
 
 		m_timer.clock();
-		m_pollTimer.clock();
+		// m_pollTimer.clock();
 	}
 
 	wxLogMessage(wxT("Stopping the D-Plus authentication thread"));

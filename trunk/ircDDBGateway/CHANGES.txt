@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130405
+ircDDB Gateway - 20130411
 =========================
 
 20101010
@@ -1291,7 +1291,7 @@ Added CCS011 and CCS017.
 Tweaked GPS-A handling a little with extra debugging.
 Makefiles fixed :-)
 
-201304xx
+20130411
 --------
 
 Cleaned up the ircDDB Gateway Config program.

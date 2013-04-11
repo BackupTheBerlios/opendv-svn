@@ -49,7 +49,7 @@ static int g_nCmdShow;
 
 extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, wxCmdLineArgType lpCmdLine, int nCmdShow)
 {
-	if (strstr(lpCmdLine, "-svc") == NULL) {
+	if (strstr(lpCmdLine, "-run") == NULL) {
 		return wxEntry(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	} else {
 		g_hInstance     = hInstance;
@@ -75,7 +75,7 @@ CDStarModemService::~CDStarModemService()
 
 bool CDStarModemService::OnInit()
 {
-	const wxString usage = wxT("-install\n-start\n-stop\n-uninstall");
+	const wxString usage = wxT("-install\n-uninstall");
 
 	if (argc != 2) {
 		wxMessageDialog(NULL, usage, SERVICE_NAME, wxOK).ShowModal();
@@ -84,7 +84,7 @@ bool CDStarModemService::OnInit()
 
 	wxString command = wxString(argv[1]);
 
-	if (command.IsSameAs(wxT("-svc"))) {
+	if (command.IsSameAs(wxT("-run"))) {
 		// INIT THE REAL SERVICE HERE AND LET THE MAIN LOOP RUN
 		return true;
 	} else if (command.IsSameAs(wxT("-install"))) {
@@ -138,7 +138,8 @@ void CDStarModemService::install()
 	// Get the args but strip out the -install command
 	wxString args = wxString((char*)g_lpCmdLine, wxConvLocal);
 	args.Replace(wxT("-install"), wxEmptyString);
-	args.Prepend(wxT("-svc "));
+	args.Prepend(wxT("-run "));
+	args.Trim();
 
 	TCHAR fileName[FILENAME_LEN];
 	::GetModuleFileName(NULL, fileName, FILENAME_LEN);
