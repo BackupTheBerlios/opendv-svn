@@ -177,7 +177,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\DStarModemService.cpp"
+				RelativePath=".\DStarModemApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemNull.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemThreadHelper.cpp"
 				>
 			</File>
 		</Filter>
@@ -187,7 +199,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\DStarModemService.h"
+				RelativePath=".\DStarModem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemNull.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemThreadHelper.h"
 				>
 			</File>
 		</Filter>

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	DStarModemDefs_H
+#define	DStarModemDefs_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+const wxString APPLICATION_NAME    = wxT("D-Star Modem");
+const wxString LOG_BASE_NAME       = wxT("DStarModem");
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
-
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
+#if !defined(__WINDOWS__)
+const wxString CONFIG_FILE_NAME = wxT("dstarmodem");
+const wxString LOG_DIR  = wxT("/var/log");
+const wxString CONF_DIR = wxT("/etc");
 #endif
 
 #endif

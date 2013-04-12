@@ -10,6 +10,8 @@ install:
 	install -g bin -o root -m 0664 TIME_en_GB.indx  $(DATADIR)
 	install -g bin -o root -m 0664 TIME_en_US.ambe  $(DATADIR)
 	install -g bin -o root -m 0664 TIME_en_US.indx  $(DATADIR)
+	install -g bin -o root -m 0664 TIME_fr_FR.ambe  $(DATADIR)
+	install -g bin -o root -m 0664 TIME_fr_FR.indx  $(DATADIR)
 	install -g bin -o root -m 0664 TIME_se_SE.ambe  $(DATADIR)
 	install -g bin -o root -m 0664 TIME_se_SE.indx  $(DATADIR)
 	install -g bin -o root -m 0664 de_DE.ambe $(DATADIR)

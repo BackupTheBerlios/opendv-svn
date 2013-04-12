@@ -156,6 +156,8 @@ int CDStarRepeaterApp::OnExit()
 
 	delete m_config;
 
+	delete m_checker;
+
 	return 0;
 }
 

@@ -16,13 +16,29 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarModemService.h"
+#include "ModemProtocolServer.h"
+#include "DStarModemApp.h"
+#include "DStarModemThread.h"
+#include "DStarModemNull.h"
+#include "DStarDefines.h"
+#include "Version.h"
+#include "Logger.h"
+
+#include <wx/cmdline.h>
+
+const wxChar*       NAME_PARAM = wxT("Modem Name");
+const wxChar* NOLOGGING_SWITCH = wxT("nolog");
+const wxChar*   INSTALL_SWITCH = wxT("install");
+const wxChar* UNINSTALL_SWITCH = wxT("uninstall");
+const wxChar*       RUN_SWITCH = wxT("run");
+const wxChar*    LOGDIR_OPTION = wxT("logdir");
+const wxChar*   CONFDIR_OPTION = wxT("confdir");
 
 const unsigned int FILENAME_LEN = 255U;
 
 const wxChar* SERVICE_NAME = wxT("D-Star Modem");
 
-IMPLEMENT_APP_NO_MAIN(CDStarModemService)
+IMPLEMENT_APP_NO_MAIN(CDStarModemApp)
 
 void WINAPI svcStart(DWORD argc, LPTSTR* argv);
 static SERVICE_TABLE_ENTRY g_dispatchTable[] = {
@@ -49,6 +65,11 @@ static int g_nCmdShow;
 
 extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, wxCmdLineArgType lpCmdLine, int nCmdShow)
 {
+		g_hInstance     = hInstance;
+		g_hPrevInstance = hPrevInstance;
+		g_lpCmdLine     = lpCmdLine;
+		g_nCmdShow      = nCmdShow;
+		return wxEntry(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	if (strstr(lpCmdLine, "-run") == NULL) {
 		return wxEntry(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	} else {
@@ -56,57 +77,157 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, wxCm
 		g_hPrevInstance = hPrevInstance;
 		g_lpCmdLine     = lpCmdLine;
 		g_nCmdShow      = nCmdShow;
-
-		BOOL ret = ::StartServiceCtrlDispatcher(g_dispatchTable);
-		if (!ret)
-			wxMessageDialog(NULL, wxString::Format(wxT("StartServiceCtrlDispatcher error %d"), GetLastError()), SERVICE_NAME, wxOK).ShowModal();
-
+		::StartServiceCtrlDispatcher(g_dispatchTable);
 		return 0;
 	}
 }
 
-CDStarModemService::CDStarModemService()
+CDStarModemApp::CDStarModemApp() :
+wxApp(),
+m_thread(NULL),
+m_config(NULL),
+m_checker(NULL)
 {
 }
 
-CDStarModemService::~CDStarModemService()
+CDStarModemApp::~CDStarModemApp()
 {
 }
 
-bool CDStarModemService::OnInit()
+bool CDStarModemApp::OnInit()
 {
-	const wxString usage = wxT("-install\n-uninstall");
+	wxCmdLineParser parser(argc, argv);
+	parser.AddSwitch(NOLOGGING_SWITCH, wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddSwitch(INSTALL_SWITCH,   wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddSwitch(UNINSTALL_SWITCH, wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddSwitch(RUN_SWITCH,       wxEmptyString, wxEmptyString, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddOption(LOGDIR_OPTION,    wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddOption(CONFDIR_OPTION,   wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddParam(NAME_PARAM, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
-	if (argc != 2) {
-		wxMessageDialog(NULL, usage, SERVICE_NAME, wxOK).ShowModal();
+	int ret = parser.Parse();
+	if (ret != 0)
 		return false;
+
+	wxString logDir = wxEmptyString;
+	bool found = parser.Found(LOGDIR_OPTION, &logDir);
+
+	wxString confDir = wxEmptyString;
+	found = parser.Found(CONFDIR_OPTION, &confDir);
+
+	if (parser.GetParamCount() == 0U) {
+		wxMessageDialog(NULL, wxT("The name of the modem must be specified"), SERVICE_NAME, wxOK).ShowModal();
+		return false;		
 	}
 
-	wxString command = wxString(argv[1]);
+	wxString name = parser.GetParam(0U);
+#if defined(__WINDOWS__)
+	name.Prepend(wxT("GMSK "));
+#else
+	name.Prepend(wxT("GMSK_"));
+#endif
 
-	if (command.IsSameAs(wxT("-run"))) {
-		// INIT THE REAL SERVICE HERE AND LET THE MAIN LOOP RUN
+	if (parser.Found(RUN_SWITCH)) {
+		SetVendorName(VENDOR_NAME);
+
+		if (!parser.Found(NOLOGGING_SWITCH)) {
+			wxString logBaseName = LOG_BASE_NAME;
+			if (!name.IsEmpty()) {
+				logBaseName.Append(wxT("_"));
+				logBaseName.Append(name);
+			}
+
+#if defined(__WINDOWS__)
+			if (logDir.IsEmpty())
+				logDir = wxFileName::GetHomeDir();
+#else
+			if (logDir.IsEmpty())
+				logDir = LOG_DIR;
+#endif
+
+			wxLog* log = new CLogger(logDir, logBaseName);
+			wxLog::SetActiveTarget(log);
+		} else {
+			new wxLogNull;
+		}
+
+		wxString appName;
+		if (!name.IsEmpty())
+			appName = APPLICATION_NAME + wxT(" ") + name;
+		else
+			appName = APPLICATION_NAME;
+
+#if !defined(__WINDOWS__)
+		appName.Replace(wxT(" "), wxT("_"));
+		m_checker = new wxSingleInstanceChecker(appName, wxT("/tmp"));
+#else
+		m_checker = new wxSingleInstanceChecker(appName);
+#endif
+
+		bool ret = m_checker->IsAnotherRunning();
+		if (ret) {
+			wxLogError(wxT("Another copy of the D-Star Modem is running, exiting"));
+			return false;
+		}
+
+#if defined(__WINDOWS__)
+		m_config = new CDStarModemConfig(new wxConfig(APPLICATION_NAME), name);
+#else
+		if (confDir.IsEmpty())
+			confDir = CONF_DIR;
+
+		m_config = new CDStarModemConfig(m_confDir, CONFIG_FILE_NAME, name);
+#endif
+
+		wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" - ") + VERSION);
+
+		// Log the SVN revsion and the version of wxWidgets and the Operating System
+		wxLogInfo(SVNREV);
+		wxLogInfo(wxT("Using wxWidgets %d.%d.%d on %s"), wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, ::wxGetOsDescription().c_str());
+
+		createThread(name);
+
 		return true;
-	} else if (command.IsSameAs(wxT("-install"))) {
+	} else if (parser.Found(INSTALL_SWITCH)) {
 		if (isInstalled()) {
 			wxMessageDialog(NULL, wxT("D-Star Modem already installed"), SERVICE_NAME, wxOK).ShowModal();
 		} else {
 			install();
 		}
-	} else if (command.IsSameAs(wxT("-uninstall"))) {
+	} else if (parser.Found(UNINSTALL_SWITCH)) {
 		if (!isInstalled()) {
 			wxMessageDialog(NULL, wxT("D-Star Modem was not installed."), SERVICE_NAME, wxOK).ShowModal();
 		} else {
 			uninstall();
 		}
 	} else {
-		wxMessageDialog(NULL, usage, SERVICE_NAME, wxOK).ShowModal();
+		wxMessageDialog(NULL, wxT("Must have one of -run, -install or -uninstall"), SERVICE_NAME, wxOK).ShowModal();
 	}
 
-	return FALSE;
+	return false;
 }
 
-bool CDStarModemService::isInstalled()
+int CDStarModemApp::OnExit()
+{
+	wxLogInfo(APPLICATION_NAME + wxT(" is exiting"));
+
+	m_thread->kill();
+
+	delete m_config;
+
+	delete m_checker;
+
+	return 0;
+}
+
+#if defined(__WXDEBUG__)
+void CDStarModemApp::OnAssertFailure(const wxChar* file, int line, const wxChar* func, const wxChar* cond, const wxChar* msg)
+{
+	wxLogFatalError(wxT("Assertion failed on line %d in file %s and function %s: %s %s"), line, file, func, cond, msg);
+}
+#endif
+
+bool CDStarModemApp::isInstalled()
 {
 	bool found = false;
 
@@ -127,7 +248,7 @@ bool CDStarModemService::isInstalled()
 	return found;
 }
 
-void CDStarModemService::install()
+void CDStarModemApp::install()
 {
 	SC_HANDLE scm = ::OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (scm == NULL) {
@@ -160,7 +281,7 @@ void CDStarModemService::install()
 	::CloseServiceHandle(scm);
 }
 
-void CDStarModemService::uninstall()
+void CDStarModemApp::uninstall()
 {
 	SC_HANDLE scm = ::OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (scm == NULL) {
@@ -222,4 +343,45 @@ void WINAPI svcStart(DWORD argc, LPTSTR* argv)
 	}
 
 	wxEntry(g_hInstance, g_hPrevInstance, g_lpCmdLine, g_nCmdShow);
+}
+
+void CDStarModemApp::createThread(const wxString& name)
+{
+	wxASSERT(m_config != NULL);
+
+	CDStarModemThread* thread = new CDStarModemThread;
+
+	CModemProtocolServer* server = new CModemProtocolServer(name);
+	int ret = server->open();
+	if (ret)
+		thread->setServer(server);
+
+	wxLogInfo(wxT("Listening on Named Pipe \"%s\""), name.c_str());
+
+	MODEM_TYPE type;
+	m_config->getType(type);
+	wxLogInfo(wxT("Modem type: %d"), int(type));
+
+	IDStarModem* modem = NULL;
+	switch (type) {
+		case MT_NONE:
+			thread->setModem(new CDStarModemNull);
+			break;
+
+		default:
+			wxLogError(wxT("Unknown modem type: %d"), int(type));
+			break;
+	}
+
+	if (modem != NULL) {
+		bool res = modem->open();
+		if (!res)
+			wxLogError(wxT("Cannot open the D-Star modem"));
+		else
+			thread->setModem(modem);
+	}
+
+	// Convert the worker class into a thread
+	m_thread = new CDStarModemThreadHelper(thread);
+	m_thread->start();
 }

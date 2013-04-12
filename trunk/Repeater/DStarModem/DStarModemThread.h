@@ -16,23 +16,29 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef DStarModemService_H
-#define	DStarModemService_H
+#ifndef	DStarModemThread_H
+#define	DStarModemThread_H
+
+#include "ModemProtocolServer.h"
+#include "DStarModem.h"
 
 #include <wx/wx.h>
 
-class CDStarModemService: public wxApp
-{
+class CDStarModemThread {
 public:
-	CDStarModemService();
-	virtual ~CDStarModemService();
+	CDStarModemThread();
+	~CDStarModemThread();
 
-	virtual bool OnInit();
+	void setServer(CModemProtocolServer* server);
+	void setModem(IDStarModem* modem);
+
+	void run();
+	void kill();
 
 private:
-	bool isInstalled();
-	void install();
-	void uninstall();
+	CModemProtocolServer* m_server;
+	IDStarModem*          m_modem;
+	bool                  m_killed;
 };
 
 #endif
