@@ -73,9 +73,11 @@ unsigned int CDStarModemNull::readData(unsigned char* data, unsigned int length,
 	return 0U;
 }
 
-bool CDStarModemNull::close()
+void CDStarModemNull::heartbeat()
+{
+}
+
+void CDStarModemNull::close()
 {
 	wxLogMessage(wxT("Null D-Star Modem closed successfully"));
-
-	return true;
 }

@@ -16,40 +16,36 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarModem_H
-#define	DStarModem_H
+#ifndef	DStarModemD_H
+#define	DStarModemD_H
 
-#include "HeaderData.h"
+#include "DStarModemThread.h"
+#include "DStarModemDefs.h"
 
 #include <wx/wx.h>
+#include <wx/snglinst.h>
 
-enum DSMT_TYPE {
-	DSMTT_NONE,
-	DSMTT_HEADER,
-	DSMTT_DATA
-};
+class CDStarModemD {
 
-class IDStarModem {
 public:
-	virtual bool open() = 0;
+	CDStarModemD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& name);
+	~CDStarModemD();
 
-	virtual bool writeHeader(const CHeaderData& header) = 0;
-	virtual bool writeData(const unsigned char* data, unsigned int length, bool end) = 0;
+	bool init();
 
-	virtual bool setTX(bool on) = 0;
+	void run();
 
-	virtual unsigned int getSpace() = 0;
-	virtual bool         getTX() = 0;
-
-	virtual DSMT_TYPE read() = 0;
-	virtual CHeaderData* readHeader() = 0;
-	virtual unsigned int readData(unsigned char* data, unsigned int length, bool& end) = 0;
-
-	virtual void heartbeat() = 0;
-
-	virtual void close() = 0;
+	void kill();
 
 private:
+	wxString                 m_name;
+	bool                     m_nolog;
+	wxString                 m_logDir;
+	wxString                 m_confDir;
+	CDStarModemThread*       m_thread;
+	wxSingleInstanceChecker* m_checker;
+
+	bool createThread();
 };
 
 #endif

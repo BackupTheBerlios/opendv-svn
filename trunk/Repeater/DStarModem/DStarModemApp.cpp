@@ -16,10 +16,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DStarModemDVAPController.h"
 #include "ModemProtocolServer.h"
-#include "DStarModemApp.h"
 #include "DStarModemThread.h"
 #include "DStarModemNull.h"
+#include "DStarModemApp.h"
 #include "DStarDefines.h"
 #include "Version.h"
 #include "Logger.h"
@@ -360,17 +361,20 @@ void CDStarModemApp::createThread(const wxString& name)
 
 	MODEM_TYPE type;
 	m_config->getType(type);
-	wxLogInfo(wxT("Modem type: %d"), int(type));
 
 	IDStarModem* modem = NULL;
-	switch (type) {
-		case MT_NONE:
-			thread->setModem(new CDStarModemNull);
-			break;
-
-		default:
-			wxLogError(wxT("Unknown modem type: %d"), int(type));
-			break;
+	if (type == MT_NONE) {
+		wxLogInfo(wxT("Null:"));
+		modem = new CDStarModemNull;
+	} else if (type == MT_DVAP) {
+		wxString port;
+		unsigned int frequency;
+		int power, squelch;
+		m_config->getDVAP(port, frequency, power, squelch);
+		wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
+		modem = new CDStarModemDVAPController(port, frequency, power, squelch);
+	} else {
+		wxLogError(wxT("Unknown modem type: %d"), int(type));
 	}
 
 	if (modem != NULL) {

@@ -5,9 +5,9 @@
 
 include settings.mk
 
-all:	AnalogueRepeater/analoguerepeater DCSGateway/dcsgateway DExtraGateway/dextragateway DStarModemConfig/dstarmodemconfig DStarRepeater/dstarrepeater \
-			DStarRepeaterConfig/dstarrepeaterconfig DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater \
-			ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
+all:	AnalogueRepeater/analoguerepeater DCSGateway/dcsgateway DExtraGateway/dextragateway DStarModem/dstarmodemd DStarModemConfig/dstarmodemconfig \
+			DStarRepeater/dstarrepeater DStarRepeaterConfig/dstarrepeaterconfig DummyRepeater/dummyrepeater DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater \
+			GMSKRepeater/gmskrepeater ParrotController/parrotcontroller SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
 
 AnalogueRepeater/analoguerepeater:	Common/Common.a
 		make -C AnalogueRepeater
@@ -18,11 +18,14 @@ DExtraGateway/dextragateway:	Common/Common.a
 DCSGateway/dcsgateway:	Common/Common.a
 		make -C DCSGateway
 
-DStarRepeater/dstarrepeater:	Common/Common.a
-		make -C DStarRepeater
+DStarModem/dstarmodemd:	Common/Common.a
+		make -C DStarModem
 
 DStarModemConfig/dstarmodemconfig:	Common/Common.a
 		make -C DStarModemConfig
+
+DStarRepeater/dstarrepeater:	Common/Common.a
+		make -C DStarRepeater
 
 DStarRepeaterConfig/dstarrepeaterconfig:	Common/Common.a
 		make -C DStarRepeaterConfig
@@ -56,6 +59,7 @@ install:	all
 		make -C AnalogueRepeater install
 		make -C Data install
 		make -C DCSGateway install
+		make -C DStarModem install
 		make -C DStarModemConfig install
 		make -C DStarRepeater install
 		make -C DStarRepeaterConfig install
@@ -73,6 +77,7 @@ clean:
 		make -C Common clean
 		make -C AnalogueRepeater clean
 		make -C DCSGateway clean
+		make -C DStarModem clean
 		make -C DStarModemConfig clean
 		make -C DStarRepeater clean
 		make -C DStarRepeaterConfig clean

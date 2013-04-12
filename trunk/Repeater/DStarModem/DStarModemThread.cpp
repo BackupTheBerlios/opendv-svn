@@ -17,6 +17,9 @@
  */
 
 #include "DStarModemThread.h"
+#include "Timer.h"
+
+const unsigned int CYCLE_TIME = 9U;
 
 CDStarModemThread::CDStarModemThread() :
 m_server(NULL),
@@ -53,43 +56,49 @@ void CDStarModemThread::run()
 
 	wxLogMessage(wxT("Starting the D-Star Modem thread"));
 
-	unsigned int timeout = 0U;
+	CTimer timeout(1000U, 0U, 100U);
+	CTimer heartbeat(1000U, 0U, 500U);
+
+	heartbeat.start();
+
 	bool connected = false;
 
+	wxStopWatch stopWatch;
+
 	while (!m_killed) {
-		timeout++;
+		stopWatch.Start();
 
 		MODEM_MSG_TYPE serverType = m_server->read();
 		if (serverType == MMT_NONE) {
 		} else if (serverType == MMT_BEGIN) {
 			m_server->writeBegin();
 			connected = true;
-			timeout = 0U;
+			timeout.start();
 		} else if (serverType == MMT_END) {
 			m_server->writeEnd();
 			connected = false;
-			timeout = 0U;
+			timeout.stop();
 		} else if (serverType == MMT_HEADER) {
 			CHeaderData* header = m_server->readHeader();
 			m_modem->writeHeader(*header);
 			delete header;
-			timeout = 0U;
+			timeout.reset();
 		} else if (serverType == MMT_DATA) {
 			unsigned char data[DV_FRAME_LENGTH_BYTES];
 			bool end;
 			unsigned int length = m_server->readData(data, DV_FRAME_LENGTH_BYTES, end);
 			m_modem->writeData(data, length, end);
-			timeout = 0U;
+			timeout.reset();
 		} else if (serverType == MMT_TX) {
 			bool tx = m_server->readTX();
 			m_modem->setTX(tx);
-			timeout = 0U;
+			timeout.reset();
 		} else if (serverType == MMT_STATUS) {
 			unsigned int space = m_modem->getSpace();
 			m_server->writeSpace(space);
 			bool tx = m_modem->getTX();
 			m_server->writeTX(tx);
-			timeout = 0U;
+			timeout.reset();
 		}
 
 		DSMT_TYPE modemType = m_modem->read();
@@ -109,12 +118,26 @@ void CDStarModemThread::run()
 				m_server->writeData(data, length, end);
 		}
 
-		if (timeout >= 20U && connected) {
+		if (timeout.isRunning() && timeout.hasExpired()) {
 			wxLogError(wxT("Watchdog has timed out, client has disappeared"));
 			connected = false;
+			timeout.stop();
 		}
 
-		::wxMilliSleep(10UL);
+		if (heartbeat.hasExpired()) {
+			m_modem->heartbeat();
+			heartbeat.reset();
+		}
+
+		unsigned int ms = stopWatch.Time();
+
+		if (ms < CYCLE_TIME) {
+			::wxMilliSleep(CYCLE_TIME - ms);
+			ms = stopWatch.Time();
+		}
+
+		heartbeat.clock(ms);
+		timeout.clock(ms);
 	}
 
 	wxLogMessage(wxT("Stopping the D-Star Modem thread"));

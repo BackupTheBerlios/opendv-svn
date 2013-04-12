@@ -42,7 +42,9 @@ public:
 	virtual CHeaderData* readHeader();
 	virtual unsigned int readData(unsigned char* data, unsigned int length, bool& end);
 
-	virtual bool close();
+	virtual void heartbeat();
+
+	virtual void close();
 
 private:
 };
