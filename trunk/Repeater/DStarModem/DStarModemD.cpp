@@ -210,19 +210,19 @@ void CDStarModemD::run()
 
 bool CDStarModemD::createThread()
 {
-	if (confDir.IsEmpty())
-		confDir = CONF_DIR;
+	if (m_confDir.IsEmpty())
+		m_confDir = CONF_DIR;
 
-	CDStarModemConfig config(m_confDir, CONFIG_FILE_NAME, name);
+	CDStarModemConfig config(m_confDir, CONFIG_FILE_NAME, m_name);
 
 	m_thread = new CDStarModemThread;
 
-	CModemProtocolServer* server = new CModemProtocolServer(name);
+	CModemProtocolServer* server = new CModemProtocolServer(m_name);
 	int ret = server->open();
 	if (ret)
 		m_thread->setServer(server);
 
-	wxLogInfo(wxT("Listening on UNIX socket \"%s\""), name.c_str());
+	wxLogInfo(wxT("Listening on UNIX socket \"%s\""), m_name.c_str());
 
 	MODEM_TYPE type;
 	config.getType(type);

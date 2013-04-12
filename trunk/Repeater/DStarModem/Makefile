@@ -2,7 +2,7 @@ all:			dstarmodemd
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-dstarmodemd:	DStarModemD.o DStarModemDVAPController.o DStarModemTXRXThread.o DStarModemNull.o DStarModemThread.o ../Common/Common.a
+dstarmodemd:	DStarModemD.o DStarModemDVAPController.o DStarModemNull.o DStarModemThread.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarmodemd DStarModemD.o DStarModemDVAPController.o DStarModemNull.o DStarModemThread.o ../Common/Common.a $(LIBS)
 
 DStarModemD.o:	DStarModemD.cpp DStarModemD.h DStarModem.h DStarModemDefs.h DStarModemDVAPController.h DStarModemNull.h DStarModemThread.h \
