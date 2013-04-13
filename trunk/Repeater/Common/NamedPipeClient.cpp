@@ -40,7 +40,7 @@ bool CNamedPipeClient::open()
 
 	m_handle = ::CreateFile(fileName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
 	if (m_handle == INVALID_HANDLE_VALUE) {
-		wxLogError(wxT("CreateFile for the Named Pipe, %s, failed: err=%lu"), fileName.c_str(), ::GetLastError());
+		wxLogError(wxT("CreateFile for the Named Pipe (%s) failed: err=%lu"), fileName.c_str(), ::GetLastError());
 		return false;
 	}
 
@@ -51,6 +51,8 @@ bool CNamedPipeClient::open()
 	m_overlappedWrite.hEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 
 	m_readPending = false;
+
+	wxLogMessage(wxT("Connected on Named Pipe \"%s\""), fileName.c_str());
 
 	return true;
 }

@@ -16,6 +16,9 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#if defined(RASPBERRY_PI)
+#include "DStarModemRaspberrySet.h"
+#endif
 #include "DStarModemConfigFrame.h"
 #include "DStarModemDVRPTR1Set.h"
 #include "DStarModemDVRPTR2Set.h"
@@ -99,12 +102,14 @@ m_type(NULL)
 	sizer->Add(dummy6, 0, wxALL, BORDER_SIZE);
 
 	m_type = new wxChoice(panel, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	m_type->Append(_("None"));
+	m_type->Append(wxT("None"));
 	m_type->Append(wxT("DVAP"));
 	m_type->Append(wxT("GMSK Modem"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
-	m_type->Append(wxT("Raspberry PI"));
+#if defined(RASPBERRY_PI)
+	m_type->Append(wxT("Raspberry Pi"));
+#endif
 	sizer->Add(m_type, 0, wxALL, BORDER_SIZE);
 
 	wxStaticText* dummy7 = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(LABEL_WIDTH, -1));
@@ -131,11 +136,14 @@ m_type(NULL)
 	CDStarModemConfig config(m_confDir, CONFIG_FILE_NAME, wxT("GMSK 1"));
 #endif
 
-	MODEM_TYPE type;
+	wxString type;
 	config.getType(type);
 
 	m_name->SetSelection(0);
-	m_type->SetSelection(int(type));
+
+	int n = m_type->SetStringSelection(type);
+	if (n == wxNOT_FOUND)
+		m_type->SetSelection(0);
 
 	panel->SetAutoLayout(true);
 
@@ -208,10 +216,12 @@ void CDStarModemConfigFrame::onName(wxCommandEvent& event)
 	CDStarModemConfig config(m_confDir, CONFIG_FILE_NAME, name);
 #endif
 
-	MODEM_TYPE type;
+	wxString type;
 	config.getType(type);
 
-	m_type->SetSelection(int(type));
+	n = m_type->SetStringSelection(type);
+	if (n == wxNOT_FOUND)
+		m_type->SetSelection(0);
 }
 
 void CDStarModemConfigFrame::onConfigure(wxCommandEvent& event)
@@ -225,6 +235,7 @@ void CDStarModemConfigFrame::onConfigure(wxCommandEvent& event)
 		return;
 
 	wxString name = m_name->GetStringSelection();
+	wxString type = m_type->GetStringSelection();
 
 #if defined(__WINDOWS__)
 	CDStarModemConfig config(new wxConfig(APPLICATION_NAME), name);
@@ -235,102 +246,95 @@ void CDStarModemConfigFrame::onConfigure(wxCommandEvent& event)
 	CDStarModemConfig config(m_confDir, CONFIG_FILE_NAME, name);
 #endif
 
-	MODEM_TYPE type = MODEM_TYPE(n);
-
-	switch (type) {
-		case MT_NONE:
-			config.setType(MT_NONE);
-			config.write();
-			break;
-
-		case MT_RASPBERRY_PI:
-			config.setType(MT_RASPBERRY_PI);
-			config.write();
-			break;
-
-		case MT_DVAP: {
-				wxString port;
-				unsigned int frequency;
-				int power, squelch;
-				config.getDVAP(port, frequency, power, squelch);
-				CDStarModemDVAPSet modem(this, -1, port, frequency, power, squelch);
-				if (modem.ShowModal() == wxID_OK) {
-					if (modem.Validate()) {
-						port      = modem.getPort();
-						frequency = modem.getFrequency();
-						power     = modem.getPower();
-						squelch   = modem.getSquelch();
-						config.setType(MT_DVAP);
-						config.setDVAP(port, frequency, power, squelch);
-						config.write();
-					}
-				}
+	if (type.IsSameAs(wxT("None"))) {
+		config.setType(type);
+		config.write();
+#if defined(RASPBERRY_PI)
+	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
+		bool txInvert, rxInvert;
+		unsigned int txDelay;
+		config.getRaspberry(rxInvert, txInvert, txDelay);
+		CDStarModemRaspberrySet modem(this, -1, rxInvert, txInvert,txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				rxInvert = modem.getRXInvert();
+				txInvert = modem.getTXInvert();
+				txDelay  = modem.getTXDelay();
+				config.setType(type);
+				config.setRaspberry(rxInvert, txInvert, txDelay);
+				config.write();
 			}
-			break;
-
-		case MT_GMSK_MODEM: {
-				USB_INTERFACE type;
-				unsigned int address;
-				config.getGMSK(type, address);
-				CDStarModemGMSKSet modem(this, -1, type, address);
-				if (modem.ShowModal() == wxID_OK) {
-					if (modem.Validate()) {
-						type    = modem.getType();
-						address = modem.getAddress();
-						config.setType(MT_GMSK_MODEM);
-						config.setGMSK(type, address);
-						config.write();
-					}
-				}
+		}
+#endif
+	} else if (type.IsSameAs(wxT("DVAP"))) {
+		wxString port;
+		unsigned int frequency;
+		int power, squelch;
+		config.getDVAP(port, frequency, power, squelch);
+		CDStarModemDVAPSet modem(this, -1, port, frequency, power, squelch);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				port      = modem.getPort();
+				frequency = modem.getFrequency();
+				power     = modem.getPower();
+				squelch   = modem.getSquelch();
+				config.setType(type);
+				config.setDVAP(port, frequency, power, squelch);
+				config.write();
 			}
-			break;
-
-		case MT_DVRPTR_V1: {
-				wxString port;
-				bool txInvert, rxInvert, channel;
-				unsigned int modLevel, txDelay;
-				config.getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
-				CDStarModemDVRPTR1Set modem(this, -1, port, rxInvert, txInvert, channel, modLevel, txDelay);
-				if (modem.ShowModal() == wxID_OK) {
-					if (modem.Validate()) {
-						port     = modem.getPort();
-						rxInvert = modem.getRXInvert();
-						txInvert = modem.getTXInvert();
-						channel  = modem.getChannel();
-						modLevel = modem.getModLevel();
-						txDelay  = modem.getTXDelay();
-						config.setType(MT_DVRPTR_V1);
-						config.setDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
-						config.write();
-					}
-				}
+		}
+	} else if (type.IsSameAs(wxT("GMSK Modem"))) {
+		USB_INTERFACE modemType;
+		unsigned int modemAddress;
+		config.getGMSK(modemType, modemAddress);
+		CDStarModemGMSKSet modem(this, -1, modemType, modemAddress);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				modemType    = modem.getType();
+				modemAddress = modem.getAddress();
+				config.setType(type);
+				config.setGMSK(modemType, modemAddress);
+				config.write();
 			}
-			break;
-
-		case MT_DVRPTR_V2: {
-				CONNECTION_TYPE type;
-				wxString usbPort, address;
-				bool txInvert;
-				unsigned int port, modLevel;
-				config.getDVRPTR2(type, usbPort, address, port, txInvert, modLevel);
-				CDStarModemDVRPTR2Set modem(this, -1, type, usbPort, address, port, txInvert, modLevel);
-				if (modem.ShowModal() == wxID_OK) {
-					if (modem.Validate()) {
-						type     = modem.getConnectionType();
-						usbPort  = modem.getUSBPort();
-						address  = modem.getAddress();
-						port     = modem.getPort();
-						txInvert = modem.getTXInvert();
-						modLevel = modem.getModLevel();
-						config.setType(MT_DVRPTR_V2);
-						config.setDVRPTR2(type, usbPort, address, port, txInvert, modLevel);
-						config.write();
-					}
-				}
+		}
+	} else if (type.IsSameAs(wxT("DV-RPTR V1"))) {
+		wxString port;
+		bool txInvert, rxInvert, channel;
+		unsigned int modLevel, txDelay;
+		config.getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		CDStarModemDVRPTR1Set modem(this, -1, port, rxInvert, txInvert, channel, modLevel, txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				port     = modem.getPort();
+				rxInvert = modem.getRXInvert();
+				txInvert = modem.getTXInvert();
+				channel  = modem.getChannel();
+				modLevel = modem.getModLevel();
+				txDelay  = modem.getTXDelay();
+				config.setType(type);
+				config.setDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+				config.write();
 			}
-			break;
-
-		default:
-			break;
+		}
+	} else if (type.IsSameAs(wxT("DV-RPTR V2"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel;
+		config.getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+		CDStarModemDVRPTR2Set modem(this, -1, connType, usbPort, address, port, txInvert, modLevel);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				connType = modem.getConnectionType();
+				usbPort  = modem.getUSBPort();
+				address  = modem.getAddress();
+				port     = modem.getPort();
+				txInvert = modem.getTXInvert();
+				modLevel = modem.getModLevel();
+				config.setType(type);
+				config.setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+				config.write();
+			}
+		}
 	}
 }

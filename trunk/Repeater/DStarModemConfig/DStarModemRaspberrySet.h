@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,30 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DStarModemRaspberrySet_H
+#define	DStarModemRaspberrySet_H
+
+#include "DStarModemConfigDefs.h"
+#include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDStarModemRaspberrySet : public wxDialog {
+public:
+	CDStarModemRaspberrySet(wxWindow* parent, int id, bool rxInvert, bool txInvert, unsigned int txDelay);
+	virtual ~CDStarModemRaspberrySet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
-#endif
+	virtual bool         getRXInvert() const;
+	virtual bool         getTXInvert() const;
+	virtual unsigned int getTXDelay() const;
+
+private:
+	wxChoice* m_txInvert;
+	wxChoice* m_rxInvert;
+	wxSlider* m_txDelay;
+};
 
 #endif

@@ -224,14 +224,14 @@ bool CDStarModemD::createThread()
 
 	wxLogInfo(wxT("Listening on UNIX socket \"%s\""), m_name.c_str());
 
-	MODEM_TYPE type;
+	wxString type;
 	config.getType(type);
 
 	IDStarModem* modem = NULL;
-	if (type == MT_NONE) {
+	if (type.IsSameAs(wxT("None"))) {
 		wxLogInfo(wxT("Null:"));
 		modem = new CDStarModemNull;
-	} else if (type == MT_DVAP) {
+	} else if (type.IsSameAs(wxT("DVAP"))) {
 		wxString port;
 		unsigned int frequency;
 		int power, squelch;
@@ -239,7 +239,7 @@ bool CDStarModemD::createThread()
 		wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
 		modem = new CDStarModemDVAPController(port, frequency, power, squelch);
 	} else {
-		wxLogError(wxT("Unknown modem type: %d"), int(type));
+		wxLogError(wxT("Unknown modem type: %s"), type.c_str());
 	}
 
 	if (modem != NULL) {

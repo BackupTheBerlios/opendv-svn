@@ -60,6 +60,8 @@ bool CNamedPipeServer::start()
 	m_waitConnect = false;
 	m_connected = false;
 
+	wxLogMessage(wxT("Listening on Named Pipe \"%s\""), fileName.c_str());
+
 	return true;
 }
 

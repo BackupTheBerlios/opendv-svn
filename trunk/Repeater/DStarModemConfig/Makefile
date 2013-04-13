@@ -3,9 +3,9 @@ all:			dstarmodemconfig
 CFLAGS :=		-I../Common $(CFLAGS)
 
 dstarmodemconfig:	DStarModemConfigApp.o DStarModemConfigFrame.o DStarModemDVAPSet.o DStarModemDVRPTR1Set.o DStarModemDVRPTR2Set.o DStarModemGMSKSet.o \
-						../Common/Common.a
+						DStarModemRaspberrySet.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarmodemconfig DStarModemConfigApp.o DStarModemConfigFrame.o DStarModemDVAPSet.o DStarModemDVRPTR1Set.o DStarModemDVRPTR2Set.o \
-						DStarModemGMSKSet.o ../Common/Common.a $(LIBS)
+						DStarModemGMSKSet.o DStarModemRaspberrySet.o ../Common/Common.a $(LIBS)
 
 DStarModemConfigApp.o:	DStarModemConfigApp.cpp DStarModemConfigApp.h DStarModemConfigFrame.h DStarModemConfigDefs.h ../Common/DStarDefines.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DStarModemConfigApp.cpp
@@ -26,6 +26,9 @@ DStarModemDVRPTR2Set.o:	DStarModemDVRPTR2Set.cpp DStarModemDVRPTR2Set.h DStarMod
 
 DStarModemGMSKSet.o:	DStarModemGMSKSet.cpp DStarModemGMSKSet.h DStarModemConfigDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarModemGMSKSet.cpp
+
+DStarModemRaspberrySet.o:	DStarModemRaspberrySet.cpp DStarModemRaspberrySet.h DStarModemConfigDefs.h ../Common/DStarDefines.h
+				$(CC) $(CFLAGS) -c DStarModemRaspberrySet.cpp
 
 install:	all
 				install -g bin -o root -m 0775 dstarmodemconfig $(BINDIR)

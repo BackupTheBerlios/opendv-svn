@@ -34,8 +34,8 @@ public:
 #endif
 	~CDStarModemConfig();
 
-	void getType(MODEM_TYPE& type) const;
-	void setType(MODEM_TYPE type);
+	void getType(wxString& type) const;
+	void setType(const wxString& type);
 
 	void getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const;
 	void setDVAP(const wxString& port, unsigned int frequency, int power, int squelch);
@@ -49,6 +49,11 @@ public:
 	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const;
 	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
 
+#if defined(RASPBERRY_PI)
+	void getRaspberry(bool& rxInvert, bool& txInvert, unsigned int& txDelay) const;
+	void setRaspberry(bool rxInvert, bool txInvert, unsigned int txDelay);
+#endif
+
 	bool write();
 
 private:
@@ -59,7 +64,7 @@ private:
 	wxFileName    m_fileName;
 #endif
 	wxString      m_modemName;
-	MODEM_TYPE    m_modemType;
+	wxString      m_modemType;
 
 	// DVAP
 	wxString      m_dvapPort;
@@ -88,6 +93,9 @@ private:
 	unsigned int  m_dvrptr2ModLevel;
 
 	// Raspberry PI
+	bool          m_raspberryRXInvert;
+	bool          m_raspberryTXInvert;
+	unsigned int  m_raspberryTXDelay;
 };
 
 #endif

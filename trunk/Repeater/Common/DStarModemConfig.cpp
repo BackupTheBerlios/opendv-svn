@@ -43,9 +43,13 @@ const wxString  KEY_DVRPTR2_PORT       = wxT("dvrptr2Port");
 const wxString  KEY_DVRPTR2_TXINVERT   = wxT("dvrptr2TXInvert");
 const wxString  KEY_DVRPTR2_MODLEVEL   = wxT("dvrptr2ModLevel");
 
+const wxString  KEY_RASPBERRY_RXINVERT = wxT("raspberryRXInvert");
+const wxString  KEY_RASPBERRY_TXINVERT = wxT("raspberryTXInvert");
+const wxString  KEY_RASPBERRY_TXDELAY  = wxT("raspberryTXDelay");
+
 
 const wxString        DEFAULT_MODEM_NAME         = wxT("GMSK 1");
-const MODEM_TYPE      DEFAULT_MODEM_TYPE         = MT_NONE;
+const wxString        DEFAULT_MODEM_TYPE         = wxT("None");
 
 const wxString        DEFAULT_DVAP_PORT          = wxEmptyString;
 const unsigned int    DEFAULT_DVAP_FREQUENCY     = 145500000U;
@@ -73,6 +77,10 @@ const unsigned int    DEFAULT_DVRPTR2_PORT       = 0U;
 const bool            DEFAULT_DVRPTR2_TXINVERT   = false;
 const unsigned int    DEFAULT_DVRPTR2_MODLEVEL   = 20U;
 
+const bool            DEFAULT_RASPBERRY_RXINVERT = false;
+const bool            DEFAULT_RASPBERRY_TXINVERT = false;
+const unsigned int    DEFAULT_RASPBERRY_TXDELAY  = 150U;
+
 
 #if defined(__WINDOWS__)
 
@@ -98,7 +106,10 @@ m_dvrptr2USBPort(DEFAULT_DVRPTR2_USBPORT),
 m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
 m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
 m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
-m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
+m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
+m_raspberryRXInvert(DEFAULT_RASPBERRY_RXINVERT),
+m_raspberryTXInvert(DEFAULT_RASPBERRY_TXINVERT),
+m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
 {
 	wxASSERT(config != NULL);
 
@@ -108,8 +119,7 @@ m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
 
 	m_config->Read(m_name + KEY_MODEM_NAME, &m_modemName, DEFAULT_MODEM_NAME);
 
-	m_config->Read(m_name + KEY_MODEM_TYPE, &temp, long(DEFAULT_MODEM_TYPE));
-	m_modemType = MODEM_TYPE(temp);
+	m_config->Read(m_name + KEY_MODEM_TYPE, &m_modemType, DEFAULT_MODEM_TYPE);
 
 	m_config->Read(m_name + KEY_DVAP_PORT, &m_dvapPort, DEFAULT_DVAP_PORT);
 
@@ -186,7 +196,10 @@ m_dvrptr2USBPort(DEFAULT_DVRPTR2_USBPORT),
 m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
 m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
 m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
-m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
+m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
+m_raspberryRXInvert(DEFAULT_RASPBERRY_RXINVERT),
+m_raspberryTXInvert(DEFAULT_RASPBERRY_TXINVERT),
+m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
 {
 	wxASSERT(!dir.IsEmpty());
 
@@ -230,8 +243,7 @@ m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
 		if (key.IsSameAs(KEY_MODEM_NAME)) {
 			m_modemName = val;
 		} else if (key.IsSameAs(KEY_MODEM_TYPE)) {
-			val.ToLong(&temp1);
-			m_modemType = MODEM_TYPE(temp1);
+			m_modemType = val;
 		} else if (key.IsSameAs(KEY_DVAP_PORT)) {
 			m_dvapPort = val;
 		} else if (key.IsSameAs(KEY_DVAP_FREQUENCY)) {
@@ -282,6 +294,17 @@ m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
 		} else if (key.IsSameAs(KEY_DVRPTR2_MODLEVEL)) {
 			val.ToULong(&temp2);
 			m_dvrptr2ModLevel = (unsigned int)temp2;
+#if defined(RASPBERRY_PI)
+		} else if (key.IsSameAs(KEY_RASPBERRY_RXINVERT)) {
+			val.ToLong(&temp1);
+			m_raspberryRXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_RASPBERRY_TXINVERT)) {
+			val.ToLong(&temp1);
+			m_raspberryTXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_RASPBERRY_TXDELAY)) {
+			val.ToULong(&temp2);
+			m_raspberryTXDelay = (unsigned int)temp2;
+#endif
 		}
 
 		str = file.GetNextLine();
@@ -296,12 +319,12 @@ CDStarModemConfig::~CDStarModemConfig()
 
 #endif
 
-void CDStarModemConfig::getType(MODEM_TYPE& type) const
+void CDStarModemConfig::getType(wxString& type) const
 {
 	type = m_modemType;
 }
 
-void CDStarModemConfig::setType(MODEM_TYPE type)
+void CDStarModemConfig::setType(const wxString& type)
 {
 	m_modemType = type;
 }
@@ -374,13 +397,28 @@ void CDStarModemConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString& u
 	m_dvrptr2ModLevel   = modLevel;
 }
 
+#if defined(RASPBERRY_PI)
+void CDStarModemConfig::getRaspberry(bool& rxInvert, bool& txInvert, unsigned int& txDelay) const
+{
+	rxInvert = m_raspberryRXInvert;
+	txInvert = m_raspberryTXInvert;
+	txDelay  = m_raspberryTXDelay;
+}
+
+void CDStarModemConfig::setRaspberry(bool rxInvert, bool txInvert, unsigned int txDelay)
+{
+	m_raspberryRXInvert = rxInvert;
+	m_raspberryTXInvert = txInvert;
+	m_raspberryTXDelay  = txDelay;
+}
+#endif
+
 #if defined(__WINDOWS__)
 
 bool CDStarModemConfig::write()
 {
 	m_config->Write(m_name + KEY_MODEM_NAME, m_modemName);
-	m_config->Write(m_name + KEY_MODEM_TYPE, long(m_modemType));
-	m_config->Flush();
+	m_config->Write(m_name + KEY_MODEM_TYPE, m_modemType);
 
 	m_config->Write(m_name + KEY_DVAP_PORT, m_dvapPort);
 	m_config->Write(m_name + KEY_DVAP_FREQUENCY, long(m_dvapFrequency));
@@ -403,6 +441,8 @@ bool CDStarModemConfig::write()
 	m_config->Write(m_name + KEY_DVRPTR2_PORT, long(m_dvrptr2Port));
 	m_config->Write(m_name + KEY_DVRPTR2_TXINVERT, m_dvrptr2TXInvert);
 	m_config->Write(m_name + KEY_DVRPTR2_MODLEVEL, long(m_dvrptr2ModLevel));
+
+	m_config->Flush();
 
 	return true;
 }
@@ -433,7 +473,7 @@ bool CDStarModemConfig::write()
 
 	wxString buffer;
 	buffer.Printf(wxT("%s=%s"), KEY_MODEM_NAME.c_str(), m_modemName.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_MODEM_TYPE.c_str(), int(m_modemType)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_MODEM_TYPE.c_str(), m_modemType.c_str()); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_DVAP_PORT.c_str(), m_dvapPort.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVAP_FREQUENCY.c_str(), m_dvapFrequency); file.AddLine(buffer);
@@ -456,6 +496,12 @@ bool CDStarModemConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_PORT.c_str(), m_dvrptr2Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_TXINVERT.c_str(), m_dvrptr2TXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_MODLEVEL.c_str(), m_dvrptr2ModLevel); file.AddLine(buffer);
+
+#if defined(RASPBERRY_PI)
+	buffer.Printf(wxT("%s=%d"), KEY_RASPBERRY_RXINVERT.c_str(), m_raspberryRXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_RASPBERRY_TXINVERT.c_str(), m_raspberryTXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_RASPBERRY_TXDELAY.c_str(), m_raspberryTXDelay); file.AddLine(buffer);
+#endif
 
 	bool ret = file.Write();
 	if (!ret) {

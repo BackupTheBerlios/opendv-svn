@@ -56,7 +56,7 @@ void CDStarModemThread::run()
 
 	wxLogMessage(wxT("Starting the D-Star Modem thread"));
 
-	CTimer timeout(1000U, 0U, 100U);
+	CTimer timeout(1000U, 0U, 500U);
 	CTimer heartbeat(1000U, 0U, 500U);
 
 	heartbeat.start();
