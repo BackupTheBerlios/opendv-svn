@@ -342,6 +342,7 @@ void* CDStarModemDVAPController::Entry()
 	return NULL;
 }
 
+// Every 500ms
 void CDStarModemDVAPController::heartbeat()
 {
 	m_count++;

@@ -16,6 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DStarModemDVRPTRV1Controller.h"
+#include "DStarModemDVRPTRV2Controller.h"
 #include "DStarModemDVAPController.h"
 #include "ModemProtocolServer.h"
 #include "DStarModemThread.h"
@@ -373,6 +375,28 @@ void CDStarModemApp::createThread(const wxString& name)
 		m_config->getDVAP(port, frequency, power, squelch);
 		wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
 		modem = new CDStarModemDVAPController(port, frequency, power, squelch);
+	} else if (type.IsSameAs(wxT("DV-RPTR V1"))) {
+		wxString port;
+		bool rxInvert, txInvert, channel;
+		unsigned int modLevel, txDelay;
+		m_config->getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		wxLogInfo(wxT("DV-RPTR V1, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+		modem = new CDStarModemDVRPTRV1Controller(port, wxEmptyString, rxInvert, txInvert, channel, modLevel, txDelay);
+	} else if (type.IsSameAs(wxT("DV-RPTR V2"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel;
+		m_config->getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+		wxLogInfo(wxT("DV-RPTR V2, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%"), int(connType), address.c_str(), port, int(txInvert), modLevel);
+		switch (connType) {
+			case CT_USB:		// XXX
+				modem = new CDStarModemDVRPTRV2Controller(usbPort, wxEmptyString, txInvert, modLevel, true, wxT("GB7XYZ  "));
+				break;
+			case CT_NETWORK:	// XXX
+				modem = new CDStarModemDVRPTRV2Controller(address, port, txInvert, modLevel, true, wxT("GB7XYZ  "));
+				break;
+		}
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), type.c_str());
 	}

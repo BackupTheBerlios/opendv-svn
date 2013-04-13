@@ -238,6 +238,28 @@ bool CDStarModemD::createThread()
 		config.getDVAP(port, frequency, power, squelch);
 		wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
 		modem = new CDStarModemDVAPController(port, frequency, power, squelch);
+	} else if (type.IsSameAs(wxT("DV-RPTR V1"))) {
+		wxString port;
+		bool rxInvert, txInvert, channel;
+		unsigned int modLevel, txDelay;
+		config.getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		wxLogInfo(wxT("DV-RPTR V1, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+		modem = new CDStarModemDVRPTRV1Controller(port, wxEmptyString, rxInvert, txInvert, channel, modeLevel, txDelay);
+	} else if (type.IsSameAs(wxT("DV-RPTR V2"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel;
+		config.getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+		wxLogInfo(wxT("DV-RPTR V2, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%"), int(connType), address.c_str(), port, int(txInvert), modLevel);
+		switch (connType) {
+			case CT_USB:
+				modem = new CDStarModemDVRPTRV2Controller(usbPort, txInvert, modLevel);
+				break;
+			case CT_NETWORK:
+				modem = new CDStarModemDVRPTRV2Controller(address, port, txInvert, modLevel);
+				break;
+		}
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), type.c_str());
 	}

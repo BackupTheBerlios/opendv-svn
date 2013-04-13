@@ -2,16 +2,27 @@ all:			dstarmodemd
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-dstarmodemd:	DStarModemD.o DStarModemDVAPController.o DStarModemNull.o DStarModemThread.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarmodemd DStarModemD.o DStarModemDVAPController.o DStarModemNull.o DStarModemThread.o ../Common/Common.a $(LIBS)
+dstarmodemd:	DStarModemD.o DStarModemDVAPController.o DStarModemDVRPTRV1Controller.o DStarModemDVRPTRV2Controller.o DStarModemNull.o DStarModemThread.o \
+					../Common/Common.a
+				$(CC) $(LDFLAGS) -o dstarmodemd DStarModemD.o DStarModemDVAPController.o DStarModemDVRPTRV1Controller.o DStarModemDVRPTRV2Controller.o DStarModemNull.o \
+					DStarModemThread.o ../Common/Common.a $(LIBS)
 
-DStarModemD.o:	DStarModemD.cpp DStarModemD.h DStarModem.h DStarModemDefs.h DStarModemDVAPController.h DStarModemNull.h DStarModemThread.h \
-					../Common/ModemProtocolServer.h ../Common/DStarModemConfig.h ../Common/DStarDefines.h ../Common/Version.h ../Common/Logger.h
+DStarModemD.o:	DStarModemD.cpp DStarModemD.h DStarModem.h DStarModemDefs.h DStarModemDVAPController.h DStarModemDVRPTRV1Controller.h DStarModemDVRPTRV2Controller.h \
+					DStarModemNull.h DStarModemThread.h ../Common/ModemProtocolServer.h ../Common/DStarModemConfig.h ../Common/DStarDefines.h ../Common/Version.h \
+					../Common/Logger.h
 				$(CC) $(CFLAGS) -c DStarModemD.cpp
 
 DStarModemDVAPController.o:	DStarModemDVAPController.cpp DStarModemDVAPController.h DStarModem.h ../Common/SerialDataController.h ../Common/RingBuffer.h \
 					../Common/HeaderData.h ../Common/Utils.h ../Common/CCITTChecksumReverse.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarModemDVAPController.cpp
+
+DStarModemDVRPTRV1Controller.o:	DStarModemDVRPTRV1Controller.cpp DStarModemDVRPTRV1Controller.h DStarModem.h ../Common/SerialDataController.h ../Common/RingBuffer.h \
+					../Common/HeaderData.h ../Common/Utils.h ../Common/CCITTChecksum.h ../Common/CCITTChecksumReverse.h ../Common/Timer.h ../Common/DStarDefines.h
+				$(CC) $(CFLAGS) -c DStarModemDVRPTRV1Controller.cpp
+
+DStarModemDVRPTRV2Controller.o:	DStarModemDVRPTRV2Controller.cpp DStarModemDVRPTRV2Controller.h DStarModem.h ../Common/SerialDataController.h ../Common/RingBuffer.h \
+					../Common/HeaderData.h ../Common/Utils.h ../Common/TCPReaderWriter.h ../Common/Timer.h ../Common/DStarDefines.h
+				$(CC) $(CFLAGS) -c DStarModemDVRPTRV2Controller.cpp
 
 DStarModemNull.o:	DStarModemNull.cpp DStarModemNull.h DStarModem.h ../Common/HeaderData.h
 				$(CC) $(CFLAGS) -c DStarModemNull.cpp

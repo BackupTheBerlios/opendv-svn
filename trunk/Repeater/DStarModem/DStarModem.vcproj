@@ -185,6 +185,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarModemDVRPTRV1Controller.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTRV2Controller.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarModemNull.cpp"
 				>
 			</File>
@@ -216,6 +224,14 @@
 			</File>
 			<File
 				RelativePath=".\DStarModemDVAPController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTRV1Controller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarModemDVRPTRV2Controller.h"
 				>
 			</File>
 			<File
