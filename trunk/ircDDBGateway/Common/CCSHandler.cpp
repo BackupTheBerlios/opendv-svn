@@ -327,6 +327,7 @@ void CCCSHandler::process(CCCSData& data)
 			addToCache(m_yourCall.Mid(1U), data.getRemote());
 			m_stateChange = true;
 			m_yourCall = data.getRemote();
+			m_rptCall1 = data.getRemote();
 			m_handler->ccsLinkMade(m_yourCall, m_direction);
 			break;
 
@@ -425,11 +426,13 @@ void CCCSHandler::startLink(const wxString& dtmf, const wxString& user, const wx
 		wxLogMessage(wxT("CCS: New outgoing link to %s/%s via %s by %s"), dtmf.c_str(), callsign.c_str(), type.c_str(), user.c_str());
 		m_handler->ccsLinkMade(callsign, m_direction);
 		m_yourCall = callsign;
+		m_rptCall1 = callsign;
 	} else {
 		wxLogMessage(wxT("CCS: New outgoing link to %s via %s by %s"), dtmf.c_str(), type.c_str(), user.c_str());
 		m_yourCall = wxT("*");
 		m_yourCall.Append(dtmf);
 		m_yourCall.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
+		m_rptCall1.Clear();
 	}
 
 	m_local = user;
@@ -439,7 +442,6 @@ void CCCSHandler::startLink(const wxString& dtmf, const wxString& user, const wx
 	m_stateChange = true;
 	m_state       = CS_ACTIVE;
 	m_direction   = DIR_OUTGOING;
-	m_rptCall1.Clear();
 	m_inactivityTimer.start();
 }
 
