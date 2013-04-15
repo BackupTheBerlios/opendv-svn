@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
 #include "AnalogueRepeaterThread.h"
 #include "AnalogueRepeaterLogger.h"
 #include "AnalogueRepeaterApp.h"
+#if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
+#endif
 #include "ExternalController.h"
 #include "SerialController.h"
 #include "URIUSBController.h"
@@ -589,8 +591,10 @@ void CAnalogueRepeaterApp::createThread()
 		controller = new CExternalController(new CURIUSBController(num, true), pttInvert, squelchInvert);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialController(port, cfg), pttInvert, squelchInvert);
+#if defined(RASPBERRY_PI)
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
 		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);
+#endif
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, squelchInvert);
 	}

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,7 +45,6 @@ m_squelchInvert(NULL)
 
 	m_type->Append(_("None"));
 
-// XXX ???
 #if defined(RASPBERRY_PI)
 	m_type->Append(wxT("Raspberry Pi"));
 #endif
