@@ -2623,7 +2623,7 @@ esac
 
 if [ $# -gt 1 ]; then
     MODULE=$1
-    if [ $2 -ne "AUTO" ]; then
+    if [ $2 != "AUTO" ]; then
 	HWTYPE=$2
 	AUTO=0
     fi

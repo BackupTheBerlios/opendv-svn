@@ -941,13 +941,13 @@ function quit_icomG2(){
 		/etc/init.d/dstar_gw start
 	fi
 }
-										
+
 ##################### basic setup  ####################
 
 function basic_setup(){
 	print_text basic_setup 
 
-# 				
+#
 # first choice for default values is always an exiting own configfile
 # 2nd and 3rd choice - if no better available:
 #
@@ -2725,7 +2725,7 @@ function timeserver_setup(){
 		RET=0
 		while [ $RET -eq 0 ]; do
 			print_text "tsrv_language"
-			select_item $var 8 "$VALUE"
+			select_item $var 11 "$VALUE"
 			RET=$?
 			case $RET in
 			1)
