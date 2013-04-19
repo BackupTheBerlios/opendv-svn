@@ -104,6 +104,9 @@ m_miscellaneous(NULL)
 	double latitude, longitude;
 	m_config->getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 
+	m_gateway = new CIRCDDBGatewayConfigGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	noteBook->AddPage(m_gateway, _("Gateway"), true);
+
 	wxString repeaterCall1, repeaterBand1, repeaterAddress1, reflector1, description11, description12, url1;
 	double frequency1, offset1, range1, latitude1, longitude1, agl1;
 	unsigned char band11, band12, band13;
@@ -187,9 +190,6 @@ m_miscellaneous(NULL)
 
 	m_dcs = new CDCSSet(noteBook, -1, APPLICATION_NAME, dcsEnabled, ccsEnabled, ccsHost);
 	noteBook->AddPage(m_dcs, _("DCS and CCS"), false);
-
-	m_gateway = new CIRCDDBGatewayConfigGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
-	noteBook->AddPage(m_gateway, _("Gateway"), true);
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	wxString starNetBand1, starNetCallsign1, starNetLogoff1, starNetInfo1, starNetLink1, starNetPermanent1;

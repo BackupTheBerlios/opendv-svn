@@ -29,7 +29,7 @@ const wxString  KEY_GATEWAY_ADDRESS    = wxT("gatewayAddress");
 const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
 const wxString  KEY_LOCAL_PORT         = wxT("localPort");
-const wxString  KEY_MODEM_NAME         = wxT("modemName");
+const wxString  KEY_MODEM_TYPE         = wxT("modemType");
 const wxString  KEY_TIMEOUT            = wxT("timeout");
 const wxString  KEY_ACK_TIME           = wxT("ackTime");
 const wxString  KEY_BEACON_TIME        = wxT("beaconTime");
@@ -74,6 +74,33 @@ const wxString  KEY_LOGGING            = wxT("logging");
 const wxString  KEY_WINDOW_X           = wxT("windowX");
 const wxString  KEY_WINDOW_Y           = wxT("windowY");
 
+const wxString  KEY_DVAP_PORT          = wxT("dvapPort");
+const wxString  KEY_DVAP_FREQUENCY     = wxT("dvapFrequency");
+const wxString  KEY_DVAP_POWER         = wxT("dvapPower");
+const wxString  KEY_DVAP_SQUELCH       = wxT("dvapSquelch");
+
+const wxString  KEY_GMSK_INTERFACE     = wxT("gmskInterfaceType");
+const wxString  KEY_GMSK_ADDRESS       = wxT("gmskAddress");
+
+const wxString  KEY_DVRPTR1_PORT       = wxT("dvrptr1Port");
+const wxString  KEY_DVRPTR1_RXINVERT   = wxT("dvrptr1RXInvert");
+const wxString  KEY_DVRPTR1_TXINVERT   = wxT("dvrptr1TXInvert");
+const wxString  KEY_DVRPTR1_CHANNEL    = wxT("dvrptr1Channel");
+const wxString  KEY_DVRPTR1_MODLEVEL   = wxT("dvrptr1ModLevel");
+const wxString  KEY_DVRPTR1_TXDELAY    = wxT("dvrptr1TXDelay");
+
+const wxString  KEY_DVRPTR2_CONNECTION = wxT("dvrptr2Connection");
+const wxString  KEY_DVRPTR2_USBPORT    = wxT("dvrptr2USBPort");
+const wxString  KEY_DVRPTR2_ADDRESS    = wxT("dvrptr2Address");
+const wxString  KEY_DVRPTR2_PORT       = wxT("dvrptr2Port");
+const wxString  KEY_DVRPTR2_TXINVERT   = wxT("dvrptr2TXInvert");
+const wxString  KEY_DVRPTR2_MODLEVEL   = wxT("dvrptr2ModLevel");
+
+const wxString  KEY_RASPBERRY_RXINVERT = wxT("raspberryRXInvert");
+const wxString  KEY_RASPBERRY_TXINVERT = wxT("raspberryTXInvert");
+const wxString  KEY_RASPBERRY_TXDELAY  = wxT("raspberryTXDelay");
+
+
 const wxString        DEFAULT_CALLSIGN           = wxT("GB3IN  C");
 const wxString        DEFAULT_GATEWAY            = wxEmptyString;
 const DSTAR_MODE      DEFAULT_MODE               = MODE_DUPLEX;
@@ -85,7 +112,7 @@ const wxString        DEFAULT_GATEWAY_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
 const unsigned int    DEFAULT_LOCAL_PORT         = 20011U;
-const wxString        DEFAULT_MODEM_NAME         = wxT("GMSK 1");
+const wxString        DEFAULT_MODEM_TYPE         = wxT("None");
 const unsigned int    DEFAULT_TIMEOUT            = 180U;
 const unsigned int    DEFAULT_ACK_TIME           = 500U;
 const unsigned int    DEFAULT_BEACON_TIME        = 600U;
@@ -130,6 +157,36 @@ const bool            DEFAULT_LOGGING            = false;
 const int             DEFAULT_WINDOW_X           = -1;
 const int             DEFAULT_WINDOW_Y           = -1;
 
+const wxString        DEFAULT_DVAP_PORT          = wxEmptyString;
+const unsigned int    DEFAULT_DVAP_FREQUENCY     = 145500000U;
+const int             DEFAULT_DVAP_POWER         = 10;
+const int             DEFAULT_DVAP_SQUELCH       = -100;
+
+#if defined(WIN32)
+const USB_INTERFACE   DEFAULT_GMSK_INTERFACE     = UI_WINUSB;
+#else
+const USB_INTERFACE   DEFAULT_GMSK_INTERFACE     = UI_LIBUSB;
+#endif
+const unsigned int    DEFAULT_GMSK_ADDRESS       = 0x0300U;
+
+const wxString        DEFAULT_DVRPTR1_PORT       = wxEmptyString;
+const bool            DEFAULT_DVRPTR1_RXINVERT   = false;
+const bool            DEFAULT_DVRPTR1_TXINVERT   = false;
+const bool            DEFAULT_DVRPTR1_CHANNEL    = false;
+const unsigned int    DEFAULT_DVRPTR1_MODLEVEL   = 20U;
+const unsigned int    DEFAULT_DVRPTR1_TXDELAY    = 150U;
+
+const CONNECTION_TYPE DEFAULT_DVRPTR2_CONNECTION = CT_USB;
+const wxString        DEFAULT_DVRPTR2_USBPORT    = wxEmptyString;
+const wxString        DEFAULT_DVRPTR2_ADDRESS    = wxT("127.0.0.1");
+const unsigned int    DEFAULT_DVRPTR2_PORT       = 0U;
+const bool            DEFAULT_DVRPTR2_TXINVERT   = false;
+const unsigned int    DEFAULT_DVRPTR2_MODLEVEL   = 20U;
+
+const bool            DEFAULT_RASPBERRY_RXINVERT = false;
+const bool            DEFAULT_RASPBERRY_TXINVERT = false;
+const unsigned int    DEFAULT_RASPBERRY_TXDELAY  = 150U;
+
 
 #if defined(__WINDOWS__)
 
@@ -147,7 +204,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
-m_modemName(DEFAULT_MODEM_NAME),
+m_modemType(DEFAULT_MODEM_TYPE),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
@@ -190,7 +247,28 @@ m_output3(DEFAULT_OUTPUT3),
 m_output4(DEFAULT_OUTPUT4),
 m_logging(DEFAULT_LOGGING),
 m_x(DEFAULT_WINDOW_X),
-m_y(DEFAULT_WINDOW_Y)
+m_y(DEFAULT_WINDOW_Y),
+m_dvapPort(DEFAULT_DVAP_PORT),
+m_dvapFrequency(DEFAULT_DVAP_FREQUENCY),
+m_dvapPower(DEFAULT_DVAP_POWER),
+m_dvapSquelch(DEFAULT_DVAP_SQUELCH),
+m_gmskInterface(DEFAULT_GMSK_INTERFACE),
+m_gmskAddress(DEFAULT_GMSK_ADDRESS),
+m_dvrptr1Port(DEFAULT_DVRPTR1_PORT),
+m_dvrptr1RXInvert(DEFAULT_DVRPTR1_RXINVERT),
+m_dvrptr1TXInvert(DEFAULT_DVRPTR1_TXINVERT),
+m_dvrptr1Channel(DEFAULT_DVRPTR1_CHANNEL),
+m_dvrptr1ModLevel(DEFAULT_DVRPTR1_MODLEVEL),
+m_dvrptr1TXDelay(DEFAULT_DVRPTR1_TXDELAY),
+m_dvrptr2Connection(DEFAULT_DVRPTR2_CONNECTION),
+m_dvrptr2USBPort(DEFAULT_DVRPTR2_USBPORT),
+m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
+m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
+m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
+m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
+m_raspberryRXInvert(DEFAULT_RASPBERRY_RXINVERT),
+m_raspberryTXInvert(DEFAULT_RASPBERRY_TXINVERT),
+m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
 {
 	wxASSERT(config != NULL);
 
@@ -225,7 +303,7 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_LOCAL_PORT, &temp, long(DEFAULT_LOCAL_PORT));
 	m_localPort = (unsigned int)temp;
 
-	m_config->Read(m_name + KEY_MODEM_NAME, &m_modemName, DEFAULT_MODEM_NAME);
+	m_config->Read(m_name + KEY_MODEM_TYPE, &m_modemType, DEFAULT_MODEM_TYPE);
 
 	m_config->Read(m_name + KEY_TIMEOUT, &temp, long(DEFAULT_TIMEOUT));
 	m_timeout = (unsigned int)temp;
@@ -320,6 +398,52 @@ m_y(DEFAULT_WINDOW_Y)
 
 	m_config->Read(m_name + KEY_WINDOW_Y, &temp, long(DEFAULT_WINDOW_Y));
 	m_y = int(temp);
+
+	m_config->Read(m_name + KEY_DVAP_PORT, &m_dvapPort, DEFAULT_DVAP_PORT);
+
+	m_config->Read(m_name + KEY_DVAP_FREQUENCY, &temp, long(DEFAULT_DVAP_FREQUENCY));
+	m_dvapFrequency = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVAP_POWER, &temp, long(DEFAULT_DVAP_POWER));
+	m_dvapPower = int(temp);
+
+	m_config->Read(m_name + KEY_DVAP_SQUELCH, &temp, long(DEFAULT_DVAP_SQUELCH));
+	m_dvapSquelch = int(temp);
+
+	m_config->Read(m_name + KEY_GMSK_INTERFACE, &temp, long(DEFAULT_GMSK_INTERFACE));
+	m_gmskInterface = USB_INTERFACE(temp);
+
+	m_config->Read(m_name + KEY_GMSK_ADDRESS, &temp, long(DEFAULT_GMSK_ADDRESS));
+	m_gmskAddress = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVRPTR1_PORT, &m_dvrptr1Port, DEFAULT_DVRPTR1_PORT);
+
+	m_config->Read(m_name + KEY_DVRPTR1_RXINVERT, &m_dvrptr1RXInvert, DEFAULT_DVRPTR1_RXINVERT);
+
+	m_config->Read(m_name + KEY_DVRPTR1_TXINVERT, &m_dvrptr1TXInvert, DEFAULT_DVRPTR1_TXINVERT);
+
+	m_config->Read(m_name + KEY_DVRPTR1_CHANNEL, &m_dvrptr1Channel, DEFAULT_DVRPTR1_CHANNEL);
+
+	m_config->Read(m_name + KEY_DVRPTR1_MODLEVEL, &temp, long(DEFAULT_DVRPTR1_MODLEVEL));
+	m_dvrptr1ModLevel = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVRPTR1_TXDELAY, &temp, long(DEFAULT_DVRPTR1_TXDELAY));
+	m_dvrptr1TXDelay = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVRPTR2_CONNECTION, &temp, long(DEFAULT_DVRPTR2_CONNECTION));
+	m_dvrptr2Connection = CONNECTION_TYPE(temp);
+
+	m_config->Read(m_name + KEY_DVRPTR2_USBPORT, &m_dvrptr2USBPort, DEFAULT_DVRPTR2_USBPORT);
+
+	m_config->Read(m_name + KEY_DVRPTR2_ADDRESS, &m_dvrptr2Address, DEFAULT_DVRPTR2_ADDRESS);
+
+	m_config->Read(m_name + KEY_DVRPTR2_PORT, &temp, long(DEFAULT_DVRPTR2_PORT));
+	m_dvrptr2Port = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVRPTR2_TXINVERT, &m_dvrptr2TXInvert, DEFAULT_DVRPTR2_TXINVERT);
+
+	m_config->Read(m_name + KEY_DVRPTR2_MODLEVEL, &temp, long(DEFAULT_DVRPTR2_MODLEVEL));
+	m_dvrptr2ModLevel = (unsigned int)temp;
 }
 
 CDStarRepeaterConfig::~CDStarRepeaterConfig()
@@ -342,7 +466,7 @@ m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
 m_localPort(DEFAULT_LOCAL_PORT),
-m_modemName(DEFAULT_MODEM_NAME),
+m_modemType(DEFAULT_MODEM_TYPE),
 m_timeout(DEFAULT_TIMEOUT),
 m_ackTime(DEFAULT_ACK_TIME),
 m_beaconTime(DEFAULT_BEACON_TIME),
@@ -385,7 +509,28 @@ m_output3(DEFAULT_OUTPUT3),
 m_output4(DEFAULT_OUTPUT4),
 m_logging(DEFAULT_LOGGING),
 m_x(DEFAULT_WINDOW_X),
-m_y(DEFAULT_WINDOW_Y)
+m_y(DEFAULT_WINDOW_Y),
+m_dvapPort(DEFAULT_DVAP_PORT),
+m_dvapFrequency(DEFAULT_DVAP_FREQUENCY),
+m_dvapPower(DEFAULT_DVAP_POWER),
+m_dvapSquelch(DEFAULT_DVAP_SQUELCH),
+m_gmskInterface(DEFAULT_GMSK_INTERFACE),
+m_gmskAddress(DEFAULT_GMSK_ADDRESS),
+m_dvrptr1Port(DEFAULT_DVRPTR1_PORT),
+m_dvrptr1RXInvert(DEFAULT_DVRPTR1_RXINVERT),
+m_dvrptr1TXInvert(DEFAULT_DVRPTR1_TXINVERT),
+m_dvrptr1Channel(DEFAULT_DVRPTR1_CHANNEL),
+m_dvrptr1ModLevel(DEFAULT_DVRPTR1_MODLEVEL),
+m_dvrptr1TXDelay(DEFAULT_DVRPTR1_TXDELAY),
+m_dvrptr2Connection(DEFAULT_DVRPTR2_CONNECTION),
+m_dvrptr2USBPort(DEFAULT_DVRPTR2_USBPORT),
+m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
+m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
+m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
+m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
+m_raspberryRXInvert(DEFAULT_RASPBERRY_RXINVERT),
+m_raspberryTXInvert(DEFAULT_RASPBERRY_TXINVERT),
+m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
 {
 	wxASSERT(!dir.IsEmpty());
 
@@ -456,8 +601,8 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_LOCAL_PORT)) {
 			val.ToULong(&temp2);
 			m_localPort = (unsigned int)temp2;
-		} else if (key.IsSameAs(KEY_MODEM_NAME)) {
-			m_modemName = val;
+		} else if (key.IsSameAs(KEY_MODEM_TYPE)) {
+			m_modemType = val;
 		} else if (key.IsSameAs(KEY_TIMEOUT)) {
 			val.ToULong(&temp2);
 			m_timeout = (unsigned int)temp2;
@@ -560,6 +705,67 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_WINDOW_Y)) {
 			val.ToLong(&temp1);
 			m_y = int(temp1);
+		} else if (key.IsSameAs(KEY_DVAP_PORT)) {
+			m_dvapPort = val;
+		} else if (key.IsSameAs(KEY_DVAP_FREQUENCY)) {
+			val.ToULong(&temp2);
+			m_dvapFrequency = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVAP_POWER)) {
+			val.ToLong(&temp1);
+			m_dvapPower = int(temp1);
+		} else if (key.IsSameAs(KEY_DVAP_SQUELCH)) {
+			val.ToLong(&temp1);
+			m_dvapSquelch = int(temp1);
+		} else if (key.IsSameAs(KEY_GMSK_INTERFACE)) {
+			val.ToLong(&temp1);
+			m_gmskInterface = USB_INTERFACE(temp1);
+		} else if (key.IsSameAs(KEY_GMSK_ADDRESS)) {
+			val.ToULong(&temp2);
+			m_gmskAddress = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVRPTR1_PORT)) {
+			m_dvrptr1Port = val;
+		} else if (key.IsSameAs(KEY_DVRPTR1_RXINVERT)) {
+			val.ToLong(&temp1);
+			m_dvrptr1RXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DVRPTR1_TXINVERT)) {
+			val.ToLong(&temp1);
+			m_dvrptr1TXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DVRPTR1_CHANNEL)) {
+			val.ToLong(&temp1);
+			m_dvrptr1Channel = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DVRPTR1_MODLEVEL)) {
+			val.ToULong(&temp2);
+			m_dvrptr1ModLevel = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVRPTR1_TXDELAY)) {
+			val.ToULong(&temp2);
+			m_dvrptr1TXDelay = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVRPTR2_CONNECTION)) {
+			val.ToLong(&temp1);
+			m_dvrptr2Connection = CONNECTION_TYPE(temp1);
+		} else if (key.IsSameAs(KEY_DVRPTR2_USBPORT)) {
+			m_dvrptr2USBPort = val;
+		} else if (key.IsSameAs(KEY_DVRPTR2_ADDRESS)) {
+			m_dvrptr2Address = val;
+		} else if (key.IsSameAs(KEY_DVRPTR2_PORT)) {
+			val.ToULong(&temp2);
+			m_dvrptr2Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVRPTR2_TXINVERT)) {
+			val.ToLong(&temp1);
+			m_dvrptr2TXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DVRPTR2_MODLEVEL)) {
+			val.ToULong(&temp2);
+			m_dvrptr2ModLevel = (unsigned int)temp2;
+#if defined(RASPBERRY_PI)
+		} else if (key.IsSameAs(KEY_RASPBERRY_RXINVERT)) {
+			val.ToLong(&temp1);
+			m_raspberryRXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_RASPBERRY_TXINVERT)) {
+			val.ToLong(&temp1);
+			m_raspberryTXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_RASPBERRY_TXDELAY)) {
+			val.ToULong(&temp2);
+			m_raspberryTXDelay = (unsigned int)temp2;
+#endif
 		}
 
 		str = file.GetNextLine();
@@ -612,14 +818,14 @@ void CDStarRepeaterConfig::setNetwork(const wxString& gatewayAddress, unsigned i
 	m_localPort      = localPort;
 }
 
-void CDStarRepeaterConfig::getModem(wxString& name) const
+void CDStarRepeaterConfig::getModem(wxString& type) const
 {
-	name = m_modemName;
+	type = m_modemType;
 }
 
-void CDStarRepeaterConfig::setModem(const wxString& name)
+void CDStarRepeaterConfig::setModem(const wxString& type)
 {
-	m_modemName = name;
+	m_modemType = type;
 }
 
 void CDStarRepeaterConfig::getTimes(unsigned int& timeout, unsigned int& ackTime) const
@@ -772,6 +978,90 @@ void CDStarRepeaterConfig::setPosition(int x, int y)
 	m_y = y;
 }
 
+void CDStarRepeaterConfig::getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const
+{
+	port      = m_dvapPort;
+	frequency = m_dvapFrequency;
+	power     = m_dvapPower;
+	squelch   = m_dvapSquelch;
+}
+
+void CDStarRepeaterConfig::setDVAP(const wxString& port, unsigned int frequency, int power, int squelch)
+{
+	m_dvapPort      = port;
+	m_dvapFrequency = frequency;
+	m_dvapPower     = power;
+	m_dvapSquelch   = squelch;
+}
+
+void CDStarRepeaterConfig::getGMSK(USB_INTERFACE& type, unsigned int& address) const
+{
+	type    = m_gmskInterface;
+	address = m_gmskAddress;
+}
+
+void CDStarRepeaterConfig::setGMSK(USB_INTERFACE type, unsigned int address)
+{
+	m_gmskInterface = type;
+	m_gmskAddress   = address;
+}
+
+void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+{
+	port     = m_dvrptr1Port;
+	rxInvert = m_dvrptr1RXInvert;
+	txInvert = m_dvrptr1TXInvert;
+	channel  = m_dvrptr1Channel;
+	modLevel = m_dvrptr1ModLevel;
+	txDelay  = m_dvrptr1TXDelay;
+}
+
+void CDStarRepeaterConfig::setDVRPTR1(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+{
+	m_dvrptr1Port     = port;
+	m_dvrptr1RXInvert = rxInvert;
+	m_dvrptr1TXInvert = txInvert;
+	m_dvrptr1Channel  = channel;
+	m_dvrptr1ModLevel = modLevel;
+	m_dvrptr1TXDelay  = txDelay;
+}
+
+void CDStarRepeaterConfig::getDVRPTR2(CONNECTION_TYPE& connection, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const
+{
+	connection = m_dvrptr2Connection;
+	usbPort    = m_dvrptr2USBPort;
+	address    = m_dvrptr2Address;
+	port       = m_dvrptr2Port;
+	txInvert   = m_dvrptr2TXInvert;
+	modLevel   = m_dvrptr2ModLevel;
+}
+
+void CDStarRepeaterConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel)
+{
+	m_dvrptr2Connection = connection;
+	m_dvrptr2USBPort    = usbPort;
+	m_dvrptr2Address    = address;
+	m_dvrptr2Port       = port;
+	m_dvrptr2TXInvert   = txInvert;
+	m_dvrptr2ModLevel   = modLevel;
+}
+
+#if defined(RASPBERRY_PI)
+void CDStarRepeaterConfig::getRaspberry(bool& rxInvert, bool& txInvert, unsigned int& txDelay) const
+{
+	rxInvert = m_raspberryRXInvert;
+	txInvert = m_raspberryTXInvert;
+	txDelay  = m_raspberryTXDelay;
+}
+
+void CDStarRepeaterConfig::setRaspberry(bool rxInvert, bool txInvert, unsigned int txDelay)
+{
+	m_raspberryRXInvert = rxInvert;
+	m_raspberryTXInvert = txInvert;
+	m_raspberryTXDelay  = txDelay;
+}
+#endif
+
 #if defined(__WINDOWS__)
 
 bool CDStarRepeaterConfig::write()
@@ -787,7 +1077,7 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_GATEWAY_PORT, long(m_gatewayPort));
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
 	m_config->Write(m_name + KEY_LOCAL_PORT, long(m_localPort));
-	m_config->Write(m_name + KEY_MODEM_NAME, m_modemName);
+	m_config->Write(m_name + KEY_MODEM_TYPE, m_modemType);
 	m_config->Write(m_name + KEY_TIMEOUT, long(m_timeout));
 	m_config->Write(m_name + KEY_ACK_TIME, long(m_ackTime));
 	m_config->Write(m_name + KEY_BEACON_TIME, long(m_beaconTime));
@@ -831,6 +1121,29 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_LOGGING, m_logging);
 	m_config->Write(m_name + KEY_WINDOW_X, long(m_x));
 	m_config->Write(m_name + KEY_WINDOW_Y, long(m_y));
+
+	m_config->Write(m_name + KEY_DVAP_PORT, m_dvapPort);
+	m_config->Write(m_name + KEY_DVAP_FREQUENCY, long(m_dvapFrequency));
+	m_config->Write(m_name + KEY_DVAP_POWER, long(m_dvapPower));
+	m_config->Write(m_name + KEY_DVAP_SQUELCH, long(m_dvapSquelch));
+
+	m_config->Write(m_name + KEY_GMSK_INTERFACE, long(m_gmskInterface));
+	m_config->Write(m_name + KEY_GMSK_ADDRESS, long(m_gmskAddress));
+
+	m_config->Write(m_name + KEY_DVRPTR1_PORT, m_dvrptr1Port);
+	m_config->Write(m_name + KEY_DVRPTR1_RXINVERT, m_dvrptr1RXInvert);
+	m_config->Write(m_name + KEY_DVRPTR1_TXINVERT, m_dvrptr1TXInvert);
+	m_config->Write(m_name + KEY_DVRPTR1_CHANNEL, m_dvrptr1Channel);
+	m_config->Write(m_name + KEY_DVRPTR1_MODLEVEL, long(m_dvrptr1ModLevel));
+	m_config->Write(m_name + KEY_DVRPTR1_TXDELAY, long(m_dvrptr1TXDelay));
+
+	m_config->Write(m_name + KEY_DVRPTR2_CONNECTION, long(m_dvrptr2Connection));
+	m_config->Write(m_name + KEY_DVRPTR2_USBPORT, m_dvrptr2USBPort);
+	m_config->Write(m_name + KEY_DVRPTR2_ADDRESS, m_dvrptr2Address);
+	m_config->Write(m_name + KEY_DVRPTR2_PORT, long(m_dvrptr2Port));
+	m_config->Write(m_name + KEY_DVRPTR2_TXINVERT, m_dvrptr2TXInvert);
+	m_config->Write(m_name + KEY_DVRPTR2_MODLEVEL, long(m_dvrptr2ModLevel));
+
 	m_config->Flush();
 
 	return true;
@@ -872,7 +1185,7 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_GATEWAY_PORT.c_str(), m_gatewayPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_LOCAL_PORT.c_str(), m_localPort); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_MODEM_NAME.c_str(), m_modemName.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_MODEM_TYPE.c_str(), m_modemType.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_TIMEOUT.c_str(), m_timeout); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_ACK_TIME.c_str(), m_ackTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_BEACON_TIME.c_str(), m_beaconTime); file.AddLine(buffer);
@@ -916,6 +1229,34 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_LOGGING.c_str(), m_logging ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_WINDOW_X.c_str(), m_x); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_WINDOW_Y.c_str(), m_y); file.AddLine(buffer);
+
+	buffer.Printf(wxT("%s=%s"), KEY_DVAP_PORT.c_str(), m_dvapPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVAP_FREQUENCY.c_str(), m_dvapFrequency); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVAP_POWER.c_str(), m_dvapPower); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVAP_SQUELCH.c_str(), m_dvapSquelch); file.AddLine(buffer);
+
+	buffer.Printf(wxT("%s=%d"), KEY_GMSK_INTERFACE.c_str(), int(m_gmskInterface)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_GMSK_ADDRESS.c_str(), m_gmskAddress); file.AddLine(buffer);
+
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR1_PORT.c_str(), m_dvrptr1Port.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_RXINVERT.c_str(), m_dvrptr1RXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_TXINVERT.c_str(), m_dvrptr1TXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_CHANNEL.c_str(), m_dvrptr1Channel ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR1_MODLEVEL.c_str(), m_dvrptr1ModLevel); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR1_TXDELAY.c_str(), m_dvrptr1TXDelay); file.AddLine(buffer);
+
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_CONNECTION.c_str(), int(m_dvrptr2Connection)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR2_USBPORT.c_str(), m_dvrptr2USBPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR2_ADDRESS.c_str(), m_dvrptr2Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_PORT.c_str(), m_dvrptr2Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_TXINVERT.c_str(), m_dvrptr2TXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_MODLEVEL.c_str(), m_dvrptr2ModLevel); file.AddLine(buffer);
+
+#if defined(RASPBERRY_PI)
+	buffer.Printf(wxT("%s=%d"), KEY_RASPBERRY_RXINVERT.c_str(), m_raspberryRXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_RASPBERRY_TXINVERT.c_str(), m_raspberryTXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_RASPBERRY_TXDELAY.c_str(), m_raspberryTXDelay); file.AddLine(buffer);
+#endif
 
 	bool ret = file.Write();
 	if (!ret) {

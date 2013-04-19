@@ -16,32 +16,35 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterConfigModemSet_H
-#define	DStarRepeaterConfigModemSet_H
+#ifndef	DStarRepeaterConfigDVRPTR1Set_H
+#define	DStarRepeaterConfigDVRPTR1Set_H
 
 #include "DStarRepeaterConfigDefs.h"
-#include "DStarRepeaterConfig.h"
 #include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-class CDStarRepeaterConfigModemSet : public wxPanel {
+class CDStarRepeaterConfigDVRPTR1Set : public wxDialog {
 public:
-	CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, CDStarRepeaterConfig* config, const wxString& type);
-	virtual ~CDStarRepeaterConfigModemSet();
+	CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	virtual ~CDStarRepeaterConfigDVRPTR1Set();
 
 	virtual bool Validate();
 
-	virtual wxString getType() const;
-
-	virtual void onConfigure(wxCommandEvent& event);
+	virtual wxString     getPort() const;
+	virtual bool         getRXInvert() const;
+	virtual bool         getTXInvert() const;
+	virtual bool         getChannel() const;
+	virtual unsigned int getModLevel() const;
+	virtual unsigned int getTXDelay() const;
 
 private:
-	CDStarRepeaterConfig* m_config;
-	wxString              m_title;
-	wxChoice*             m_type;
-
-	DECLARE_EVENT_TABLE()
+	wxChoice* m_port;
+	wxChoice* m_txInvert;
+	wxChoice* m_rxInvert;
+	wxChoice* m_channel;
+	wxSlider* m_modLevel;
+	wxSlider* m_txDelay;
 };
 
 #endif

@@ -16,32 +16,33 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterConfigModemSet_H
-#define	DStarRepeaterConfigModemSet_H
+#ifndef	DStarRepeaterConfigDVAPSet_H
+#define	DStarRepeaterConfigDVAPSet_H
 
 #include "DStarRepeaterConfigDefs.h"
-#include "DStarRepeaterConfig.h"
 #include "DStarDefines.h"
 
 #include <wx/wx.h>
+#include <wx/spinctrl.h>
 
-class CDStarRepeaterConfigModemSet : public wxPanel {
+class CDStarRepeaterConfigDVAPSet : public wxDialog {
 public:
-	CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, CDStarRepeaterConfig* config, const wxString& type);
-	virtual ~CDStarRepeaterConfigModemSet();
+	CDStarRepeaterConfigDVAPSet(wxWindow* parent, int id, const wxString& port, unsigned int frequency, int power, int squelch);
+	virtual ~CDStarRepeaterConfigDVAPSet();
 
 	virtual bool Validate();
 
-	virtual wxString getType() const;
-
-	virtual void onConfigure(wxCommandEvent& event);
+	virtual wxString     getPort() const;
+	virtual unsigned int getFrequency() const;
+	virtual int          getPower() const;
+	virtual int          getSquelch() const;
 
 private:
-	CDStarRepeaterConfig* m_config;
-	wxString              m_title;
-	wxChoice*             m_type;
-
-	DECLARE_EVENT_TABLE()
+	wxChoice*   m_port;
+	wxChoice*   m_band;
+	wxTextCtrl* m_frequency;
+	wxSpinCtrl* m_power;
+	wxSpinCtrl* m_squelch;
 };
 
 #endif

@@ -16,14 +16,17 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DStarRepeaterModemDVRPTRV1Controller.h"
+#include "DStarRepeaterModemDVRPTRV2Controller.h"
+#include "DStarRepeaterModemDVAPController.h"
 #include "DStarRepeaterTXRXThread.h"
 #include "RepeaterProtocolHandler.h"
+#include "DStarRepeaterModemNull.h"
 #include "DStarRepeaterTRXThread.h"
 #include "DStarRepeaterTXThread.h"
 #include "DStarRepeaterRXThread.h"
 #include "DStarRepeaterLogger.h"
 #include "DStarRepeaterThread.h"
-#include "ModemProtocolClient.h"
 #include "RaspberryController.h"
 #include "DStarRepeaterApp.h"
 #include "K8055Controller.h"
@@ -334,15 +337,51 @@ void CDStarRepeaterApp::createThread()
 	thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 	wxLogInfo(wxT("Announcement enabled: %d, time: %u mins, record RPT1: \"%s\", record RPT2: \"%s\", delete RPT1: \"%s\", delete RPT2: \"%s\""), int(announcementEnabled), announcementTime / 60U, announcementRecordRPT1.c_str(), announcementRecordRPT2.c_str(), announcementDeleteRPT1.c_str(), announcementDeleteRPT2.c_str());
 
-	wxString modemName;
-	m_config->getModem(modemName);
-	wxLogInfo(wxT("Modem set to \"%s\""), modemName.c_str());
+	wxString modemType;
+	m_config->getModem(modemType);
+	wxLogInfo(wxT("Modem type set to \"%s\""), modemType.c_str());
 
-	if (!modemName.IsEmpty()) {
-		CModemProtocolClient* modem = new CModemProtocolClient(modemName);
-		bool res = modem->open();
+	IDStarRepeaterModem* modem = NULL;
+	if (modemType.IsSameAs(wxT("None"))) {
+		wxLogInfo(wxT("Null:"));
+		modem = new CDStarRepeaterModemNull;
+	} else if (modemType.IsSameAs(wxT("DVAP"))) {
+		wxString port;
+		unsigned int frequency;
+		int power, squelch;
+		m_config->getDVAP(port, frequency, power, squelch);
+		wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
+		modem = new CDStarRepeaterModemDVAPController(port, frequency, power, squelch);
+	} else if (modemType.IsSameAs(wxT("DV-RPTR V1"))) {
+		wxString port;
+		bool rxInvert, txInvert, channel;
+		unsigned int modLevel, txDelay;
+		m_config->getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		wxLogInfo(wxT("DV-RPTR V1, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+		modem = new CDStarRepeaterModemDVRPTRV1Controller(port, wxEmptyString, rxInvert, txInvert, channel, modLevel, txDelay);
+	} else if (modemType.IsSameAs(wxT("DV-RPTR V2"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel;
+		m_config->getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+		wxLogInfo(wxT("DV-RPTR V2, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%"), int(connType), address.c_str(), port, int(txInvert), modLevel);
+		switch (connType) {
+			case CT_USB:		// XXX
+				modem = new CDStarRepeaterModemDVRPTRV2Controller(usbPort, wxEmptyString, txInvert, modLevel, true, wxT("GB7XYZ  "));
+				break;
+			case CT_NETWORK:	// XXX
+				modem = new CDStarRepeaterModemDVRPTRV2Controller(address, port, txInvert, modLevel, true, wxT("GB7XYZ  "));
+				break;
+		}
+	} else {
+		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());
+	}
+
+	if (modem != NULL) {
+		bool res = modem->start();
 		if (!res)
-			wxLogError(wxT("Cannot open the modem"));
+			wxLogError(wxT("Cannot open the D-Star modem"));
 		else
 			thread->setModem(modem);
 	}

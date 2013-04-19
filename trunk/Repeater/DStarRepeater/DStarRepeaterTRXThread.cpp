@@ -36,6 +36,8 @@ const unsigned int STATUS_TIME = 100U;
 
 const unsigned int CYCLE_TIME = 9U;
 
+// m_tx XXX
+
 CDStarRepeaterTRXThread::CDStarRepeaterTRXThread() :
 m_modem(NULL),
 m_protocolHandler(NULL),
@@ -193,7 +195,7 @@ void CDStarRepeaterTRXThread::run()
 
 		statusCount++;
 		if (statusCount >= (STATUS_TIME / CYCLE_TIME)) {
-			m_modem->getStatus();
+			m_space = m_modem->getSpace();
 			statusCount = 0U;
 		}
 
@@ -335,8 +337,7 @@ void CDStarRepeaterTRXThread::run()
 
 	wxLogMessage(wxT("Stopping the D-Star repeater thread"));
 
-	m_modem->close();
-	delete m_modem;
+	m_modem->stop();
 
 	if (m_logging != NULL) {
 		m_logging->close();
@@ -395,7 +396,7 @@ void CDStarRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* handl
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTRXThread::setModem(CModemProtocolClient* modem)
+void CDStarRepeaterTRXThread::setModem(IDStarRepeaterModem* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -565,32 +566,16 @@ void CDStarRepeaterTRXThread::setGreyList(CCallsignList* list)
 void CDStarRepeaterTRXThread::receiveModem()
 {
 	for (;;) {
-		MODEM_MSG_TYPE type = m_modem->read();
-		if (type == MMT_NONE)
+		DSMT_TYPE type = m_modem->read();
+		if (type == DSMTT_NONE)
 			return;
-
-		if (type == MMT_TEXT) {
-			wxString text = m_modem->readText();
-			wxLogMessage(text);
-			continue;
-		}
-
-		if (type == MMT_TX) {
-			m_tx = m_modem->readTX();
-			continue;
-		}
-
-		if (type == MMT_SPACE) {
-			m_space = m_modem->readSpace();
-			continue;
-		}
 
 		switch (m_rxState) {
 			case DSRXS_LISTENING:
-				if (type == MMT_HEADER) {
+				if (type == DSMTT_HEADER) {
 					CHeaderData* header = m_modem->readHeader();
 					receiveHeader(header);
-				} else if (type == MMT_DATA) {
+				} else if (type == DSMTT_DATA) {
 					unsigned char data[20U];
 					bool end;
 					unsigned int length = m_modem->readData(data, 20U, end);
@@ -605,7 +590,7 @@ void CDStarRepeaterTRXThread::receiveModem()
 				break;
 
 			case DSRXS_PROCESS_SLOW_DATA:
-				if (type == MMT_DATA) {
+				if (type == DSMTT_DATA) {
 					unsigned char data[20U];
 					bool end;
 					unsigned int length = m_modem->readData(data, 20U, end);
@@ -618,7 +603,7 @@ void CDStarRepeaterTRXThread::receiveModem()
 				break;
 
 			case DSRXS_PROCESS_DATA:
-				if (type == MMT_DATA) {
+				if (type == DSMTT_DATA) {
 					unsigned char data[20U];
 					bool end;
 					unsigned int length = m_modem->readData(data, 20U, end);
@@ -1000,8 +985,6 @@ void CDStarRepeaterTRXThread::transmitLocalHeader()
 	if (header == NULL)
 		return;
 
-	m_modem->writeTX(true);
-
 	m_modem->writeHeader(*header);
 	delete header;
 }
@@ -1021,11 +1004,8 @@ void CDStarRepeaterTRXThread::transmitLocalData()
 	m_modem->writeData(buffer, length, end);
 	m_space -= length;
 
-	if (end) {
-		m_modem->writeTX(false);
-
+	if (end)
 		m_localQueue.reset();
-	}
 }
 
 void CDStarRepeaterTRXThread::transmitRadioHeader()
@@ -1037,8 +1017,6 @@ void CDStarRepeaterTRXThread::transmitRadioHeader()
 	CHeaderData* header = m_radioQueue.getHeader();
 	if (header == NULL)
 		return;
-
-	m_modem->writeTX(true);
 
 	m_modem->writeHeader(*header);
 	delete header;
@@ -1059,11 +1037,8 @@ void CDStarRepeaterTRXThread::transmitRadioData()
 	m_modem->writeData(buffer, length, end);
 	m_space -= length;
 
-	if (end) {
-		m_modem->writeTX(false);
-
+	if (end)
 		m_radioQueue.reset();
-	}
 }
 
 void CDStarRepeaterTRXThread::transmitNetworkHeader()
@@ -1075,8 +1050,6 @@ void CDStarRepeaterTRXThread::transmitNetworkHeader()
 	CHeaderData* header = m_networkQueue[m_readNum]->getHeader();
 	if (header == NULL)
 		return;
-
-	m_modem->writeTX(true);
 
 	m_modem->writeHeader(*header);
 	delete header;
@@ -1098,8 +1071,6 @@ void CDStarRepeaterTRXThread::transmitNetworkData()
 	m_space -= length;
 
 	if (end) {
-		m_modem->writeTX(false);
-
 		m_networkQueue[m_readNum]->reset();
 
 		m_readNum++;

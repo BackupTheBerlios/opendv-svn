@@ -40,8 +40,8 @@ public:
 	void getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const;
 	void setNetwork(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort);
 
-	void getModem(wxString& name) const;
-	void setModem(const wxString& name);
+	void getModem(wxString& type) const;
+	void setModem(const wxString& type);
 
 	void getTimes(unsigned int& timeout, unsigned int& ackTime) const;
 	void setTimes(unsigned int timeout, unsigned int ackTime);
@@ -67,6 +67,23 @@ public:
 	void getPosition(int& x, int& y) const;
 	void setPosition(int x, int y);
 
+	void getDVAP(wxString& port, unsigned int& frequency, int& power, int& squelch) const;
+	void setDVAP(const wxString& port, unsigned int frequency, int power, int squelch);
+
+	void getGMSK(USB_INTERFACE& type, unsigned int& address) const;
+	void setGMSK(USB_INTERFACE type, unsigned int address);
+
+	void getDVRPTR1(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
+	void setDVRPTR1(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+
+	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const;
+	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
+
+#if defined(RASPBERRY_PI)
+	void getRaspberry(bool& rxInvert, bool& txInvert, unsigned int& txDelay) const;
+	void setRaspberry(bool rxInvert, bool txInvert, unsigned int txDelay);
+#endif
+
 	bool write();
 
 private:
@@ -87,7 +104,7 @@ private:
 	unsigned int  m_gatewayPort;
 	wxString      m_localAddress;
 	unsigned int  m_localPort;
-	wxString      m_modemName;
+	wxString      m_modemType;
 	unsigned int  m_timeout;
 	unsigned int  m_ackTime;
 	unsigned int  m_beaconTime;
@@ -131,6 +148,37 @@ private:
 	bool          m_logging;
 	int           m_x;
 	int           m_y;
+
+	// DVAP
+	wxString      m_dvapPort;
+	unsigned int  m_dvapFrequency;
+	int           m_dvapPower;
+	int           m_dvapSquelch;
+
+	// GMSK
+	USB_INTERFACE m_gmskInterface;
+	unsigned int  m_gmskAddress;
+
+	// DV-RPTR 1
+	wxString      m_dvrptr1Port;
+	bool          m_dvrptr1RXInvert;
+	bool          m_dvrptr1TXInvert;
+	bool          m_dvrptr1Channel;
+	unsigned int  m_dvrptr1ModLevel;
+	unsigned int  m_dvrptr1TXDelay;
+
+	// DV-RPTR 2
+	CONNECTION_TYPE m_dvrptr2Connection;
+	wxString      m_dvrptr2USBPort;
+	wxString      m_dvrptr2Address;
+	unsigned int  m_dvrptr2Port;
+	bool          m_dvrptr2TXInvert;
+	unsigned int  m_dvrptr2ModLevel;
+
+	// Raspberry PI
+	bool          m_raspberryRXInvert;
+	bool          m_raspberryTXInvert;
+	unsigned int  m_raspberryTXDelay;
 };
 
 #endif

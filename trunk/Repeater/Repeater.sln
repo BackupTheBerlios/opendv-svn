@@ -63,16 +63,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DStarRepeaterConfig", "DSta
 		{3753EF20-2330-415E-B933-2560A474498B} = {3753EF20-2330-415E-B933-2560A474498B}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DStarModemConfig", "DStarModemConfig\DStarModemConfig.vcproj", "{560BF3B6-10D0-4409-808D-F3D67F2A94F7}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3753EF20-2330-415E-B933-2560A474498B} = {3753EF20-2330-415E-B933-2560A474498B}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DStarModem", "DStarModem\DStarModem.vcproj", "{1FE22B2B-D76B-4382-B9CB-2818F2CC57A8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3753EF20-2330-415E-B933-2560A474498B} = {3753EF20-2330-415E-B933-2560A474498B}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -131,14 +121,6 @@ Global
 		{FBAE8201-11CC-4256-BF39-A860B9DF963C}.Debug|Win32.Build.0 = Debug|Win32
 		{FBAE8201-11CC-4256-BF39-A860B9DF963C}.Release|Win32.ActiveCfg = Release|Win32
 		{FBAE8201-11CC-4256-BF39-A860B9DF963C}.Release|Win32.Build.0 = Release|Win32
-		{560BF3B6-10D0-4409-808D-F3D67F2A94F7}.Debug|Win32.ActiveCfg = Debug|Win32
-		{560BF3B6-10D0-4409-808D-F3D67F2A94F7}.Debug|Win32.Build.0 = Debug|Win32
-		{560BF3B6-10D0-4409-808D-F3D67F2A94F7}.Release|Win32.ActiveCfg = Release|Win32
-		{560BF3B6-10D0-4409-808D-F3D67F2A94F7}.Release|Win32.Build.0 = Release|Win32
-		{1FE22B2B-D76B-4382-B9CB-2818F2CC57A8}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1FE22B2B-D76B-4382-B9CB-2818F2CC57A8}.Debug|Win32.Build.0 = Debug|Win32
-		{1FE22B2B-D76B-4382-B9CB-2818F2CC57A8}.Release|Win32.ActiveCfg = Release|Win32
-		{1FE22B2B-D76B-4382-B9CB-2818F2CC57A8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

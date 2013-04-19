@@ -242,10 +242,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarModemConfig.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfig.cpp"
 				>
 			</File>
@@ -347,22 +343,6 @@
 			</File>
 			<File
 				RelativePath=".\MessageTextCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ModemProtocolClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ModemProtocolServer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NamedPipeClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NamedPipeServer.cpp"
 				>
 			</File>
 			<File
@@ -592,10 +572,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarModemConfig.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfig.h"
 				>
 			</File>
@@ -736,23 +712,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ModemProtocolClient.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ModemProtocolServer.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Modulator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NamedPipeClient.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NamedPipeServer.h"
 				>
 			</File>
 			<File

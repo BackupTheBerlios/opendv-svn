@@ -16,35 +16,62 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#if defined(RASPBERRY_PI)
+#include "DStarRepeaterConfigRaspberrySet.h"
+#endif
+#include "DStarRepeaterConfigDVRPTR1Set.h"
+#include "DStarRepeaterConfigDVRPTR2Set.h"
 #include "DStarRepeaterConfigModemSet.h"
+#include "DStarRepeaterConfigGMSKSet.h"
+#include "DStarRepeaterConfigDVAPSet.h"
+
+enum {
+	Button_Configure = 7088
+};
+
+BEGIN_EVENT_TABLE(CDStarRepeaterConfigModemSet, wxPanel)
+	EVT_BUTTON(Button_Configure, CDStarRepeaterConfigModemSet::onConfigure)
+END_EVENT_TABLE()
 
 const unsigned int BORDER_SIZE   = 5U;
 const unsigned int CONTROL_WIDTH = 100U;
 
-
-CDStarRepeaterConfigModemSet::CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, const wxString& name) :
+CDStarRepeaterConfigModemSet::CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, CDStarRepeaterConfig* config, const wxString& type) :
 wxPanel(parent, id),
+m_config(config),
 m_title(title),
-m_name(NULL)
+m_type(NULL)
 {
+	wxASSERT(config != NULL);
+
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
-	wxStaticText* versionLabel = new wxStaticText(this, -1, _("Name"));
-	sizer->Add(versionLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	wxStaticText* typeLabel = new wxStaticText(this, -1, _("Type"));
+	sizer->Add(typeLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	m_name = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	m_name->Append(wxT("GMSK 1"));
-	m_name->Append(wxT("GMSK 2"));
-	m_name->Append(wxT("GMSK 3"));
-	m_name->Append(wxT("GMSK 4"));
-	sizer->Add(m_name, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	m_type->Append(wxT("None"));
+	m_type->Append(wxT("DVAP"));
+	m_type->Append(wxT("GMSK Modem"));
+	m_type->Append(wxT("DV-RPTR V1"));
+	m_type->Append(wxT("DV-RPTR V2"));
+#if defined(RASPBERRY_PI)
+	m_type->Append(wxT("Raspberry Pi"));
+#endif
+	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	if (name.IsEmpty()) {
-		m_name->SetSelection(0);
+	wxStaticText* dummy = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy, 0, wxALL, BORDER_SIZE);
+
+	wxButton* configure = new wxButton(this, Button_Configure, _("Configure..."), wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+	sizer->Add(configure, 0, wxALL, BORDER_SIZE);
+
+	if (type.IsEmpty()) {
+		m_type->SetSelection(0);
 	} else {
-		int n = m_name->SetStringSelection(name);
+		int n = m_type->SetStringSelection(type);
 		if (n == wxNOT_FOUND)
-			m_name->SetSelection(0);
+			m_type->SetSelection(0);
 	}
 
 	SetAutoLayout(true);
@@ -61,15 +88,104 @@ CDStarRepeaterConfigModemSet::~CDStarRepeaterConfigModemSet()
 
 bool CDStarRepeaterConfigModemSet::Validate()
 {
-	return m_name->GetCurrentSelection() != wxNOT_FOUND;
+	return m_type->GetCurrentSelection() != wxNOT_FOUND;
 }
 
-wxString CDStarRepeaterConfigModemSet::getName() const
+wxString CDStarRepeaterConfigModemSet::getType() const
 {
-	int n = m_name->GetCurrentSelection();
+	int n = m_type->GetCurrentSelection();
 
 	if (n == wxNOT_FOUND)
-		return _("Modem 1");
+		return wxT("None");
 
-	return m_name->GetStringSelection();
+	return m_type->GetStringSelection();
+}
+
+void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
+{
+	int n = m_type->GetSelection();
+	if (n == wxNOT_FOUND)
+		return;
+
+	wxString type = m_type->GetStringSelection();
+
+	if (type.IsSameAs(wxT("None"))) {
+#if defined(RASPBERRY_PI)
+	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
+		bool txInvert, rxInvert;
+		unsigned int txDelay;
+		m_config->getRaspberry(rxInvert, txInvert, txDelay);
+		CDStarRepeaterConfigRaspberrySet modem(this, -1, rxInvert, txInvert,txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				rxInvert = modem.getRXInvert();
+				txInvert = modem.getTXInvert();
+				txDelay  = modem.getTXDelay();
+				m_config->setRaspberry(rxInvert, txInvert, txDelay);
+			}
+		}
+#endif
+	} else if (type.IsSameAs(wxT("DVAP"))) {
+		wxString port;
+		unsigned int frequency;
+		int power, squelch;
+		m_config->getDVAP(port, frequency, power, squelch);
+		CDStarRepeaterConfigDVAPSet modem(this, -1, port, frequency, power, squelch);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				port      = modem.getPort();
+				frequency = modem.getFrequency();
+				power     = modem.getPower();
+				squelch   = modem.getSquelch();
+				m_config->setDVAP(port, frequency, power, squelch);
+			}
+		}
+	} else if (type.IsSameAs(wxT("GMSK Modem"))) {
+		USB_INTERFACE modemType;
+		unsigned int modemAddress;
+		m_config->getGMSK(modemType, modemAddress);
+		CDStarRepeaterConfigGMSKSet modem(this, -1, modemType, modemAddress);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				modemType    = modem.getType();
+				modemAddress = modem.getAddress();
+				m_config->setGMSK(modemType, modemAddress);
+			}
+		}
+	} else if (type.IsSameAs(wxT("DV-RPTR V1"))) {
+		wxString port;
+		bool txInvert, rxInvert, channel;
+		unsigned int modLevel, txDelay;
+		m_config->getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		CDStarRepeaterConfigDVRPTR1Set modem(this, -1, port, rxInvert, txInvert, channel, modLevel, txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				port     = modem.getPort();
+				rxInvert = modem.getRXInvert();
+				txInvert = modem.getTXInvert();
+				channel  = modem.getChannel();
+				modLevel = modem.getModLevel();
+				txDelay  = modem.getTXDelay();
+				m_config->setDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+			}
+		}
+	} else if (type.IsSameAs(wxT("DV-RPTR V2"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel;
+		m_config->getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+		CDStarRepeaterConfigDVRPTR2Set modem(this, -1, connType, usbPort, address, port, txInvert, modLevel);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				connType = modem.getConnectionType();
+				usbPort  = modem.getUSBPort();
+				address  = modem.getAddress();
+				port     = modem.getPort();
+				txInvert = modem.getTXInvert();
+				modLevel = modem.getModLevel();
+				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+			}
+		}
+	}
 }

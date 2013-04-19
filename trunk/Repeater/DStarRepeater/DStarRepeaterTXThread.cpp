@@ -36,6 +36,8 @@ const unsigned int STATUS_TIME = 100U;
 
 const unsigned int CYCLE_TIME  = 9U;
 
+// m_tx XXX
+
 CDStarRepeaterTXThread::CDStarRepeaterTXThread() :
 m_modem(NULL),
 m_protocolHandler(NULL),
@@ -99,7 +101,7 @@ void CDStarRepeaterTXThread::run()
 
 		count++;
 		if (count >= (STATUS_TIME / CYCLE_TIME)) {
-			m_modem->getStatus();
+			m_space = m_modem->getSpace();
 			count = 0U;
 		}
 
@@ -142,8 +144,7 @@ void CDStarRepeaterTXThread::run()
 
 	wxLogMessage(wxT("Stopping the D-Star transmitter thread"));
 
-	m_modem->close();
-	delete m_modem;
+	m_modem->stop();
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
@@ -168,7 +169,7 @@ void CDStarRepeaterTXThread::setProtocolHandler(CRepeaterProtocolHandler* handle
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTXThread::setModem(CModemProtocolClient* modem)
+void CDStarRepeaterTXThread::setModem(IDStarRepeaterModem* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -218,25 +219,9 @@ void CDStarRepeaterTXThread::setGreyList(CCallsignList* list)
 void CDStarRepeaterTXThread::receiveModem()
 {
 	for (;;) {
-		MODEM_MSG_TYPE type = m_modem->read();
-		if (type == MMT_NONE)
+		DSMT_TYPE type = m_modem->read();
+		if (type == DSMTT_NONE)
 			return;
-
-		if (type == MMT_TEXT) {
-			wxString text = m_modem->readText();
-			wxLogMessage(text);
-			continue;
-		}
-
-		if (type == MMT_SPACE) {
-			m_space = m_modem->readSpace();
-			continue;
-		}
-
-		if (type == MMT_TX) {
-			m_tx = m_modem->readTX();
-			continue;
-		}
 	}
 }
 
@@ -339,8 +324,6 @@ void CDStarRepeaterTXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_modem->writeTX(true);
-
 	m_modem->writeHeader(*header);
 	delete header;
 }
@@ -361,8 +344,6 @@ void CDStarRepeaterTXThread::transmitNetworkData()
 	m_space -= length;
 
 	if (end) {
-		m_modem->writeTX(false);
-
 		m_networkQueue[m_readNum]->reset();
 
 		m_readNum++;

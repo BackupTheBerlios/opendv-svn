@@ -120,10 +120,10 @@ m_controller(NULL)
 	m_beacon = new CBeaconSet(noteBook, -1, APPLICATION_NAME, beaconTime, beaconText, beaconVoice, language);
 	noteBook->AddPage(m_beacon, _("Beacon"), false);
 
-	wxString modemName;
-	m_config->getModem(modemName);
+	wxString modemType;
+	m_config->getModem(modemType);
 
-	m_modem = new CDStarRepeaterConfigModemSet(noteBook, -1, APPLICATION_NAME, modemName);
+	m_modem = new CDStarRepeaterConfigModemSet(noteBook, -1, APPLICATION_NAME, m_config, modemType);
 	noteBook->AddPage(m_modem, _("Modem"), false);
 
 	bool enabled;
@@ -243,8 +243,8 @@ void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
 	wxString announcementDeleteRPT2 = m_announcement->getDeleteRPT2();
 	m_config->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 
-	wxString modemName = m_modem->getName();
-	m_config->setModem(modemName);
+	wxString modemType = m_modem->getType();
+	m_config->setModem(modemType);
 
 	bool enabled          = m_control1->getEnabled();
 	wxString rpt1Callsign = m_control1->getRPT1Callsign();

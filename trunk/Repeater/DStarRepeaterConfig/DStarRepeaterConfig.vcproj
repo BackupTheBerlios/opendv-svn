@@ -189,7 +189,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterConfigDVAPSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigDVRPTR1Set.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigDVRPTR2Set.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterConfigFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigGMSKSet.cpp"
 				>
 			</File>
 			<File
@@ -223,7 +239,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterConfigDVAPSet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigDVRPTR1Set.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigDVRPTR2Set.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterConfigFrame.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigGMSKSet.h"
 				>
 			</File>
 			<File

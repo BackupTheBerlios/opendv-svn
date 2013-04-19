@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,32 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	DStarRepeaterModemNull_H
+#define	DStarRepeaterModemNull_H
+
+#include "DStarRepeaterModem.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDStarRepeaterModemNull : public IDStarRepeaterModem {
+public:
+	CDStarRepeaterModemNull();
+	virtual ~CDStarRepeaterModemNull();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool start();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
-#endif
+	virtual bool writeHeader(const CHeaderData& header);
+	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
+
+	virtual unsigned int getSpace();
+
+	virtual DSMT_TYPE read();
+	virtual CHeaderData* readHeader();
+	virtual unsigned int readData(unsigned char* data, unsigned int length, bool& end);
+
+	virtual void stop();
+
+private:
+};
 
 #endif

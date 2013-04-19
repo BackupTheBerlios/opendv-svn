@@ -2,13 +2,12 @@ all:		Common.a
 
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o \
 		CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o \
-		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarModemConfig.o DStarRepeaterConfig.o DStarScrambler.o DTMFController.o DTMFDecoder.o \
-		DTMFTextCtrl.o DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o \
-		ExternalController.o FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o \
-		LogEvent.o Logger.o NCO.o MessageTextCtrl.o ModemProtocolClient.o ModemProtocolServer.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o \
-		PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o \
-		SerialController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o UNIXSocketClient.o \
-		UNIXSocketServer.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
+		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o \
+		DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
+		FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o \
+		NCO.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
+		RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o \
+		SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -78,9 +77,6 @@ DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h
 
 DStarInterleaver.o:	DStarInterleaver.cpp DStarInterleaver.h DStarDefines.h Interleaver.h
 		$(CC) $(CFLAGS) -c DStarInterleaver.cpp
-
-DStarModemConfig.o:	DStarModemConfig.cpp DStarModemConfig.h DStarDefines.h
-		$(CC) $(CFLAGS) -c DStarModemConfig.cpp
 
 DStarRepeaterConfig.o:	DStarRepeaterConfig.cpp DStarRepeaterConfig.h DStarDefines.h
 		$(CC) $(CFLAGS) -c DStarRepeaterConfig.cpp
@@ -159,12 +155,6 @@ Logger.o:	Logger.cpp Logger.h
 MessageTextCtrl.o:	MessageTextCtrl.cpp MessageTextCtrl.h RestrictedTextCtrl.h
 		$(CC) $(CFLAGS) -c MessageTextCtrl.cpp
 
-ModemProtocolClient.o:	ModemProtocolClient.cpp ModemProtocolClient.h UNIXSocketClient.h DStarDefines.h HeaderData.h
-		$(CC) $(CFLAGS) -c ModemProtocolClient.cpp
-
-ModemProtocolServer.o:	ModemProtocolServer.cpp ModemProtocolServer.h UNIXSocketServer.h DStarDefines.h HeaderData.h
-		$(CC) $(CFLAGS) -c ModemProtocolServer.cpp
-
 NCO.o:		NCO.cpp NCO.h
 		$(CC) $(CFLAGS) -c NCO.cpp
 
@@ -229,12 +219,6 @@ Timer.o:	Timer.cpp Timer.h
 
 UDPReaderWriter.o:	UDPReaderWriter.cpp UDPReaderWriter.h Utils.h
 		$(CC) $(CFLAGS) -c UDPReaderWriter.cpp
-
-UNIXSocketClient.o:	UNIXSocketClient.cpp UNIXSocketClient.h
-		$(CC) $(CFLAGS) -c UNIXSocketClient.cpp
-
-UNIXSocketServer.o:	UNIXSocketServer.cpp UNIXSocketServer.h
-		$(CC) $(CFLAGS) -c UNIXSocketServer.cpp
 
 URIUSBController.o:	URIUSBController.cpp URIUSBController.h HardwareController.h
 		$(CC) $(CFLAGS) -c URIUSBController.cpp

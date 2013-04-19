@@ -16,30 +16,39 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterConfigModemSet_H
-#define	DStarRepeaterConfigModemSet_H
+#ifndef	DStarRepeaterConfigDVRPTR2Set_H
+#define	DStarRepeaterConfigDVRPTR2Set_H
 
 #include "DStarRepeaterConfigDefs.h"
-#include "DStarRepeaterConfig.h"
+#include "AddressTextCtrl.h"
 #include "DStarDefines.h"
+#include "PortTextCtrl.h"
 
 #include <wx/wx.h>
 
-class CDStarRepeaterConfigModemSet : public wxPanel {
+class CDStarRepeaterConfigDVRPTR2Set : public wxDialog {
 public:
-	CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, CDStarRepeaterConfig* config, const wxString& type);
-	virtual ~CDStarRepeaterConfigModemSet();
+	CDStarRepeaterConfigDVRPTR2Set(wxWindow* parent, int id, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
+	virtual ~CDStarRepeaterConfigDVRPTR2Set();
 
 	virtual bool Validate();
 
-	virtual wxString getType() const;
+	virtual CONNECTION_TYPE getConnectionType() const;
+	virtual wxString        getUSBPort() const;
+	virtual wxString        getAddress() const;
+	virtual unsigned int    getPort() const;
+	virtual bool            getTXInvert() const;
+	virtual unsigned int    getModLevel() const;
 
-	virtual void onConfigure(wxCommandEvent& event);
+	virtual void onConnectionType(wxCommandEvent& event);
 
 private:
-	CDStarRepeaterConfig* m_config;
-	wxString              m_title;
-	wxChoice*             m_type;
+	wxChoice*         m_connectionType;
+	wxChoice*         m_usbPort;
+	CAddressTextCtrl* m_address;
+	CPortTextCtrl*    m_port;
+	wxChoice*         m_txInvert;
+	wxSlider*         m_modLevel;
 
 	DECLARE_EVENT_TABLE()
 };

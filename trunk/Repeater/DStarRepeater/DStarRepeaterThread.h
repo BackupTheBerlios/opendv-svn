@@ -21,7 +21,7 @@
 
 #include "DStarRepeaterStatusData.h"
 #include "RepeaterProtocolHandler.h"
-#include "ModemProtocolClient.h"
+#include "DStarRepeaterModem.h"
 #include "ExternalController.h"
 #include "DStarRepeaterDefs.h"
 #include "CallsignList.h"
@@ -38,7 +38,7 @@ class IDStarRepeaterThread {
 public:
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) = 0;
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler) = 0;
-	virtual void setModem(CModemProtocolClient* modem) = 0;
+	virtual void setModem(IDStarRepeaterModem* modem) = 0;
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime) = 0;
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime) = 0;
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language) = 0;

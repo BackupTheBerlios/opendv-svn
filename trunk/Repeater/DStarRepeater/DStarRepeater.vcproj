@@ -189,6 +189,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterModemDVAPController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemDVRPTRV1Controller.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemDVRPTRV2Controller.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemNull.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterRXThread.cpp"
 				>
 			</File>
@@ -232,6 +248,26 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterLogger.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemDVAPController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemDVRPTRV1Controller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemDVRPTRV2Controller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterModemNull.h"
 				>
 			</File>
 			<File

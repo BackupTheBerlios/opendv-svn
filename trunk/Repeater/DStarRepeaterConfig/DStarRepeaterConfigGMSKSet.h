@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,29 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	Version_H
-#define	Version_H
+#ifndef	DStarRepeaterConfigGMSKSet_H
+#define	DStarRepeaterConfigGMSKSet_H
+
+#include "DStarRepeaterConfigDefs.h"
+#include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDStarRepeaterConfigGMSKSet : public wxDialog {
+public:
+	CDStarRepeaterConfigGMSKSet(wxWindow* parent, int id, USB_INTERFACE type, unsigned int address);
+	virtual ~CDStarRepeaterConfigGMSKSet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20130323 - DEBUG");
-#else
-const wxString VERSION = wxT("20130323");
+	virtual USB_INTERFACE getType() const;
+	virtual unsigned int  getAddress() const;
+
+private:
+#if defined(WIN32)
+	wxChoice* m_type;
 #endif
+	wxChoice* m_address;
+};
 
 #endif

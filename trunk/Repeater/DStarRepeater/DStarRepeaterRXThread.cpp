@@ -31,6 +31,8 @@ const unsigned int MAX_DATA_SYNC_BIT_ERRS  = 2U;
 
 const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
+const unsigned int STATUS_TIME = 100U;
+
 const unsigned int CYCLE_TIME = 9U;
 
 CDStarRepeaterRXThread::CDStarRepeaterRXThread() :
@@ -72,10 +74,18 @@ void CDStarRepeaterRXThread::run()
 
 	wxLogMessage(wxT("Starting the D-Star receiver thread"));
 
+	unsigned int statusCount = 0U;
+
 	wxStopWatch stopWatch;
 
 	while (!m_killed) {
 		stopWatch.Start();
+
+		statusCount++;
+		if (statusCount >= (STATUS_TIME / CYCLE_TIME)) {
+			m_modem->getSpace();
+			statusCount = 0U;
+		}
 
 		receiveModem();
 
@@ -102,8 +112,7 @@ void CDStarRepeaterRXThread::run()
 
 	wxLogMessage(wxT("Stopping the D-Star receiver thread"));
 
-	m_modem->close();
-	delete m_modem;
+	m_modem->stop();
 
 	m_protocolHandler->close();
 	delete m_protocolHandler;
@@ -125,7 +134,7 @@ void CDStarRepeaterRXThread::setProtocolHandler(CRepeaterProtocolHandler* handle
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterRXThread::setModem(CModemProtocolClient* modem)
+void CDStarRepeaterRXThread::setModem(IDStarRepeaterModem* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -175,22 +184,16 @@ void CDStarRepeaterRXThread::setGreyList(CCallsignList* list)
 void CDStarRepeaterRXThread::receiveModem()
 {
 	for (;;) {
-		MODEM_MSG_TYPE type = m_modem->read();
-		if (type == MMT_NONE)
+		DSMT_TYPE type = m_modem->read();
+		if (type == DSMTT_NONE)
 			return;
-
-		if (type == MMT_TEXT) {
-			wxString text = m_modem->readText();
-			wxLogMessage(text);
-			continue;
-		}
 
 		switch (m_rxState) {
 			case DSRXS_LISTENING:
-				if (type == MMT_HEADER) {
+				if (type == DSMTT_HEADER) {
 					CHeaderData* header = m_modem->readHeader();
 					receiveHeader(header);
-				} else if (type == MMT_DATA) {
+				} else if (type == DSMTT_DATA) {
 					unsigned char data[20U];
 					bool end;
 					unsigned int length = m_modem->readData(data, 20U, end);
@@ -205,7 +208,7 @@ void CDStarRepeaterRXThread::receiveModem()
 				break;
 
 			case DSRXS_PROCESS_SLOW_DATA:
-				if (type == MMT_DATA) {
+				if (type == DSMTT_DATA) {
 					unsigned char data[20U];
 					bool end;
 					unsigned int length = m_modem->readData(data, 20U, end);
@@ -218,7 +221,7 @@ void CDStarRepeaterRXThread::receiveModem()
 				break;
 
 			case DSRXS_PROCESS_DATA:
-				if (type == MMT_DATA) {
+				if (type == DSMTT_DATA) {
 					unsigned char data[20U];
 					bool end;
 					unsigned int length = m_modem->readData(data, 20U, end);
