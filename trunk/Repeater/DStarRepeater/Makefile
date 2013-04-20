@@ -3,33 +3,35 @@ all:			dstarrepeater dstarrepeaterd
 CFLAGS :=		-I../Common $(CFLAGS)
 
 dstarrepeater:	DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o \
-					DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterModemDVAPController.o DStarRepeaterModemDVRPTR1Controller.o \
-					DStarRepeaterModemDVRPTR2Controller.o DStarRepeaterModemNull.o ../Common/Common.a
+					DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterModemDVAPController.o DStarRepeaterModemDVRPTRV1Controller.o \
+					DStarRepeaterModemDVRPTRV2Controller.o DStarRepeaterModemNull.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o \
 					DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterModemDVAPController.o \
-					DStarRepeaterModemDVRPTR1Controller.o DStarRepeaterModemDVRPTR2Controller.o DStarRepeaterModemNull.o ../Common/Common.a $(LIBS)
+					DStarRepeaterModemDVRPTRV1Controller.o DStarRepeaterModemDVRPTRV2Controller.o DStarRepeaterModemNull.o ../Common/Common.a $(LIBS)
 
 dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterStatusData.o \
-					DStarRepeaterModemDVAPController.o DStarRepeaterModemDVRPTR1Controller.o DStarRepeaterModemDVRPTR2Controller.o DStarRepeaterModemNull.o ../Common/Common.a
+					DStarRepeaterModemDVAPController.o DStarRepeaterModemDVRPTRV1Controller.o DStarRepeaterModemDVRPTRV2Controller.o DStarRepeaterModemNull.o \
+					../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarrepeaterd DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
-					DStarRepeaterStatusData.o DStarRepeaterModemDVAPController.o DStarRepeaterModemDVRPTR1Controller.o DStarRepeaterModemDVRPTR2Controller.o \
+					DStarRepeaterStatusData.o DStarRepeaterModemDVAPController.o DStarRepeaterModemDVRPTRV1Controller.o DStarRepeaterModemDVRPTRV2Controller.o \
 					DStarRepeaterModemNull.o ../Common/Common.a $(LIBS)
 
 DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterStatusData.h DStarRepeaterLogger.h DStarRepeaterThreadHelper.h \
-					DStarRepeaterModemDVAPController.h DStarRepeaterModemDVRPTR1Controller.h DStarRepeaterModemDVRPTR2Controller.h DStarRepeaterModemNull.h \
+					DStarRepeaterModemDVAPController.h DStarRepeaterModemDVRPTRV1Controller.h DStarRepeaterModemDVRPTRV2Controller.h DStarRepeaterModemNull.h \
 					../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h \
 					../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h 
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
-					DStarRepeaterRXThread.h DStarRepeaterDefs.h DStarRepeaterModemDVAPController.h DStarRepeaterModemDVRPTR1Controller.h DStarRepeaterModemDVRPTR2Controller.h \
-					DStarRepeaterModemNull.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h \
-					../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h
+					DStarRepeaterRXThread.h DStarRepeaterDefs.h DStarRepeaterModemDVAPController.h DStarRepeaterModemDVRPTRV1Controller.h \
+					DStarRepeaterModemDVRPTRV2Controller.h DStarRepeaterModemNull.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
+					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
+					../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
 
 DStarRepeaterModemDVAPController.o:	DStarRepeaterModemDVAPController.cpp DStarRepeaterModemDVAPController.h DStarRepeaterModem.h ../Common/SerialDataController.h \
-					../Common/RingBuffer.h ../Common/HeaderData.h ../Common/Utils.h ../Common/CCITTChecksumReverse.h ../Common/DStarDefines.h
+					../Common/RingBuffer.h ../Common/HeaderData.h ../Common/Utils.h ../Common/CCITTChecksumReverse.h ../Common/DStarDefines.h ../Common/Timer.h
 				$(CC) $(CFLAGS) -c DStarRepeaterModemDVAPController.cpp
 
 DStarRepeaterModemDVRPTRV1Controller.o:	DStarRepeaterModemDVRPTRV1Controller.cpp DStarRepeaterModemDVRPTRV1Controller.h DStarRepeaterModem.h \

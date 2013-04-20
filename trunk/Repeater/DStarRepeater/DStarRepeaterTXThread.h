@@ -71,6 +71,7 @@ private:
 	unsigned char              m_networkSeqNo;
 	CTimer                     m_watchdogTimer;
 	CTimer                     m_pollTimer;
+	CTimer                     m_statusTimer;
 	DSTAR_RPT_STATE            m_state;
 	bool                       m_tx;
 	unsigned int               m_space;

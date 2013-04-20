@@ -110,6 +110,8 @@ private:
 	CTimer                     m_status5Timer;
 	CTimer                     m_beaconTimer;
 	CTimer                     m_announcementTimer;
+	CTimer                     m_statusTimer;
+	CTimer                     m_heartbeatTimer;
 	DSTAR_RPT_STATE            m_rptState;
 	DSTAR_RX_STATE             m_rxState;
 	CSlowDataDecoder           m_slowDataDecoder;

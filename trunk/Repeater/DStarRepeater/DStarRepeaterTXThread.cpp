@@ -32,11 +32,7 @@ const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
 const unsigned int SILENCE_THRESHOLD = 2U;
 
-const unsigned int STATUS_TIME = 100U;
-
 const unsigned int CYCLE_TIME  = 9U;
-
-// m_tx XXX
 
 CDStarRepeaterTXThread::CDStarRepeaterTXThread() :
 m_modem(NULL),
@@ -50,6 +46,7 @@ m_readNum(0U),
 m_networkSeqNo(0U),
 m_watchdogTimer(1000U, 2U),			// 2s
 m_pollTimer(1000U, 60U),			// 60s
+m_statusTimer(1000U, 0U, 100U),		// 100ms
 m_state(DSRS_LISTENING),
 m_tx(false),
 m_space(0U),
@@ -89,20 +86,18 @@ void CDStarRepeaterTXThread::run()
 	m_stopped = false;
 
 	m_pollTimer.start();
+	m_statusTimer.start();
 
 	wxLogMessage(wxT("Starting the D-Star transmitter thread"));
 
 	wxStopWatch stopWatch;
 
-	unsigned int count = 0U;
-
 	while (!m_killed) {
 		stopWatch.Start();
 
-		count++;
-		if (count >= (STATUS_TIME / CYCLE_TIME)) {
+		if (m_statusTimer.hasExpired()) {
 			m_space = m_modem->getSpace();
-			count = 0U;
+			m_statusTimer.reset();
 		}
 
 		receiveNetwork();
@@ -324,6 +319,8 @@ void CDStarRepeaterTXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
+	m_tx = true;
+
 	m_modem->writeHeader(*header);
 	delete header;
 }
@@ -349,6 +346,8 @@ void CDStarRepeaterTXThread::transmitNetworkData()
 		m_readNum++;
 		if (m_readNum >= NETWORK_QUEUE_COUNT)
 			m_readNum = 0U;
+
+		m_tx = false;
 	}
 }
 
@@ -489,6 +488,7 @@ void CDStarRepeaterTXThread::clock(unsigned int ms)
 {
 	m_pollTimer.clock(ms);
 	m_watchdogTimer.clock(ms);
+	m_statusTimer.clock(ms);
 }
 
 void CDStarRepeaterTXThread::shutdown()

@@ -32,11 +32,7 @@ const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
 const unsigned int SILENCE_THRESHOLD = 2U;
 
-const unsigned int STATUS_TIME = 100U;
-
 const unsigned int CYCLE_TIME = 9U;
-
-// m_tx XXX
 
 CDStarRepeaterTRXThread::CDStarRepeaterTRXThread() :
 m_modem(NULL),
@@ -70,6 +66,8 @@ m_status4Timer(1000U, 3U),			// 3s
 m_status5Timer(1000U, 3U),			// 3s
 m_beaconTimer(1000U, 600U),			// 10 mins
 m_announcementTimer(1000U, 0U),		// not running
+m_statusTimer(1000U, 0U, 100U),		// 100ms
+m_heartbeatTimer(1000U, 1U),		// 1s
 m_rptState(DSRS_LISTENING),
 m_rxState(DSRXS_LISTENING),
 m_slowDataDecoder(),
@@ -179,24 +177,22 @@ void CDStarRepeaterTRXThread::run()
 	m_announcementTimer.start();
 	m_controller->setActive(false);
 	m_controller->setRadioTransmit(false);
+	m_statusTimer.start();
+	m_heartbeatTimer.start();
 
 	if (m_protocolHandler != NULL)
 		m_pollTimer.start();
 
 	wxLogMessage(wxT("Starting the D-Star repeater thread"));
 
-	unsigned int heartbeatCount = 0U;
-	unsigned int statusCount = 0U;
-
 	wxStopWatch stopWatch;
 
 	while (!m_killed) {
 		stopWatch.Start();
 
-		statusCount++;
-		if (statusCount >= (STATUS_TIME / CYCLE_TIME)) {
+		if (m_statusTimer.hasExpired()) {
 			m_space = m_modem->getSpace();
-			statusCount = 0U;
+			m_statusTimer.reset();
 		}
 
 		receiveModem();
@@ -263,10 +259,9 @@ void CDStarRepeaterTRXThread::run()
 		}
 
 		// Clock the heartbeat output every one second
-		heartbeatCount++;
-		if (heartbeatCount == (1000U / CYCLE_TIME)) {
+		if (m_heartbeatTimer.hasExpired()) {
 			m_controller->setHeartbeat();
-			heartbeatCount = 0U;
+			m_heartbeatTimer.reset();
 		}
 
 		// Set the output state
@@ -985,6 +980,8 @@ void CDStarRepeaterTRXThread::transmitLocalHeader()
 	if (header == NULL)
 		return;
 
+	m_tx = true;
+
 	m_modem->writeHeader(*header);
 	delete header;
 }
@@ -1004,8 +1001,11 @@ void CDStarRepeaterTRXThread::transmitLocalData()
 	m_modem->writeData(buffer, length, end);
 	m_space -= length;
 
-	if (end)
+	if (end) {
 		m_localQueue.reset();
+
+		m_tx = false;
+	}
 }
 
 void CDStarRepeaterTRXThread::transmitRadioHeader()
@@ -1017,6 +1017,8 @@ void CDStarRepeaterTRXThread::transmitRadioHeader()
 	CHeaderData* header = m_radioQueue.getHeader();
 	if (header == NULL)
 		return;
+
+	m_tx = true;
 
 	m_modem->writeHeader(*header);
 	delete header;
@@ -1037,8 +1039,11 @@ void CDStarRepeaterTRXThread::transmitRadioData()
 	m_modem->writeData(buffer, length, end);
 	m_space -= length;
 
-	if (end)
+	if (end) {
 		m_radioQueue.reset();
+
+		m_tx = false;
+	}
 }
 
 void CDStarRepeaterTRXThread::transmitNetworkHeader()
@@ -1050,6 +1055,8 @@ void CDStarRepeaterTRXThread::transmitNetworkHeader()
 	CHeaderData* header = m_networkQueue[m_readNum]->getHeader();
 	if (header == NULL)
 		return;
+
+	m_tx = true;
 
 	m_modem->writeHeader(*header);
 	delete header;
@@ -1076,6 +1083,8 @@ void CDStarRepeaterTRXThread::transmitNetworkData()
 		m_readNum++;
 		if (m_readNum >= NETWORK_QUEUE_COUNT)
 			m_readNum = 0U;
+
+		m_tx = false;
 	}
 }
 
@@ -1784,6 +1793,8 @@ void CDStarRepeaterTRXThread::clock(unsigned int ms)
 	m_status5Timer.clock(ms);
 	m_beaconTimer.clock(ms);
 	m_announcementTimer.clock(ms);
+	m_statusTimer.clock(ms);
+	m_heartbeatTimer.clock(ms);
 	if (m_beacon != NULL)
 		m_beacon->clock();
 	if (m_announcement != NULL)

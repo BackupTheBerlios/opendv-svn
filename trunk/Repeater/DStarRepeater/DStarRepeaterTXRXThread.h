@@ -79,6 +79,8 @@ private:
 	unsigned char              m_networkSeqNo;
 	CTimer                     m_watchdogTimer;
 	CTimer                     m_pollTimer;
+	CTimer                     m_statusTimer;
+	CTimer                     m_heartbeatTimer;
 	DSTAR_RPT_STATE            m_rptState;
 	DSTAR_RX_STATE             m_rxState;
 	CSlowDataDecoder           m_slowDataDecoder;

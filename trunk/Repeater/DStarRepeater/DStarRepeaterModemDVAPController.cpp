@@ -19,6 +19,7 @@
 #include "DStarRepeaterModemDVAPController.h"
 #include "CCITTChecksumReverse.h"
 #include "DStarDefines.h"
+#include "Timer.h"
 
 const unsigned char DVAP_REQ_NAME[] = {0x04, 0x20, 0x01, 0x00};
 const unsigned int  DVAP_REQ_NAME_LEN = 4U;
@@ -143,7 +144,6 @@ m_rxData(1000U),
 m_txData(1000U),
 m_stopped(false),
 m_mutex(),
-m_count(0U),
 m_accepted(false),
 m_readType(),
 m_readLength(0U),
@@ -235,7 +235,18 @@ void* CDStarRepeaterModemDVAPController::Entry()
 {
 	wxLogMessage(wxT("Starting DVAP Controller thread"));
 
+	// Clock every 5ms-ish
+	CTimer pollTimer(200U, 2U);
+
+	pollTimer.start();
+
 	while (!m_stopped) {
+		// Poll the modem every 2s
+		if (pollTimer.hasExpired()) {
+			writePoll();
+			pollTimer.reset();
+		}
+
 		unsigned int length;
 		RESP_TYPE type = getResponse(m_buffer, length);
 
@@ -331,6 +342,8 @@ void* CDStarRepeaterModemDVAPController::Entry()
 		}
 
 		Sleep(5UL);
+
+		pollTimer.clock();
 	}
 
 	wxLogMessage(wxT("Stopping DVAP Controller thread"));
@@ -511,20 +524,14 @@ void CDStarRepeaterModemDVAPController::stop()
 	Wait();
 }
 
-// Every 100ms
 unsigned int CDStarRepeaterModemDVAPController::getSpace()
 {
-	m_count++;
-	if (m_count < 4U)
-		return m_space;
-
-	wxMutexLocker locker(m_mutex);
-
-	m_serial.write(DVAP_ACK, DVAP_ACK_LEN);
-
-	m_count = 0U;
-
 	return m_space;
+}
+
+void CDStarRepeaterModemDVAPController::writePoll()
+{
+	m_serial.write(DVAP_ACK, DVAP_ACK_LEN);
 }
 
 bool CDStarRepeaterModemDVAPController::getName()

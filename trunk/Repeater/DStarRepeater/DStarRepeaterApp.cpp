@@ -367,11 +367,11 @@ void CDStarRepeaterApp::createThread()
 		m_config->getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
 		wxLogInfo(wxT("DV-RPTR V2, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%"), int(connType), address.c_str(), port, int(txInvert), modLevel);
 		switch (connType) {
-			case CT_USB:		// XXX
-				modem = new CDStarRepeaterModemDVRPTRV2Controller(usbPort, wxEmptyString, txInvert, modLevel, true, wxT("GB7XYZ  "));
+			case CT_USB:
+				modem = new CDStarRepeaterModemDVRPTRV2Controller(usbPort, wxEmptyString, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 				break;
-			case CT_NETWORK:	// XXX
-				modem = new CDStarRepeaterModemDVRPTRV2Controller(address, port, txInvert, modLevel, true, wxT("GB7XYZ  "));
+			case CT_NETWORK:
+				modem = new CDStarRepeaterModemDVRPTRV2Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 				break;
 		}
 	} else {

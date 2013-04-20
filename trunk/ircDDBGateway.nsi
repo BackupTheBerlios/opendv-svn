@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "ircDDB Gateway 20130411"
-  OutFile "ircDDBGateway-20130411.exe"
+  Name "ircDDB Gateway 20130420"
+  OutFile "ircDDBGateway-20130420.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\ircDDBGateway"

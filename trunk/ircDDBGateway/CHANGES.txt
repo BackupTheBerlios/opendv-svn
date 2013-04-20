@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130411
+ircDDB Gateway - 20130420
 =========================
 
 20101010
@@ -1301,5 +1301,8 @@ Stop multiple incoming CCS links.
 Added French as a language for the Time Server.
 Added XRF851.
 
-201304xx
+20130420
 --------
+
+Put the French AMBE and index files into the right place under Linux.
+Fixed CCS incoming for "repeater routing".

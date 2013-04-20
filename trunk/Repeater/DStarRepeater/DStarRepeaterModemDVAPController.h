@@ -87,7 +87,6 @@ private:
 	CRingBuffer<unsigned char> m_txData;
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
-	unsigned int               m_count;
 	bool                       m_accepted;
 	unsigned char              m_readType;
 	unsigned int               m_readLength;
@@ -106,6 +105,8 @@ private:
 
 	bool startDVAP();
 	bool stopDVAP();
+
+	void writePoll();
 
 	void resync();
 

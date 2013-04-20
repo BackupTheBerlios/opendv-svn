@@ -31,8 +31,6 @@ const unsigned int MAX_DATA_SYNC_BIT_ERRS  = 2U;
 
 const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
-const unsigned int STATUS_TIME = 100U;
-
 const unsigned int CYCLE_TIME = 9U;
 
 CDStarRepeaterRXThread::CDStarRepeaterRXThread() :
@@ -74,18 +72,10 @@ void CDStarRepeaterRXThread::run()
 
 	wxLogMessage(wxT("Starting the D-Star receiver thread"));
 
-	unsigned int statusCount = 0U;
-
 	wxStopWatch stopWatch;
 
 	while (!m_killed) {
 		stopWatch.Start();
-
-		statusCount++;
-		if (statusCount >= (STATUS_TIME / CYCLE_TIME)) {
-			m_modem->getSpace();
-			statusCount = 0U;
-		}
 
 		receiveModem();
 
