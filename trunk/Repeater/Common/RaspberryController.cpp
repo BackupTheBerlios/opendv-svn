@@ -29,7 +29,6 @@ CRaspberryController::~CRaspberryController()
 {
 }
 
-// XXX ????
 #if !defined(RASPBERRY_PI)
 
 bool CRaspberryController::open()
@@ -51,39 +50,37 @@ void CRaspberryController::close()
 
 #else
 
-#include <bcm2835.h>
+#include <wiringPi.h>
 
 bool CRaspberryController::open()
 {
-	bool ret = ::bcm2835_init() == 1;
+	bool ret = ::wiringPiSetup() != -1;
 	if (!ret) {
-		wxLogError(wxT("Unable to initialise the BCM2835"));
+		wxLogError(wxT("Unable to initialise wiringPi"));
 		return false;
 	}
 
-	// Set GPIOs 7,8,10,11,12 to be inputs
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_07, BCM2835_GPIO_FSEL_INPT);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_08, BCM2835_GPIO_FSEL_INPT);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_10, BCM2835_GPIO_FSEL_INPT);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_11, BCM2835_GPIO_FSEL_INPT);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_12, BCM2835_GPIO_FSEL_INPT);
+	::pinMode(8, INPUT);
+	::pinMode(9, INPUT);
+	::pinMode(7, INPUT);
+	::pinMode(0, INPUT);
+	::pinMode(2, INPUT);
 
-	// Set pull downs on the input pins
-	::bcm2835_gpio_set_pud(RPI_V2_GPIO_P1_07, BCM2835_GPIO_PUD_DOWN);
-	::bcm2835_gpio_set_pud(RPI_V2_GPIO_P1_08, BCM2835_GPIO_PUD_DOWN);
-	::bcm2835_gpio_set_pud(RPI_V2_GPIO_P1_10, BCM2835_GPIO_PUD_DOWN);
-	::bcm2835_gpio_set_pud(RPI_V2_GPIO_P1_11, BCM2835_GPIO_PUD_DOWN);
-	::bcm2835_gpio_set_pud(RPI_V2_GPIO_P1_12, BCM2835_GPIO_PUD_DOWN);
+	// Set pull ups on the input pins
+	::pullUpDnControl(8, PUD_UP);
+	::pullUpDnControl(9, PUD_UP);
+	::pullUpDnControl(7, PUD_UP);
+	::pullUpDnControl(0, PUD_UP);
+	::pullUpDnControl(2, PUD_UP);
 
-	// Set GPIOs 13,15,16,18,19,21,22,23 to be outputs
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_13, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_15, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_19, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_21, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_22, BCM2835_GPIO_FSEL_OUTP);
-	::bcm2835_gpio_fsel(RPI_V2_GPIO_P1_23, BCM2835_GPIO_FSEL_OUTP);
+	::pinMode(12, OUTPUT);
+	::pinMode(13, OUTPUT);
+	::pinMode(14, OUTPUT);
+	::pinMode(11, OUTPUT);
+	::pinMode(10, OUTPUT);
+	::pinMode(6,  OUTPUT);
+	::pinMode(5,  OUTPUT);
+	::pinMode(4,  OUTPUT);
 
 	setDigitalOutputs(false, false, false, false, false, false, false, false);
 
@@ -92,68 +89,62 @@ bool CRaspberryController::open()
 
 void CRaspberryController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool& inp4, bool& inp5)
 {
-	uint8_t level = ::bcm2835_gpio_lev(RPI_V2_GPIO_P1_07);
-	inp1 = level > 0U;
+	inp1 = ::digitalRead(8) == LOW;
 
-	level = ::bcm2835_gpio_lev(RPI_V2_GPIO_P1_08);
-	inp2 = level > 0U;
+	inp2 = ::digitalRead(9) == LOW;
 
-	level = ::bcm2835_gpio_lev(RPI_V2_GPIO_P1_10);
-	inp3 = level > 0U;
+	inp3 = ::digitalRead(7) == LOW;
 
-	level = ::bcm2835_gpio_lev(RPI_V2_GPIO_P1_11);
-	inp4 = level > 0U;
+	inp4 = ::digitalRead(0) == LOW;
 
-	level = ::bcm2835_gpio_lev(RPI_V2_GPIO_P1_12);
-	inp5 = level > 0U;
+	inp5 = ::digitalRead(2) == LOW;
 }
 
 void CRaspberryController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
 {
 	if (outp1 != m_outp1) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_13, outp1 ? HIGH : LOW);
+		::digitalWrite(12, outp1 ? HIGH : LOW);
 		m_outp1 = outp1;
 	}
 
 	if (outp2 != m_outp2) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_15, outp2 ? HIGH : LOW);
+		::digitalWrite(13, outp2 ? HIGH : LOW);
 		m_outp2 = outp2;
 	}
 
 	if (outp3 != m_outp3) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_16, outp3 ? HIGH : LOW);
+		::digitalWrite(14, outp3 ? HIGH : LOW);
 		m_outp3 = outp3;
 	}
 
 	if (outp4 != m_outp4) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_18, outp4 ? HIGH : LOW);
+		::digitalWrite(11, outp4 ? HIGH : LOW);
 		m_outp4 = outp4;
 	}
 
 	if (outp5 != m_outp5) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_19, outp5 ? HIGH : LOW);
+		::digitalWrite(10, outp5 ? HIGH : LOW);
 		m_outp5 = outp5;
 	}
 
 	if (outp6 != m_outp6) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_21, outp6 ? HIGH : LOW);
+		::digitalWrite(6, outp6 ? HIGH : LOW);
 		m_outp6 = outp6;
 	}
 
 	if (outp7 != m_outp7) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_22, outp7 ? HIGH : LOW);
+		::digitalWrite(5, outp7 ? HIGH : LOW);
 		m_outp7 = outp7;
 	}
 
 	if (outp8 != m_outp8) {
-		::bcm2835_gpio_write(RPI_V2_GPIO_P1_23, outp8 ? HIGH : LOW);
+		::digitalWrite(4, outp8 ? HIGH : LOW);
 		m_outp8 = outp8;
 	}
 }
 
 void CRaspberryController::close()
 {
-	::bcm2835_close();
 }
 
 #endif
