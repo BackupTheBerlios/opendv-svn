@@ -1380,17 +1380,20 @@ bool CGMSKRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			break;
 
 		case DSRS_VALID:
-			if (m_state != DSRS_LISTENING)
+			if (m_state != DSRS_LISTENING && m_state != DSRS_VALID_WAIT)
 				return false;
 
+			if (m_state == DSRS_LISTENING)
+				m_timeoutTimer.start();
+			else
+				m_ackTimer.stop();
+
 			m_activeHangTimer.stop();
-			m_timeoutTimer.start();
 			m_state = DSRS_VALID;
 			break;
 
 		case DSRS_VALID_WAIT:
 			m_ackTimer.start();
-			m_timeoutTimer.stop();
 			m_state = DSRS_VALID_WAIT;
 			break;
 
@@ -1613,28 +1616,27 @@ void CGMSKRepeaterTRXThread::processNetworkHeader(CHeaderData* header)
 		return;
 	}
 
-	setRepeaterState(DSRS_NETWORK);
-
-	if (m_state == DSRS_NETWORK) {
-		delete m_rxHeader;
-		m_rxHeader = header;
-
-		if (m_mode == MODE_GATEWAY) {
-			// If in gateway mode, set the repeater bit, set flag 2 to 0x01,
-			// and change RPT1 & RPT2 just for transmission
-			CHeaderData* header = new CHeaderData(*m_rxHeader);
-			header->setRepeaterMode(true);
-			header->setFlag2(0x01U);
-			header->setRptCall1(m_rptCallsign);
-			header->setRptCall2(m_gwyCallsign);
-			transmitNetworkHeader(header);
-		} else {
-			CHeaderData* header = new CHeaderData(*m_rxHeader);
-
-			transmitNetworkHeader(header);
-		}
-	} else {
+	bool res = setRepeaterState(DSRS_NETWORK);
+	if (!res) {
 		delete header;
+		return;
+	}
+
+	delete m_rxHeader;
+	m_rxHeader = header;
+
+	if (m_mode == MODE_GATEWAY) {
+		// If in gateway mode, set the repeater bit, set flag 2 to 0x01,
+		// and change RPT1 & RPT2 just for transmission
+		CHeaderData* header = new CHeaderData(*m_rxHeader);
+		header->setRepeaterMode(true);
+		header->setFlag2(0x01U);
+		header->setRptCall1(m_rptCallsign);
+		header->setRptCall2(m_gwyCallsign);
+		transmitNetworkHeader(header);
+	} else {
+		CHeaderData* header = new CHeaderData(*m_rxHeader);
+		transmitNetworkHeader(header);
 	}
 }
 

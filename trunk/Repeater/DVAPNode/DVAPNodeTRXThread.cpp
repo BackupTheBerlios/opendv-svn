@@ -877,26 +877,26 @@ bool CDVAPNodeTRXThread::processRadioHeader(CHeaderData* header)
 			break;
 	}
 
-	setRepeaterState(DSRS_VALID);
+	res = setRepeaterState(DSRS_VALID);
+	if (!res) {
+		delete header;
+		return true;
+	}
 
 	// Send the valid header to the gateway if we are accepted
-	if (m_state == DSRS_VALID) {
-		delete m_rxHeader;
-		m_rxHeader = header;
+	delete m_rxHeader;
+	m_rxHeader = header;
 
-		if (m_logging != NULL)
-			m_logging->open(*m_rxHeader);
+	if (m_logging != NULL)
+		m_logging->open(*m_rxHeader);
 
-		// Only send on the network if they are not blocked and we have one and RPT2 is not blank or the repeater callsign
-		if (!m_blocked && m_protocolHandler != NULL && !m_rxHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_rxHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
-			CHeaderData netHeader(*m_rxHeader);
-			netHeader.setRptCall1(m_rxHeader->getRptCall2());
-			netHeader.setRptCall2(m_rxHeader->getRptCall1());
-			netHeader.setFlag1(m_rxHeader->getFlag1() & ~REPEATER_MASK);
-			m_protocolHandler->writeHeader(netHeader);
-		}
-	} else {
-		delete header;
+	// Only send on the network if they are not blocked and we have one and RPT2 is not blank or the repeater callsign
+	if (!m_blocked && m_protocolHandler != NULL && !m_rxHeader->getRptCall2().IsSameAs(wxT("        ")) && !m_rxHeader->getRptCall2().IsSameAs(m_rptCallsign)) {
+		CHeaderData netHeader(*m_rxHeader);
+		netHeader.setRptCall1(m_rxHeader->getRptCall2());
+		netHeader.setRptCall2(m_rxHeader->getRptCall1());
+		netHeader.setFlag1(m_rxHeader->getFlag1() & ~REPEATER_MASK);
+		m_protocolHandler->writeHeader(netHeader);
 	}
 
 	return true;
@@ -915,18 +915,17 @@ void CDVAPNodeTRXThread::processNetworkHeader(CHeaderData* header)
 		return;
 	}
 
-	setRepeaterState(DSRS_NETWORK);
-
-	if (m_state == DSRS_NETWORK) {
-		delete m_rxHeader;
-		m_rxHeader = header;
-
-		CHeaderData* header = new CHeaderData(*m_rxHeader);
-
-		transmitNetworkHeader(header);
-	} else {
+	bool res = setRepeaterState(DSRS_NETWORK);
+	if (!res) {
 		delete header;
+		return;
 	}
+
+	delete m_rxHeader;
+	m_rxHeader = header;
+
+	CHeaderData* txHeader = new CHeaderData(*m_rxHeader);
+	transmitNetworkHeader(txHeader);
 }
 
 void CDVAPNodeTRXThread::processRadioFrame(unsigned char* data, FRAME_TYPE type)

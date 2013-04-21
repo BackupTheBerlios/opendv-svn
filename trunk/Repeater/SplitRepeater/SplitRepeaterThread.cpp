@@ -1086,16 +1086,19 @@ bool CSplitRepeaterThread::setRepeaterState(DSTAR_RPT_STATE state)
 			break;
 
 		case DSRS_VALID:
-			if (m_state != DSRS_LISTENING)
+			if (m_state != DSRS_LISTENING && m_state != DSRS_VALID_WAIT)
 				return false;
 
-			m_timeoutTimer.start();
+			if (m_state == DSRS_LISTENING)
+				m_timeoutTimer.start();
+			else
+				m_ackTimer.stop();
+
 			m_state = DSRS_VALID;
 			break;
 
 		case DSRS_VALID_WAIT:
 			m_ackTimer.start();
-			m_timeoutTimer.stop();
 			m_state = DSRS_VALID_WAIT;
 			break;
 
@@ -1224,9 +1227,8 @@ bool CSplitRepeaterThread::processRadioHeader(CSplitRepeaterHeaderData* header)
 			break;
 	}
 
-	setRepeaterState(DSRS_VALID);
-
-	if (m_state == DSRS_VALID) {
+	res = setRepeaterState(DSRS_VALID);
+	if (res) {
 		delete m_rxHeader;
 		m_rxHeader = new CSplitRepeaterHeaderData(*header);
 	}
@@ -1369,9 +1371,8 @@ void CSplitRepeaterThread::processNetworkHeader(CSplitRepeaterHeaderData* header
 		return;
 	}
 
-	setRepeaterState(DSRS_NETWORK);
-
-	if (m_state == DSRS_NETWORK) {
+	bool res = setRepeaterState(DSRS_NETWORK);
+	if (res) {
 		delete m_rxHeader;
 		m_rxHeader = new CSplitRepeaterHeaderData(*header);
 

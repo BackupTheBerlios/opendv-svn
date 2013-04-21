@@ -255,11 +255,7 @@ void CCCSHandler::process(CAMBEData& data)
 	} else {
 		// Allow for the fact that the distant repeater may change during the QSO
 		if (m_yourCall.IsSameAs(myCall1) && !m_rptCall1.IsSameAs(rptCall1)) {
-			if (m_rptCall1.IsEmpty())
-				wxLogMessage(wxT("CCS: %s is at repeater %s"), m_yourCall.c_str(), rptCall1.c_str());
-			else
-				wxLogMessage(wxT("CCS: %s has moved from repeater %s to %s"), m_yourCall.c_str(), m_rptCall1.c_str(), rptCall1.c_str());
-
+			wxLogMessage(wxT("CCS: %s has moved from repeater %s to %s"), m_yourCall.c_str(), m_rptCall1.c_str(), rptCall1.c_str());
 			m_rptCall1 = rptCall1;
 		}
 

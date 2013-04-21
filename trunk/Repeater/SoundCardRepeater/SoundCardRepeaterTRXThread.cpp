@@ -1606,17 +1606,20 @@ bool CSoundCardRepeaterTRXThread::setRepeaterState(DSTAR_RPT_STATE state)
 			break;
 
 		case DSRS_VALID:
-			if (m_rptState != DSRS_LISTENING)
+			if (m_rptState != DSRS_LISTENING && m_rptState != DSRS_VALID_WAIT)
 				return false;
 
+			if (m_rptState == DSRS_LISTENING)
+				m_timeoutTimer.start();
+			else
+				m_ackTimer.stop();
+
 			m_activeHangTimer.stop();
-			m_timeoutTimer.start();
 			m_rptState = DSRS_VALID;
 			break;
 
 		case DSRS_VALID_WAIT:
 			m_ackTimer.start();
-			m_timeoutTimer.stop();
 			m_rptState = DSRS_VALID_WAIT;
 			break;
 
@@ -1860,27 +1863,27 @@ void CSoundCardRepeaterTRXThread::processNetworkHeader(CHeaderData* header)
 		return;
 	}
 
-	setRepeaterState(DSRS_NETWORK);
-
-	if (m_rptState == DSRS_NETWORK) {
-		delete m_header;
-		m_header = header;
-
-		if (m_mode == MODE_GATEWAY) {
-			// If in gateway mode, set the repeater bit , set flag 2 to 0x01,
-			// and change RPT1 & RPT2 just for transmission
-			CHeaderData txHeader(*m_header);
-			txHeader.setRepeaterMode(true);
-			txHeader.setFlag2(0x01U);
-			txHeader.setRptCall1(m_rptCallsign);
-			txHeader.setRptCall2(m_gwyCallsign);
-			transmitNetworkHeader(txHeader);
-		} else {
-			CHeaderData header(*m_header);
-			transmitNetworkHeader(header);
-		}
-	} else {
+	bool res = setRepeaterState(DSRS_NETWORK);
+	if (!res) {
 		delete header;
+		return;
+	}
+
+	delete m_header;
+	m_header = header;
+
+	if (m_mode == MODE_GATEWAY) {
+		// If in gateway mode, set the repeater bit , set flag 2 to 0x01,
+		// and change RPT1 & RPT2 just for transmission
+		CHeaderData txHeader(*m_header);
+		txHeader.setRepeaterMode(true);
+		txHeader.setFlag2(0x01U);
+		txHeader.setRptCall1(m_rptCallsign);
+		txHeader.setRptCall2(m_gwyCallsign);
+		transmitNetworkHeader(txHeader);
+	} else {
+		CHeaderData header(*m_header);
+		transmitNetworkHeader(header);
 	}
 }
 
