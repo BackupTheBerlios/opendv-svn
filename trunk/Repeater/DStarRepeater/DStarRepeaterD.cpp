@@ -237,6 +237,17 @@ bool CDStarRepeaterD::createThread()
 	bool restriction, rpt1Validation, dtmfBlanking;
 	config.getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
 
+	wxString modemType;
+	config.getModem(modemType);
+
+	// DVAP can only do simplex, force the mode accordingly
+	if (modemType.IsSameAs(wxT("DVAP"))) {
+		if (mode == MODE_DUPLEX)
+			mode = MODE_SIMPLEX;
+		else if (mode == MODE_TXANDRX)
+			mode = MODE_RXONLY;
+	}
+
 	switch (mode) {
 		case MODE_RXONLY:
 			m_thread = new CDStarRepeaterRXThread;
@@ -297,8 +308,6 @@ bool CDStarRepeaterD::createThread()
 	m_thread->setAnnouncement(announcementEnabled, announcementTime, announcementRecordRPT1, announcementRecordRPT2, announcementDeleteRPT1, announcementDeleteRPT2);
 	wxLogInfo(wxT("Announcement enabled: %d, time: %u mins, record RPT1: \"%s\", record RPT2: \"%s\", delete RPT1: \"%s\", delete RPT2: \"%s\""), int(announcementEnabled), announcementTime / 60U, announcementRecordRPT1.c_str(), announcementRecordRPT2.c_str(), announcementDeleteRPT1.c_str(), announcementDeleteRPT2.c_str());
 
-	wxString modemType;
-	config.getModem(modemType);
 	wxLogInfo(wxT("Modem type set to \"%s\""), modemType.c_str());
 
 	IDStarRepeaterModem* modem = NULL;

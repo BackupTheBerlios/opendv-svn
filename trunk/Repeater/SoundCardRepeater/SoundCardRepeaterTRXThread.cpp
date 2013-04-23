@@ -1793,10 +1793,30 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 			break;
 	}
 
-	setRepeaterState(DSRS_VALID);
+	// If we're in network mode, send the header as a busy header to the gateway in case it's an unlink
+	// command
+	if (m_rptState == DSRS_NETWORK) {
+		// Only send on the network if the user isn't blocked and we have one and RPT2 is not blank or the repeater callsign
+		if (!header->getRptCall2().IsSameAs(wxT("        ")) && !header->getRptCall2().IsSameAs(m_rptCallsign)) {
+			if (!m_blocked && m_protocolHandler != NULL) {
+				CHeaderData netHeader(*header);
+				netHeader.setRptCall1(header->getRptCall2());
+				netHeader.setRptCall2(header->getRptCall1());
+				netHeader.setFlag1(header->getFlag1() & ~REPEATER_MASK);
+				m_protocolHandler->writeBusyHeader(netHeader);
+			}
+
+			m_busyData = true;
+		}
+
+		delete header;
+
+		return true;
+	}
 
 	// Send the valid header to the gateway if we are accepted
-	if (m_rptState == DSRS_VALID) {
+	res = setRepeaterState(DSRS_VALID);
+	if (res) {
 		delete m_header;
 		m_header = header;
 
@@ -1820,25 +1840,6 @@ bool CSoundCardRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 			rfHeader.setFlag1(m_header->getFlag1() & ~REPEATER_MASK);
 			transmitRadioHeader(rfHeader);
 		}
-	}
-
-	// If we're in network mode, send the header as a busy header to the gateway in case it's an unlink
-	// command
-	if (m_rptState == DSRS_NETWORK) {
-		// Only send on the network if the user isn't blocked and we have one and RPT2 is not blank or the repeater callsign
-		if (!header->getRptCall2().IsSameAs(wxT("        ")) && !header->getRptCall2().IsSameAs(m_rptCallsign)) {
-			if (!m_blocked && m_protocolHandler != NULL) {
-				CHeaderData netHeader(*header);
-				netHeader.setRptCall1(header->getRptCall2());
-				netHeader.setRptCall2(header->getRptCall1());
-				netHeader.setFlag1(header->getFlag1() & ~REPEATER_MASK);
-				m_protocolHandler->writeBusyHeader(netHeader);
-			}
-
-			m_busyData = true;
-		}
-
-		delete header;
 	}
 
 	return true;

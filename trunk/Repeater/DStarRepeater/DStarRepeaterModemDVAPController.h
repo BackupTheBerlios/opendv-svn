@@ -77,7 +77,6 @@ private:
 	wxInt16                    m_power;
 	wxInt8                     m_squelch;
 	unsigned int               m_space;
-	bool                       m_rx;
 	bool                       m_tx;
 	unsigned char*             m_buffer;
 	wxUint16                   m_streamId;
@@ -87,7 +86,6 @@ private:
 	CRingBuffer<unsigned char> m_txData;
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
-	bool                       m_accepted;
 	unsigned char              m_readType;
 	unsigned int               m_readLength;
 	unsigned char*             m_readBuffer;

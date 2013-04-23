@@ -1,4 +1,4 @@
-Repeater - 20130323
+Repeater - 20130423
 ===================
 
 20090530
@@ -1823,11 +1823,11 @@ Allow for the new format of Danish callsigns.
 Updated XRF003s IP address.
 Added the recording and playback of announcements.
 
-201304xx
+20130423
 --------
 
-Split the configuration of the D-Star Repeater into its own program.
+Change to the wiringPi library rather than bcm2835 library for controlling the RPi.
+Added the generic D-Star Repeater and configuration program.
 Allow incoming radio audio during the valid_wait period.
 Don't reset the announcement timer on transmissions.
-Added the generic D-Star Repeater.
 Added XRF851.

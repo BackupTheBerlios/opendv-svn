@@ -134,7 +134,6 @@ m_frequency(frequency),
 m_power(power),
 m_squelch(squelch),
 m_space(0U),
-m_rx(false),
 m_tx(false),
 m_buffer(NULL),
 m_streamId(0U),
@@ -144,7 +143,6 @@ m_rxData(1000U),
 m_txData(1000U),
 m_stopped(false),
 m_mutex(),
-m_accepted(false),
 m_readType(),
 m_readLength(0U),
 m_readBuffer(NULL)
@@ -258,7 +256,6 @@ void* CDStarRepeaterModemDVAPController::Entry()
 				m_serial.close();
 				return NULL;
 			case RT_STATE:
-				m_rx    = m_buffer[5U] == 0x01U;
 				m_space = m_buffer[6U];
 				break;
 			case RT_PTT:
@@ -412,12 +409,6 @@ unsigned int CDStarRepeaterModemDVAPController::readData(unsigned char* data, un
 
 bool CDStarRepeaterModemDVAPController::writeHeader(const CHeaderData& header)
 {
-	m_accepted = false;
-
-	if (m_rx)
-		return false;
-
-	m_accepted = true;
 	m_streamId++;
 
 	unsigned char buffer[50U];
@@ -479,9 +470,6 @@ bool CDStarRepeaterModemDVAPController::writeHeader(const CHeaderData& header)
 
 bool CDStarRepeaterModemDVAPController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
-	if (!m_accepted)
-		return false;
-
 	unsigned char buffer[20U];
 
 	::memcpy(buffer + 0U, DVAP_GMSK_DATA, DVAP_GMSK_DATA_LEN);
