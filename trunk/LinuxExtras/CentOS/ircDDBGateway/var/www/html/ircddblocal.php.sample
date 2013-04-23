@@ -5,6 +5,7 @@ $registerURL = '';
 $starLogPath = $logPath . '/STARnet.log';
 $linkLogPath = $logPath . '/Links.log';
 $hdrLogPath = $logPath . '/Headers.log';
+$ddmode_log = $logPath . '/DDMode.log';
 $configPath='/etc';
 $gatewayConfigPath = '/etc/ircddbgateway';
 $defaultConfPath = '/etc/default';
@@ -13,6 +14,5 @@ $sysconfigPath = '/etc/sysconfig';
 //
 // Setting only needed if DD-Mode is in use:
 // Location of dhcpd.leases file
-$ddmode_log = $logPath . '/DDMode.log';
 $dhcpd_leases_file = "/var/lib/dhcpd/dhcpd.leases";
 ?>
