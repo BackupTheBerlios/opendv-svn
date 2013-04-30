@@ -36,6 +36,8 @@ public:
 							  const wxString& status4, const wxString& status5);
 	~CDStarRepeaterStatusData();
 
+	void setDVAP(bool squelch, int signal);
+
 	wxString      getMyCall1() const;
 	wxString      getMyCall2() const;
 	wxString      getYourCall() const;
@@ -46,6 +48,8 @@ public:
 	unsigned char getFlag3() const;
 
 	bool          getTX() const;
+	bool          getSquelch() const;
+	int           getSignal() const;
 
 	DSTAR_RPT_STATE getRptState() const;
 	DSTAR_RX_STATE  getRxState() const;
@@ -93,6 +97,10 @@ private:
 	wxString        m_status3;
 	wxString        m_status4;
 	wxString        m_status5;
+
+	// DVAP
+	bool            m_squelch;
+	int             m_signal;
 };
 
 #endif

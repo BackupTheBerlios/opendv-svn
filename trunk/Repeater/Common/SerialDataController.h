@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002-2004,2007-2009,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002-2004,2007-2009,2011-2013 by Jonathan Naylor G4KLX
  *   Copyright (C) 1999-2001 by Thomas Sailor HB9JNX
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -57,12 +57,17 @@ public:
 	static wxArrayString getDevices();
 
 private:
-	wxString     m_device;
-	SERIAL_SPEED m_speed;
+	wxString       m_device;
+	SERIAL_SPEED   m_speed;
 #if defined(__WINDOWS__)
-	HANDLE       m_handle;
+	HANDLE         m_handle;
+	OVERLAPPED     m_readOverlapped;
+	OVERLAPPED     m_writeOverlapped;
+	unsigned char* m_readBuffer;
+	unsigned int   m_readLength;
+	bool           m_readPending;
 #else
-	int          m_fd;
+	int            m_fd;
 #endif
 };
 

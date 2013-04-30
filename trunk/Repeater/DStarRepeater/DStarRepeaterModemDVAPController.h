@@ -65,6 +65,10 @@ public:
 	virtual unsigned int readData(unsigned char* data, unsigned int length, bool& end);
 
 	virtual unsigned int getSpace();
+	virtual bool getTX();
+
+	virtual bool getSquelch() const;
+	virtual int getSignal() const;
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
@@ -78,6 +82,8 @@ private:
 	wxInt8                     m_squelch;
 	unsigned int               m_space;
 	bool                       m_tx;
+	bool                       m_squelchOpen;
+	int                        m_signal;
 	unsigned char*             m_buffer;
 	wxUint16                   m_streamId;
 	wxUint8                    m_framePos;

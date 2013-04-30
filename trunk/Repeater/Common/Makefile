@@ -96,7 +96,7 @@ DTMFTextCtrl.o:	DTMFTextCtrl.cpp DTMFTextCtrl.h RestrictedTextCtrl.h
 DummyController.o:	DummyController.cpp DummyController.h HardwareController.h
 		$(CC) $(CFLAGS) -c DummyController.cpp
 
-DVAPController.o:	DVAPController.cpp DVAPController.h SerialDataController.h HeaderData.h Utils.h RingBuffer.h DStarDefines.h CCITTChecksumReverse.h
+DVAPController.o:	DVAPController.cpp DVAPController.h SerialDataController.h HeaderData.h Utils.h RingBuffer.h DStarDefines.h CCITTChecksumReverse.h Timer.h
 		$(CC) $(CFLAGS) -c DVAPController.cpp
 
 DVDongleController.o:	DVDongleController.cpp DVDongleController.h DStarDefines.h SerialDataController.h

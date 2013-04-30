@@ -37,6 +37,7 @@ public:
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end) = 0;
 
 	virtual unsigned int getSpace() = 0;
+	virtual bool getTX() = 0;
 
 	virtual DSMT_TYPE read() = 0;
 	virtual CHeaderData* readHeader() = 0;

@@ -1831,3 +1831,8 @@ Added the generic D-Star Repeater and configuration program.
 Allow incoming radio audio during the valid_wait period.
 Don't reset the announcement timer on transmissions.
 Added XRF851.
+
+201304xx
+--------
+
+Tweaks to the DVAP handling.

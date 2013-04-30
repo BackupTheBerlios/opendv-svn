@@ -19,6 +19,7 @@
 #include "CCITTChecksumReverse.h"
 #include "DVAPController.h"
 #include "DStarDefines.h"
+#include "Timer.h"
 
 const unsigned char DVAP_REQ_NAME[] = {0x04, 0x20, 0x01, 0x00};
 const unsigned int  DVAP_REQ_NAME_LEN = 4U;
@@ -229,6 +230,10 @@ void* CDVAPController::Entry()
 {
 	wxLogMessage(wxT("Starting DVAP Controller thread"));
 
+	// Send data every 19ms-ish
+	CTimer dataTimer(200U, 0U, 19U);
+	dataTimer.start();
+
 	while (!m_stopped) {
 		unsigned int length;
 		RESP_TYPE type = getResponse(m_buffer, length);
@@ -303,7 +308,7 @@ void* CDVAPController::Entry()
 				break;
 		}
 
-		if (m_space > 0U) {
+		if (m_space > 0U && dataTimer.hasExpired()) {
 			if (!m_txData.isEmpty()) {
 				m_mutex.Lock();
 
@@ -322,10 +327,14 @@ void* CDVAPController::Entry()
 					wxLogWarning(wxT("Error when writing data to the modem"));
 
 				m_space--;
+
+				dataTimer.reset();
 			}
 		}
 
 		Sleep(5UL);
+
+		dataTimer.clock();
 	}
 
 	wxLogMessage(wxT("Stopping DVAP Controller thread"));
@@ -874,21 +883,35 @@ bool CDVAPController::setFrequency()
 
 RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& length)
 {
-	int ret = m_serial.read(buffer, DVAP_HEADER_LENGTH);
-	if (ret == 0)
-		return RT_TIMEOUT;
-	if (ret != int(DVAP_HEADER_LENGTH))
-		return RT_ERROR;
+	unsigned int offset = 0U;
+	while (offset < DVAP_HEADER_LENGTH) {
+		int ret = m_serial.read(buffer + offset, DVAP_HEADER_LENGTH - offset);
+		if (ret == 0 && offset == 0U)
+			return RT_TIMEOUT;
+		if (ret == 0U)
+			Sleep(5UL);
+		if (ret > 0)
+			offset += ret;
+		if (ret < 0)
+			return RT_ERROR;
+	}
+
+	// First byte has gone missing from the operation status message, fix it
+	if (buffer[0U] == 0x20U && buffer[1U] == 0x90U) {
+		buffer[0U] = 0x07U;
+		buffer[1U] = 0x20U;
+		buffer[2U] = 0x90U;
+		offset = DVAP_HEADER_LENGTH + 1U;
+	}
 
 	length = buffer[0U] + (buffer[1U] & 0x1FU) * 256U;
 
 	// Check for silliness
 	if (length > 50U) {
+		CUtils::dump(wxT("Bad DVAP header"), buffer, DVAP_HEADER_LENGTH);
 		resync();
 		return RT_TIMEOUT;
 	}
-
-	unsigned int offset = DVAP_HEADER_LENGTH;
 
 	while (offset < length) {
 		int ret = m_serial.read(buffer + offset, length - offset);
@@ -939,6 +962,7 @@ RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& leng
 	else if (::memcmp(buffer, DVAP_RESP_SQUELCH, 4U) == 0)
 		return RT_SQUELCH;
 	else {
+		CUtils::dump(wxT("Bad DVAP data"), buffer, length);
 		resync();
 		return RT_TIMEOUT;
 	}
@@ -963,7 +987,7 @@ void CDVAPController::resync()
 			data[5U] = data[6U];
 			data[6U] = c;
 
-			CUtils::dump(wxT("Resync buffer"), data, DVAP_STATUS_LEN);
+			// CUtils::dump(wxT("Resync buffer"), data, DVAP_STATUS_LEN);
 		}
 	}
 

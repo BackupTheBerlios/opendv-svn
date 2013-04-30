@@ -601,6 +601,11 @@ unsigned int CDStarRepeaterModemDVRPTRV1Controller::getSpace()
 	return m_space;
 }
 
+bool CDStarRepeaterModemDVRPTRV1Controller::getTX()
+{
+	return m_tx;
+}
+
 void CDStarRepeaterModemDVRPTRV1Controller::stop()
 {
 	m_stopped = true;

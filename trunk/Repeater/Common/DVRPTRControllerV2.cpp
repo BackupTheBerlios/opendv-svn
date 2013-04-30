@@ -570,14 +570,22 @@ bool CDVRPTRControllerV2::setConfig()
 RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
-	int ret = readModem(buffer, 5U);
-	if (ret < 0) {
-		wxLogError(wxT("Error when reading from the DV-RPTR"));
-		return RT2_ERROR;
-	}
+	unsigned int offset = 0U;
+	while (offset < 5U) {
+		int ret = readModem(buffer + offset, 5U - offset);
+		if (ret < 0) {
+			wxLogError(wxT("Error when reading from the DV-RPTR"));
+			return RT2_ERROR;
+		}
 
-	if (ret == 0)
-		return RT2_TIMEOUT;
+		if (ret == 0 && offset == 0U)
+			return RT2_TIMEOUT;
+
+		if (ret == 0)
+			Sleep(5UL);
+
+		offset += ret;
+	}
 
 	if (::memcmp(buffer + 0U, "HEAD", 4U) != 0) {
 		wxLogError(wxT("DV-RPTR frame start is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[0U], buffer[1U], buffer[2U], buffer[3U]);
@@ -594,8 +602,6 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 		wxLogError(wxT("DV-RPTR frame type is incorrect - 0x%02X"), buffer[4U]);
 		return RT2_UNKNOWN;
 	}
-
-	unsigned int offset = 5U;
 
 	while (offset < length) {
 		int ret = readModem(buffer + offset, length - offset);

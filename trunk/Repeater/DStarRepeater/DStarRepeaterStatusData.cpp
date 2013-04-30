@@ -52,12 +52,20 @@ m_status1(status1),
 m_status2(status2),
 m_status3(status3),
 m_status4(status4),
-m_status5(status5)
+m_status5(status5),
+m_squelch(false),
+m_signal(0)
 {
 }
 
 CDStarRepeaterStatusData::~CDStarRepeaterStatusData()
 {
+}
+
+void CDStarRepeaterStatusData::setDVAP(bool squelch, int signal)
+{
+	m_squelch = squelch;
+	m_signal  = signal;
 }
 
 wxString CDStarRepeaterStatusData::getMyCall1() const
@@ -103,6 +111,16 @@ unsigned char CDStarRepeaterStatusData::getFlag3() const
 bool CDStarRepeaterStatusData::getTX() const
 {
 	return m_tx;
+}
+
+bool CDStarRepeaterStatusData::getSquelch() const
+{
+	return m_squelch;
+}
+
+int CDStarRepeaterStatusData::getSignal() const
+{
+	return m_signal;
 }
 
 DSTAR_RX_STATE CDStarRepeaterStatusData::getRxState() const

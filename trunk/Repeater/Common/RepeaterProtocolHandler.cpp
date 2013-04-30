@@ -405,6 +405,19 @@ unsigned int CRepeaterProtocolHandler::readData(unsigned char* buffer, unsigned 
 
 	::memcpy(buffer, m_buffer + 9U, dataLen);
 
+	// Simple sanity checks of the incoming sync bits
+	if (seqNo == 0U) {
+		// Regenerate sync bytes
+		buffer[9U]  = DATA_SYNC_BYTES[0U];
+		buffer[10U] = DATA_SYNC_BYTES[1U];
+		buffer[11U] = DATA_SYNC_BYTES[2U];
+	} else if (::memcmp(buffer + 9U, DATA_SYNC_BYTES, DATA_FRAME_LENGTH_BYTES) == 0) {
+		// Sync bytes appearing where they shouldn't!
+		buffer[9U]  = 0x70U;
+		buffer[10U] = 0x4FU;
+		buffer[11U] = 0x93U;
+	}
+
 	return dataLen;
 }
 

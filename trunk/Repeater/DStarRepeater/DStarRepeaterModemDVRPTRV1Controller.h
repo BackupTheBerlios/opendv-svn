@@ -55,6 +55,7 @@ public:
 	virtual bool start();
 
 	virtual unsigned int getSpace();
+	virtual bool getTX();
 
 	virtual DSMT_TYPE    read();
 	virtual CHeaderData* readHeader();

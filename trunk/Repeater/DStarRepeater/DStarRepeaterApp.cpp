@@ -133,7 +133,10 @@ bool CDStarRepeaterApp::OnInit()
 	}
 	frameName.Append(VERSION);
 
-	m_frame = new CDStarRepeaterFrame(frameName, m_gui);
+	wxString type;
+	m_config->getModem(type);
+
+	m_frame = new CDStarRepeaterFrame(frameName, type, m_gui);
 	m_frame->Show();
 
 	SetTopWindow(m_frame);
@@ -283,25 +286,28 @@ void CDStarRepeaterApp::createThread()
 
 	// DVAP can only do simplex, force the mode accordingly
 	if (modemType.IsSameAs(wxT("DVAP"))) {
-		if (mode == MODE_DUPLEX)
+		if (mode == MODE_DUPLEX) {
+			wxLogInfo(wxT("DVAP: changing mode from DUPLEX to SIMPLEX"));
 			mode = MODE_SIMPLEX;
-		else if (mode == MODE_TXANDRX)
+		} else if (mode == MODE_TXANDRX) {
+			wxLogInfo(wxT("DVAP: changing mode from TX_AND_RX to RX_ONLY"));
 			mode = MODE_RXONLY;
+		}
 	}
 
 	IDStarRepeaterThread* thread = NULL;
 	switch (mode) {
 		case MODE_RXONLY:
-			thread = new CDStarRepeaterRXThread;
+			thread = new CDStarRepeaterRXThread(modemType);
 			break;
 		case MODE_TXONLY:
-			thread = new CDStarRepeaterTXThread;
+			thread = new CDStarRepeaterTXThread(modemType);
 			break;
 		case MODE_TXANDRX:
-			thread = new CDStarRepeaterTXRXThread;
+			thread = new CDStarRepeaterTXRXThread(modemType);
 			break;
 		default:
-			thread = new CDStarRepeaterTRXThread;
+			thread = new CDStarRepeaterTRXThread(modemType);
 			break;
 	}
 

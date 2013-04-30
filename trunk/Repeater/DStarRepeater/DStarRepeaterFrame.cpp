@@ -81,12 +81,14 @@ const unsigned int LABEL_WIDTH    = 70U;
 const unsigned int LOGTEXT_WIDTH  = 710U;
 #endif
 
-CDStarRepeaterFrame::CDStarRepeaterFrame(const wxString& title, bool gui) :
+CDStarRepeaterFrame::CDStarRepeaterFrame(const wxString& title, const wxString& type, bool gui) :
 wxFrame(NULL, -1, title),
 m_logging(NULL),
 m_rxState(NULL),
 m_rptState(NULL),
 m_tx(NULL),
+m_squelch(NULL),
+m_signal(NULL),
 m_your(NULL),
 m_my(NULL),
 m_rpt1(NULL),
@@ -144,6 +146,32 @@ m_updates(gui)
 
 	stat1Sizer->Add(stat2Sizer);
 	panelSizer->Add(stat1Sizer, 0, wxALL, BORDER_SIZE);
+
+	if (type.IsSameAs(wxT("DVAP"))) {
+		wxStaticBoxSizer* rx1Sizer = new wxStaticBoxSizer(new wxStaticBox(panel, -1, _("Receiver")), wxVERTICAL);
+		wxFlexGridSizer* rx2Sizer = new wxFlexGridSizer(6);
+
+		wxStaticText* squelchLabel = new wxStaticText(panel, -1, wxT("Squelch:"), wxDefaultPosition, wxSize(LABEL_WIDTH, -1), wxALIGN_RIGHT);
+		rx2Sizer->Add(squelchLabel, 0, wxALL, BORDER_SIZE);
+
+		m_squelch = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+		rx2Sizer->Add(m_squelch, 0, wxALL, BORDER_SIZE);
+
+		wxStaticText* signalLabel = new wxStaticText(panel, -1, wxT("Signal:"), wxDefaultPosition, wxSize(LABEL_WIDTH, -1), wxALIGN_RIGHT);
+		rx2Sizer->Add(signalLabel, 0, wxALL, BORDER_SIZE);
+
+		m_signal = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+		rx2Sizer->Add(m_signal, 0, wxALL, BORDER_SIZE);
+
+		wxStaticText* dummy20Label = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(LABEL_WIDTH, -1));
+		rx2Sizer->Add(dummy20Label, 0, wxALL, BORDER_SIZE);
+
+		wxStaticText* dummy21Label = new wxStaticText(panel, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
+		rx2Sizer->Add(dummy21Label, 0, wxALL, BORDER_SIZE);
+
+		rx1Sizer->Add(rx2Sizer);
+		panelSizer->Add(rx1Sizer, 0, wxALL, BORDER_SIZE);
+	}
 
 	wxStaticBoxSizer* info1Sizer = new wxStaticBoxSizer(new wxStaticBox(panel, -1, _("Header")), wxVERTICAL);
 	wxFlexGridSizer* info2Sizer = new wxFlexGridSizer(6);
@@ -484,6 +512,20 @@ void CDStarRepeaterFrame::onTimer(wxTimerEvent& event)
 	m_status3->SetLabel(status->getStatus3());
 	m_status4->SetLabel(status->getStatus4());
 	m_status5->SetLabel(status->getStatus5());
+
+	// DVAP
+	if (m_squelch != NULL) {
+		if (tx) {
+			m_squelch->SetLabel(wxEmptyString);
+			m_signal->SetLabel(wxEmptyString);
+		} else {
+			bool squelch = status->getSquelch();
+			m_squelch->SetLabel(squelch ? _("Open") : _("Closed"));
+
+			text.Printf(wxT("%d dBm"), status->getSignal());
+			m_signal->SetLabel(text);
+		}
+	}
 
 	delete status;
 }

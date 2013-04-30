@@ -34,7 +34,8 @@ const unsigned int SILENCE_THRESHOLD = 2U;
 
 const unsigned int CYCLE_TIME  = 9U;
 
-CDStarRepeaterTXThread::CDStarRepeaterTXThread() :
+CDStarRepeaterTXThread::CDStarRepeaterTXThread(const wxString& type) :
+m_type(type),
 m_modem(NULL),
 m_protocolHandler(NULL),
 m_stopped(true),
@@ -97,6 +98,7 @@ void CDStarRepeaterTXThread::run()
 
 		if (m_statusTimer.hasExpired()) {
 			m_space = m_modem->getSpace();
+			m_tx    = m_modem->getTX();
 			m_statusTimer.reset();
 		}
 
@@ -319,8 +321,6 @@ void CDStarRepeaterTXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_tx = true;
-
 	m_modem->writeHeader(*header);
 	delete header;
 }
@@ -346,8 +346,6 @@ void CDStarRepeaterTXThread::transmitNetworkData()
 		m_readNum++;
 		if (m_readNum >= NETWORK_QUEUE_COUNT)
 			m_readNum = 0U;
-
-		m_tx = false;
 	}
 }
 

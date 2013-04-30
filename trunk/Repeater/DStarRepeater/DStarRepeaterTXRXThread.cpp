@@ -16,6 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DStarRepeaterModemDVAPController.h"
 #include "DStarRepeaterStatusData.h"
 #include "DStarRepeaterTXRXThread.h"
 #include "DStarRepeaterApp.h"
@@ -35,7 +36,8 @@ const unsigned int SILENCE_THRESHOLD = 2U;
 
 const unsigned int CYCLE_TIME = 9U;
 
-CDStarRepeaterTXRXThread::CDStarRepeaterTXRXThread() :
+CDStarRepeaterTXRXThread::CDStarRepeaterTXRXThread(const wxString& type) :
+m_type(type),
 m_modem(NULL),
 m_protocolHandler(NULL),
 m_controller(NULL),
@@ -117,6 +119,7 @@ void CDStarRepeaterTXRXThread::run()
 
 		if (m_statusTimer.hasExpired()) {
 			m_space = m_modem->getSpace();
+			m_tx    = m_modem->getTX();
 			m_statusTimer.reset();
 		}
 
@@ -505,8 +508,6 @@ void CDStarRepeaterTXRXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return;
 
-	m_tx = true;
-
 	m_modem->writeHeader(*header);
 	delete header;
 }
@@ -532,8 +533,6 @@ void CDStarRepeaterTXRXThread::transmitNetworkData()
 		m_readNum++;
 		if (m_readNum >= NETWORK_QUEUE_COUNT)
 			m_readNum = 0U;
-
-		m_tx = false;
 	}
 }
 
@@ -814,16 +813,26 @@ CDStarRepeaterStatusData* CDStarRepeaterTXRXThread::getStatus()
 	m_lastAMBEBits   = m_ambeBits;
 	m_lastAMBEErrors = m_ambeErrors;
 
+	CDStarRepeaterStatusData* status;
 	if (m_rptState == DSRS_SHUTDOWN || m_rptState == DSRS_LISTENING)
-		return new CDStarRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
-				wxEmptyString, 0x00, 0x00, 0x00, m_tx, m_rxState, m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, 0.0F,
-				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
+		status = new CDStarRepeaterStatusData(wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString,
+					wxEmptyString, 0x00, 0x00, 0x00, m_tx, m_rxState, m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, 0.0F,
+					wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 	else
-		return new CDStarRepeaterStatusData(m_rxHeader->getMyCall1(), m_rxHeader->getMyCall2(),
-				m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
-				m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_rxState,
-				m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, (errors * 100.0F) / bits, wxEmptyString, wxEmptyString,
-				wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
+		status = new CDStarRepeaterStatusData(m_rxHeader->getMyCall1(), m_rxHeader->getMyCall2(),
+					m_rxHeader->getYourCall(), m_rxHeader->getRptCall1(), m_rxHeader->getRptCall2(), 
+					m_rxHeader->getFlag1(), m_rxHeader->getFlag2(), m_rxHeader->getFlag3(), m_tx, m_rxState,
+					m_rptState, 0U, 0U, 0U, 0U, 0U, 0U, (errors * 100.0F) / bits, wxEmptyString, wxEmptyString,
+					wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
+
+	if (m_type.IsSameAs(wxT("DVAP"))) {
+		CDStarRepeaterModemDVAPController* dvap = static_cast<CDStarRepeaterModemDVAPController*>(m_modem);
+		bool squelch = dvap->getSquelch();
+		int signal   = dvap->getSignal();
+		status->setDVAP(squelch, signal);
+	}
+
+	return status;
 }
 
 void CDStarRepeaterTXRXThread::clock(unsigned int ms)

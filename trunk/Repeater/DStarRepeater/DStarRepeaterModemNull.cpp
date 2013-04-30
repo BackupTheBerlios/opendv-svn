@@ -18,7 +18,8 @@
 
 #include "DStarRepeaterModemNull.h"
 
-CDStarRepeaterModemNull::CDStarRepeaterModemNull()
+CDStarRepeaterModemNull::CDStarRepeaterModemNull() :
+m_tx(false)
 {
 }
 
@@ -35,17 +36,27 @@ bool CDStarRepeaterModemNull::start()
 
 bool CDStarRepeaterModemNull::writeHeader(const CHeaderData& header)
 {
+	m_tx = true;
+
 	return true;
 }
 
 bool CDStarRepeaterModemNull::writeData(const unsigned char* data, unsigned int length, bool end)
 {
+	if (end)
+		m_tx = false;
+
 	return true;
 }
 
 unsigned int CDStarRepeaterModemNull::getSpace()
 {
 	return 0;
+}
+
+bool CDStarRepeaterModemNull::getTX()
+{
+	return m_tx;
 }
 
 DSMT_TYPE CDStarRepeaterModemNull::read()
