@@ -65,7 +65,7 @@ CCSProtocolHandler.o:	CCSProtocolHandler.cpp CCSProtocolHandler.h AMBEData.h UDP
 				CCSData.h HeardData.h
 				$(CC) $(CFLAGS) -c CCSProtocolHandler.cpp
 
-ConnectData.o:	ConnectData.cpp ConnectData.h DStarDefines.h Version.h Utils.h
+ConnectData.o:	ConnectData.cpp ConnectData.h DStarDefines.h Version.h Utils.h Defs.h
 				$(CC) $(CFLAGS) -c ConnectData.cpp
 
 DescriptionTextCtrl.o:	DescriptionTextCtrl.cpp DescriptionTextCtrl.h RestrictedTextCtrl.h

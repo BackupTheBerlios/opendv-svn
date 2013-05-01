@@ -218,10 +218,11 @@ bool CIRCDDBGatewayAppD::createThread()
 
 	m_thread = new CIRCDDBGatewayThread(m_logDir, m_name);
 
+	GATEWAY_TYPE gatewayType;
 	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress, description1, description2, url;
 	unsigned int icomPort, hbPort;
 	double latitude, longitude;
-	config.getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	config.getGateway(gatewayType, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 
 	gatewayCallsign.MakeUpper();
 	gatewayCallsign.Append(wxT("        "));
@@ -232,9 +233,9 @@ bool CIRCDDBGatewayAppD::createThread()
 
 	gatewayCallsign.Append(wxT("G"));
 
-	wxLogInfo(wxT("Gateway callsign: \"%s\", address: %s, Icom address: %s:%u, homebrew address: %s:%u, latitude: %lf, longitude: %lf, description: \"%s %s\", URL: \"%s\""), gatewayCallsign.c_str(), gatewayAddress.c_str(), icomAddress.c_str(), icomPort, hbAddress.c_str(), hbPort, latitude, longitude, description1.c_str(), description2.c_str(), url.c_str());
+	wxLogInfo(wxT("Gateway type: %d, callsign: \"%s\", address: %s, Icom address: %s:%u, homebrew address: %s:%u, latitude: %lf, longitude: %lf, description: \"%s %s\", URL: \"%s\""), int(gatewayType), gatewayCallsign.c_str(), gatewayAddress.c_str(), icomAddress.c_str(), icomPort, hbAddress.c_str(), hbPort, latitude, longitude, description1.c_str(), description2.c_str(), url.c_str());
 
-	m_thread->setGateway(gatewayCallsign, gatewayAddress);
+	m_thread->setGateway(gatewayType, gatewayCallsign, gatewayAddress);
 
 	wxString aprsHostname;
 	unsigned int aprsPort;

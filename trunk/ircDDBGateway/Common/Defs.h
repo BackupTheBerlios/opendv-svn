@@ -126,6 +126,12 @@ enum STARNET_CALLSIGN_SWITCH {
 	SCS_USER_CALLSIGN
 };
 
+enum GATEWAY_TYPE {
+	GT_REPEATER,
+	GT_HOTSPOT,
+	GT_DONGLE
+};
+
 const unsigned int TIME_PER_TIC_MS = 5U; 
 
 #if defined(__WINDOWS__)

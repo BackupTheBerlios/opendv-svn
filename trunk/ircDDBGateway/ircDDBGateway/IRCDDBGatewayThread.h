@@ -43,7 +43,7 @@ public:
 	CIRCDDBGatewayThread(const wxString& logDir, const wxString& name);
 	virtual ~CIRCDDBGatewayThread();
 
-	virtual void setGateway(const wxString& callsign, const wxString& address);
+	virtual void setGateway(GATEWAY_TYPE type, const wxString& callsign, const wxString& address);
 	virtual void addRepeater(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1 = 0x00U, unsigned char band2 = 0x00U, unsigned char band3 = 0x00U);
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
 	virtual void addStarNet(const wxString& callsign, const wxString& logoff, const wxString& repeater, const wxString& infoText, const wxString& permanent, unsigned int userTimeout, unsigned int groupTimeout, STARNET_CALLSIGN_SWITCH callsignSwitch, bool txMsgSwitch, const wxString& reflector);
@@ -79,6 +79,7 @@ private:
 	wxString                  m_name;
 	bool                      m_killed;
 	bool                      m_stopped;
+	GATEWAY_TYPE              m_gatewayType;
 	wxString                  m_gatewayCallsign;
 	wxString                  m_gatewayAddress;
 	CIcomRepeaterProtocolHandler*  m_icomRepeaterHandler;

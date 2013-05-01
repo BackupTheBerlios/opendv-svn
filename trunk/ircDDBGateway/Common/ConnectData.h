@@ -19,6 +19,8 @@
 #ifndef	ConnectData_H
 #define	ConnectData_H
 
+#include "Defs.h"
+
 #include <wx/wx.h>
 
 #if defined(__WINDOWS__)
@@ -37,6 +39,7 @@ enum CD_TYPE {
 
 class CConnectData {
 public:
+	CConnectData(GATEWAY_TYPE gatewayType, const wxString& repeater, const wxString& reflector, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CConnectData(const wxString& repeater, const wxString& reflector, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CConnectData(const wxString& repeater, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
 	CConnectData(const wxString& repeater, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort = 0U);
@@ -64,12 +67,8 @@ public:
 
 	void setLocator(const wxString& locator);
 
-	static void initialise();
-	static void finalise();
-
 private:
-	static char* m_html;
-
+	GATEWAY_TYPE  m_gatewayType;
 	wxString      m_repeater;
 	wxString      m_reflector;
 	CD_TYPE       m_type;

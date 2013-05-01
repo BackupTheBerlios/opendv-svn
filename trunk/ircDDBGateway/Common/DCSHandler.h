@@ -51,6 +51,7 @@ public:
 	static void setDCSProtocolHandlerPool(CDCSProtocolHandlerPool* pool);
 	static void setDCSProtocolIncoming(CDCSProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
+	static void setGatewayType(GATEWAY_TYPE type);
 
 	static void link(IReflectorCallback* handler, const wxString& repeater, const wxString& reflector, const in_addr& address);
 	static void unlink(IReflectorCallback* handler, const wxString& reflector = wxEmptyString, bool exclude = true);
@@ -95,6 +96,8 @@ private:
 	static CDCSProtocolHandler*     m_incoming;
 
 	static bool                     m_stateChange;
+
+	static GATEWAY_TYPE             m_gatewayType;
 
 	static CHeaderLogger*           m_headerLogger;
 

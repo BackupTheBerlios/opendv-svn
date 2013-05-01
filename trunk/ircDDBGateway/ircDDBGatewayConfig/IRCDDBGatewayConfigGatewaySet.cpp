@@ -30,9 +30,10 @@ const unsigned int PORT_LENGTH        = 5U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CIRCDDBGatewayConfigGatewaySet::CIRCDDBGatewayConfigGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url) :
+CIRCDDBGatewayConfigGatewaySet::CIRCDDBGatewayConfigGatewaySet(wxWindow* parent, int id, const wxString& title, GATEWAY_TYPE type, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url) :
 wxPanel(parent, id),
 m_title(title),
+m_type(NULL),
 m_callsign(NULL),
 m_address(NULL),
 m_icomAddress(NULL),
@@ -46,6 +47,19 @@ m_description2(NULL),
 m_url(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(3);
+
+	wxStaticText* typeLabel = new wxStaticText(this, -1, _("Type"));
+	sizer->Add(typeLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_type = new wxChoice(this, -1);
+	m_type->Append(_("Repeater"));
+	m_type->Append(_("Hotspot"));
+	m_type->Append(_("Dongle"));
+	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_type->SetSelection(int(type));
+
+	wxStaticText* dummy10Label = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy10Label, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	wxStaticText* callsignLabel = new wxStaticText(this, -1, _("Callsign"));
 	sizer->Add(callsignLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
@@ -176,6 +190,10 @@ CIRCDDBGatewayConfigGatewaySet::~CIRCDDBGatewayConfigGatewaySet()
 
 bool CIRCDDBGatewayConfigGatewaySet::Validate()
 {
+	int n = m_type->GetCurrentSelection();
+	if (n == wxNOT_FOUND)
+		return false;
+
 	wxString callsign = getCallsign();
 
 	if (callsign.IsEmpty()) {
@@ -217,6 +235,15 @@ bool CIRCDDBGatewayConfigGatewaySet::Validate()
 	}
 
 	return true;
+}
+
+GATEWAY_TYPE CIRCDDBGatewayConfigGatewaySet::getType() const
+{
+	int n = m_type->GetCurrentSelection();
+	if (n == wxNOT_FOUND)
+		return GT_REPEATER;
+
+	return GATEWAY_TYPE(n);
 }
 
 wxString CIRCDDBGatewayConfigGatewaySet::getCallsign() const

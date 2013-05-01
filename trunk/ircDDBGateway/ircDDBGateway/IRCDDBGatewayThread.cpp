@@ -53,6 +53,7 @@ m_logDir(logDir),
 m_name(name),
 m_killed(false),
 m_stopped(true),
+m_gatewayType(GT_REPEATER),
 m_gatewayCallsign(),
 m_gatewayAddress(),
 m_icomRepeaterHandler(NULL),
@@ -97,7 +98,6 @@ m_longitude(0.0),
 m_restrictList(NULL)
 {
 	CHeaderData::initialise();
-	CConnectData::initialise();
 	CG2Handler::initialise(MAX_ROUTES);
 	CDExtraHandler::initialise(MAX_DEXTRA_LINKS);
 	CDPlusHandler::initialise(MAX_DPLUS_LINKS);
@@ -111,7 +111,6 @@ m_restrictList(NULL)
 CIRCDDBGatewayThread::~CIRCDDBGatewayThread()
 {
 	CHeaderData::finalise();
-	CConnectData::finalise();
 	CG2Handler::finalise();
 	CDExtraHandler::finalise();
 	CDPlusHandler::finalise();
@@ -240,6 +239,7 @@ void CIRCDDBGatewayThread::run()
 	if (m_dplusEnabled)
 		CDPlusHandler::startAuthenticator(m_gatewayAddress, &m_cache);
 
+	CDCSHandler::setGatewayType(m_gatewayType);
 	CDCSHandler::setHeaderLogger(headerLogger);
 
 	CRepeaterHandler::setLocalAddress(m_gatewayAddress);
@@ -445,11 +445,12 @@ void CIRCDDBGatewayThread::kill()
 	m_killed = true;
 }
 
-void CIRCDDBGatewayThread::setGateway(const wxString& gatewayCallsign, const wxString& gatewayAddress)
+void CIRCDDBGatewayThread::setGateway(GATEWAY_TYPE gatewayType, const wxString& gatewayCallsign, const wxString& gatewayAddress)
 {
 	if (!m_stopped)
 		return;
 
+	m_gatewayType     = gatewayType;
 	m_gatewayCallsign = gatewayCallsign;
 	m_gatewayAddress  = gatewayAddress;
 }

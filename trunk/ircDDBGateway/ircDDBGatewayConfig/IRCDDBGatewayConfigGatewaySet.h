@@ -29,11 +29,12 @@
 
 class CIRCDDBGatewayConfigGatewaySet : public wxPanel {
 public:
-	CIRCDDBGatewayConfigGatewaySet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
+	CIRCDDBGatewayConfigGatewaySet(wxWindow* parent, int id, const wxString& title, GATEWAY_TYPE type, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url);
 	virtual ~CIRCDDBGatewayConfigGatewaySet();
 
 	virtual bool Validate();
 
+	virtual GATEWAY_TYPE getType() const;
 	virtual wxString     getCallsign() const;
 	virtual wxString     getAddress() const;
 	virtual wxString     getIcomAddress() const;
@@ -48,6 +49,7 @@ public:
 
 private:
 	wxString              m_title;
+	wxChoice*             m_type;
 	CCallsignTextCtrl*    m_callsign;
 	CAddressTextCtrl*     m_address;
 	CAddressTextCtrl*     m_icomAddress;

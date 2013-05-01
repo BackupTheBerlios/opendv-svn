@@ -99,12 +99,13 @@ m_miscellaneous(NULL)
 	wxString ccsHost;
 	m_config->getDCS(dcsEnabled, ccsEnabled, ccsHost);
 
+	GATEWAY_TYPE gatewayType;
 	wxString gatewayCallsign, gatewayAddress, icomAddress, hbAddress, description1, description2, url;
 	unsigned int icomPort, hbPort;
 	double latitude, longitude;
-	m_config->getGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_config->getGateway(gatewayType, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 
-	m_gateway = new CIRCDDBGatewayConfigGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_gateway = new CIRCDDBGatewayConfigGatewaySet(noteBook, -1, APPLICATION_NAME, gatewayType, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 	noteBook->AddPage(m_gateway, _("Gateway"), true);
 
 	wxString repeaterCall1, repeaterBand1, repeaterAddress1, reflector1, description11, description12, url1;
@@ -350,6 +351,7 @@ void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent& event)
 		!m_starNet5->Validate() || !m_remote->Validate() || !m_miscellaneous->Validate())
 		return;
 
+	GATEWAY_TYPE gatewayType = m_gateway->getType();
 	wxString gatewayCallsign = m_gateway->getCallsign();
 	wxString gatewayAddress  = m_gateway->getAddress();
 	wxString icomAddress     = m_gateway->getIcomAddress();
@@ -361,7 +363,7 @@ void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent& event)
 	wxString description1    = m_gateway->getDescription1();
 	wxString description2    = m_gateway->getDescription2();
 	wxString url             = m_gateway->getURL();
-	m_config->setGateway(gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
+	m_config->setGateway(gatewayType, gatewayCallsign, gatewayAddress, icomAddress, icomPort, hbAddress, hbPort, latitude, longitude, description1, description2, url);
 
 	wxString repeaterBand1     = m_repeaterData1->getBand();
 	HW_TYPE repeaterType1      = m_repeaterData1->getType();

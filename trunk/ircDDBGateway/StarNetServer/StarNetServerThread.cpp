@@ -57,7 +57,6 @@ m_remotePort(0U),
 m_remote(NULL)
 {
 	CHeaderData::initialise();
-	CConnectData::initialise();
 	CG2Handler::initialise(MAX_ROUTES);
 	CStarNetHandler::initialise(MAX_STARNETS);
 #if defined(DEXTRA_LINK)
@@ -71,7 +70,6 @@ m_remote(NULL)
 CStarNetServerThread::~CStarNetServerThread()
 {
 	CHeaderData::finalise();
-	CConnectData::finalise();
 	CG2Handler::finalise();
 	CStarNetHandler::finalise();
 #if defined(DEXTRA_LINK)

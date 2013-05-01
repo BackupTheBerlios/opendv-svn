@@ -29,6 +29,8 @@ CDCSProtocolHandler*     CDCSHandler::m_incoming = NULL;
 
 bool                     CDCSHandler::m_stateChange = false;
 
+GATEWAY_TYPE             CDCSHandler::m_gatewayType  = GT_REPEATER;
+
 CHeaderLogger*           CDCSHandler::m_headerLogger = NULL;
 
 
@@ -111,6 +113,11 @@ void CDCSHandler::setDCSProtocolIncoming(CDCSProtocolHandler* handler)
 void CDCSHandler::setHeaderLogger(CHeaderLogger* logger)
 {
 	m_headerLogger = logger;
+}
+
+void CDCSHandler::setGatewayType(GATEWAY_TYPE type)
+{
+	m_gatewayType = type;
 }
 
 wxString CDCSHandler::getIncoming(const wxString& callsign)
@@ -309,7 +316,7 @@ void CDCSHandler::link(IReflectorCallback* handler, const wxString& repeater, co
 	}
 
 	if (found) {
-		CConnectData reply(repeater, gateway, CT_LINK1, address, DCS_PORT);
+		CConnectData reply(m_gatewayType, repeater, gateway, CT_LINK1, address, DCS_PORT);
 		protoHandler->writeConnect(reply);
 	} else {
 		wxLogError(wxT("No space to add new DCS link, ignoring"));
@@ -681,7 +688,7 @@ bool CDCSHandler::clockInt(unsigned int ms)
 		if (m_direction == DIR_OUTGOING) {
 			bool reconnect = m_destination->linkFailed(DP_DCS, m_reflector, true);
 			if (reconnect) {
-				CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_yourAddress, m_yourPort);
+				CConnectData reply(m_gatewayType, m_repeater, m_reflector, CT_LINK1, m_yourAddress, m_yourPort);
 				m_handler->writeConnect(reply);
 				m_linkState = DCS_LINKING;
 				m_tryTimer.setTimeout(1U);
@@ -709,7 +716,7 @@ bool CDCSHandler::clockInt(unsigned int ms)
 
 	if (m_linkState == DCS_LINKING) {
 		if (m_tryTimer.isRunning() && m_tryTimer.hasExpired()) {
-			CConnectData reply(m_repeater, m_reflector, CT_LINK1, m_yourAddress, m_yourPort);
+			CConnectData reply(m_gatewayType, m_repeater, m_reflector, CT_LINK1, m_yourAddress, m_yourPort);
 			m_handler->writeConnect(reply);
 
 			unsigned int timeout = calcBackoff();

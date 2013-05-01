@@ -18,6 +18,7 @@
 
 #include "IRCDDBGatewayConfig.h"
 
+const wxString  KEY_GATEWAY_TYPE         = wxT("gatewayType");
 const wxString  KEY_GATEWAY_CALLSIGN     = wxT("gatewayCallsign");
 const wxString  KEY_GATEWAY_ADDRESS      = wxT("gatewayAddress");
 const wxString  KEY_ICOM_ADDRESS         = wxT("icomAddress");
@@ -186,6 +187,7 @@ const wxString  KEY_DTMF_ENABLED             = wxT("dtmfEnabled");
 const wxString  KEY_WINDOW_X                 = wxT("windowX");
 const wxString  KEY_WINDOW_Y                 = wxT("windowY");
 
+const GATEWAY_TYPE DEFAULT_GATEWAY_TYPE          = GT_REPEATER;
 const wxString     DEFAULT_GATEWAY_CALLSIGN      = wxEmptyString;
 const wxString     DEFAULT_GATEWAY_ADDRESS       = wxEmptyString;
 const wxString     DEFAULT_ICOM_ADDRESS          = wxT("172.16.0.20");
@@ -258,6 +260,7 @@ const int          DEFAULT_WINDOW_Y              = -1;
 CIRCDDBGatewayConfig::CIRCDDBGatewayConfig(wxConfigBase* config, const wxString& name) :
 m_config(config),
 m_name(wxT("/")),
+m_type(DEFAULT_GATEWAY_TYPE),
 m_callsign(DEFAULT_GATEWAY_CALLSIGN),
 m_address(DEFAULT_GATEWAY_ADDRESS),
 m_icomAddress(DEFAULT_ICOM_ADDRESS),
@@ -432,6 +435,9 @@ m_y(DEFAULT_WINDOW_Y)
 		m_name = wxT("/") + name + wxT("/");
 
 	long temp;
+
+	m_config->Read(m_name + KEY_GATEWAY_TYPE, &temp, long(DEFAULT_GATEWAY_TYPE));
+	m_type = GATEWAY_TYPE(temp);
 
 	m_config->Read(m_name + KEY_GATEWAY_CALLSIGN, &m_callsign, DEFAULT_GATEWAY_CALLSIGN);
 
@@ -825,6 +831,7 @@ CIRCDDBGatewayConfig::~CIRCDDBGatewayConfig()
 
 CIRCDDBGatewayConfig::CIRCDDBGatewayConfig(const wxString& dir, const wxString& configName, const wxString& name) :
 m_fileName(),
+m_type(DEFAULT_GATEWAY_TYPE),
 m_callsign(DEFAULT_GATEWAY_CALLSIGN),
 m_address(DEFAULT_GATEWAY_ADDRESS),
 m_icomAddress(DEFAULT_ICOM_ADDRESS),
@@ -1033,7 +1040,10 @@ m_y(DEFAULT_WINDOW_Y)
 		wxString key = str.Left(n);
 		wxString val = str.Mid(n + 1U);
 
-		if (key.IsSameAs(KEY_GATEWAY_CALLSIGN)) {
+		if (key.IsSameAs(KEY_GATEWAY_TYPE)) {
+			val.ToLong(&temp1);
+			m_type = GATEWAY_TYPE(temp1);
+		} else if (key.IsSameAs(KEY_GATEWAY_CALLSIGN)) {
 			m_callsign = val;
 		} else if (key.IsSameAs(KEY_GATEWAY_ADDRESS)) {
 			m_address = val;
@@ -1450,8 +1460,9 @@ CIRCDDBGatewayConfig::~CIRCDDBGatewayConfig()
 
 #endif
 
-void CIRCDDBGatewayConfig::getGateway(wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort, double& latitude, double& longitude, wxString& description1, wxString& description2, wxString& url) const
+void CIRCDDBGatewayConfig::getGateway(GATEWAY_TYPE& type, wxString& callsign, wxString& address, wxString& icomAddress, unsigned int& icomPort, wxString& hbAddress, unsigned int& hbPort, double& latitude, double& longitude, wxString& description1, wxString& description2, wxString& url) const
 {
+	type         = m_type;
 	callsign     = m_callsign;
 	address      = m_address;
 	icomAddress  = m_icomAddress;
@@ -1468,8 +1479,9 @@ void CIRCDDBGatewayConfig::getGateway(wxString& callsign, wxString& address, wxS
 		address.Clear();
 }
 
-void CIRCDDBGatewayConfig::setGateway(const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url)
+void CIRCDDBGatewayConfig::setGateway(GATEWAY_TYPE type, const wxString& callsign, const wxString& address, const wxString& icomAddress, unsigned int icomPort, const wxString& hbAddress, unsigned int hbPort, double latitude, double longitude, const wxString& description1, const wxString& description2, const wxString& url)
 {
+	m_type         = type;
 	m_callsign     = callsign;
 	m_address      = address;
 	m_icomAddress  = icomAddress;
@@ -2003,6 +2015,7 @@ bool CIRCDDBGatewayConfig::write()
 {
 	wxString text;
 
+	m_config->Write(m_name + KEY_GATEWAY_TYPE, long(m_type));
 	m_config->Write(m_name + KEY_GATEWAY_CALLSIGN, m_callsign);
 	m_config->Write(m_name + KEY_GATEWAY_ADDRESS, m_address);
 	m_config->Write(m_name + KEY_ICOM_ADDRESS, m_icomAddress);
@@ -2241,6 +2254,7 @@ bool CIRCDDBGatewayConfig::write()
 	}
 
 	wxString buffer;
+	buffer.Printf(wxT("%s=%d"), KEY_GATEWAY_TYPE.c_str(), int(m_type)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_GATEWAY_CALLSIGN.c_str(), m_callsign.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_GATEWAY_ADDRESS.c_str(), m_address.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_ICOM_ADDRESS.c_str(), m_icomAddress.c_str()); file.AddLine(buffer);
