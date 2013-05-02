@@ -17,13 +17,13 @@ analoguerepeaterd:	AnalogueRepeaterD.o AnalogueRepeaterConfig.o AnalogueRepeater
 
 AnalogueRepeaterApp.o:	AnalogueRepeaterApp.cpp AnalogueRepeaterApp.h AnalogueRepeaterThread.h AnalogueRepeaterFrame.h AnalogueRepeaterDefs.h \
 						AnalogueRepeaterStatusData.h AnalogueRepeaterLogger.h AnalogueRepeaterConfig.h AnalogueRepeaterThreadHelper.h ../Common/ExternalController.h \
-						../Common/DummyController.h ../Common/K8055Controller.h ../Common/SerialController.h ../Common/URIUSBController.h ../Common/RaspberryController.h \
+						../Common/DummyController.h ../Common/K8055Controller.h ../Common/SerialLineController.h ../Common/URIUSBController.h ../Common/RaspberryController.h \
 						../Common/Logger.h ../Common/AnalogueDefines.h ../Common/Version.h ../Common/CWKeyer.h ../Common/WAVFileStore.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterApp.cpp
 
 AnalogueRepeaterD.o:	AnalogueRepeaterD.cpp AnalogueRepeaterD.h AnalogueRepeaterThread.h AnalogueRepeaterConfig.h AnalogueRepeaterDefs.h \
 						../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/RaspberryController.h \
-						../Common/SerialController.h ../Common/Logger.h ../Common/AnalogueDefines.h ../Common/Version.h ../Common/CWKeyer.h \
+						../Common/SerialLineController.h ../Common/Logger.h ../Common/AnalogueDefines.h ../Common/Version.h ../Common/CWKeyer.h \
 						../Common/WAVFileStore.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterD.cpp
 
@@ -36,10 +36,10 @@ AnalogueRepeaterCallsignSet.o:	AnalogueRepeaterCallsignSet.cpp AnalogueRepeaterC
 				$(CC) $(CFLAGS) -c AnalogueRepeaterCallsignSet.cpp
 
 AnalogueRepeaterConfig.o:	AnalogueRepeaterConfig.cpp AnalogueRepeaterConfig.h AnalogueRepeaterDefs.h ../Common/AnalogueDefines.h \
-							../Common/TimeoutTones.h ../Common/SerialController.h
+							../Common/TimeoutTones.h ../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterConfig.cpp
 
-AnalogueRepeaterControllerSet.o:	AnalogueRepeaterControllerSet.cpp AnalogueRepeaterControllerSet.h ../Common/SerialController.h
+AnalogueRepeaterControllerSet.o:	AnalogueRepeaterControllerSet.cpp AnalogueRepeaterControllerSet.h ../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterControllerSet.cpp
 
 AnalogueRepeaterDTMF1Set.o:	AnalogueRepeaterDTMF1Set.cpp AnalogueRepeaterDTMF1Set.h AnalogueRepeaterApp.h ../Common/DTMFTextCtrl.h
@@ -49,7 +49,7 @@ AnalogueRepeaterDTMF2Set.o:	AnalogueRepeaterDTMF2Set.cpp AnalogueRepeaterDTMF2Se
 				$(CC) $(CFLAGS) -c AnalogueRepeaterDTMF2Set.cpp
 
 AnalogueRepeaterExternalSet.o:	AnalogueRepeaterExternalSet.cpp AnalogueRepeaterExternalSet.h ../Common/AnalogueDefines.h ../Common/SoundCardReaderWriter.h \
-								../Common/SerialController.h
+								../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterExternalSet.cpp
 
 AnalogueRepeaterFeelSet.o:	AnalogueRepeaterFeelSet.cpp AnalogueRepeaterFeelSet.h ../Common/AnalogueDefines.h ../Common/TimeoutTones.h

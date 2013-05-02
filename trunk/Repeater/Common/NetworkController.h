@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #ifndef	NetworkController_H
 #define	NetworkController_H
 
-#include "SerialController.h"
+#include "SerialLineController.h"
 
 #include <wx/wx.h>
 
@@ -32,9 +32,9 @@ public:
 	void close();
 
 private:
-	CSerialController* m_serial;
-	SERIALPIN          m_txPin;
-	SERIALPIN          m_rxPin;
+	CSerialLineController* m_serial;
+	SERIALPIN              m_txPin;
+	SERIALPIN              m_rxPin;
 };
 
 #endif

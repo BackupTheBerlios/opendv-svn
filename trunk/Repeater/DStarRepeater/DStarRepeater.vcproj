@@ -201,10 +201,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterModemNull.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterRXThread.cpp"
 				>
 			</File>
@@ -264,10 +260,6 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterModemDVRPTRV2Controller.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterModemNull.h"
 				>
 			</File>
 			<File

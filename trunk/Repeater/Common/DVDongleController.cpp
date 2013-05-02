@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -289,44 +289,60 @@ RESP_TYPE CDVDongleController::processResponse(unsigned char* buffer, unsigned i
 	wxASSERT(buffer != NULL);
 	wxASSERT(length >= DVD_AUDIO_LENGTH_BYTES);
 
-	int len;
-
 	if (::memcmp(buffer, DVD_AUDIO_HEADER, DVD_HEADER_LEN) == 0) {			// Audio data
-		do {
-			len = m_controller->read(buffer, DVD_AUDIO_LENGTH_BYTES);
+		unsigned int offset = 0U;
+
+		while (offset < DVD_AUDIO_LENGTH_BYTES) {
+			int len = m_controller->read(buffer + offset, DVD_AUDIO_LENGTH_BYTES - offset);
+
+			if (len < 0) {
+				wxLogError(wxT("Unable to receive the DVD audio data, len=%d"), len);
+				return RESP_ERROR;
+			}
+
 			if (len == 0)
 				::wxMilliSleep(5UL);
-		} while (len == 0);
 
-		if (len != int(DVD_AUDIO_LENGTH_BYTES)) {
-			wxLogError(wxT("Unable to receive the DVD audio data, len=%d"), len);
-			return RESP_ERROR;
+			if (len > 0)
+				offset += len;
 		}
 
 		return RESP_AUDIO;
 	} else if (::memcmp(buffer, DVD_AMBE_HEADER, DVD_HEADER_LEN) == 0) {	// AMBE data
-		do {
-			len = m_controller->read(buffer, DVD_AMBE_LENGTH_BYTES);
+		unsigned int offset = 0U;
+
+		while (offset < DVD_AMBE_LENGTH_BYTES) {
+			int len = m_controller->read(buffer + offset, DVD_AMBE_LENGTH_BYTES - offset);
+
+			if (len < 0) {
+				wxLogError(wxT("Unable to receive the DVD AMBE data, len=%d"), len);
+				return RESP_ERROR;
+			}
+
 			if (len == 0)
 				::wxMilliSleep(5UL);
-		} while (len == 0);
 
-		if (len != int(DVD_AMBE_LENGTH_BYTES)) {
-			wxLogError(wxT("Unable to receive the DVD AMBE data, len=%d"), len);
-			return RESP_ERROR;
+			if (len > 0)
+				offset += len;
 		}
 
 		return RESP_AMBE;
 	} else if (::memcmp(buffer, DVD_RESP_STOP, DVD_HEADER_LEN) == 0) {		// Start or Stop response
-		do {
-			len = m_controller->read(buffer + DVD_HEADER_LEN, DVD_RESP_STOP_LEN - DVD_HEADER_LEN);
+		unsigned int offset = 0U;
+
+		while (offset < (DVD_RESP_STOP_LEN - DVD_HEADER_LEN)) {
+			int len = m_controller->read(buffer + DVD_HEADER_LEN + offset, DVD_RESP_STOP_LEN - DVD_HEADER_LEN - offset);
+
+			if (len < 0) {
+				wxLogError(wxT("Unable to receive the DVD start/stop response, len=%d"), len);
+				return RESP_ERROR;
+			}
+
 			if (len == 0)
 				::wxMilliSleep(5UL);
-		} while (len == 0);
 
-		if (len != int(DVD_RESP_STOP_LEN - DVD_HEADER_LEN)) {
-			wxLogError(wxT("Unable to receive the DVD start/stop response, len=%d"), len);
-			return RESP_ERROR;
+			if (len > 0)
+				offset += len;
 		}
 
 		bool res = ::memcmp(buffer, DVD_RESP_START, DVD_RESP_START_LEN) == 0;
@@ -340,15 +356,21 @@ RESP_TYPE CDVDongleController::processResponse(unsigned char* buffer, unsigned i
 		wxLogError(wxT("Incorrect response to start/stop request: %02X %02X %02X %02X %02X"), buffer[0U], buffer[1U], buffer[2U], buffer[3U], buffer[4U]);
 		return RESP_ERROR;
 	} else if (::memcmp(buffer, DVD_RESP_NAME, DVD_HEADER_LEN) == 0) {		// Dongle name
-		do {
-			len = m_controller->read(buffer + DVD_HEADER_LEN, DVD_RESP_NAME_LEN - DVD_HEADER_LEN);
+		unsigned int offset = 0U;
+
+		while (offset < (DVD_RESP_NAME_LEN - DVD_HEADER_LEN)) {
+			int len = m_controller->read(buffer + DVD_HEADER_LEN + offset, DVD_RESP_NAME_LEN - DVD_HEADER_LEN - offset);
+
+			if (len < 0) {
+				wxLogError(wxT("Unable to receive the DVD name data, len=%d"), len);
+				return RESP_ERROR;
+			}
+
 			if (len == 0)
 				::wxMilliSleep(5UL);
-		} while (len == 0);
 
-		if (len != int(DVD_RESP_NAME_LEN - DVD_HEADER_LEN)) {
-			wxLogError(wxT("Unable to receive the DVD name data, len=%d"), len);
-			return RESP_ERROR;
+			if (len > 0)
+				offset += len;
 		}
 
 		bool res = ::memcmp(buffer, DVD_RESP_NAME, DVD_RESP_NAME_LEN) == 0;
@@ -364,4 +386,3 @@ RESP_TYPE CDVDongleController::processResponse(unsigned char* buffer, unsigned i
 		return RESP_UNKNOWN;
 	}
 }
-

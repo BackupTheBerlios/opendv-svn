@@ -26,7 +26,6 @@
 #include <windows.h>
 #endif
 
-#if !defined(SerialSpeed)
 enum SERIAL_SPEED {
 	SERIAL_1200   = 1200,
 	SERIAL_2400   = 2400,
@@ -38,9 +37,6 @@ enum SERIAL_SPEED {
 	SERIAL_115200 = 115200,
 	SERIAL_230400 = 230400
 };
-
-#define	SerialSpeed
-#endif
 
 class CSerialDataController {
 public:

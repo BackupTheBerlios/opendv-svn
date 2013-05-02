@@ -6,7 +6,7 @@ OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o Announceme
 		DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
 		FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o \
 		NCO.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
-		RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialController.o SlowDataDecoder.o SlowDataEncoder.o \
+		RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o \
 		SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
 
 Common.a:	$(OBJS)
@@ -96,7 +96,7 @@ DTMFTextCtrl.o:	DTMFTextCtrl.cpp DTMFTextCtrl.h RestrictedTextCtrl.h
 DummyController.o:	DummyController.cpp DummyController.h HardwareController.h
 		$(CC) $(CFLAGS) -c DummyController.cpp
 
-DVAPController.o:	DVAPController.cpp DVAPController.h SerialDataController.h HeaderData.h Utils.h RingBuffer.h DStarDefines.h CCITTChecksumReverse.h Timer.h
+DVAPController.o:	DVAPController.cpp DVAPController.h SerialDataController.h HeaderData.h Utils.h RingBuffer.h DStarDefines.h CCITTChecksumReverse.h
 		$(CC) $(CFLAGS) -c DVAPController.cpp
 
 DVDongleController.o:	DVDongleController.cpp DVDongleController.h DStarDefines.h SerialDataController.h
@@ -158,7 +158,7 @@ MessageTextCtrl.o:	MessageTextCtrl.cpp MessageTextCtrl.h RestrictedTextCtrl.h
 NCO.o:		NCO.cpp NCO.h
 		$(CC) $(CFLAGS) -c NCO.cpp
 
-NetworkController.o:	NetworkController.cpp NetworkController.h SerialController.h
+NetworkController.o:	NetworkController.cpp NetworkController.h SerialLineController.h
 		$(CC) $(CFLAGS) -c NetworkController.cpp
 
 NetworkSet.o:	NetworkSet.cpp NetworkSet.h AddressTextCtrl.h PortTextCtrl.h
@@ -196,8 +196,8 @@ RestrictedTextCtrl.o:	RestrictedTextCtrl.cpp RestrictedTextCtrl.h
 SerialDataController.o:	SerialDataController.cpp SerialDataController.h HardwareController.h
 		$(CC) $(CFLAGS) -c SerialDataController.cpp
 
-SerialController.o:	SerialController.cpp SerialController.h HardwareController.h
-		$(CC) $(CFLAGS) -c SerialController.cpp
+SerialLineController.o:	SerialLineController.cpp SerialLineController.h HardwareController.h
+		$(CC) $(CFLAGS) -c SerialLineController.cpp
 
 SlowDataDecoder.o:	SlowDataDecoder.cpp SlowDataDecoder.h DStarDefines.h HeaderData.h CCITTChecksumReverse.h
 		$(CC) $(CFLAGS) -c SlowDataDecoder.cpp

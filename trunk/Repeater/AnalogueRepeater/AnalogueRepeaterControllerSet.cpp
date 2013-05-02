@@ -18,7 +18,7 @@
 
 #include "AnalogueRepeaterControllerSet.h"
 
-#include "SerialController.h"
+#include "SerialLineController.h"
 
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 300U;
@@ -39,7 +39,7 @@ m_squelchInvert(NULL)
 	wxStaticText* typeLabel = new wxStaticText(this, -1, _("Type"));
 	sizer->Add(typeLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	wxArrayString serialDevs = CSerialController::getDevices();
+	wxArrayString serialDevs = CSerialLineController::getDevices();
 
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 

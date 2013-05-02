@@ -22,7 +22,7 @@
 #include "Version.h"
 #include "Utils.h"
 
-const wxChar* HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=hf.jpg></td><td width=\"96%%\"><font size=\"2\"><b>%s</b> ircDDB Gateway %s</font></td></tr></table>");
+const wxChar* HTML = wxT("<table border=\"0\" width=\"95%%\"><tr><td width=\"4%%\"><img border=\"0\" src=%s></td><td width=\"96%%\"><font size=\"2\"><b>%s</b> ircDDB Gateway %s</font></td></tr></table>");
 
 CConnectData::CConnectData(GATEWAY_TYPE gatewayType, const wxString& repeater, const wxString& reflector, CD_TYPE type, const in_addr& yourAddress, unsigned int yourPort, unsigned int myPort) :
 m_gatewayType(gatewayType),
@@ -344,16 +344,16 @@ unsigned int CConnectData::getDCSData(unsigned char *data, unsigned int length) 
 				wxString html;
 				switch (m_gatewayType) {
 					case GT_HOTSPOT:
-						html.Printf(HTML, wxT("HOTSPOT"), VERSION.c_str());
+						html.Printf(HTML, wxT("hotspot.jpg"), wxT("HOTSPOT"), VERSION.c_str());
 						break;
 					case GT_DONGLE:
-						html.Printf(HTML, wxT("DONGLE"), VERSION.c_str());
+						html.Printf(HTML, wxT("dongle.jpg"), wxT("DONGLE"), VERSION.c_str());
 						break;
 					case GT_STARNET:
-						html.Printf(HTML, wxT("STARNET"), VERSION.c_str());
+						html.Printf(HTML, wxT("hf.jpg"), wxT("STARNET"), VERSION.c_str());
 						break;
 					default:
-						html.Printf(HTML, wxT("REPEATER"), VERSION.c_str());
+						html.Printf(HTML, wxT("hf.jpg"), wxT("REPEATER"), VERSION.c_str());
 						break;
 				}
 

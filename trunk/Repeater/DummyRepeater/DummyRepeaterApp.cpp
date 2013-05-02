@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 #include "RepeaterProtocolHandler.h"
 #include "SoundCardReaderWriter.h"
 #include "SerialDataController.h"
+#include "SerialLineController.h"
 #include "RaspberryController.h"
 #include "DVDongleController.h"
 #include "ExternalController.h"
 #include "DummyRepeaterApp.h"
-#include "SerialController.h"
 #include "URIUSBController.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -739,7 +739,7 @@ void CDummyRepeaterApp::createThread()
 		port.ToULong(&num);
 		controller = new CExternalController(new CURIUSBController(num, true), pttInvert, squelchInvert);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
-		controller = new CExternalController(new CSerialController(port, config), pttInvert, squelchInvert);
+		controller = new CExternalController(new CSerialLineController(port, config), pttInvert, squelchInvert);
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
 		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);
 	} else {

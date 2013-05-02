@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ m_txPin(txPin),
 m_rxPin(rxPin)
 {
 	if (!device.IsEmpty())
-		m_serial = new CSerialController(device);
+		m_serial = new CSerialLineController(device);
 }
 
 CNetworkController::~CNetworkController()

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002-2004,2007-2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002-2004,2007-2011,2013 by Jonathan Naylor G4KLX
  *   Copyright (C) 1999-2001 by Thomas Sailor HB9JNX
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "SerialController.h"
+#include "SerialLineController.h"
 
 #include <sys/types.h>
 
@@ -41,7 +41,7 @@
 #endif
 
 
-wxArrayString CSerialController::getDevices()
+wxArrayString CSerialLineController::getDevices()
 {
 	wxArrayString devices;
 
@@ -118,12 +118,9 @@ wxArrayString CSerialController::getDevices()
 
 #if defined(__WINDOWS__)
 
-CSerialController::CSerialController(const wxString& device, unsigned int config, SERIAL_SPEED speed, SERIAL_FORMAT format, SERIAL_CONTROL control) :
+CSerialLineController::CSerialLineController(const wxString& device, unsigned int config) :
 m_device(device),
 m_config(config),
-m_speed(speed),
-m_format(format),
-m_control(control),
 m_rts(false),
 m_dtr(false),
 m_handle(INVALID_HANDLE_VALUE)
@@ -132,11 +129,11 @@ m_handle(INVALID_HANDLE_VALUE)
 	wxASSERT(config == 1U || config == 2U || config == 3U);
 }
 
-CSerialController::~CSerialController()
+CSerialLineController::~CSerialLineController()
 {
 }
 
-bool CSerialController::open()
+bool CSerialLineController::open()
 {
 	wxASSERT(m_handle == INVALID_HANDLE_VALUE);
 
@@ -156,31 +153,10 @@ bool CSerialController::open()
 		return false;
 	}
 
-	dcb.BaudRate = DWORD(m_speed);
-
-	switch (m_format) {
-		case SERIAL_8N1:
-			dcb.ByteSize = 8;
-			dcb.Parity   = NOPARITY;
-			dcb.fParity  = FALSE;
-			dcb.StopBits = ONESTOPBIT;
-			break;
-	}
-
-	switch (m_control) {
-		case SERIAL_HWFC:
-			dcb.fOutxCtsFlow = TRUE;
-			dcb.fOutxDsrFlow = TRUE;
-			dcb.fDtrControl  = DTR_CONTROL_HANDSHAKE;
-			dcb.fRtsControl  = RTS_CONTROL_HANDSHAKE;
-			break;
-		case SERIAL_NOFC:
-			dcb.fOutxCtsFlow = FALSE;
-			dcb.fOutxDsrFlow = FALSE;
-			dcb.fDtrControl  = DTR_CONTROL_DISABLE;
-			dcb.fRtsControl  = RTS_CONTROL_DISABLE;
-			break;
-	}
+	dcb.fOutxCtsFlow = FALSE;
+	dcb.fOutxDsrFlow = FALSE;
+	dcb.fDtrControl  = DTR_CONTROL_DISABLE;
+	dcb.fRtsControl  = RTS_CONTROL_DISABLE;
 
 	if (::SetCommState(m_handle, &dcb) == 0) {
 		wxLogError(wxT("Cannot set the attributes for %s"), m_device.c_str());
@@ -208,39 +184,7 @@ bool CSerialController::open()
 	return true;
 }
 
-int CSerialController::read(unsigned char* buffer, unsigned int length)
-{
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-	wxASSERT(buffer != NULL);
-
-	if (length == 0U)
-		return 0;
-
-	DWORD bytes = 0UL;
-	BOOL res = ::ReadFile(m_handle, buffer, length, &bytes, NULL);
-	if (!res)
-		return -1;
-
-	return int(bytes);
-}
-
-int CSerialController::write(const unsigned char* buffer, unsigned int length)
-{
-	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
-	wxASSERT(buffer != NULL);
-
-	if (length == 0U)
-		return 0;
-
-	DWORD bytes = 0UL;
-	BOOL res = ::WriteFile(m_handle, buffer, length, &bytes, NULL);
-	if (!res)
-		return -1;
-
-	return int(bytes);
-}
-
-bool CSerialController::getCD() const
+bool CSerialLineController::getCD() const
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -254,7 +198,7 @@ bool CSerialController::getCD() const
 	return (status & MS_RLSD_ON) == MS_RLSD_ON;
 }
 
-bool CSerialController::getCTS() const
+bool CSerialLineController::getCTS() const
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -268,7 +212,7 @@ bool CSerialController::getCTS() const
 	return (status & MS_CTS_ON) == MS_CTS_ON;
 }
 
-bool CSerialController::getDSR() const
+bool CSerialLineController::getDSR() const
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -282,7 +226,7 @@ bool CSerialController::getDSR() const
 	return (status & MS_DSR_ON) == MS_DSR_ON;
 }
 
-bool CSerialController::setRTS(bool set)
+bool CSerialLineController::setRTS(bool set)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -302,7 +246,7 @@ bool CSerialController::setRTS(bool set)
 	return true;
 }
 
-bool CSerialController::setDTR(bool set)
+bool CSerialLineController::setDTR(bool set)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -322,7 +266,7 @@ bool CSerialController::setDTR(bool set)
 	return true;
 }
 
-void CSerialController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool& inp4, bool& inp5)
+void CSerialLineController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool& inp4, bool& inp5)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -353,7 +297,7 @@ void CSerialController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, boo
 	}
 }
 
-void CSerialController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
+void CSerialLineController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -415,7 +359,7 @@ void CSerialController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bo
 	}
 }
 
-void CSerialController::close()
+void CSerialLineController::close()
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -425,12 +369,9 @@ void CSerialController::close()
 
 #else
 
-CSerialController::CSerialController(const wxString& device, unsigned int config, SERIAL_SPEED speed, SERIAL_FORMAT format, SERIAL_CONTROL control) :
+CSerialLineController::CSerialLineController(const wxString& device, unsigned int config) :
 m_device(device),
 m_config(config),
-m_speed(speed),
-m_format(format),
-m_control(control),
 m_rts(false),
 m_dtr(false),
 m_fd(-1)
@@ -439,11 +380,11 @@ m_fd(-1)
 	wxASSERT(config == 1U || config == 2U || config == 3U);
 }
 
-CSerialController::~CSerialController()
+CSerialLineController::~CSerialLineController()
 {
 }
 
-bool CSerialController::open()
+bool CSerialLineController::open()
 {
 	wxASSERT(m_fd == -1);
 
@@ -468,65 +409,11 @@ bool CSerialController::open()
 
 	// FIXME XXX unfinished
 	termios.c_cflag |= (CLOCAL | CREAD);
+	termios.c_cflag &= ~CRTSCTS;
 	termios.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 	termios.c_oflag &= ~OPOST;
 	termios.c_cc[VMIN]  = 0;
 	termios.c_cc[VTIME] = 10;
-
-	switch (m_format) {
-		case SERIAL_8N1:
-			termios.c_cflag &= ~(CSIZE | PARENB | CSTOPB);
-			termios.c_cflag |= CS8;
-			break;
-	}
-
-	switch (m_control) {
-		case SERIAL_HWFC:
-			termios.c_cflag |= CRTSCTS;
-			break;
-		case SERIAL_NOFC:
-			termios.c_cflag &= ~CRTSCTS;
-			break;
-	}
-
-	switch (m_speed) {
-		case SERIAL_1200:
-			::cfsetospeed(&termios, B1200);
-			::cfsetispeed(&termios, B1200);
-			break;
-		case SERIAL_2400:
-			::cfsetospeed(&termios, B2400);
-			::cfsetispeed(&termios, B2400);
-			break;
-		case SERIAL_4800:
-			::cfsetospeed(&termios, B4800);
-			::cfsetispeed(&termios, B4800);
-			break;
-		case SERIAL_9600:
-			::cfsetospeed(&termios, B9600);
-			::cfsetispeed(&termios, B9600);
-			break;
-		case SERIAL_19200:
-			::cfsetospeed(&termios, B19200);
-			::cfsetispeed(&termios, B19200);
-			break;
-		case SERIAL_38400:
-			::cfsetospeed(&termios, B230400);
-			::cfsetispeed(&termios, B230400);
-			break;
-		case SERIAL_76800:
-			::cfsetospeed(&termios, B230400);
-			::cfsetispeed(&termios, B230400);
-			break;
-		case SERIAL_230400:
-			::cfsetospeed(&termios, B230400);
-			::cfsetispeed(&termios, B230400);
-			break;
-		default:
-			wxLogError(wxT("Unsupported serial port speed - %d"), int(m_speed));
-			::close(m_fd);
-			return false;
-	}
 
 	if (::tcsetattr(m_fd, TCSANOW, &termios) < 0) {
 		wxLogError(wxT("Cannot set the attributes for %s"), m_device.c_str());
@@ -553,51 +440,7 @@ bool CSerialController::open()
 	return true;
 }
 
-int CSerialController::read(unsigned char* buffer, unsigned int length)
-{
-	wxASSERT(m_fd != -1);
-	wxASSERT(buffer != NULL);
-
-	if (length == 0U)
-		return 0;
-
-	ssize_t n = 0;
-	while (n <= 0) {
-		n = ::read(m_fd, buffer, length);
-		if (n < 0 && errno != EAGAIN) {
-			wxLogError(wxT("Error returned from read(), errno=%d"), errno);
-			return -1;
-		}
-		if (errno == EAGAIN || n == 0)
-			::wxMilliSleep(5UL);
-	}
-
-	return n;
-}
-
-int CSerialController::write(const unsigned char* buffer, unsigned int length)
-{
-	wxASSERT(m_fd != -1);
-	wxASSERT(buffer != NULL);
-
-	if (length == 0U)
-		return 0;
-
-	ssize_t n = 0;
-	while (n <= 0) {
-		n = ::write(m_fd, buffer, length);
-		if (n < 0 && errno != EAGAIN) {
-			wxLogError(wxT("Error returned from write(), errno=%d"), errno);
-			return -1;
-		}
-		if (errno == EAGAIN || n == 0)
-			::wxMilliSleep(5UL);
-	}
-
-	return n;
-}
-
-bool CSerialController::getCD() const
+bool CSerialLineController::getCD() const
 {
 	wxASSERT(m_fd != -1);
 
@@ -608,7 +451,7 @@ bool CSerialController::getCD() const
 	return (y & TIOCM_CD) == TIOCM_CD;
 }
 
-bool CSerialController::getCTS() const
+bool CSerialLineController::getCTS() const
 {
 	wxASSERT(m_fd != -1);
 
@@ -619,7 +462,7 @@ bool CSerialController::getCTS() const
 	return (y & TIOCM_CTS) == TIOCM_CTS;
 }
 
-bool CSerialController::getDSR() const
+bool CSerialLineController::getDSR() const
 {
 	wxASSERT(m_fd != -1);
 
@@ -630,7 +473,7 @@ bool CSerialController::getDSR() const
 	return (y & TIOCM_DSR) == TIOCM_DSR;
 }
 
-bool CSerialController::setRTS(bool set)
+bool CSerialLineController::setRTS(bool set)
 {
 	wxASSERT(m_fd != -1);
 
@@ -654,7 +497,7 @@ bool CSerialController::setRTS(bool set)
 	return true;
 }
 
-bool CSerialController::setDTR(bool set)
+bool CSerialLineController::setDTR(bool set)
 {
 	wxASSERT(m_fd != -1);
 
@@ -678,7 +521,7 @@ bool CSerialController::setDTR(bool set)
 	return true;
 }
 
-void CSerialController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool& inp4, bool& inp5)
+void CSerialLineController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool& inp4, bool& inp5)
 {
 	wxASSERT(m_fd != -1);
 
@@ -706,7 +549,7 @@ void CSerialController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, boo
 	}
 }
 
-void CSerialController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
+void CSerialLineController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
 {
 	wxASSERT(m_fd != -1);
 
@@ -761,7 +604,7 @@ void CSerialController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bo
 	}
 }
 
-void CSerialController::close()
+void CSerialLineController::close()
 {
 	wxASSERT(m_fd != -1);
 

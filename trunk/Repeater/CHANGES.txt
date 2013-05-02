@@ -1836,3 +1836,4 @@ Added XRF851.
 --------
 
 Tweaks to the DVAP handling.
+Made opening the serial port more aggressive for the DVAP.

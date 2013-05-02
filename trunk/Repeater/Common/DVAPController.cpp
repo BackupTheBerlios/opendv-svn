@@ -19,7 +19,6 @@
 #include "CCITTChecksumReverse.h"
 #include "DVAPController.h"
 #include "DStarDefines.h"
-#include "Timer.h"
 
 const unsigned char DVAP_REQ_NAME[] = {0x04, 0x20, 0x01, 0x00};
 const unsigned int  DVAP_REQ_NAME_LEN = 4U;
@@ -230,10 +229,6 @@ void* CDVAPController::Entry()
 {
 	wxLogMessage(wxT("Starting DVAP Controller thread"));
 
-	// Send data every 19ms-ish
-	CTimer dataTimer(200U, 0U, 19U);
-	dataTimer.start();
-
 	while (!m_stopped) {
 		unsigned int length;
 		RESP_TYPE type = getResponse(m_buffer, length);
@@ -308,7 +303,8 @@ void* CDVAPController::Entry()
 				break;
 		}
 
-		if (m_space > 0U && dataTimer.hasExpired()) {
+		// Use the status packet every 20ms to trigger the sending of data to the DVAP
+		if (m_space > 0U && type == RT_STATE) {
 			if (!m_txData.isEmpty()) {
 				m_mutex.Lock();
 
@@ -327,14 +323,10 @@ void* CDVAPController::Entry()
 					wxLogWarning(wxT("Error when writing data to the modem"));
 
 				m_space--;
-
-				dataTimer.reset();
 			}
 		}
 
 		Sleep(5UL);
-
-		dataTimer.clock();
 	}
 
 	wxLogMessage(wxT("Stopping DVAP Controller thread"));

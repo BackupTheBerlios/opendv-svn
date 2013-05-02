@@ -192,7 +192,7 @@ void CDStarRepeaterTRXThread::run()
 	while (!m_killed) {
 		stopWatch.Start();
 
-		if (m_statusTimer.hasExpired()) {
+		if (m_statusTimer.hasExpired() || m_space == 0U) {
 			m_space = m_modem->getSpace();
 			m_tx    = m_modem->getTX();
 			m_statusTimer.reset();
@@ -206,11 +206,14 @@ void CDStarRepeaterTRXThread::run()
 
 		// Send the network poll if needed and restart the timer
 		if (m_pollTimer.hasExpired()) {
+			wxString text;
 #if defined(__WINDOWS__)
-			m_protocolHandler->writePoll(wxT("win_dstar-") + VERSION);
+			text.Printf(wxT("win_%s-%s"), m_type.c_str(), VERSION.c_str());
 #else
-			m_protocolHandler->writePoll(wxT("linux_dstar-") + VERSION);
+			text.Printf(wxT("linux_%s-%s"), m_type.c_str(), VERSION.c_str());
 #endif
+			text.Replace(wxT(" "), wxT("-"));
+			m_protocolHandler->writePoll(text);
 			m_pollTimer.reset();
 		}
 
@@ -989,7 +992,7 @@ void CDStarRepeaterTRXThread::transmitLocalHeader()
 
 void CDStarRepeaterTRXThread::transmitLocalData()
 {
-	if (m_space < DV_FRAME_LENGTH_BYTES)
+	if (m_space == 0U)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -1000,7 +1003,7 @@ void CDStarRepeaterTRXThread::transmitLocalData()
 		return;
 
 	m_modem->writeData(buffer, length, end);
-	m_space -= length;
+	m_space--;
 
 	if (end)
 		m_localQueue.reset();
@@ -1022,7 +1025,7 @@ void CDStarRepeaterTRXThread::transmitRadioHeader()
 
 void CDStarRepeaterTRXThread::transmitRadioData()
 {
-	if (m_space < DV_FRAME_LENGTH_BYTES)
+	if (m_space == 0U)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -1033,7 +1036,7 @@ void CDStarRepeaterTRXThread::transmitRadioData()
 		return;
 
 	m_modem->writeData(buffer, length, end);
-	m_space -= length;
+	m_space--;
 
 	if (end)
 		m_radioQueue.reset();
@@ -1055,7 +1058,7 @@ void CDStarRepeaterTRXThread::transmitNetworkHeader()
 
 void CDStarRepeaterTRXThread::transmitNetworkData()
 {
-	if (m_space < DV_FRAME_LENGTH_BYTES)
+	if (m_space == 0U)
 		return;
 
 	unsigned char buffer[DV_FRAME_LENGTH_BYTES];
@@ -1066,7 +1069,7 @@ void CDStarRepeaterTRXThread::transmitNetworkData()
 		return;
 
 	m_modem->writeData(buffer, length, end);
-	m_space -= length;
+	m_space--;
 
 	if (end) {
 		m_networkQueue[m_readNum]->reset();

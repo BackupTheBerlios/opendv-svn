@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ m_background(NULL)
 	sizer->Add(m_vogad, 0, wxALL, BORDER_SIZE);
 	m_vogad->SetSelection(vogad ? 1 : 0);
 
-	wxArrayString devices = CSerialController::getDevices();
+	wxArrayString devices = CSerialLineController::getDevices();
 
 	wxStaticText* deviceLabel = new wxStaticText(this, -1, _("Device"));
 	sizer->Add(deviceLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);

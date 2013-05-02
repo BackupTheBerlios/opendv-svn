@@ -22,8 +22,8 @@
 #if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
 #endif
+#include "SerialLineController.h"
 #include "ExternalController.h"
-#include "SerialController.h"
 #include "URIUSBController.h"
 #include "DummyController.h"
 #include "K8055Controller.h"
@@ -590,7 +590,7 @@ void CAnalogueRepeaterApp::createThread()
 		port.ToULong(&num);
 		controller = new CExternalController(new CURIUSBController(num, true), pttInvert, squelchInvert);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
-		controller = new CExternalController(new CSerialController(port, cfg), pttInvert, squelchInvert);
+		controller = new CExternalController(new CSerialLineController(port, cfg), pttInvert, squelchInvert);
 #if defined(RASPBERRY_PI)
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
 		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);

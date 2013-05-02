@@ -394,11 +394,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SerialController.cpp"
+				RelativePath=".\SerialDataController.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SerialDataController.cpp"
+				RelativePath=".\SerialLineController.cpp"
 				>
 			</File>
 			<File
@@ -772,11 +772,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SerialController.h"
+				RelativePath=".\SerialDataController.h"
 				>
 			</File>
 			<File
-				RelativePath=".\SerialDataController.h"
+				RelativePath=".\SerialLineController.h"
 				>
 			</File>
 			<File

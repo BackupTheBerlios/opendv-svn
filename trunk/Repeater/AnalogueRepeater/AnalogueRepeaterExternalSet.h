@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef	AnalogueRepeaterExternalSet_H
 #define	AnalogueRepeaterExternalSet_H
 
-#include "SerialController.h"
+#include "SerialLineController.h"
 #include "AnalogueDefines.h"
 
 #include <wx/wx.h>

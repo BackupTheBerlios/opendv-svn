@@ -127,6 +127,9 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
+const unsigned int MAX_OPEN_TRIES = 6U;
+const unsigned int OPEN_TRY_PAUSE = 5000U;		// 5 seconds
+
 CDStarRepeaterModemDVAPController::CDStarRepeaterModemDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),
 m_serial(port, SERIAL_230400),
@@ -166,9 +169,21 @@ CDStarRepeaterModemDVAPController::~CDStarRepeaterModemDVAPController()
 
 bool CDStarRepeaterModemDVAPController::start()
 {
-	bool res = m_serial.open();
-	if (!res)
+	bool res = false;
+	for (unsigned int i = 0U; i < MAX_OPEN_TRIES; i++) {
+		res = m_serial.open();
+		if (res)
+			break;
+
+		Sleep(OPEN_TRY_PAUSE);
+	}
+
+	if (!res) {
+		wxLogError(wxT("Unable to open the DVAP after %u attempts"), MAX_OPEN_TRIES);
 		return false;
+	}
+
+	wxLogMessage(wxT("Opened the DVAP modem port"));
 
 	res = getName();
 	if (!res) {
@@ -238,11 +253,7 @@ void* CDStarRepeaterModemDVAPController::Entry()
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 2U);
 
-	// Send data every 19ms-ish
-	CTimer dataTimer(200U, 0U, 19U);
-
 	pollTimer.start();
-	dataTimer.start();
 
 	while (!m_stopped) {
 		// Poll the modem every 2s
@@ -324,7 +335,8 @@ void* CDStarRepeaterModemDVAPController::Entry()
 				break;
 		}
 
-		if (m_space > 0U && dataTimer.hasExpired()) {
+		// Use the status packet every 20ms to trigger the sending of data to the DVAP
+		if (m_space > 0U && type == RT_STATE) {
 			if (!m_txData.isEmpty()) {
 				m_mutex.Lock();
 
@@ -343,15 +355,12 @@ void* CDStarRepeaterModemDVAPController::Entry()
 					wxLogWarning(wxT("Error when writing data to the modem"));
 
 				m_space--;
-
-				dataTimer.reset();
 			}
 		}
 
 		Sleep(5UL);
 
 		pollTimer.clock();
-		dataTimer.clock();
 	}
 
 	wxLogMessage(wxT("Stopping DVAP Controller thread"));

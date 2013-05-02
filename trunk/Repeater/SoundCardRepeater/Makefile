@@ -19,7 +19,7 @@ soundcardrepeaterd:	SoundCardRepeaterD.o SoundCardRepeaterConfig.o SoundCardRepe
 SoundCardRepeaterApp.o:	SoundCardRepeaterApp.cpp SoundCardRepeaterApp.h SoundCardRepeaterThread.h SoundCardRepeaterTRXThread.h SoundCardRepeaterTXRXThread.h \
 					SoundCardRepeaterTXThread.h SoundCardRepeaterRXThread.h SoundCardRepeaterFrame.h SoundCardRepeaterDefs.h SoundCardRepeaterStatusData.h \
 					SoundCardRepeaterLogger.h SoundCardRepeaterConfig.h SoundCardRepeaterThreadHelper.h ../Common/WAVFileReader.h ../Common/DStarDefines.h \
-					../Common/Logger.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialController.h \
+					../Common/Logger.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialLineController.h \
 					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h ../Common/RaspberryController.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterApp.cpp
 
@@ -29,12 +29,12 @@ SoundCardRepeaterCallsignSet.o:	SoundCardRepeaterCallsignSet.cpp SoundCardRepeat
 SoundCardRepeaterConfig.o:	SoundCardRepeaterConfig.cpp SoundCardRepeaterConfig.h SoundCardRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterConfig.cpp
 
-SoundCardRepeaterControllerSet.o:	SoundCardRepeaterControllerSet.cpp SoundCardRepeaterControllerSet.h ../Common/SerialController.h
+SoundCardRepeaterControllerSet.o:	SoundCardRepeaterControllerSet.cpp SoundCardRepeaterControllerSet.h ../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterControllerSet.cpp
 
 SoundCardRepeaterD.o:	SoundCardRepeaterD.cpp SoundCardRepeaterD.h SoundCardRepeaterThread.h SoundCardRepeaterTRXThread.h SoundCardRepeaterTXRXThread.h SoundCardRepeaterTXThread.h \
 					SoundCardRepeaterRXThread.h SoundCardRepeaterConfig.h SoundCardRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h \
-					../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialController.h ../Common/RaspberryController.h \
+					../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialLineController.h ../Common/RaspberryController.h \
 					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterD.cpp
 

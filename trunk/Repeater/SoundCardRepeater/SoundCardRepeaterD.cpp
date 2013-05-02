@@ -22,9 +22,9 @@
 #include "SoundCardRepeaterRXThread.h"
 #include "SoundCardRepeaterConfig.h"
 #include "RepeaterProtocolHandler.h"
+#include "SerialLineController.h"
 #include "RaspberryController.h"
 #include "SoundCardRepeaterD.h"
-#include "SerialController.h"
 #include "URIUSBController.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -289,7 +289,7 @@ bool CSoundCardRepeaterD::createThread()
 		port.ToULong(&num);
 		controller = new CExternalController(new CURIUSBController(num, false), pttInvert, false);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
-		controller = new CExternalController(new CSerialController(port, cfg), pttInvert, false);
+		controller = new CExternalController(new CSerialLineController(port, cfg), pttInvert, false);
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
 		controller = new CExternalController(new CRaspberryController, pttInvert, false);
 	} else {

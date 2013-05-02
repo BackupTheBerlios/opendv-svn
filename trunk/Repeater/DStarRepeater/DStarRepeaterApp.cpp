@@ -21,7 +21,6 @@
 #include "DStarRepeaterModemDVAPController.h"
 #include "DStarRepeaterTXRXThread.h"
 #include "RepeaterProtocolHandler.h"
-#include "DStarRepeaterModemNull.h"
 #include "DStarRepeaterTRXThread.h"
 #include "DStarRepeaterTXThread.h"
 #include "DStarRepeaterRXThread.h"
@@ -357,10 +356,7 @@ void CDStarRepeaterApp::createThread()
 	wxLogInfo(wxT("Modem type set to \"%s\""), modemType.c_str());
 
 	IDStarRepeaterModem* modem = NULL;
-	if (modemType.IsSameAs(wxT("None"))) {
-		wxLogInfo(wxT("Null:"));
-		modem = new CDStarRepeaterModemNull;
-	} else if (modemType.IsSameAs(wxT("DVAP"))) {
+	if (modemType.IsSameAs(wxT("DVAP"))) {
 		wxString port;
 		unsigned int frequency;
 		int power, squelch;

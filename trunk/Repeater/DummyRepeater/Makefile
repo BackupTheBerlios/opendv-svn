@@ -15,7 +15,7 @@ dummyrepeater:	DummyRepeaterApp.o DummyRepeaterBleeper.o DummyRepeaterBleepSet.o
 
 DummyRepeaterApp.o:	DummyRepeaterApp.cpp DummyRepeaterApp.h DummyRepeaterThread.h DummyRepeaterFrame.h DummyRepeaterDefs.h DummyRepeaterMessageData.h \
 					DummyRepeaterDVDongleSet.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/HeaderData.h ../Common/RepeaterProtocolHandler.h \
-					../Common/SoundCardReaderWriter.h ../Common/SerialDataController.h ../Common/SerialController.h ../Common/K8055Controller.h \
+					../Common/SoundCardReaderWriter.h ../Common/SerialDataController.h ../Common/SerialLineController.h ../Common/K8055Controller.h \
 					../Common/URIUSBController.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/DVDongleController.h \
 					../Common/RaspberryController.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DummyRepeaterApp.cpp
@@ -29,7 +29,7 @@ DummyRepeaterBleepSet.o:	DummyRepeaterBleepSet.cpp DummyRepeaterBleepSet.h
 DummyRepeaterCallsignSet.o:	DummyRepeaterCallsignSet.cpp DummyRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h
 				$(CC) $(CFLAGS) -c DummyRepeaterCallsignSet.cpp
 
-DummyRepeaterControllerSet.o:	DummyRepeaterControllerSet.cpp DummyRepeaterControllerSet.h ../Common/SerialController.h
+DummyRepeaterControllerSet.o:	DummyRepeaterControllerSet.cpp DummyRepeaterControllerSet.h ../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c DummyRepeaterControllerSet.cpp
 
 DummyRepeaterDVDongleSet.o:	DummyRepeaterDVDongleSet.cpp DummyRepeaterDVDongleSet.h ../Common/SerialDataController.h

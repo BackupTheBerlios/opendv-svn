@@ -50,13 +50,12 @@ m_type(NULL)
 	sizer->Add(typeLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
-	m_type->Append(wxT("None"));
 	m_type->Append(wxT("DVAP"));
-	m_type->Append(wxT("GMSK Modem"));
+	// m_type->Append(wxT("GMSK"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
 #if defined(RASPBERRY_PI)
-	m_type->Append(wxT("Raspberry Pi"));
+	// m_type->Append(wxT("Raspberry Pi"));
 #endif
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -96,7 +95,7 @@ wxString CDStarRepeaterConfigModemSet::getType() const
 	int n = m_type->GetCurrentSelection();
 
 	if (n == wxNOT_FOUND)
-		return wxT("None");
+		return wxT("DVAP");
 
 	return m_type->GetStringSelection();
 }
@@ -109,23 +108,7 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 
 	wxString type = m_type->GetStringSelection();
 
-	if (type.IsSameAs(wxT("None"))) {
-#if defined(RASPBERRY_PI)
-	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
-		bool txInvert, rxInvert;
-		unsigned int txDelay;
-		m_config->getRaspberry(rxInvert, txInvert, txDelay);
-		CDStarRepeaterConfigRaspberrySet modem(this, -1, rxInvert, txInvert,txDelay);
-		if (modem.ShowModal() == wxID_OK) {
-			if (modem.Validate()) {
-				rxInvert = modem.getRXInvert();
-				txInvert = modem.getTXInvert();
-				txDelay  = modem.getTXDelay();
-				m_config->setRaspberry(rxInvert, txInvert, txDelay);
-			}
-		}
-#endif
-	} else if (type.IsSameAs(wxT("DVAP"))) {
+	if (type.IsSameAs(wxT("DVAP"))) {
 		wxString port;
 		unsigned int frequency;
 		int power, squelch;
@@ -140,7 +123,7 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				m_config->setDVAP(port, frequency, power, squelch);
 			}
 		}
-	} else if (type.IsSameAs(wxT("GMSK Modem"))) {
+	} else if (type.IsSameAs(wxT("GMSK"))) {
 		USB_INTERFACE modemType;
 		unsigned int modemAddress;
 		m_config->getGMSK(modemType, modemAddress);
@@ -187,5 +170,20 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
 			}
 		}
+#if defined(RASPBERRY_PI)
+	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
+		bool txInvert, rxInvert;
+		unsigned int txDelay;
+		m_config->getRaspberry(rxInvert, txInvert, txDelay);
+		CDStarRepeaterConfigRaspberrySet modem(this, -1, rxInvert, txInvert,txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				rxInvert = modem.getRXInvert();
+				txInvert = modem.getTXInvert();
+				txDelay  = modem.getTXDelay();
+				m_config->setRaspberry(rxInvert, txInvert, txDelay);
+			}
+		}
+#endif
 	}
 }
