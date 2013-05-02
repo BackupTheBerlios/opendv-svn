@@ -1018,34 +1018,54 @@ void CIRCDDBGatewayThread::processDD()
 
 void CIRCDDBGatewayThread::loadReflectors()
 {
-	if (m_dextraEnabled)
-		loadDExtraReflectors();
+	if (m_dplusEnabled) {
+		wxFileName fileName(wxFileName::GetHomeDir(), DPLUS_HOSTS_FILE_NAME);
+		if (fileName.IsFileReadable())
+			loadDPlusReflectors(fileName.GetFullPath());
 
-	if (m_dplusEnabled)
-		loadDPlusReflectors();
+#if defined(__WINDOWS__)
+		fileName.Assign(::wxGetCwd(), DPLUS_HOSTS_FILE_NAME);
+#else
+		fileName.Assign(wxT(DATA_DIR), DPLUS_HOSTS_FILE_NAME);
+#endif
+		if (fileName.IsFileReadable())
+			loadDPlusReflectors(fileName.GetFullPath());
+	}
 
-	if (m_dcsEnabled)
-		loadDCSReflectors();
-}
+	if (m_dextraEnabled) {
+		wxFileName fileName(wxFileName::GetHomeDir(), DEXTRA_HOSTS_FILE_NAME);
+		if (fileName.IsFileReadable())
+			loadDExtraReflectors(fileName.GetFullPath());
 
-void CIRCDDBGatewayThread::loadDExtraReflectors()
-{
-	wxFileName fileName(wxFileName::GetHomeDir(), DEXTRA_HOSTS_FILE_NAME);
-
-	if (!fileName.IsFileReadable()) {
-		wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
 #if defined(__WINDOWS__)
 		fileName.Assign(::wxGetCwd(), DEXTRA_HOSTS_FILE_NAME);
 #else
 		fileName.Assign(wxT(DATA_DIR), DEXTRA_HOSTS_FILE_NAME);
 #endif
-		if (!fileName.IsFileReadable())
-			wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
+		if (fileName.IsFileReadable())
+			loadDExtraReflectors(fileName.GetFullPath());
 	}
 
+	if (m_dcsEnabled) {
+		wxFileName fileName(wxFileName::GetHomeDir(), DCS_HOSTS_FILE_NAME);
+		if (fileName.IsFileReadable())
+			loadDCSReflectors(fileName.GetFullPath());
+
+#if defined(__WINDOWS__)
+		fileName.Assign(::wxGetCwd(), DCS_HOSTS_FILE_NAME);
+#else
+		fileName.Assign(wxT(DATA_DIR), DCS_HOSTS_FILE_NAME);
+#endif
+		if (fileName.IsFileReadable())
+			loadDCSReflectors(fileName.GetFullPath());
+	}
+}
+
+void CIRCDDBGatewayThread::loadDExtraReflectors(const wxString& fileName)
+{
 	unsigned int count = 0U;
 
-	CHostFile hostFile(fileName.GetFullPath(), true);
+	CHostFile hostFile(fileName, false);
 	for (unsigned int i = 0U; i < hostFile.getCount(); i++) {
 		wxString reflector = hostFile.getName(i);
 		in_addr address    = CUDPReaderWriter::lookup(hostFile.getAddress(i));
@@ -1069,27 +1089,14 @@ void CIRCDDBGatewayThread::loadDExtraReflectors()
 		}
 	}
 
-	wxLogMessage(wxT("Loaded %u of %u DExtra reflectors"), count, hostFile.getCount());
+	wxLogMessage(wxT("Loaded %u of %u DExtra reflectors from %s"), count, hostFile.getCount(), fileName.c_str());
 }
 
-void CIRCDDBGatewayThread::loadDPlusReflectors()
+void CIRCDDBGatewayThread::loadDPlusReflectors(const wxString& fileName)
 {
-	wxFileName fileName(wxFileName::GetHomeDir(), DPLUS_HOSTS_FILE_NAME);
-
-	if (!fileName.IsFileReadable()) {
-		wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
-#if defined(__WINDOWS__)
-		fileName.Assign(::wxGetCwd(), DPLUS_HOSTS_FILE_NAME);
-#else
-		fileName.Assign(wxT(DATA_DIR), DPLUS_HOSTS_FILE_NAME);
-#endif
-		if (!fileName.IsFileReadable())
-			wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
-	}
-
 	unsigned int count = 0U;
 
-	CHostFile hostFile(fileName.GetFullPath(), true);
+	CHostFile hostFile(fileName, false);
 	for (unsigned int i = 0U; i < hostFile.getCount(); i++) {
 		wxString reflector = hostFile.getName(i);
 		in_addr address    = CUDPReaderWriter::lookup(hostFile.getAddress(i));
@@ -1113,27 +1120,14 @@ void CIRCDDBGatewayThread::loadDPlusReflectors()
 		}
 	}
 
-	wxLogMessage(wxT("Loaded %u of %u D-Plus reflectors"), count, hostFile.getCount());
+	wxLogMessage(wxT("Loaded %u of %u D-Plus reflectors from %s"), count, hostFile.getCount(), fileName.c_str());
 }
 
-void CIRCDDBGatewayThread::loadDCSReflectors()
+void CIRCDDBGatewayThread::loadDCSReflectors(const wxString& fileName)
 {
-	wxFileName fileName(wxFileName::GetHomeDir(), DCS_HOSTS_FILE_NAME);
-
-	if (!fileName.IsFileReadable()) {
-		wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
-#if defined(__WINDOWS__)
-		fileName.Assign(::wxGetCwd(), DCS_HOSTS_FILE_NAME);
-#else
-		fileName.Assign(wxT(DATA_DIR), DCS_HOSTS_FILE_NAME);
-#endif
-		if (!fileName.IsFileReadable())
-			wxLogMessage(wxT("File %s not readable"), fileName.GetFullPath().c_str());
-	}
-
 	unsigned int count = 0U;
 
-	CHostFile hostFile(fileName.GetFullPath(), true);
+	CHostFile hostFile(fileName, false);
 	for (unsigned int i = 0U; i < hostFile.getCount(); i++) {
 		wxString reflector = hostFile.getName(i);
 		in_addr address    = CUDPReaderWriter::lookup(hostFile.getAddress(i));
@@ -1157,7 +1151,7 @@ void CIRCDDBGatewayThread::loadDCSReflectors()
 		}
 	}
 
-	wxLogMessage(wxT("Loaded %u of %u DCS reflectors"), count, hostFile.getCount());
+	wxLogMessage(wxT("Loaded %u of %u DCS reflectors from %s"), count, hostFile.getCount(), fileName.c_str());
 }
 	
 void CIRCDDBGatewayThread::writeStatus()

@@ -132,9 +132,9 @@ private:
 	void processDD();
 
 	void loadReflectors();
-	void loadDExtraReflectors();
-	void loadDPlusReflectors();
-	void loadDCSReflectors();
+	void loadDExtraReflectors(const wxString& fileName);
+	void loadDPlusReflectors(const wxString& fileName);
+	void loadDCSReflectors(const wxString& fileName);
 
 	void writeStatus();
 
