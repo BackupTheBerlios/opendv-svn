@@ -349,6 +349,9 @@ unsigned int CConnectData::getDCSData(unsigned char *data, unsigned int length) 
 					case GT_DONGLE:
 						html.Printf(HTML, wxT("DONGLE"), VERSION.c_str());
 						break;
+					case GT_STARNET:
+						html.Printf(HTML, wxT("STARNET"), VERSION.c_str());
+						break;
 					default:
 						html.Printf(HTML, wxT("REPEATER"), VERSION.c_str());
 						break;

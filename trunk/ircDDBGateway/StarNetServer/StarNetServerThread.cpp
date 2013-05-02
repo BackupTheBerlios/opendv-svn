@@ -163,6 +163,7 @@ void CStarNetServerThread::run()
 #if defined(DCS_LINK)
 	CDCSHandler::setDCSProtocolHandlerPool(m_dcsPool);
 	CDCSHandler::setHeaderLogger(headerLogger);
+	CDCSHandler::setGatewayType(GT_STARNET);
 #endif
 
 	CStarNetHandler::setCache(&m_cache);
