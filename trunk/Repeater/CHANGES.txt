@@ -1,4 +1,4 @@
-Repeater - 20130423
+Repeater - 20130503
 ===================
 
 20090530
@@ -1832,8 +1832,9 @@ Allow incoming radio audio during the valid_wait period.
 Don't reset the announcement timer on transmissions.
 Added XRF851.
 
-201304xx
+20130503
 --------
 
 Tweaks to the DVAP handling.
 Made opening the serial port more aggressive for the DVAP.
+Included the D-Star Repeater and Config program in the Windows package for the first time.

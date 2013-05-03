@@ -104,7 +104,7 @@ wxString CCCSHandler::getIncoming(const wxString& callsign)
 
 	for (unsigned int i = 0U; i < m_count; i++) {
 		CCCSHandler* handler = m_handlers[i];
-		if (handler != NULL && handler->m_direction == DIR_INCOMING && handler->m_callsign.IsSameAs(callsign)) {
+		if (handler != NULL && handler->m_direction == DIR_INCOMING && handler->m_state == CS_ACTIVE && handler->m_callsign.IsSameAs(callsign)) {
 			incoming.Append(handler->m_yourCall);
 			incoming.Append(wxT("  "));
 		}

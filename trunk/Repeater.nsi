@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "Repeater 20130423"
-  OutFile "Repeater-20130423.exe"
+  Name "Repeater 20130503"
+  OutFile "Repeater-20130503.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\Repeater"
@@ -49,6 +49,8 @@ Section "Repeater Program Files" SecProgram
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\AnalogueRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DCSGateway.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DExtraGateway.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DStarRepeater.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DStarRepeaterConfig.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DummyRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DVAPNode.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DVRPTRRepeater.exe"
@@ -94,6 +96,8 @@ Section "Repeater Program Files" SecProgram
   CreateShortCut "$SMPROGRAMS\Repeater\Analogue Repeater.lnk"        "$INSTDIR\AnalogueRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DCS Gateway.lnk"              "$INSTDIR\DCSGateway.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DExtra Gateway.lnk"           "$INSTDIR\DExtraGateway.exe"
+  CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater.lnk"          "$INSTDIR\DStarRepeater.exe"
+  CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater Config.lnk"   "$INSTDIR\DStarRepeaterConfig.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DummyRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DVAP Node.lnk"                "$INSTDIR\DVAPNode.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\DV-RPTR Repeater.lnk"         "$INSTDIR\DVRPTRRepeater.exe"
@@ -124,6 +128,7 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Analogue Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DCS Gateway"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DExtra Gateway"
+  DeleteRegKey /ifempty HKCU "Software\G4KLX\D-Star Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Dummy Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DVAP Node"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DV-RPTR Repeater"
