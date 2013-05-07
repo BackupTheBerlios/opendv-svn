@@ -228,38 +228,48 @@ int CSerialDataController::read(unsigned char* buffer, unsigned int length)
 	if (length == 0U)
 		return 0;
 
-	if (!m_readPending) {
-		DWORD bytes = 0UL;
-		BOOL res = ::ReadFile(m_handle, m_readBuffer, m_readLength, &bytes, &m_readOverlapped);
-		if (res) {
-			::memcpy(buffer, m_readBuffer, bytes);
-			return int(bytes);
+	unsigned int offset = 0U;
+
+	while (offset < length) {
+		if (!m_readPending) {
+			DWORD bytes = 0UL;
+			BOOL res = ::ReadFile(m_handle, m_readBuffer + offset, m_readLength - offset, &bytes, &m_readOverlapped);
+			if (res) {
+				offset += bytes;
+			} else {
+				DWORD error = ::GetLastError();
+				if (error != ERROR_IO_PENDING) {
+					wxLogError(wxT("Error from ReadFile: %04lx"), error);
+					return -1;
+				}
+
+				m_readPending = true;
+			}
 		}
 
-		DWORD error = ::GetLastError();
-		if (error != ERROR_IO_PENDING) {
-			wxLogError(wxT("Error from ReadFile: %04lx"), error);
-			return -1;
+		if (m_readPending) {
+			if (offset == 0U) {
+				BOOL res = HasOverlappedIoCompleted(&m_readOverlapped);
+				if (!res)
+					return 0;
+			}
+
+			DWORD bytes = 0UL;
+			BOOL res = ::GetOverlappedResult(m_handle, &m_readOverlapped, &bytes, TRUE);
+			if (!res) {
+				wxLogError(wxT("Error from GetOverlappedResult (ReadFile): %04lx"), ::GetLastError());
+				return -1;
+			}
+
+			offset += bytes;
+
+			m_readPending = false;
 		}
-
-		m_readPending = true;
 	}
 
-	BOOL res = HasOverlappedIoCompleted(&m_readOverlapped);
-	if (!res)
-		return 0;
+	::memcpy(buffer, m_readBuffer, length);
 
-	DWORD bytes = 0UL;
-	res = ::GetOverlappedResult(m_handle, &m_readOverlapped, &bytes, TRUE);
-	if (!res) {
-		wxLogError(wxT("Error from GetOverlappedResult (ReadFile): %04lx"), ::GetLastError());
-		return -1;
-	}
-
-	::memcpy(buffer, m_readBuffer, bytes);
-	m_readPending = false;
-
-	return int(bytes);
+	return length;
 }
 
 int CSerialDataController::write(const unsigned char* buffer, unsigned int length)
@@ -270,24 +280,30 @@ int CSerialDataController::write(const unsigned char* buffer, unsigned int lengt
 	if (length == 0U)
 		return 0;
 
-	DWORD bytes = 0UL;
-	BOOL res = ::WriteFile(m_handle, buffer, length, &bytes, &m_writeOverlapped);
-	if (res)
-		return int(bytes);
+	unsigned int ptr = 0U;
 
-	DWORD error = ::GetLastError();
-	if (error != ERROR_IO_PENDING) {
-		wxLogError(wxT("Error from WriteFile: %04lx"), error);
-		return -1;
+	while (ptr < length) {
+		DWORD bytes = 0UL;
+		BOOL res = ::WriteFile(m_handle, buffer + ptr, length - ptr, &bytes, &m_writeOverlapped);
+		if (!res) {
+			DWORD error = ::GetLastError();
+			if (error != ERROR_IO_PENDING) {
+				wxLogError(wxT("Error from WriteFile: %04lx"), error);
+				return -1;
+			}
+
+			bytes = 0UL;
+			res = ::GetOverlappedResult(m_handle, &m_writeOverlapped, &bytes, TRUE);
+			if (!res) {
+				wxLogError(wxT("Error from GetOverlappedResult (WriteFile): %04lx"), ::GetLastError());
+				return -1;
+			}
+		}
+
+		ptr += bytes;
 	}
 
-	res = ::GetOverlappedResult(m_handle, &m_writeOverlapped, &bytes, TRUE);
-	if (!res) {
-		wxLogError(wxT("Error from GetOverlappedResult (WriteFile): %04lx"), ::GetLastError());
-		return -1;
-	}
-
-	return int(bytes);
+	return length;
 }
 
 void CSerialDataController::close()
@@ -402,28 +418,46 @@ int CSerialDataController::read(unsigned char* buffer, unsigned int length)
 	if (length == 0U)
 		return 0;
 
-	fd_set fds;
-	FD_ZERO(&fds);
-	FD_SET(m_fd, &fds);
+	unsigned int offset = 0U;
 
-	int n = ::select(m_fd + 1, &fds, NULL, NULL, NULL);
-	if (n == 0)
-		return 0;
+	while (offset < length) {
+		fd_set fds;
+		FD_ZERO(&fds);
+		FD_SET(m_fd, &fds);
 
-	if (n < 0) {
-		wxLogError(wxT("Error from select(), errno=%d"), errno);
-		return -1;
-	}
+		int n;
+		if (offset == 0U) {
+			struct timeval tv;
+			tv.tv_sec  = 0;
+			tv.tv_usec = 0;
 
-	ssize_t len = ::read(m_fd, buffer, length);
-	if (len < 0) {
-		if (errno != EAGAIN) {
-			wxLogError(wxT("Error from read(), errno=%d"), errno);
+			n = ::select(m_fd + 1, &fds, NULL, NULL, &tv);
+			if (n == 0)
+				return 0;
+		} else {
+			n = ::select(m_fd + 1, &fds, NULL, NULL, NULL);
+		}
+
+		if (n < 0) {
+			wxLogError(wxT("Error from select(), errno=%d"), errno);
 			return -1;
+		}
+
+		if (n > 0) {
+			ssize_t len = ::read(m_fd, buffer + offset, length - offset);
+			if (len < 0) {
+				if (errno != EAGAIN) {
+					wxLogError(wxT("Error from read(), errno=%d"), errno);
+					return -1;
+				}
+			}
+
+			if (len > 0)
+				offset += len;
 		}
 	}
 
-	return len;
+	return length;
 }
 
 int CSerialDataController::write(const unsigned char* buffer, unsigned int length)

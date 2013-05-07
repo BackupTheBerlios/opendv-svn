@@ -890,18 +890,13 @@ bool CDVAPController::setFrequency()
 
 RESP_TYPE CDVAPController::getResponse(unsigned char *buffer, unsigned int& length)
 {
-	unsigned int offset = 0U;
-	while (offset < DVAP_HEADER_LENGTH) {
-		int ret = m_serial.read(buffer + offset, DVAP_HEADER_LENGTH - offset);
-		if (ret == 0 && offset == 0U)
-			return RT_TIMEOUT;
-		if (ret == 0U)
-			Sleep(5UL);
-		if (ret > 0)
-			offset += ret;
-		if (ret < 0)
-			return RT_ERROR;
-	}
+	int ret = m_serial.read(buffer, DVAP_HEADER_LENGTH);
+	if (ret == 0)
+		return RT_TIMEOUT;
+	if (ret != int(DVAP_HEADER_LENGTH))
+		return RT_ERROR;
+
+	unsigned int offset = DVAP_HEADER_LENGTH;
 
 	// First byte has gone missing from the operation status message, fix it
 	if (buffer[0U] == 0x20U && buffer[1U] == 0x90U) {
