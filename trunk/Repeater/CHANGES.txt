@@ -1,4 +1,4 @@
-Repeater - 20130503
+Repeater - 20130508
 ===================
 
 20090530
@@ -1838,3 +1838,8 @@ Added XRF851.
 Tweaks to the DVAP handling.
 Made opening the serial port more aggressive for the DVAP.
 Included the D-Star Repeater and Config program in the Windows package for the first time.
+
+20130508
+--------
+
+Revert most of the serial port changes.

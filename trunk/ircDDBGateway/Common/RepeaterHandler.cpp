@@ -1076,7 +1076,7 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	if (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS)
 		m_ccsHandler->writeHeader(header);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_ECHO)
 		return true;
 
 	// Reset the slow data text collector, used for DCS text passing
@@ -1113,7 +1113,7 @@ bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURC
 	if (source == AS_DPLUS || source == AS_DEXTRA || source == AS_DCS)
 		m_ccsHandler->writeAMBE(data);
 
-	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND)
+	if (source == AS_G2 || source == AS_INFO || source == AS_VERSION || source == AS_XBAND || source == AS_ECHO)
 		return true;
 
 	// Collect the text from the slow data for DCS

@@ -126,8 +126,8 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-const unsigned int MAX_OPEN_TRIES = 6U;
-const unsigned int OPEN_TRY_PAUSE = 5000U;		// 5 seconds
+const unsigned int MAX_OPEN_TRIES = 5U;
+const unsigned int OPEN_TRY_PAUSE = 10000U;		// 10 seconds
 
 CDVAPController::CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),

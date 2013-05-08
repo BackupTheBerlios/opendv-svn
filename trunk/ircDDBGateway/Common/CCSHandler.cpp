@@ -253,13 +253,7 @@ void CCCSHandler::process(CAMBEData& data)
 
 		wxLogMessage(wxT("CCS: New incoming link to %s from %s @ %s"), m_local.c_str(), m_yourCall.c_str(), m_rptCall1.c_str());
 	} else {
-		// Allow for the fact that the distant repeater may change during the QSO
-		if (m_yourCall.IsSameAs(myCall1) && !m_rptCall1.IsSameAs(rptCall1)) {
-			wxLogMessage(wxT("CCS: %s has moved from repeater %s to %s"), m_yourCall.c_str(), m_rptCall1.c_str(), rptCall1.c_str());
-			m_rptCall1 = rptCall1;
-		}
-
-		if (!m_rptCall1.IsSameAs(rptCall1)) {
+		if (!m_yourCall.IsSameAs(myCall1) && !m_rptCall1.IsSameAs(rptCall1)) {
 			wxLogMessage(wxT("CCS: Rejecting new incoming CCS link from %s @ %s to %s"), myCall1.c_str(), rptCall1.c_str(), yourCall.c_str());
 
 			CCCSData data(yourCall, myCall1, CT_TERMINATE);
@@ -272,6 +266,12 @@ void CCCSHandler::process(CAMBEData& data)
 			m_protocol.writeMisc(data);
 
 			return;
+		}
+
+		// Allow for the fact that the distant repeater may change during the QSO
+		if (m_yourCall.IsSameAs(myCall1) && !m_rptCall1.IsSameAs(rptCall1)) {
+			wxLogMessage(wxT("CCS: %s has moved from repeater %s to %s"), m_yourCall.c_str(), m_rptCall1.c_str(), rptCall1.c_str());
+			m_rptCall1 = rptCall1;
 		}
 	}
 

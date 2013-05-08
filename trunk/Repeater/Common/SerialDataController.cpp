@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002-2004,2007-2011,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002-2004,2007-2011 by Jonathan Naylor G4KLX
  *   Copyright (C) 1999-2001 by Thomas Sailor HB9JNX
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -72,26 +72,16 @@ wxArrayString CSerialDataController::getDevices()
 
 #if defined(__WINDOWS__)
 
-const unsigned int BUFFER_LENGTH = 1000U;
-
 CSerialDataController::CSerialDataController(const wxString& device, SERIAL_SPEED speed) :
 m_device(device),
 m_speed(speed),
-m_handle(INVALID_HANDLE_VALUE),
-m_readOverlapped(),
-m_writeOverlapped(),
-m_readBuffer(NULL),
-m_readLength(0U),
-m_readPending(false)
+m_handle(INVALID_HANDLE_VALUE)
 {
 	wxASSERT(!device.IsEmpty());
-
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CSerialDataController::~CSerialDataController()
 {
-	delete[] m_readBuffer;
 }
 
 bool CSerialDataController::open()
@@ -102,14 +92,14 @@ bool CSerialDataController::open()
 
 	wxString baseName = m_device.Mid(4U);		// Convert "\\.\COM10" to "COM10"
 
-	m_handle = ::CreateFile(m_device.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	m_handle = ::CreateFile(m_device.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 	if (m_handle == INVALID_HANDLE_VALUE) {
-		wxLogError(wxT("Cannot open device - %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot open device - %s"), m_device.c_str());
 		return false;
 	}
 
 	if (!::SetupComm(m_handle, 32768UL, 32768UL)) {
-		wxLogError(wxT("Cannot set the communications parameters for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot set the communications parameters for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
@@ -122,14 +112,14 @@ bool CSerialDataController::open()
 	config.dwSize = size;
 
 	if (!::GetDefaultCommConfig(baseName.c_str(), &config, &size)) {
-		wxLogError(wxT("Cannot get the default comm config for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot get the default comm config for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
 	}
 
 	if (!::SetCommConfig(m_handle, &config, size)) {
-		wxLogError(wxT("Cannot set the comm config for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot set the comm config for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
@@ -137,7 +127,7 @@ bool CSerialDataController::open()
 
 	DCB dcb;
 	if (::GetCommState(m_handle, &dcb) == 0) {
-		wxLogError(wxT("Cannot get the attributes for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot get the attributes for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
@@ -156,7 +146,7 @@ bool CSerialDataController::open()
 	dcb.fRtsControl  = RTS_CONTROL_DISABLE;
 
 	if (::SetCommState(m_handle, &dcb) == 0) {
-		wxLogError(wxT("Cannot set the attributes for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot set the attributes for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
@@ -164,7 +154,7 @@ bool CSerialDataController::open()
 
 	COMMTIMEOUTS timeouts;
 	if (!::GetCommTimeouts(m_handle, &timeouts)) {
-		wxLogError(wxT("Cannot get the timeouts for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot get the timeouts for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
@@ -174,38 +164,31 @@ bool CSerialDataController::open()
 	timeouts.ReadTotalTimeoutMultiplier = 0UL;
 	timeouts.ReadTotalTimeoutConstant   = 0UL;
 
+	timeouts.WriteTotalTimeoutMultiplier = 0UL;
+	timeouts.WriteTotalTimeoutConstant   = 0UL;
+
 	if (!::SetCommTimeouts(m_handle, &timeouts)) {
-		wxLogError(wxT("Cannot set the timeouts for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot set the timeouts for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
 	}
 
 	if (::EscapeCommFunction(m_handle, CLRDTR) == 0) {
-		wxLogError(wxT("Cannot clear DTR for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot clear DTR for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
 	}
 
 	if (::EscapeCommFunction(m_handle, CLRRTS) == 0) {
-		wxLogError(wxT("Cannot clear RTS for %s, err=%04lx"), m_device.c_str(), ::GetLastError());
+		wxLogError(wxT("Cannot clear RTS for %s"), m_device.c_str());
 		::ClearCommError(m_handle, &errCode, NULL);
 		::CloseHandle(m_handle);
 		return false;
 	}
 
 	::ClearCommError(m_handle, &errCode, NULL);
-
-	::memset(&m_readOverlapped, 0x00U, sizeof(OVERLAPPED));
-	::memset(&m_writeOverlapped, 0x00U, sizeof(OVERLAPPED));
-
-	m_readOverlapped.hEvent  = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_writeOverlapped.hEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-
-	m_readLength  = 0U;
-	m_readPending = false;
-	::memset(m_readBuffer, 0x00U, BUFFER_LENGTH);
 
 	return true;
 }
@@ -215,59 +198,26 @@ int CSerialDataController::read(unsigned char* buffer, unsigned int length)
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 	wxASSERT(buffer != NULL);
 
-	if (length > BUFFER_LENGTH)
-		length = BUFFER_LENGTH;
-
-	if (m_readPending && length != m_readLength) {
-		::CancelIo(m_handle);
-		m_readPending = false;
-	}
-
-	m_readLength = length;
-
 	if (length == 0U)
 		return 0;
 
 	unsigned int offset = 0U;
 
 	while (offset < length) {
-		if (!m_readPending) {
-			DWORD bytes = 0UL;
-			BOOL res = ::ReadFile(m_handle, m_readBuffer + offset, m_readLength - offset, &bytes, &m_readOverlapped);
-			if (res) {
-				offset += bytes;
-			} else {
-				DWORD error = ::GetLastError();
-				if (error != ERROR_IO_PENDING) {
-					wxLogError(wxT("Error from ReadFile: %04lx"), error);
-					return -1;
-				}
-
-				m_readPending = true;
-			}
+		DWORD bytes;
+		BOOL res = ::ReadFile(m_handle, LPVOID(buffer + offset), DWORD(length - offset), &bytes, NULL);
+		if (!res) {
+			DWORD error = ::GetLastError();
+			wxLogError(wxT("Error from ReadFile: %04lx"), error);
+			return -1;
 		}
 
-		if (m_readPending) {
-			if (offset == 0U) {
-				BOOL res = HasOverlappedIoCompleted(&m_readOverlapped);
-				if (!res)
-					return 0;
-			}
+		if (bytes == 0UL && offset == 0U)
+			return 0;
 
-			DWORD bytes = 0UL;
-			BOOL res = ::GetOverlappedResult(m_handle, &m_readOverlapped, &bytes, TRUE);
-			if (!res) {
-				wxLogError(wxT("Error from GetOverlappedResult (ReadFile): %04lx"), ::GetLastError());
-				return -1;
-			}
-
+		if (bytes > 0UL)
 			offset += bytes;
-
-			m_readPending = false;
-		}
 	}
-
-	::memcpy(buffer, m_readBuffer, length);
 
 	return length;
 }
@@ -280,30 +230,15 @@ int CSerialDataController::write(const unsigned char* buffer, unsigned int lengt
 	if (length == 0U)
 		return 0;
 
-	unsigned int ptr = 0U;
-
-	while (ptr < length) {
-		DWORD bytes = 0UL;
-		BOOL res = ::WriteFile(m_handle, buffer + ptr, length - ptr, &bytes, &m_writeOverlapped);
-		if (!res) {
-			DWORD error = ::GetLastError();
-			if (error != ERROR_IO_PENDING) {
-				wxLogError(wxT("Error from WriteFile: %04lx"), error);
-				return -1;
-			}
-
-			bytes = 0UL;
-			res = ::GetOverlappedResult(m_handle, &m_writeOverlapped, &bytes, TRUE);
-			if (!res) {
-				wxLogError(wxT("Error from GetOverlappedResult (WriteFile): %04lx"), ::GetLastError());
-				return -1;
-			}
-		}
-
-		ptr += bytes;
+	DWORD bytes = 0UL;
+	BOOL res = ::WriteFile(m_handle, LPVOID(buffer), DWORD(length), &bytes, NULL);
+	if (!res) {
+		DWORD error = ::GetLastError();
+		wxLogError(wxT("Error from WriteFile: %04lx"), error);
+		return -1;
 	}
 
-	return length;
+	return int(bytes);
 }
 
 void CSerialDataController::close()
@@ -312,9 +247,6 @@ void CSerialDataController::close()
 
 	::CloseHandle(m_handle);
 	m_handle = INVALID_HANDLE_VALUE;
-
-	::CloseHandle(m_readOverlapped.hEvent);
-	::CloseHandle(m_writeOverlapped.hEvent);
 }
 
 #else

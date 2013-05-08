@@ -1314,3 +1314,8 @@ Allow a type to be specified for the gateway.
 The local *_Hosts.txt file is now appended to the distributed file.
 Read DPlus_Hosts.txt before DExtra_Hosts.txt.
 Fix incoming CCS links display in the GUI.
+
+201305xx
+--------
+
+Stop the echoed audio from going out over reflector links.
