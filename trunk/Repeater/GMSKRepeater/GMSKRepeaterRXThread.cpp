@@ -21,8 +21,7 @@
 #include "DStarDefines.h"
 #include "Version.h"
 
-const unsigned int NORMAL_CYCLE_TIME = 15U;
-const unsigned int BROKEN_CYCLE_TIME = 7U;
+const unsigned int CYCLE_TIME = 15U;
 
 const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
@@ -37,15 +36,13 @@ m_pollTimer(1000U, 60U),			// 60s
 m_headerReadTimer(1000U, 0U, 50U),	// 50ms
 m_state(DSRS_LISTENING),
 m_killed(false),
-m_broken(false),
 m_ambe(),
 m_ambeFrames(0U),
 m_ambeSilence(0U),
 m_ambeBits(1U),
 m_ambeErrors(0U),
 m_lastAMBEBits(0U),
-m_lastAMBEErrors(0U),
-m_cycleTime(NORMAL_CYCLE_TIME)
+m_lastAMBEErrors(0U)
 {
 	m_ambeBuffer = new unsigned char[DV_FRAME_LENGTH_BYTES];
 }
@@ -64,10 +61,6 @@ void CGMSKRepeaterRXThread::run()
 
 	if (m_killed)
 		return;
-
-	m_broken = m_modem->isBroken();
-
-	m_cycleTime = m_broken ? BROKEN_CYCLE_TIME : NORMAL_CYCLE_TIME;
 
 	m_headerReadTimer.start();
 	m_pollTimer.start();
@@ -114,8 +107,8 @@ void CGMSKRepeaterRXThread::run()
 
 		// Don't sleep when reading from the modem
 		if (m_state != DSRS_VALID) {
-			if (ms < m_cycleTime)
-				::wxMilliSleep(m_cycleTime - ms);
+			if (ms < CYCLE_TIME)
+				::wxMilliSleep(CYCLE_TIME - ms);
 
 			ms = stopWatch.Time();
 		}

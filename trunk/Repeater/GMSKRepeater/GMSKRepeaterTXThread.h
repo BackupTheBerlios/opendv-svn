@@ -75,7 +75,6 @@ private:
 	DSTAR_RPT_STATE            m_state;
 	bool                       m_tx;
 	bool                       m_killed;
-	bool                       m_broken;
 	unsigned char*             m_lastData;
 	CAMBEFEC                   m_ambe;
 	wxStopWatch                m_headerTime;
@@ -84,7 +83,6 @@ private:
 	unsigned char*             m_modemBuffer;
 	unsigned int               m_modemLength;
 	bool                       m_modemEnd;
-	unsigned int               m_cycleTime;
 	unsigned int               m_packetSilence;
 
 	void transmitNetworkHeader(CHeaderData* header);

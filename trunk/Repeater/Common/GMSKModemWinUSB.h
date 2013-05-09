@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,17 +34,15 @@ public:
 
 	virtual bool open();
 
-	virtual bool isBroken() const;
-
 	virtual CHeaderData* readHeader(bool& error);
 	virtual int readData(unsigned char* data, unsigned int length, bool& end);
 
 	virtual TRISTATE getPTT();
-	virtual bool setPTT(bool on);
+	virtual void setPTT(bool on);
 
 	virtual TRISTATE hasSpace();
 
-	virtual bool writeHeader(const CHeaderData& header);
+	virtual void writeHeader(const CHeaderData& header);
 	virtual int writeData(unsigned char* data, unsigned int length);
 
 	virtual void close();
@@ -53,7 +51,6 @@ private:
 	unsigned int            m_address;
 	HANDLE                  m_file;
 	WINUSB_INTERFACE_HANDLE m_handle;
-	bool                    m_broken;
 
 	bool openModem();
 	int  io(unsigned char type, unsigned char n1, unsigned char n2, unsigned char* buffer, unsigned int length);

@@ -153,7 +153,6 @@ private:
 	bool                       m_shutdown;
 	bool                       m_disable;
 	CDVTOOLFileWriter*         m_logging;
-	bool                       m_broken;
 	unsigned char*             m_lastData;
 	CAMBEFEC                   m_ambe;
 	unsigned int               m_ambeFrames;
@@ -178,7 +177,6 @@ private:
 	unsigned char*             m_modemBuffer;
 	unsigned int               m_modemLength;
 	bool                       m_modemEnd;
-	unsigned int               m_cycleTime;
 	unsigned int               m_packetSilence;
 	CCallsignList*             m_whiteList;
 	CCallsignList*             m_blackList;

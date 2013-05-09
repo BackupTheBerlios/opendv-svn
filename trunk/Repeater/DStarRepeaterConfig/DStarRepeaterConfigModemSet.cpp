@@ -16,9 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if defined(RASPBERRY_PI)
-#include "DStarRepeaterConfigRaspberrySet.h"
-#endif
 #include "DStarRepeaterConfigDVRPTR1Set.h"
 #include "DStarRepeaterConfigDVRPTR2Set.h"
 #include "DStarRepeaterConfigModemSet.h"
@@ -51,12 +48,9 @@ m_type(NULL)
 
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	m_type->Append(wxT("DVAP"));
-	// m_type->Append(wxT("GMSK"));
+	m_type->Append(wxT("GMSK"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
-#if defined(RASPBERRY_PI)
-	// m_type->Append(wxT("Raspberry Pi"));
-#endif
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* dummy = new wxStaticText(this, -1, wxEmptyString);
@@ -170,20 +164,5 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
 			}
 		}
-#if defined(RASPBERRY_PI)
-	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
-		bool txInvert, rxInvert;
-		unsigned int txDelay;
-		m_config->getRaspberry(rxInvert, txInvert, txDelay);
-		CDStarRepeaterConfigRaspberrySet modem(this, -1, rxInvert, txInvert,txDelay);
-		if (modem.ShowModal() == wxID_OK) {
-			if (modem.Validate()) {
-				rxInvert = modem.getRXInvert();
-				txInvert = modem.getTXInvert();
-				txDelay  = modem.getTXDelay();
-				m_config->setRaspberry(rxInvert, txInvert, txDelay);
-			}
-		}
-#endif
 	}
 }

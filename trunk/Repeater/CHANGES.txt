@@ -1843,3 +1843,8 @@ Included the D-Star Repeater and Config program in the Windows package for the f
 --------
 
 Revert most of the serial port changes.
+
+201305xx
+--------
+
+Remove support for the DUTCH*Star 0.1.00 firmware.

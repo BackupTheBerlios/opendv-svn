@@ -81,7 +81,6 @@ private:
 	DSTAR_RPT_STATE            m_state;
 	bool                       m_tx;
 	bool                       m_killed;
-	bool                       m_broken;
 	CTimer                     m_activeHangTimer;
 	bool                       m_disable;
 	unsigned char*             m_lastData;
@@ -98,7 +97,6 @@ private:
 	unsigned char*             m_modemBuffer;
 	unsigned int               m_modemLength;
 	bool                       m_modemEnd;
-	unsigned int               m_cycleTime;
 	unsigned int               m_packetSilence;
 
 	bool receiveRadioHeader();

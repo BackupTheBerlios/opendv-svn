@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,17 +38,15 @@ public:
 
 	virtual bool open();
 
-	virtual bool isBroken() const;
-
 	virtual CHeaderData* readHeader(bool& error);
 	virtual int readData(unsigned char* data, unsigned int length, bool& end);
 
 	virtual TRISTATE getPTT();
-	virtual bool setPTT(bool on);
+	virtual void setPTT(bool on);
 
 	virtual TRISTATE hasSpace();
 
-	virtual bool writeHeader(const CHeaderData& header);
+	virtual void writeHeader(const CHeaderData& header);
 	virtual int writeData(unsigned char* data, unsigned int length);
 
 	virtual void close();
@@ -78,7 +76,6 @@ private:
 
 	int io(uint8_t requestType, uint8_t request, uint16_t value, uint16_t index, unsigned char* data, uint16_t length, unsigned int timeout);
 #endif
-	bool                     m_broken;
 
 	bool openModem();
 };

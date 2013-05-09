@@ -69,7 +69,6 @@ private:
 	CTimer                     m_headerReadTimer;
 	DSTAR_RPT_STATE            m_state;
 	bool                       m_killed;
-	bool                       m_broken;
 	CAMBEFEC                   m_ambe;
 	unsigned int               m_ambeFrames;
 	unsigned int               m_ambeSilence;
@@ -77,7 +76,6 @@ private:
 	unsigned int               m_ambeErrors;
 	unsigned int               m_lastAMBEBits;
 	unsigned int               m_lastAMBEErrors;
-	unsigned int               m_cycleTime;
 
 	bool receiveRadioHeader();
 	bool receiveRadioData();

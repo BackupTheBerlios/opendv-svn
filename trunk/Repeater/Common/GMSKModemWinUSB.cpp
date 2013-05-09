@@ -47,8 +47,7 @@ const unsigned char PTT_OFF = 0U;
 CGMSKModemWinUSB::CGMSKModemWinUSB(unsigned int address) :
 m_address(address),
 m_file(INVALID_HANDLE_VALUE),
-m_handle(INVALID_HANDLE_VALUE),
-m_broken(false)
+m_handle(INVALID_HANDLE_VALUE)
 {
 }
 
@@ -88,17 +87,13 @@ bool CGMSKModemWinUSB::open()
 
 	// Trap firmware version 0.1.00 of DUTCH*Star and complain loudly
 	if (version.Find(wxT("DUTCH*Star")) != wxNOT_FOUND && version.Find(wxT("0.1.00")) != wxNOT_FOUND) {
-		wxLogWarning(wxT("This modem firmware is not fully supported by the GMSK Repeater"));
-		wxLogWarning(wxT("Please upgrade to a newer version if possible"));
-		m_broken = true;
+		wxLogWarning(wxT("This modem firmware is not supported by the GMSK Repeater"));
+		wxLogWarning(wxT("Please upgrade to a newer version"));
+		close();
+		return false;
 	}
 
 	return true;
-}
-
-bool CGMSKModemWinUSB::isBroken() const
-{
-	return m_broken;
 }
 
 CHeaderData* CGMSKModemWinUSB::readHeader(bool& error)
@@ -177,7 +172,7 @@ int CGMSKModemWinUSB::readData(unsigned char* data, unsigned int length, bool& e
 	return ret;
 }
 
-bool CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
+void CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 {
 	unsigned char myCall1[LONG_CALLSIGN_LENGTH];
 	unsigned char myCall2[SHORT_CALLSIGN_LENGTH];
@@ -196,48 +191,20 @@ bool CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
 		rptCall2[i] = header.getRptCall2().GetChar(i);
 
-	int ret = io(SET_MyCALL2, 0x40U, 0U, myCall2, SHORT_CALLSIGN_LENGTH);
-	if (ret < 0) {
-		wxLogError(wxT("SET_MyCALL2 returned %d"), -ret);
-		return false;
-	}
-
-	ret = io(SET_MyCALL, 0x40U, 0U, myCall1, LONG_CALLSIGN_LENGTH);
-	if (ret < 0) {
-		wxLogError(wxT("SET_MyCALL returned %d"), -ret);
-		return false;
-	}
-
-	ret = io(SET_YourCALL, 0x40U, 0U, yourCall, LONG_CALLSIGN_LENGTH);
-	if (ret < 0) {
-		wxLogError(wxT("SET_YourCALL returned %d"), -ret);
-		return false;
-	}
-
-	ret = io(SET_RPT1CALL, 0x40U, 0U, rptCall1, LONG_CALLSIGN_LENGTH);
-	if (ret < 0) {
-		wxLogError(wxT("SET_RPT1CALL returned %d"), -ret);
-		return false;
-	}
-
-	ret = io(SET_RPT2CALL, 0x40U, 0U, rptCall2, LONG_CALLSIGN_LENGTH);
-	if (ret < 0) {
-		wxLogError(wxT("SET_RPT2CALL returned %d"), -ret);
-		return false;
-	}
+	io(SET_MyCALL2, 0x40U, 0U, myCall2, SHORT_CALLSIGN_LENGTH);
+	io(SET_MyCALL, 0x40U, 0U, myCall1, LONG_CALLSIGN_LENGTH);
+	io(SET_YourCALL, 0x40U, 0U, yourCall, LONG_CALLSIGN_LENGTH);
+	io(SET_RPT1CALL, 0x40U, 0U, rptCall1, LONG_CALLSIGN_LENGTH);
+	io(SET_RPT2CALL, 0x40U, 0U, rptCall2, LONG_CALLSIGN_LENGTH);
 
 	unsigned char flags[3U];
 	flags[0U] = header.getFlag1();
 	flags[1U] = header.getFlag2();
 	flags[2U] = header.getFlag3();
 
-	ret = io(SET_FLAGS, 0x40U, 0U, flags, 3U);
-	if (ret < 0) {
-		wxLogError(wxT("SET_FLAGS returned %d"), -ret);
-		return false;
-	}
+	io(SET_FLAGS, 0x40U, 0U, flags, 3U);
 
-	return setPTT(true);
+	setPTT(true);
 }
 
 TRISTATE CGMSKModemWinUSB::getPTT()
@@ -255,22 +222,14 @@ TRISTATE CGMSKModemWinUSB::getPTT()
 		return STATE_FALSE;
 }
 
-bool CGMSKModemWinUSB::setPTT(bool on)
+void CGMSKModemWinUSB::setPTT(bool on)
 {
-	int ret = io(SET_PTT, 0x40U, on ? PTT_ON : PTT_OFF, NULL, 0U);
-	if (ret < 0) {
-		wxLogError(wxT("SET_PTT(%d) returned %d"), on ? 1 : 0, -ret);
-		return false;
-	}
-
-	return true;
+	unsigned char c;
+	io(SET_PTT, 0x40U, on ? PTT_ON : PTT_OFF, &c, 0U);
 }
 
 TRISTATE CGMSKModemWinUSB::hasSpace()
 {
-	if (m_broken)
-		return STATE_TRUE;
-
 	unsigned char space;
 	int ret = io(GET_REMAINSPACE, 0xC0U, 0U, &space, 1U);
 	if (ret != 1) {
@@ -406,18 +365,10 @@ bool CGMSKModemWinUSB::openModem()
 		::SetupDiDestroyDeviceInfoList(devInfo);
 		::free(detailData);
 
-		int ret2 = io(SET_AD_INIT, 0x40U, 0U, NULL, 0U);
-		if (ret2 < 0) {
-			wxLogError(wxT("SET_AD_INIT returned %d"), -ret2);
-			close();
-			return false;
-		}
+		unsigned char c;
+		io(SET_AD_INIT, 0x40U, 0U, &c, 0U);
 
-		bool ret3 = setPTT(false);
-		if (!ret3) {
-			close();
-			return false;
-		}
+		setPTT(false);
 
 		return true;
 	}

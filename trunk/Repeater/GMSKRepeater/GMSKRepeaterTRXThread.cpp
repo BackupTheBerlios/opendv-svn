@@ -24,8 +24,7 @@
 const unsigned char DTMF_MASK[] = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x82U, 0x00U, 0x00U};
 const unsigned char DTMF_SIG[]  = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U};
 
-const unsigned int NORMAL_CYCLE_TIME = 15U;
-const unsigned int BROKEN_CYCLE_TIME = 7U;
+const unsigned int CYCLE_TIME = 15U;
 
 const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
@@ -112,7 +111,6 @@ m_activeHangTimer(1000U),
 m_shutdown(false),
 m_disable(false),
 m_logging(NULL),
-m_broken(false),
 m_lastData(NULL),
 m_ambe(),
 m_ambeFrames(0U),
@@ -137,7 +135,6 @@ m_packetCount(0U),
 m_modemBuffer(NULL),
 m_modemLength(0U),
 m_modemEnd(false),
-m_cycleTime(NORMAL_CYCLE_TIME),
 m_packetSilence(0U),
 m_whiteList(NULL),
 m_blackList(NULL),
@@ -179,11 +176,7 @@ void CGMSKRepeaterTRXThread::run()
 	if (m_killed)
 		return;
 
-	m_broken = m_modem->isBroken();
-
 	m_stopped = false;
-
-	m_cycleTime = m_broken ? BROKEN_CYCLE_TIME : NORMAL_CYCLE_TIME;
 
 	m_beaconTimer.start();
 	m_headerReadTimer.start();
@@ -397,8 +390,8 @@ void CGMSKRepeaterTRXThread::run()
 
 		// Don't sleep when reading from the modem
 		if (m_state != DSRS_VALID && m_state != DSRS_INVALID && m_state != DSRS_TIMEOUT) {
-			if (ms < m_cycleTime)
-				::wxMilliSleep(m_cycleTime - ms);
+			if (ms < CYCLE_TIME)
+				::wxMilliSleep(CYCLE_TIME - ms);
 
 			ms = stopWatch.Time();
 		}
@@ -1002,10 +995,7 @@ bool CGMSKRepeaterTRXThread::transmitLocalHeader()
 	if (header == NULL)
 		return true;
 
-	bool ret = m_modem->writeHeader(*header);
-	if (!ret)
-		return false;
-
+	m_modem->writeHeader(*header);
 	delete header;
 
 	m_tx = true;
@@ -1036,19 +1026,6 @@ bool CGMSKRepeaterTRXThread::transmitLocalData()
 	if (m_modemLength == 0U)
 		m_modemLength = m_localQueue.getData(m_modemBuffer, DV_FRAME_LENGTH_BYTES, m_modemEnd);
 
-	if (m_broken) {
-		// PTT restoration is needed when using DUTCH*Star 0.1.00
-		TRISTATE ptt = m_modem->getPTT();
-		if (ptt == STATE_UNKNOWN)
-			return false;
-
-		if (ptt == STATE_FALSE) {
-			bool ret = m_modem->setPTT(true);
-			if (!ret)
-				return false;
-		}
-	}
-
 	// If nothing to do then leave
 	if (m_modemLength == 0U)
 		return true;
@@ -1059,9 +1036,7 @@ bool CGMSKRepeaterTRXThread::transmitLocalData()
 
 	if (int(m_modemLength) == length) {
 		if (m_modemEnd) {
-			bool ret = m_modem->setPTT(false);
-			if (!ret)
-				return false;
+			m_modem->setPTT(false);
 
 			m_localQueue.reset();
 			m_tx = false;
@@ -1097,10 +1072,7 @@ bool CGMSKRepeaterTRXThread::transmitRadioHeader()
 	if (header == NULL)
 		return true;
 
-	bool ret = m_modem->writeHeader(*header);
-	if (!ret)
-		return false;
-
+	m_modem->writeHeader(*header);
 	delete header;
 
 	m_tx = true;
@@ -1137,11 +1109,8 @@ bool CGMSKRepeaterTRXThread::transmitRadioData()
 		if (ptt == STATE_UNKNOWN)
 			return false;
 
-		if (ptt == STATE_FALSE) {
-			bool ret = m_modem->setPTT(true);
-			if (!ret)
-				return false;
-		}
+		if (ptt == STATE_FALSE)
+			m_modem->setPTT(true);
 	// }
 
 	// If nothing to do then leave
@@ -1154,9 +1123,7 @@ bool CGMSKRepeaterTRXThread::transmitRadioData()
 
 	if (int(m_modemLength) == length) {
 		if (m_modemEnd) {
-			bool ret = m_modem->setPTT(false);
-			if (!ret)
-				return false;
+			m_modem->setPTT(false);
 
 			m_radioQueue.reset();
 			m_tx = false;
@@ -1192,10 +1159,7 @@ bool CGMSKRepeaterTRXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return true;
 
-	bool ret = m_modem->writeHeader(*header);
-	if (!ret)
-		return false;
-
+	m_modem->writeHeader(*header);
 	delete header;
 
 	m_tx = true;
@@ -1228,19 +1192,6 @@ bool CGMSKRepeaterTRXThread::transmitNetworkData()
 	if (m_modemLength == 0U)
 		m_modemLength = m_networkQueue[m_readNum]->getData(m_modemBuffer, DV_FRAME_LENGTH_BYTES, m_modemEnd);
 
-	if (m_broken) {
-		// PTT restoration is needed when using DUTCH*Star 0.1.00
-		TRISTATE ptt = m_modem->getPTT();
-		if (ptt == STATE_UNKNOWN)
-			return false;
-
-		if (ptt == STATE_FALSE) {
-			bool ret = m_modem->setPTT(true);
-			if (!ret)
-				return false;
-		}
-	}
-
 	// If nothing to do then leave
 	if (m_modemLength == 0U)
 		return true;
@@ -1251,9 +1202,7 @@ bool CGMSKRepeaterTRXThread::transmitNetworkData()
 
 	if (int(m_modemLength) == length) {
 		if (m_modemEnd) {
-			bool ret = m_modem->setPTT(false);
-			if (!ret)
-				return false;
+			m_modem->setPTT(false);
 
 			m_networkQueue[m_readNum]->reset();
 

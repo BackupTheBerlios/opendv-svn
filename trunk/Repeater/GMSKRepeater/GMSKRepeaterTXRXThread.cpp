@@ -24,8 +24,7 @@
 const unsigned char DTMF_MASK[] = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x82U, 0x00U, 0x00U};
 const unsigned char DTMF_SIG[]  = {0x82U, 0x08U, 0x20U, 0x82U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U};
 
-const unsigned int NORMAL_CYCLE_TIME = 15U;
-const unsigned int BROKEN_CYCLE_TIME = 7U;
+const unsigned int CYCLE_TIME = 15U;
 
 const unsigned int NETWORK_QUEUE_COUNT = 2U;
 
@@ -52,7 +51,6 @@ m_dataWaitTimer(1000U, 0U, 100U),	// 100ms
 m_state(DSRS_LISTENING),
 m_tx(false),
 m_killed(false),
-m_broken(false),
 m_activeHangTimer(1000U),
 m_disable(false),
 m_lastData(NULL),
@@ -69,7 +67,6 @@ m_packetCount(0U),
 m_modemBuffer(NULL),
 m_modemLength(0U),
 m_modemEnd(false),
-m_cycleTime(NORMAL_CYCLE_TIME),
 m_packetSilence(0U)
 {
 	m_networkQueue = new COutputQueue*[NETWORK_QUEUE_COUNT];
@@ -103,10 +100,6 @@ void CGMSKRepeaterTXRXThread::run()
 
 	if (m_killed)
 		return;
-
-	m_broken = m_modem->isBroken();
-
-	m_cycleTime = m_broken ? BROKEN_CYCLE_TIME : NORMAL_CYCLE_TIME;
 
 	m_controller->setActive(false);
 	m_controller->setRadioTransmit(false);
@@ -216,8 +209,8 @@ void CGMSKRepeaterTXRXThread::run()
 		unsigned long ms = stopWatch.Time();
 
 		if (m_state != DSRS_VALID) {
-			if (ms < m_cycleTime)
-				::wxMilliSleep(m_cycleTime - ms);
+			if (ms < CYCLE_TIME)
+				::wxMilliSleep(CYCLE_TIME - ms);
 
 			ms = stopWatch.Time();
 		}
@@ -488,10 +481,7 @@ bool CGMSKRepeaterTXRXThread::transmitNetworkHeader()
 	if (header == NULL)
 		return true;
 
-	bool ret = m_modem->writeHeader(*header);
-	if (!ret)
-		return false;
-
+	m_modem->writeHeader(*header);
 	delete header;
 
 	m_tx = true;
@@ -521,19 +511,6 @@ bool CGMSKRepeaterTXRXThread::transmitNetworkData()
 	if (m_modemLength == 0U)
 		m_modemLength = m_networkQueue[m_readNum]->getData(m_modemBuffer, DV_FRAME_LENGTH_BYTES, m_modemEnd);
 
-	if (m_broken) {
-		// PTT restoration is needed when using DUTCH*Star 0.1.00
-		TRISTATE ptt = m_modem->getPTT();
-		if (ptt == STATE_UNKNOWN)
-			return false;
-
-		if (ptt == STATE_FALSE) {
-			bool ret = m_modem->setPTT(true);
-			if (!ret)
-				return false;
-		}
-	}
-
 	// If nothing to do then leave
 	if (m_modemLength == 0U)
 		return true;
@@ -544,9 +521,7 @@ bool CGMSKRepeaterTXRXThread::transmitNetworkData()
 
 	if (int(m_modemLength) == length) {
 		if (m_modemEnd) {
-			bool ret = m_modem->setPTT(false);
-			if (!ret)
-				return false;
+			m_modem->setPTT(false);
 
 			m_networkQueue[m_readNum]->reset();
 
