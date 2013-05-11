@@ -96,10 +96,6 @@ const wxString  KEY_DVRPTR2_PORT       = wxT("dvrptr2Port");
 const wxString  KEY_DVRPTR2_TXINVERT   = wxT("dvrptr2TXInvert");
 const wxString  KEY_DVRPTR2_MODLEVEL   = wxT("dvrptr2ModLevel");
 
-const wxString  KEY_RASPBERRY_RXINVERT = wxT("raspberryRXInvert");
-const wxString  KEY_RASPBERRY_TXINVERT = wxT("raspberryTXInvert");
-const wxString  KEY_RASPBERRY_TXDELAY  = wxT("raspberryTXDelay");
-
 
 const wxString        DEFAULT_CALLSIGN           = wxT("GB3IN  C");
 const wxString        DEFAULT_GATEWAY            = wxEmptyString;
@@ -183,10 +179,6 @@ const unsigned int    DEFAULT_DVRPTR2_PORT       = 0U;
 const bool            DEFAULT_DVRPTR2_TXINVERT   = false;
 const unsigned int    DEFAULT_DVRPTR2_MODLEVEL   = 20U;
 
-const bool            DEFAULT_RASPBERRY_RXINVERT = false;
-const bool            DEFAULT_RASPBERRY_TXINVERT = false;
-const unsigned int    DEFAULT_RASPBERRY_TXDELAY  = 150U;
-
 
 #if defined(__WINDOWS__)
 
@@ -265,10 +257,7 @@ m_dvrptr2USBPort(DEFAULT_DVRPTR2_USBPORT),
 m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
 m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
 m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
-m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
-m_raspberryRXInvert(DEFAULT_RASPBERRY_RXINVERT),
-m_raspberryTXInvert(DEFAULT_RASPBERRY_TXINVERT),
-m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
+m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
 {
 	wxASSERT(config != NULL);
 
@@ -527,10 +516,7 @@ m_dvrptr2USBPort(DEFAULT_DVRPTR2_USBPORT),
 m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
 m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
 m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
-m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
-m_raspberryRXInvert(DEFAULT_RASPBERRY_RXINVERT),
-m_raspberryTXInvert(DEFAULT_RASPBERRY_TXINVERT),
-m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
+m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL)
 {
 	wxASSERT(!dir.IsEmpty());
 
@@ -716,9 +702,6 @@ m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
 		} else if (key.IsSameAs(KEY_DVAP_SQUELCH)) {
 			val.ToLong(&temp1);
 			m_dvapSquelch = int(temp1);
-		} else if (key.IsSameAs(KEY_GMSK_INTERFACE)) {
-			val.ToLong(&temp1);
-			m_gmskInterface = USB_INTERFACE(temp1);
 		} else if (key.IsSameAs(KEY_GMSK_ADDRESS)) {
 			val.ToULong(&temp2);
 			m_gmskAddress = (unsigned int)temp2;
@@ -755,17 +738,6 @@ m_raspberryTXDelay(DEFAULT_RASPBERRY_TXDELAY)
 		} else if (key.IsSameAs(KEY_DVRPTR2_MODLEVEL)) {
 			val.ToULong(&temp2);
 			m_dvrptr2ModLevel = (unsigned int)temp2;
-#if defined(RASPBERRY_PI)
-		} else if (key.IsSameAs(KEY_RASPBERRY_RXINVERT)) {
-			val.ToLong(&temp1);
-			m_raspberryRXInvert = temp1 == 1L;
-		} else if (key.IsSameAs(KEY_RASPBERRY_TXINVERT)) {
-			val.ToLong(&temp1);
-			m_raspberryTXInvert = temp1 == 1L;
-		} else if (key.IsSameAs(KEY_RASPBERRY_TXDELAY)) {
-			val.ToULong(&temp2);
-			m_raspberryTXDelay = (unsigned int)temp2;
-#endif
 		}
 
 		str = file.GetNextLine();
@@ -1235,7 +1207,6 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_DVAP_POWER.c_str(), m_dvapPower); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVAP_SQUELCH.c_str(), m_dvapSquelch); file.AddLine(buffer);
 
-	buffer.Printf(wxT("%s=%d"), KEY_GMSK_INTERFACE.c_str(), int(m_gmskInterface)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_GMSK_ADDRESS.c_str(), m_gmskAddress); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR1_PORT.c_str(), m_dvrptr1Port.c_str()); file.AddLine(buffer);
@@ -1251,12 +1222,6 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_PORT.c_str(), m_dvrptr2Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_TXINVERT.c_str(), m_dvrptr2TXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_MODLEVEL.c_str(), m_dvrptr2ModLevel); file.AddLine(buffer);
-
-#if defined(RASPBERRY_PI)
-	buffer.Printf(wxT("%s=%d"), KEY_RASPBERRY_RXINVERT.c_str(), m_raspberryRXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_RASPBERRY_TXINVERT.c_str(), m_raspberryTXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_RASPBERRY_TXDELAY.c_str(), m_raspberryTXDelay); file.AddLine(buffer);
-#endif
 
 	bool ret = file.Write();
 	if (!ret) {

@@ -79,11 +79,6 @@ public:
 	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const;
 	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
 
-#if defined(RASPBERRY_PI)
-	void getRaspberry(bool& rxInvert, bool& txInvert, unsigned int& txDelay) const;
-	void setRaspberry(bool rxInvert, bool txInvert, unsigned int txDelay);
-#endif
-
 	bool write();
 
 private:
@@ -174,11 +169,6 @@ private:
 	unsigned int  m_dvrptr2Port;
 	bool          m_dvrptr2TXInvert;
 	unsigned int  m_dvrptr2ModLevel;
-
-	// Raspberry PI
-	bool          m_raspberryRXInvert;
-	bool          m_raspberryTXInvert;
-	unsigned int  m_raspberryTXDelay;
 };
 
 #endif

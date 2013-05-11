@@ -19,6 +19,7 @@
 #include "DStarRepeaterModemDVRPTRV1Controller.h"
 #include "DStarRepeaterModemDVRPTRV2Controller.h"
 #include "DStarRepeaterModemDVAPController.h"
+#include "DStarRepeaterModemGMSKController.h"
 #include "DStarRepeaterTXRXThread.h"
 #include "RepeaterProtocolHandler.h"
 #include "DStarRepeaterTRXThread.h"
@@ -385,6 +386,12 @@ void CDStarRepeaterApp::createThread()
 				modem = new CDStarRepeaterModemDVRPTRV2Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 				break;
 		}
+	} else if (modemType.IsSameAs(wxT("GMSK"))) {
+		USB_INTERFACE iface;
+		unsigned int address;
+		m_config->getGMSK(iface, address);
+		wxLogInfo(wxT("GMSK, interface: %d, address: %04X"), int(iface), address);
+		modem = new CDStarRepeaterModemGMSKController(iface, address);
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());
 	}

@@ -34,16 +34,19 @@ public:
 
 	virtual bool open();
 
-	virtual CHeaderData* readHeader(bool& error);
-	virtual int readData(unsigned char* data, unsigned int length, bool& end);
+	virtual CHeaderData* readHeader(bool& error);							// Old
+	virtual bool readHeader(unsigned char* header, unsigned int length);	// News
+	virtual int  readData(unsigned char* data, unsigned int length, bool& end);
 
 	virtual TRISTATE getPTT();
-	virtual void setPTT(bool on);
+	virtual void     setPTT(bool on);
 
-	virtual TRISTATE hasSpace();
+	virtual TRISTATE hasSpace();											// Old
+	virtual int      getSpace();											// New
 
-	virtual void writeHeader(const CHeaderData& header);
-	virtual int writeData(unsigned char* data, unsigned int length);
+	virtual void writeHeader(const CHeaderData& header);					// Old
+	virtual void writeHeader(unsigned char* data, unsigned int length);		// New
+	virtual int  writeData(unsigned char* data, unsigned int length);
 
 	virtual void close();
 
@@ -51,6 +54,7 @@ private:
 	unsigned int            m_address;
 	HANDLE                  m_file;
 	WINUSB_INTERFACE_HANDLE m_handle;
+	bool                    m_brokenSpace;
 
 	bool openModem();
 	int  io(unsigned char type, unsigned char n1, unsigned char n2, unsigned char* buffer, unsigned int length);

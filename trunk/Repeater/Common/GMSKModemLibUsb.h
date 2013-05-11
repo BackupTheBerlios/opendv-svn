@@ -38,16 +38,19 @@ public:
 
 	virtual bool open();
 
-	virtual CHeaderData* readHeader(bool& error);
-	virtual int readData(unsigned char* data, unsigned int length, bool& end);
+	virtual CHeaderData* readHeader(bool& error);							// Old
+	virtual bool readHeader(unsigned char* header, unsigned int length);	// News
+	virtual int  readData(unsigned char* data, unsigned int length, bool& end);
 
 	virtual TRISTATE getPTT();
-	virtual void setPTT(bool on);
+	virtual void     setPTT(bool on);
 
-	virtual TRISTATE hasSpace();
+	virtual TRISTATE hasSpace();											// Old
+	virtual int      getSpace();											// New
 
-	virtual void writeHeader(const CHeaderData& header);
-	virtual int writeData(unsigned char* data, unsigned int length);
+	virtual void writeHeader(const CHeaderData& header);					// Old
+	virtual void writeHeader(unsigned char* data, unsigned int length);		// New
+	virtual int  writeData(unsigned char* data, unsigned int length);
 
 	virtual void close();
 
@@ -76,6 +79,7 @@ private:
 
 	int io(uint8_t requestType, uint8_t request, uint16_t value, uint16_t index, unsigned char* data, uint16_t length, unsigned int timeout);
 #endif
+	bool                     m_brokenSpace;
 
 	bool openModem();
 };

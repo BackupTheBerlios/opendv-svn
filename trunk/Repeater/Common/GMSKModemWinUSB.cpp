@@ -47,7 +47,8 @@ const unsigned char PTT_OFF = 0U;
 CGMSKModemWinUSB::CGMSKModemWinUSB(unsigned int address) :
 m_address(address),
 m_file(INVALID_HANDLE_VALUE),
-m_handle(INVALID_HANDLE_VALUE)
+m_handle(INVALID_HANDLE_VALUE),
+m_brokenSpace(false)
 {
 }
 
@@ -92,6 +93,10 @@ bool CGMSKModemWinUSB::open()
 		close();
 		return false;
 	}
+
+	// DUTCH*Star firmware has a broken concept of free space
+	if (version.Find(wxT("DUTCH*Star")) != wxNOT_FOUND)
+		m_brokenSpace = true;
 
 	return true;
 }
@@ -146,6 +151,53 @@ CHeaderData* CGMSKModemWinUSB::readHeader(bool& error)
 	return new CHeaderData(header, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
+bool CGMSKModemWinUSB::readHeader(unsigned char* header, unsigned int length)
+{
+	wxASSERT(header != NULL);
+	wxASSERT(length > (RADIO_HEADER_LENGTH_BYTES * 2U));
+
+	unsigned int offset = 0U;
+
+	while (offset < RADIO_HEADER_LENGTH_BYTES) {
+		int ret = io(GET_HEADER, 0xC0U, 0U, header + offset, GMSK_MODEM_DATA_LENGTH);
+		if (ret < 0) {
+			wxLogError(wxT("GET_HEADER returned %d"), -ret);
+			return false;
+		} else if (ret == 0) {
+			if (offset == 0U)
+				return false;
+
+			::wxMilliSleep(10UL);
+
+			unsigned char status;
+			ret = io(GET_AD_STATUS, 0xC0U, 0U, &status, 1U);
+			if (ret < 0) {
+				wxLogError(wxT("GET_COS returned %d"), -ret);
+				return false;
+			} else if (ret > 0) {
+				if ((status & COS_OnOff) == COS_OnOff)
+					offset = 0U;
+			}
+		} else {
+			offset += ret;
+		}
+	}
+
+	unsigned char status;
+	int ret = io(GET_AD_STATUS, 0xC0U, 0U, &status, 1U);
+	if (ret < 0) {
+		wxLogError(wxT("GET_CRC returned %d"), -ret);
+		return false;
+	}
+
+	if ((status & CRC_ERROR) == CRC_ERROR) {
+		wxLogMessage(wxT("Invalid CRC on header"));
+		return false;
+	}
+
+	return true;
+}
+
 int CGMSKModemWinUSB::readData(unsigned char* data, unsigned int length, bool& end)
 {
 	wxASSERT(data != NULL);
@@ -191,8 +243,8 @@ void CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
 		rptCall2[i] = header.getRptCall2().GetChar(i);
 
-	io(SET_MyCALL2, 0x40U, 0U, myCall2, SHORT_CALLSIGN_LENGTH);
-	io(SET_MyCALL, 0x40U, 0U, myCall1, LONG_CALLSIGN_LENGTH);
+	io(SET_MyCALL2,  0x40U, 0U, myCall2,  SHORT_CALLSIGN_LENGTH);
+	io(SET_MyCALL,   0x40U, 0U, myCall1,  LONG_CALLSIGN_LENGTH);
 	io(SET_YourCALL, 0x40U, 0U, yourCall, LONG_CALLSIGN_LENGTH);
 	io(SET_RPT1CALL, 0x40U, 0U, rptCall1, LONG_CALLSIGN_LENGTH);
 	io(SET_RPT2CALL, 0x40U, 0U, rptCall2, LONG_CALLSIGN_LENGTH);
@@ -203,6 +255,21 @@ void CGMSKModemWinUSB::writeHeader(const CHeaderData& header)
 	flags[2U] = header.getFlag3();
 
 	io(SET_FLAGS, 0x40U, 0U, flags, 3U);
+
+	setPTT(true);
+}
+
+void CGMSKModemWinUSB::writeHeader(unsigned char* header, unsigned int length)
+{
+	wxASSERT(header != NULL);
+	wxASSERT(length >= (RADIO_HEADER_LENGTH_BYTES - 2U));
+
+	io(SET_MyCALL2,  0x40U, 0U, header + 35U, SHORT_CALLSIGN_LENGTH);
+	io(SET_MyCALL,   0x40U, 0U, header + 27U, LONG_CALLSIGN_LENGTH);
+	io(SET_YourCALL, 0x40U, 0U, header + 19U, LONG_CALLSIGN_LENGTH);
+	io(SET_RPT1CALL, 0x40U, 0U, header + 11U, LONG_CALLSIGN_LENGTH);
+	io(SET_RPT2CALL, 0x40U, 0U, header + 3U,  LONG_CALLSIGN_LENGTH);
+	io(SET_FLAGS,    0x40U, 0U, header + 0U,  3U);
 
 	setPTT(true);
 }
@@ -241,6 +308,21 @@ TRISTATE CGMSKModemWinUSB::hasSpace()
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;
+}
+
+int CGMSKModemWinUSB::getSpace()
+{
+	unsigned char space;
+	int ret = io(GET_REMAINSPACE, 0xC0U, 0U, &space, 1U);
+	if (ret != 1) {
+		wxLogError(wxT("GET_REMAINSPACE returned %d"), -ret);
+		return -1;
+	}
+
+	if (m_brokenSpace)
+		return space > 0 ? DV_FRAME_LENGTH_BYTES : 0;
+	else
+		return space / DV_FRAME_LENGTH_BYTES;
 }
 
 int CGMSKModemWinUSB::writeData(unsigned char* data, unsigned int length)
