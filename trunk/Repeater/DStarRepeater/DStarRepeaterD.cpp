@@ -346,7 +346,7 @@ bool CDStarRepeaterD::createThread()
 	} else if (modemType.IsSameAs(wxT("GMSK"))) {
 		USB_INTERFACE iface;
 		unsigned int address;
-		m_config->getGMSK(iface, address);
+		config.getGMSK(iface, address);
 		wxLogInfo(wxT("GMSK, interface: %d, address: %04X"), int(iface), address);
 		modem = new CDStarRepeaterModemGMSKController(iface, address);
 	} else {

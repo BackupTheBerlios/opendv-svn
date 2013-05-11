@@ -1018,22 +1018,6 @@ void CDStarRepeaterConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString
 	m_dvrptr2ModLevel   = modLevel;
 }
 
-#if defined(RASPBERRY_PI)
-void CDStarRepeaterConfig::getRaspberry(bool& rxInvert, bool& txInvert, unsigned int& txDelay) const
-{
-	rxInvert = m_raspberryRXInvert;
-	txInvert = m_raspberryTXInvert;
-	txDelay  = m_raspberryTXDelay;
-}
-
-void CDStarRepeaterConfig::setRaspberry(bool rxInvert, bool txInvert, unsigned int txDelay)
-{
-	m_raspberryRXInvert = rxInvert;
-	m_raspberryTXInvert = txInvert;
-	m_raspberryTXDelay  = txDelay;
-}
-#endif
-
 #if defined(__WINDOWS__)
 
 bool CDStarRepeaterConfig::write()
