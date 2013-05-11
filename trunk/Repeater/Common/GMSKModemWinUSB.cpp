@@ -88,7 +88,7 @@ bool CGMSKModemWinUSB::open()
 
 	// Trap firmware version 0.1.00 of DUTCH*Star and complain loudly
 	if (version.Find(wxT("DUTCH*Star")) != wxNOT_FOUND && version.Find(wxT("0.1.00")) != wxNOT_FOUND) {
-		wxLogWarning(wxT("This modem firmware is not supported by the GMSK Repeater"));
+		wxLogWarning(wxT("This modem firmware is not supported by the repeater"));
 		wxLogWarning(wxT("Please upgrade to a newer version"));
 		close();
 		return false;

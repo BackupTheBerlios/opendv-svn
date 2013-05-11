@@ -47,8 +47,8 @@ m_readBuffer(NULL)
 {
 	wxASSERT(address > 0U);
 
-	m_buffer      = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer  = new unsigned char[BUFFER_LENGTH];
+	m_buffer     = new unsigned char[BUFFER_LENGTH];
+	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 
 #if defined(__WINDOWS__)
 	switch (iface) {
@@ -110,30 +110,41 @@ void* CDStarRepeaterModemGMSKController::Entry()
 	unsigned char  writeLength = 0U;
 	unsigned char* writeBuffer = new unsigned char[BUFFER_LENGTH];
 
+	unsigned char  readLength = 0U;
+	unsigned char* readBuffer = new unsigned char[DV_FRAME_LENGTH_BYTES];
+
 	while (!m_stopped) {
 		if (rx) {
-			unsigned char buffer[20U];
+			unsigned char buffer[GMSK_MODEM_DATA_LENGTH];
 			bool end;
-			int ret = m_modem->readData(buffer, 20U, end);
+			int ret = m_modem->readData(buffer, GMSK_MODEM_DATA_LENGTH, end);
 			if (ret > 0) {
 				// CUtils::dump(wxT("Read Data"), buffer, ret);
 
-				unsigned char data[2U];
-				data[0U] = end ? TAG_DATA_END : TAG_DATA;
-				data[1U] = DV_FRAME_LENGTH_BYTES;
-				m_rxData.addData(data, 2U);
+				for (int i = 0; i < ret; i++) {
+					readBuffer[readLength] = buffer[i];
 
-				m_rxData.addData(buffer, DV_FRAME_LENGTH_BYTES);
+					readLength++;
+					if (readLength >= DV_FRAME_LENGTH_BYTES) {
+						unsigned char data[2U];
+						data[0U] = end ? TAG_DATA_END : TAG_DATA;
+						data[1U] = DV_FRAME_LENGTH_BYTES;
+						m_rxData.addData(data, 2U);
 
-				if (end) {
-					hdrTimer.start();
-					rx = false;
+						m_rxData.addData(readBuffer, DV_FRAME_LENGTH_BYTES);
+						readLength = 0U;
+
+						if (end) {
+							hdrTimer.start();
+							rx = false;
+						}
+					}
 				}
 			}
 		} else {
 			if (hdrTimer.isRunning() && hdrTimer.hasExpired()) {
-				unsigned char buffer[50U];
-				bool ret = m_modem->readHeader(buffer, 50U);
+				unsigned char buffer[90U];
+				bool ret = m_modem->readHeader(buffer, 90U);
 				if (ret) {
 					// CUtils::dump(wxT("Read Header"), buffer, ret);
 
@@ -145,6 +156,7 @@ void* CDStarRepeaterModemGMSKController::Entry()
 					m_rxData.addData(buffer, RADIO_HEADER_LENGTH_BYTES - 2U);
 
 					hdrTimer.stop();
+					readLength = 0U;
 					rx = true;
 				} else {
 					hdrTimer.reset();
@@ -206,6 +218,7 @@ void* CDStarRepeaterModemGMSKController::Entry()
 	m_modem->close();
 
 	delete[] writeBuffer;
+	delete[] readBuffer;
 
 	return NULL;
 }
