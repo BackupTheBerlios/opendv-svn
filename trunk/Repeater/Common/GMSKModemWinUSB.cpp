@@ -320,7 +320,7 @@ int CGMSKModemWinUSB::getSpace()
 	}
 
 	if (m_brokenSpace)
-		return space > 0 ? DV_FRAME_LENGTH_BYTES : 0;
+		return space > 0 ? 1 : 0;
 	else
 		return space / DV_FRAME_LENGTH_BYTES;
 }

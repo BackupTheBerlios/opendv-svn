@@ -98,11 +98,13 @@ void* CDStarRepeaterModemGMSKController::Entry()
 	CTimer txTimer(200U, 0U, 100U);
 	txTimer.start();
 
-	CTimer hdrTimer(200U, 0U, 100U);
+	CTimer hdrTimer(200U, 0U, 50U);
 	hdrTimer.start();
 
 	CTimer spaceTimer(200U, 0U, 100U);
 	spaceTimer.start();
+
+	CTimer dataTimer(200U, 0U, 100U);
 
 	bool rx = false;
 
@@ -115,28 +117,33 @@ void* CDStarRepeaterModemGMSKController::Entry()
 
 	while (!m_stopped) {
 		if (rx) {
-			unsigned char buffer[GMSK_MODEM_DATA_LENGTH];
-			bool end;
-			int ret = m_modem->readData(buffer, GMSK_MODEM_DATA_LENGTH, end);
-			if (ret > 0) {
-				// CUtils::dump(wxT("Read Data"), buffer, ret);
+			if (!dataTimer.isRunning() || dataTimer.hasExpired()) {
+				dataTimer.stop();
 
-				for (int i = 0; i < ret; i++) {
-					readBuffer[readLength] = buffer[i];
+				unsigned char buffer[GMSK_MODEM_DATA_LENGTH];
+				bool end;
+				int ret = m_modem->readData(buffer, GMSK_MODEM_DATA_LENGTH, end);
+				if (ret > 0) {
+					// CUtils::dump(wxT("Read Data"), buffer, ret);
 
-					readLength++;
-					if (readLength >= DV_FRAME_LENGTH_BYTES) {
-						unsigned char data[2U];
-						data[0U] = end ? TAG_DATA_END : TAG_DATA;
-						data[1U] = DV_FRAME_LENGTH_BYTES;
-						m_rxData.addData(data, 2U);
+					for (int i = 0; i < ret; i++) {
+						readBuffer[readLength] = buffer[i];
 
-						m_rxData.addData(readBuffer, DV_FRAME_LENGTH_BYTES);
-						readLength = 0U;
+						readLength++;
+						if (readLength >= DV_FRAME_LENGTH_BYTES) {
+							unsigned char data[2U];
+							data[0U] = end ? TAG_DATA_END : TAG_DATA;
+							data[1U] = DV_FRAME_LENGTH_BYTES;
+							m_rxData.addData(data, 2U);
 
-						if (end) {
-							hdrTimer.start();
-							rx = false;
+							m_rxData.addData(readBuffer, DV_FRAME_LENGTH_BYTES);
+							readLength = 0U;
+
+							if (end) {
+								dataTimer.stop();
+								hdrTimer.start();
+								rx = false;
+							}
 						}
 					}
 				}
@@ -155,6 +162,7 @@ void* CDStarRepeaterModemGMSKController::Entry()
 
 					m_rxData.addData(buffer, RADIO_HEADER_LENGTH_BYTES - 2U);
 
+					dataTimer.start();
 					hdrTimer.stop();
 					readLength = 0U;
 					rx = true;
@@ -194,6 +202,7 @@ void* CDStarRepeaterModemGMSKController::Entry()
 
 		Sleep(5UL);
 
+		dataTimer.clock();
 		hdrTimer.clock();
 
 		// Check the state of the PTT every 100ms or so

@@ -89,6 +89,16 @@ void CDStarRepeaterTXThread::run()
 	m_pollTimer.start();
 	m_statusTimer.start();
 
+	wxString pollText;
+#if defined(__WINDOWS__)
+	pollText.Printf(wxT("win_%s-%s"), m_type.c_str(), VERSION.c_str());
+#else
+	pollText.Printf(wxT("linux_%s-%s"), m_type.c_str(), VERSION.c_str());
+#endif
+	pollText.Replace(wxT(" "), wxT("-"));
+	pollText.MakeLower();
+	wxLogMessage(wxT("Poll text set to \"%s\""), pollText.c_str());
+
 	wxLogMessage(wxT("Starting the D-Star transmitter thread"));
 
 	wxStopWatch stopWatch;
@@ -117,14 +127,7 @@ void CDStarRepeaterTXThread::run()
 
 		// Send the network poll if needed and restart the timer
 		if (m_pollTimer.hasExpired()) {
-			wxString text;
-#if defined(__WINDOWS__)
-			text.Printf(wxT("win_%s-%s"), m_type.c_str(), VERSION.c_str());
-#else
-			text.Printf(wxT("linux_%s-%s"), m_type.c_str(), VERSION.c_str());
-#endif
-			text.Replace(wxT(" "), wxT("-"));
-			m_protocolHandler->writePoll(text);
+			m_protocolHandler->writePoll(pollText);
 			m_pollTimer.reset();
 		}
 
