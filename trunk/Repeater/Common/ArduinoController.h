@@ -35,11 +35,8 @@ public:
 
 private:
 	CSerialDataController m_serial;
-	bool                  m_inp1;
-	bool                  m_inp2;
-	bool                  m_inp3;
-	bool                  m_inp4;
-	bool                  m_inp5;
+	unsigned char         m_out;
+	unsigned char         m_in;
 };
 
 #endif
