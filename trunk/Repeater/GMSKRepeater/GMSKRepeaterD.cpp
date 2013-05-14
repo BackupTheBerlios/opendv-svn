@@ -21,7 +21,7 @@
 #include "GMSKRepeaterTRXThread.h"
 #include "GMSKRepeaterTXThread.h"
 #include "GMSKRepeaterRXThread.h"
-#if defined(RASPBERY_PI)
+#if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
 #endif
 #include "GMSKRepeaterConfig.h"
