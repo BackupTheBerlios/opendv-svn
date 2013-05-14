@@ -27,7 +27,10 @@
 #include "DStarRepeaterRXThread.h"
 #include "DStarRepeaterLogger.h"
 #include "DStarRepeaterThread.h"
+#if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
+#endif
+#include "ArduinoController.h"
 #include "DStarRepeaterApp.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -415,11 +418,15 @@ void CDStarRepeaterApp::createThread()
 	if (controllerType.StartsWith(wxT("Velleman K8055 - "), &port)) {
 		unsigned long num;
 		port.ToULong(&num);
-		controller = new CExternalController(new CK8055Controller(num), false, false);
+		controller = new CExternalController(new CK8055Controller(num));
+	} else if (controllerType.StartsWith(wxT("Arduino - "), &port)) {
+		controller = new CExternalController(new CArduinoController(port));
+#if defined(RASPBERRY_PI)
 	} else if (controllerType.IsSameAs(wxT("Raspberry Pi"))) {
-		controller = new CExternalController(new CRaspberryController, false, false);
+		controller = new CExternalController(new CRaspberryController);
+#endif
 	} else {
-		controller = new CExternalController(new CDummyController, false, false);
+		controller = new CExternalController(new CDummyController);
 	}
 
 	bool res = controller->open();

@@ -23,9 +23,12 @@
 #include "DVRPTRRepeaterRXThread.h"
 #include "DVRPTRRepeaterLogger.h"
 #include "DVRPTRRepeaterThread.h"
+#if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
+#endif
 #include "DVRPTRControllerV2.h"
 #include "DVRPTRControllerV1.h"
+#include "ArduinoController.h"
 #include "DVRPTRRepeaterApp.h"
 #include "DVRPTRController.h"
 #include "K8055Controller.h"
@@ -495,11 +498,15 @@ void CDVRPTRRepeaterApp::createThread()
 	if (controllerType.StartsWith(wxT("Velleman K8055 - "), &port)) {
 		unsigned long num;
 		port.ToULong(&num);
-		controller = new CExternalController(new CK8055Controller(num), false, false);
+		controller = new CExternalController(new CK8055Controller(num));
+	} else if (controllerType.StartsWith(wxT("Arduino - "), &port)) {
+		controller = new CExternalController(new CArduinoController(port));
+#if defined(RASPBERRY_PI)
 	} else if (controllerType.IsSameAs(wxT("Raspberry Pi"))) {
-		controller = new CExternalController(new CRaspberryController, false, false);
+		controller = new CExternalController(new CRaspberryController);
+#endif
 	} else {
-		controller = new CExternalController(new CDummyController, false, false);
+		controller = new CExternalController(new CDummyController);
 	}
 
 	bool res = controller->open();

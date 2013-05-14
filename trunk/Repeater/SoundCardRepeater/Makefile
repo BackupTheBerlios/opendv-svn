@@ -20,7 +20,7 @@ SoundCardRepeaterApp.o:	SoundCardRepeaterApp.cpp SoundCardRepeaterApp.h SoundCar
 					SoundCardRepeaterTXThread.h SoundCardRepeaterRXThread.h SoundCardRepeaterFrame.h SoundCardRepeaterDefs.h SoundCardRepeaterStatusData.h \
 					SoundCardRepeaterLogger.h SoundCardRepeaterConfig.h SoundCardRepeaterThreadHelper.h ../Common/WAVFileReader.h ../Common/DStarDefines.h \
 					../Common/Logger.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialLineController.h \
-					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h ../Common/RaspberryController.h
+					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h ../Common/RaspberryController.h ../Common/ArduinoController.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterApp.cpp
 
 SoundCardRepeaterCallsignSet.o:	SoundCardRepeaterCallsignSet.cpp SoundCardRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -35,7 +35,7 @@ SoundCardRepeaterControllerSet.o:	SoundCardRepeaterControllerSet.cpp SoundCardRe
 SoundCardRepeaterD.o:	SoundCardRepeaterD.cpp SoundCardRepeaterD.h SoundCardRepeaterThread.h SoundCardRepeaterTRXThread.h SoundCardRepeaterTXRXThread.h SoundCardRepeaterTXThread.h \
 					SoundCardRepeaterRXThread.h SoundCardRepeaterConfig.h SoundCardRepeaterDefs.h ../Common/DStarDefines.h ../Common/Logger.h \
 					../Common/DummyController.h ../Common/K8055Controller.h ../Common/URIUSBController.h ../Common/SerialLineController.h ../Common/RaspberryController.h \
-					../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h
+					../Common/ArduinoController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h ../Common/CallsignList.h
 				$(CC) $(CFLAGS) -c SoundCardRepeaterD.cpp
 
 SoundCardRepeaterFrame.o:	SoundCardRepeaterFrame.cpp SoundCardRepeaterFrame.h SoundCardRepeaterDefs.h SoundCardRepeaterApp.h SoundCardRepeaterStatusData.h \

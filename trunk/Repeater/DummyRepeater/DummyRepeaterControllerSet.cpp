@@ -67,6 +67,10 @@ m_squelchInvert(NULL)
 	for (size_t i = 0U; i < nSerial; i++)
 		m_type->Append(wxT("Serial - ") + serialDevs.Item(i));
 
+	// Add the Arduino ports
+	for (size_t i = 0U; i < nSerial; i++)
+		m_type->Append(wxT("Arduino - ") + serialDevs.Item(i));
+
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* configLabel = new wxStaticText(this, -1, _("Config"));

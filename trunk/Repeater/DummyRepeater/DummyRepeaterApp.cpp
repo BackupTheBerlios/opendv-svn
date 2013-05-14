@@ -20,9 +20,12 @@
 #include "SoundCardReaderWriter.h"
 #include "SerialDataController.h"
 #include "SerialLineController.h"
+#if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
+#endif
 #include "DVDongleController.h"
 #include "ExternalController.h"
+#include "ArduinoController.h"
 #include "DummyRepeaterApp.h"
 #include "URIUSBController.h"
 #include "K8055Controller.h"
@@ -740,8 +743,12 @@ void CDummyRepeaterApp::createThread()
 		controller = new CExternalController(new CURIUSBController(num, true), pttInvert, squelchInvert);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialLineController(port, config), pttInvert, squelchInvert);
+	} else if (type.StartsWith(wxT("Arduino - "), &port)) {
+		controller = new CExternalController(new CArduinoController(port), pttInvert, squelchInvert);
+#if defined(RASPBERRY_PI)
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
 		controller = new CExternalController(new CRaspberryController, pttInvert, squelchInvert);
+#endif
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, squelchInvert);
 	}

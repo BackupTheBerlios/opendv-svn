@@ -23,8 +23,11 @@
 #include "SoundCardRepeaterConfig.h"
 #include "RepeaterProtocolHandler.h"
 #include "SerialLineController.h"
+#if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
+#endif
 #include "SoundCardRepeaterD.h"
+#include "ArduinoController.h"
 #include "URIUSBController.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -290,8 +293,12 @@ bool CSoundCardRepeaterD::createThread()
 		controller = new CExternalController(new CURIUSBController(num, false), pttInvert, false);
 	} else if (type.StartsWith(wxT("Serial - "), &port)) {
 		controller = new CExternalController(new CSerialLineController(port, cfg), pttInvert, false);
+	} else if (type.StartsWith(wxT("Arduino - "), &port)) {
+		controller = new CExternalController(new CArduinoController(port), pttInvert, false);
+#if defined(RASPBERRY_PI)
 	} else if (type.IsSameAs(wxT("Raspberry Pi"))) {
 		controller = new CExternalController(new CRaspberryController, pttInvert, false);
+#endif
 	} else {
 		controller = new CExternalController(new CDummyController, pttInvert, false);
 	}

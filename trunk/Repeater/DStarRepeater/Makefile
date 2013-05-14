@@ -20,14 +20,15 @@ DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.
 					DStarRepeaterRXThread.h DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterStatusData.h DStarRepeaterLogger.h DStarRepeaterThreadHelper.h \
 					DStarRepeaterModemDVAPController.h DStarRepeaterModemDVRPTRV1Controller.h DStarRepeaterModemDVRPTRV2Controller.h DStarRepeaterModemGMSKController.h \
 					../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h \
-					../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h 
+					../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h \
+					../Common/ArduinoController.h
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterDefs.h DStarRepeaterModemDVAPController.h DStarRepeaterModemDVRPTRV1Controller.h DStarRepeaterModemGMSKController.h \
 					DStarRepeaterModemDVRPTRV2Controller.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
 					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
-					../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h
+					../Common/RaspberryController.h ../Common/ArduinoController.h ../Common/DStarRepeaterConfig.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
 
 DStarRepeaterModemDVAPController.o:	DStarRepeaterModemDVAPController.cpp DStarRepeaterModemDVAPController.h DStarRepeaterModem.h ../Common/SerialDataController.h \

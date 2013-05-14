@@ -1849,3 +1849,4 @@ Revert most of the serial port changes.
 
 Remove support for the DUTCH*Star 0.1.00 firmware.
 Add GMSK modem support to the D-Star Repeater.
+Added Arduino hardware support.

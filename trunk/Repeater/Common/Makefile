@@ -1,7 +1,7 @@
 all:		Common.a
 
-OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o \
-		CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o \
+OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o ArduinoController.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o \
+		CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o \
 		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o \
 		DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
 		FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o \
@@ -26,6 +26,9 @@ AnnouncementSet.o:	AnnouncementSet.cpp AnnouncementSet.h CallsignTextCtrl.h DSta
 
 AnnouncementUnit.o:	AnnouncementUnit.cpp AnnouncementUnit.h AnnouncementCallback.h HeaderData.h DStarDefines.h DVTOOLFileReader.h DVTOOLFileWriter.h
 		$(CC) $(CFLAGS) -c AnnouncementUnit.cpp
+
+ArduinoController.o:	ArduinoController.cpp ArduinoController.h SerialDataController.h HardwareController.h
+		$(CC) $(CFLAGS) -c ArduinoController.cpp
 
 AudioDelay.o:	AudioDelay.cpp AudioDelay.h
 		$(CC) $(CFLAGS) -c AudioDelay.cpp

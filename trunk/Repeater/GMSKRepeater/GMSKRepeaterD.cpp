@@ -21,8 +21,11 @@
 #include "GMSKRepeaterTRXThread.h"
 #include "GMSKRepeaterTXThread.h"
 #include "GMSKRepeaterRXThread.h"
+#if defined(RASPBERY_PI)
 #include "RaspberryController.h"
+#endif
 #include "GMSKRepeaterConfig.h"
+#include "ArduinoController.h"
 #include "GMSKModemLibUsb.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
@@ -271,11 +274,15 @@ bool CGMSKRepeaterD::createThread()
 	if (controllerType.StartsWith(wxT("Velleman K8055 - "), &port)) {
 		unsigned long num;
 		port.ToULong(&num);
-		controller = new CExternalController(new CK8055Controller(num), false, false);
+		controller = new CExternalController(new CK8055Controller(num));
+	} else if (controllerType.StartsWith(wxT("Arduino - "), &port)) {
+		controller = new CExternalController(new CArduinoController(port));
+#if defined(RASPBERRY_PI)
 	} else if (controllerType.IsSameAs(wxT("Raspberry Pi"))) {
-		controller = new CExternalController(new CRaspberryController, false, false);
+		controller = new CExternalController(new CRaspberryController);
+#endif
 	} else {
-		controller = new CExternalController(new CDummyController, false, false);
+		controller = new CExternalController(new CDummyController);
 	}
 
 	res = controller->open();

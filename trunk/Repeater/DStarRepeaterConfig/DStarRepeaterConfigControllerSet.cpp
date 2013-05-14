@@ -17,6 +17,7 @@
  */
 
 #include "DStarRepeaterConfigControllerSet.h"
+#include "SerialDataController.h"
 
 const unsigned int CONTROL_WIDTH = 300U;
 
@@ -46,6 +47,11 @@ m_time(NULL)
 	m_type->Append(wxT("Velleman K8055 - 1"));
 	m_type->Append(wxT("Velleman K8055 - 2"));
 	m_type->Append(wxT("Velleman K8055 - 3"));
+
+	// Add the Arduino ports
+	wxArrayString serialDevs = CSerialDataController::getDevices();
+	for (size_t i = 0U; i < serialDevs.GetCount(); i++)
+		m_type->Append(wxT("Arduino - ") + serialDevs.Item(i));
 
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 

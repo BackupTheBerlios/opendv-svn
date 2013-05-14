@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2010 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2010,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 class CExternalController : public wxThread {
 public:
-	CExternalController(IHardwareController* controller, bool pttInvert, bool squelchInvert);
+	CExternalController(IHardwareController* controller, bool pttInvert = false, bool squelchInvert = false);
 	virtual ~CExternalController();
 
 	virtual bool open();

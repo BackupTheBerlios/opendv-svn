@@ -20,7 +20,8 @@ DVRPTRRepeaterApp.o:	DVRPTRRepeaterApp.cpp DVRPTRRepeaterApp.h DVRPTRRepeaterThr
 						DVRPTRRepeaterTXThread.h DVRPTRRepeaterRXThread.h DVRPTRRepeaterFrame.h DVRPTRRepeaterDefs.h DVRPTRRepeaterStatusData.h \
 						DVRPTRRepeaterLogger.h DVRPTRRepeaterConfig.h DVRPTRRepeaterThreadHelper.h ../Common/DVRPTRController.h ../Common/DVRPTRControllerV1.h \
 						../Common/DVRPTRControllerV2.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h \
-						../Common/Version.h ../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h
+						../Common/Version.h ../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h  ../Common/ArduinoController.h \
+						../Common/RaspberryController.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterApp.cpp
 
 DVRPTRRepeaterCallsignSet.o:	DVRPTRRepeaterCallsignSet.cpp DVRPTRRepeaterCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
@@ -29,14 +30,14 @@ DVRPTRRepeaterCallsignSet.o:	DVRPTRRepeaterCallsignSet.cpp DVRPTRRepeaterCallsig
 DVRPTRRepeaterConfig.o:	DVRPTRRepeaterConfig.cpp DVRPTRRepeaterConfig.h DVRPTRRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterConfig.cpp
 
-DVRPTRRepeaterControllerSet.o:	DVRPTRRepeaterControllerSet.cpp DVRPTRRepeaterControllerSet.h
+DVRPTRRepeaterControllerSet.o:	DVRPTRRepeaterControllerSet.cpp DVRPTRRepeaterControllerSet.h ../Common/SerialDataController.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterControllerSet.cpp
 
 DVRPTRRepeaterD.o:	DVRPTRRepeaterD.cpp DVRPTRRepeaterD.h DVRPTRRepeaterThread.h DVRPTRRepeaterTRXThread.h DVRPTRRepeaterTXRXThread.h \
 					DVRPTRRepeaterTXThread.h DVRPTRRepeaterRXThread.h DVRPTRRepeaterConfig.h DVRPTRRepeaterDefs.h ../Common/DStarDefines.h \
 					../Common/Logger.h ../Common/DVRPTRController.h ../Common/DVRPTRControllerV1.h ../Common/DVRPTRControllerV2.h ../Common/RepeaterProtocolHandler.h \
 					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
-					../Common/RaspberryController.h
+					../Common/RaspberryController.h ../Common/RaspberryController.h
 				$(CC) $(CFLAGS) -c DVRPTRRepeaterD.cpp
 
 DVRPTRRepeaterFrame.o:	DVRPTRRepeaterFrame.cpp DVRPTRRepeaterFrame.h DVRPTRRepeaterDefs.h DVRPTRRepeaterApp.h DVRPTRRepeaterStatusData.h \
