@@ -35,14 +35,6 @@ const int EXTSQUELCH  = A2;
 const int BATTERY     = A3;
 const int DISABLE     = A4;
 
-int m_out1 = false;
-int m_out2 = false;
-int m_out3 = false;
-int m_out4 = false;
-int m_out5 = false;
-int m_out6 = false;
-int m_out7 = false;
-int m_out8 = false;
 
 void setup() {
   // Set up the outut pins with pull ups
@@ -87,55 +79,15 @@ void loop() {
   if (Serial.available() > 0) {
     int out = Serial.read();
 
-    int out1 = (out & 0x01) == 0x01;
-    int out2 = (out & 0x02) == 0x02;
-    int out3 = (out & 0x04) == 0x04;
-    int out4 = (out & 0x08) == 0x08;
-    int out5 = (out & 0x10) == 0x10;
-    int out6 = (out & 0x20) == 0x20;
-    int out7 = (out & 0x40) == 0x40;
-    int out8 = (out & 0x80) == 0x80;
-
-    if (out1 != m_out1) {
-      digitalWrite(RFTRANSMIT,  out1 ? HIGH : LOW);
-      m_out1 = out1;
-    }
-
-    if (out2 != m_out2) {
-      digitalWrite(EXTTRANSMIT, out2 ? HIGH : LOW);
-      m_out2 = out2;
-    }
-
-    if (out3 != m_out3) {
-      digitalWrite(HEARTBEAT1,  out3 ? HIGH : LOW);
-      digitalWrite(HEARTBEAT2,  out3 ? HIGH : LOW);
-      m_out3 = out3;
-    }
-
-    if (out4 != m_out4) {
-      digitalWrite(ACTIVE,      out4 ? HIGH : LOW);
-      m_out4 = out4;
-    }
-
-    if (out5 != m_out5) {
-      digitalWrite(OUTPUT1,     out5 ? HIGH : LOW);
-      m_out5 = out5;
-    }
-
-    if (out6 != m_out6) {
-      digitalWrite(OUTPUT2,     out6 ? HIGH : LOW);
-      m_out6 = out6;
-    }
-
-    if (out7 != m_out7) {
-      digitalWrite(OUTPUT3,     out7 ? HIGH : LOW);
-      m_out7 = out7;
-    }
-
-    if (out8 != m_out8) {
-      digitalWrite(OUTPUT4,     out8 ? HIGH : LOW);
-      m_out8 = out8;
-    }
+    digitalWrite(RFTRANSMIT,  (out & 0x01) == 0x01 ? HIGH : LOW);
+    digitalWrite(EXTTRANSMIT, (out & 0x02) == 0x02 ? HIGH : LOW);
+    digitalWrite(HEARTBEAT1,  (out & 0x04) == 0x04 ? HIGH : LOW);
+    digitalWrite(HEARTBEAT2,  (out & 0x04) == 0x04 ? HIGH : LOW);
+    digitalWrite(ACTIVE,      (out & 0x08) == 0x08 ? HIGH : LOW);
+    digitalWrite(OUTPUT1,     (out & 0x10) == 0x10 ? HIGH : LOW);
+    digitalWrite(OUTPUT2,     (out & 0x20) == 0x20 ? HIGH : LOW);
+    digitalWrite(OUTPUT3,     (out & 0x40) == 0x40 ? HIGH : LOW);
+    digitalWrite(OUTPUT4,     (out & 0x80) == 0x80 ? HIGH : LOW);
   }
 
   byte val = 0x00;

@@ -1,4 +1,4 @@
-Repeater - 20130508
+Repeater - 20130515
 ===================
 
 20090530
@@ -1844,9 +1844,10 @@ Included the D-Star Repeater and Config program in the Windows package for the f
 
 Revert most of the serial port changes.
 
-201305xx
+20130515
 --------
 
+Removed aggressive DVAP serial port opening.
 Remove support for the DUTCH*Star 0.1.00 firmware.
 Add GMSK modem support to the D-Star Repeater.
 Added Arduino hardware support.

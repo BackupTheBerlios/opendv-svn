@@ -47,7 +47,12 @@ bool CArduinoController::open()
 	if (!ret)
 		return false;
 
-	setDigitalOutputs(false, false, false, false, false, false, false, false);
+	unsigned char buffer;
+	while (m_serial.read(&buffer, 1U) == 1)
+		;
+
+	m_out = 0x00U;
+	m_in  = 0x00U;
 
 	return true;
 }
@@ -90,7 +95,8 @@ void CArduinoController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, b
 
 void CArduinoController::close()
 {
-	setDigitalOutputs(false, false, false, false, false, false, false, false);
+	unsigned char buffer = 0x00U;
+	m_serial.write(&buffer, 1U);
 
 	m_serial.close();
 }

@@ -127,9 +127,6 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-const unsigned int MAX_OPEN_TRIES = 5U;
-const unsigned int OPEN_TRY_PAUSE = 10000U;		// 10 seconds
-
 CDStarRepeaterModemDVAPController::CDStarRepeaterModemDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),
 m_serial(port, SERIAL_230400),
@@ -169,21 +166,9 @@ CDStarRepeaterModemDVAPController::~CDStarRepeaterModemDVAPController()
 
 bool CDStarRepeaterModemDVAPController::start()
 {
-	bool res = false;
-	for (unsigned int i = 0U; i < MAX_OPEN_TRIES; i++) {
-		res = m_serial.open();
-		if (res)
-			break;
-
-		Sleep(OPEN_TRY_PAUSE);
-	}
-
-	if (!res) {
-		wxLogError(wxT("Unable to open the DVAP after %u attempts"), MAX_OPEN_TRIES);
+	bool res = m_serial.open();
+	if (!res)
 		return false;
-	}
-
-	wxLogMessage(wxT("Opened the DVAP modem port"));
 
 	res = getName();
 	if (!res) {
