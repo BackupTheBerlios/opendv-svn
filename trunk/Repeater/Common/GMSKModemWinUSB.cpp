@@ -270,8 +270,6 @@ void CGMSKModemWinUSB::writeHeader(unsigned char* header, unsigned int length)
 	io(SET_RPT1CALL, 0x40U, 0U, header + 11U, LONG_CALLSIGN_LENGTH);
 	io(SET_RPT2CALL, 0x40U, 0U, header + 3U,  LONG_CALLSIGN_LENGTH);
 	io(SET_FLAGS,    0x40U, 0U, header + 0U,  3U);
-
-	setPTT(true);
 }
 
 TRISTATE CGMSKModemWinUSB::getPTT()

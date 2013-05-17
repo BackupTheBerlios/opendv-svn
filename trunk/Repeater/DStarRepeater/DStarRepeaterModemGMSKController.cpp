@@ -172,30 +172,33 @@ void* CDStarRepeaterModemGMSKController::Entry()
 			}
 		}
 
-		if (m_space > 0U) {
-			if (writeLength == 0U && !m_txData.isEmpty()) {
-				m_mutex.Lock();
+		if (writeLength == 0U && !m_txData.isEmpty()) {
+			m_mutex.Lock();
 
-				m_txData.getData(&writeType, 1U);
-				m_txData.getData(&writeLength, 1U);
-				m_txData.getData(writeBuffer, writeLength);
+			m_txData.getData(&writeType, 1U);
+			m_txData.getData(&writeLength, 1U);
+			m_txData.getData(writeBuffer, writeLength);
 
-				m_mutex.Unlock();
-			}
+			m_mutex.Unlock();
+		}
 
+		if (writeLength > 0U) {
 			if (writeType == TAG_HEADER) {
 				// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
 				m_modem->writeHeader(writeBuffer, writeLength);
+				m_modem->setPTT(true);
 				writeLength = 0U;
 			} else {
-				// CUtils::dump(wxT("Write Data"), writeBuffer, writeLength);
-				int ret = m_modem->writeData(writeBuffer, writeLength);
-				if (ret > 0) {
-					writeLength -= ret;
-					m_space--;
+				if (m_space > 0U) {
+					// CUtils::dump(wxT("Write Data"), writeBuffer, writeLength);
+					int ret = m_modem->writeData(writeBuffer, writeLength);
+					if (ret > 0) {
+						writeLength -= ret;
+						m_space--;
 
-					if (writeType == TAG_DATA_END)
-						m_modem->setPTT(false);
+						if (writeType == TAG_DATA_END)
+							m_modem->setPTT(false);
+					}
 				}
 			}
 		}

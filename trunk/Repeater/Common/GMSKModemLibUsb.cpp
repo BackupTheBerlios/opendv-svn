@@ -367,8 +367,6 @@ void CGMSKModemLibUsb::writeHeader(unsigned char* header, unsigned int length)
 	io(0x40, SET_RPT1CALL, 0, 0, (char*)(header + 11U), LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
 	io(0x40, SET_RPT2CALL, 0, 0, (char*)(header + 3U),  LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
 	io(0x40, SET_FLAGS,    0, 0, (char*)(header + 0U),  3U, USB_TIMEOUT);
-
-	setPTT(true);
 }
 
 TRISTATE CGMSKModemLibUsb::hasSpace()
@@ -791,8 +789,6 @@ void CGMSKModemLibUsb::writeHeader(unsigned char* header, unsigned int length)
 	io(0x40, SET_RPT1CALL, 0, 0, header + 11U, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
 	io(0x40, SET_RPT2CALL, 0, 0, header + 3U,  LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
 	io(0x40, SET_FLAGS,    0, 0, header + 0U,  3U, USB_TIMEOUT);
-
-	setPTT(true);
 }
 
 TRISTATE CGMSKModemLibUsb::hasSpace()
