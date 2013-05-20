@@ -21,10 +21,11 @@
 
 #include <wx/wx.h>
 
-const wxString DEXTRA_HOSTS_FILE_NAME = wxT("DExtra_Hosts.txt");
-const wxString DPLUS_HOSTS_FILE_NAME  = wxT("DPlus_Hosts.txt");
-const wxString DCS_HOSTS_FILE_NAME    = wxT("DCS_Hosts.txt");
-const wxString CCS_HOSTS_FILE_NAME    = wxT("CCS_Hosts.txt");
+const wxString DEXTRA_HOSTS_FILE_NAME  = wxT("DExtra_Hosts.txt");
+const wxString DPLUS_HOSTS_FILE_NAME   = wxT("DPlus_Hosts.txt");
+const wxString DCS_HOSTS_FILE_NAME     = wxT("DCS_Hosts.txt");
+const wxString CCS_HOSTS_FILE_NAME     = wxT("CCS_Hosts.txt");
+const wxString GATEWAY_HOSTS_FILE_NAME = wxT("Gateway_Hosts.txt");
 
 const wxString LINKS_BASE_NAME   = wxT("Links");
 const wxString TEXT_BASE_NAME    = wxT("Text");

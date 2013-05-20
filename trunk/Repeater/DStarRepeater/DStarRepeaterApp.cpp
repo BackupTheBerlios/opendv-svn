@@ -389,7 +389,7 @@ void CDStarRepeaterApp::createThread()
 				modem = new CDStarRepeaterModemDVRPTRV2Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 				break;
 		}
-	} else if (modemType.IsSameAs(wxT("GMSK"))) {
+	} else if (modemType.IsSameAs(wxT("GMSK Modem"))) {
 		USB_INTERFACE iface;
 		unsigned int address;
 		m_config->getGMSK(iface, address);

@@ -1851,3 +1851,9 @@ Removed aggressive DVAP serial port opening.
 Remove support for the DUTCH*Star 0.1.00 firmware.
 Add GMSK modem support to the D-Star Repeater.
 Added Arduino hardware support.
+
+201305xx
+--------
+
+Fixed GMSK Modem bug in the D-Star Repeater.
+Added XRF727.

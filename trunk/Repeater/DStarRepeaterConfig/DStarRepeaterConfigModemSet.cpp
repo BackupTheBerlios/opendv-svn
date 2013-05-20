@@ -48,7 +48,7 @@ m_type(NULL)
 
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	m_type->Append(wxT("DVAP"));
-	m_type->Append(wxT("GMSK"));
+	m_type->Append(wxT("GMSK Modem"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -117,7 +117,7 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				m_config->setDVAP(port, frequency, power, squelch);
 			}
 		}
-	} else if (type.IsSameAs(wxT("GMSK"))) {
+	} else if (type.IsSameAs(wxT("GMSK Modem"))) {
 		USB_INTERFACE modemType;
 		unsigned int modemAddress;
 		m_config->getGMSK(modemType, modemAddress);

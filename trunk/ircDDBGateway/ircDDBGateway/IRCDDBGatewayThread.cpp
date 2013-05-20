@@ -222,6 +222,7 @@ void CIRCDDBGatewayThread::run()
 		}
 	}
 
+	loadGateways();
 	loadReflectors();
 
 	CG2Handler::setG2ProtocolHandler(m_g2Handler);
@@ -1014,6 +1015,39 @@ void CIRCDDBGatewayThread::processDD()
 
 		delete data;
 	}
+}
+
+void CIRCDDBGatewayThread::loadGateways()
+{
+	wxFileName fileName(wxFileName::GetHomeDir(), GATEWAY_HOSTS_FILE_NAME);
+	if (!fileName.IsFileReadable())
+		return;
+
+	unsigned int count = 0U;
+
+	CHostFile hostFile(fileName.GetFullPath(), false);
+	for (unsigned int i = 0U; i < hostFile.getCount(); i++) {
+		wxString gateway = hostFile.getName(i);
+		in_addr address  = CUDPReaderWriter::lookup(hostFile.getAddress(i));
+
+		if (address.s_addr != INADDR_NONE) {
+			unsigned char* ucp = (unsigned char*)&address;
+
+			wxString addrText;
+			addrText.Printf(wxT("%u.%u.%u.%u"), ucp[0U] & 0xFFU, ucp[1U] & 0xFFU, ucp[2U] & 0xFFU, ucp[3U] & 0xFFU);
+
+			wxLogMessage(wxT("Locking %s to %s"), gateway.c_str(), addrText.c_str());
+
+			gateway.Append(wxT("        "));
+			gateway.Truncate(LONG_CALLSIGN_LENGTH - 1U);
+			gateway.Append(wxT("G"));
+			m_cache.updateGateway(gateway, addrText, DP_DEXTRA, true, false);
+
+			count++;
+		}
+	}
+
+	wxLogMessage(wxT("Loaded %u of %u gateways from %s"), count, hostFile.getCount(), fileName.GetFullPath().c_str());
 }
 
 void CIRCDDBGatewayThread::loadReflectors()

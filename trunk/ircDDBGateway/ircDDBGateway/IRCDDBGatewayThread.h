@@ -131,6 +131,7 @@ private:
 	void processG2();
 	void processDD();
 
+	void loadGateways();
 	void loadReflectors();
 	void loadDExtraReflectors(const wxString& fileName);
 	void loadDPlusReflectors(const wxString& fileName);

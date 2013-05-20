@@ -1318,4 +1318,6 @@ Fix incoming CCS links display in the GUI.
 201305xx
 --------
 
+Allow for a gateways IP address override file.
 Stop the echoed audio from going out over reflector links.
+Added XRF727.
