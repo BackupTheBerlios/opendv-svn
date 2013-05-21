@@ -123,8 +123,21 @@ void* CDStarRepeaterModemGMSKController::Entry()
 				unsigned char buffer[GMSK_MODEM_DATA_LENGTH];
 				bool end;
 				int ret = m_modem->readData(buffer, GMSK_MODEM_DATA_LENGTH, end);
-				if (ret > 0) {
+				if (ret >= 0) {
 					// CUtils::dump(wxT("Read Data"), buffer, ret);
+
+					if (end) {
+						unsigned char data[2U];
+						data[0U] = TAG_DATA_END;
+						data[1U] = DV_FRAME_LENGTH_BYTES;
+						m_rxData.addData(data, 2U);
+
+						m_rxData.addData(END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES);
+
+						dataTimer.stop();
+						hdrTimer.start();
+						rx = false;
+					}
 
 					for (int i = 0; i < ret; i++) {
 						readBuffer[readLength] = buffer[i];
@@ -132,18 +145,12 @@ void* CDStarRepeaterModemGMSKController::Entry()
 						readLength++;
 						if (readLength >= DV_FRAME_LENGTH_BYTES) {
 							unsigned char data[2U];
-							data[0U] = end ? TAG_DATA_END : TAG_DATA;
+							data[0U] = TAG_DATA;
 							data[1U] = DV_FRAME_LENGTH_BYTES;
 							m_rxData.addData(data, 2U);
 
 							m_rxData.addData(readBuffer, DV_FRAME_LENGTH_BYTES);
 							readLength = 0U;
-
-							if (end) {
-								dataTimer.stop();
-								hdrTimer.start();
-								rx = false;
-							}
 						}
 					}
 				}
