@@ -1856,4 +1856,5 @@ Added Arduino hardware support.
 --------
 
 Fixed GMSK Modem bug in the D-Star Repeater.
+Updated XRF008s IP addresses.
 Added XRF727.
