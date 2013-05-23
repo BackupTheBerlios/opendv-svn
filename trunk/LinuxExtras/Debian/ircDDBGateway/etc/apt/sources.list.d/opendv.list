@@ -3,5 +3,5 @@
 #deb http://44.225.73.2/dl5di-soft/repositories/debian experimental main
 ## set the following lines in comment if your gateway should not use the internet, the amprnet/hament 44/8 only
 deb ftp://141.75.245.226:8021/debian/ experimental main
-deb http://soft.mgw.ch/debian/ experimental main
+deb http://176.10.105.230/debian/ experimental main
 deb http://debian.nh6z.net/ experimental main
