@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130503
+ircDDB Gateway - 20130523
 =========================
 
 20101010
@@ -1315,10 +1315,15 @@ The local *_Hosts.txt file is now appended to the distributed file.
 Read DPlus_Hosts.txt before DExtra_Hosts.txt.
 Fix incoming CCS links display in the GUI.
 
-201305xx
+20130523
 --------
 
 Allow for a gateways IP address override file.
 Stop the echoed audio from going out over reflector links.
 Updated XRF008s, REF035s, REF042s, and REF053s IP addresses.
 Added XRF727 and REF060.
+
+201305xx
+--------
+
+Added XRF250.
