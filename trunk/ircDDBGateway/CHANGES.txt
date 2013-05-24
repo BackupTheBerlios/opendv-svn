@@ -1327,3 +1327,4 @@ Added XRF727 and REF060.
 --------
 
 Added XRF250.
+Merge the local *_Hosts.txt file in the RemoteControl and TimerControl programs to match the gateway.
