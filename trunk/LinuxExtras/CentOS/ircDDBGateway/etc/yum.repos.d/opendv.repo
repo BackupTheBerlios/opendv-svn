@@ -8,7 +8,7 @@ name=openDV Repository
 #baseurl=http://group1-update.ircddb.net/ircDDB/centos55/repo
 baseurl=http://centos.nh6z.net
 baseurl=ftp://141.75.245.226:8021/centos5
-baseurl=http://176.10.105.230/centos5
+baseurl=http://176.10.105.250/centos5
 #
 ## uncomment the following line alternatively if you have access to the closed amprnet/hamnet 44/8
 #baseurl=http://44.225.73.2/pub/dl5di-soft/repositories/centos
