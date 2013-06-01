@@ -4,10 +4,10 @@ CFLAGS :=		-I../Common $(CFLAGS)
 
 dstarrepeaterconfig:	DStarRepeaterConfigApp.o DStarRepeaterConfigCallsignSet.o DStarRepeaterConfigControllerSet.o DStarRepeaterConfigDVAPSet.o \
 					DStarRepeaterConfigDVRPTR1Set.o DStarRepeaterConfigDVRPTR2Set.o DStarRepeaterConfigFrame.o DStarRepeaterConfigGMSKSet.o DStarRepeaterConfigModemSet.o \
-					DStarRepeaterConfigRaspberrySet.o DStarRepeaterConfigTimesSet.o ../Common/Common.a
+					DStarRepeaterConfigRaspberrySet.o DStarRepeaterConfigSoundCardSet.o DStarRepeaterConfigTimesSet.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarrepeaterconfig DStarRepeaterConfigApp.o DStarRepeaterConfigCallsignSet.o DStarRepeaterConfigControllerSet.o \
 					DStarRepeaterConfigDVAPSet.o DStarRepeaterConfigDVRPTR1Set.o DStarRepeaterConfigDVRPTR2Set.o DStarRepeaterConfigFrame.o DStarRepeaterConfigGMSKSet.o \
-					DStarRepeaterConfigModemSet.o DStarRepeaterConfigRaspberrySet.o DStarRepeaterConfigTimesSet.o ../Common/Common.a $(LIBS)
+					DStarRepeaterConfigModemSet.o DStarRepeaterConfigRaspberrySet.o DStarRepeaterConfigSoundCardSet.o DStarRepeaterConfigTimesSet.o ../Common/Common.a $(LIBS)
 
 DStarRepeaterConfigApp.o:	DStarRepeaterConfigApp.cpp DStarRepeaterConfigApp.h DStarRepeaterConfigFrame.h DStarRepeaterConfigDefs.h ../Common/DStarDefines.h \
 					../Common/Version.h
@@ -36,11 +36,16 @@ DStarRepeaterConfigFrame.o:	DStarRepeaterConfigFrame.cpp DStarRepeaterConfigFram
 DStarRepeaterConfigGMSKSet.o:	DStarRepeaterConfigGMSKSet.cpp DStarRepeaterConfigGMSKSet.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigGMSKSet.cpp
 
-DStarRepeaterConfigModemSet.o:	DStarRepeaterConfigModemSet.cpp DStarRepeaterConfigModemSet.h DStarRepeaterConfigDefs.h ../Common/DStarDefines.h
+DStarRepeaterConfigModemSet.o:	DStarRepeaterConfigModemSet.cpp DStarRepeaterConfigModemSet.h DStarRepeaterConfigDefs.h DStarRepeaterConfigSoundCardSet.h \
+					DStarRepeaterConfigDVRPTR1Set.h DStarRepeaterConfigDVRPTR2Set.h DStarRepeaterConfigModemSet.h DStarRepeaterConfigGMSKSet.h DStarRepeaterConfigDVAPSet.h \
+					../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigModemSet.cpp
 
 DStarRepeaterConfigRaspberrySet.o:	DStarRepeaterConfigRaspberrySet.cpp DStarRepeaterConfigRaspberrySet.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigRaspberrySet.cpp
+
+DStarRepeaterConfigSoundCardSet.o:	DStarRepeaterConfigSoundCardSet.cpp DStarRepeaterConfigSoundCardSet.h ../Common/SoundCardReaderWriter.h ../Common/DStarDefines.h
+				$(CC) $(CFLAGS) -c DStarRepeaterConfigSoundCardSet.cpp
 
 DStarRepeaterConfigTimesSet.o:	DStarRepeaterConfigTimesSet.cpp DStarRepeaterConfigTimesSet.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigTimesSet.cpp

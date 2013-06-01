@@ -26,9 +26,6 @@ const unsigned int CONTROL_WIDTH2 = 300U;
 const unsigned int ADDRESS_LENGTH  = 15U;
 const unsigned int PORT_LENGTH     = 5U;
 
-const int CHOICE_VERSION = 8749;
-const int CHOICE_TYPE    = 8750;
-
 
 CDStarRepeaterConfigDVRPTR1Set::CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxDialog(parent, id, wxString(_("DV-RPTR V1 Settings"))),

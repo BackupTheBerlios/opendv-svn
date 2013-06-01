@@ -16,6 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DStarRepeaterConfigSoundCardSet.h"
 #include "DStarRepeaterConfigDVRPTR1Set.h"
 #include "DStarRepeaterConfigDVRPTR2Set.h"
 #include "DStarRepeaterConfigModemSet.h"
@@ -51,6 +52,7 @@ m_type(NULL)
 	m_type->Append(wxT("GMSK Modem"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
+	m_type->Append(wxT("Sound Card"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* dummy = new wxStaticText(this, -1, wxEmptyString);
@@ -162,6 +164,23 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				txInvert = modem.getTXInvert();
 				modLevel = modem.getModLevel();
 				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+			}
+		}
+	} else if (type.IsSameAs(wxT("Sound Card"))) {
+		wxString rxDevice, txDevice;
+		bool txInvert, rxInvert;
+		unsigned int modLevel, txDelay;
+		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
+		CDStarRepeaterConfigSoundCardSet modem(this, -1, rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				rxDevice = modem.getRXDevice();
+				txDevice = modem.getTXDevice();
+				rxInvert = modem.getRXInvert();
+				txInvert = modem.getTXInvert();
+				modLevel = modem.getModLevel();
+				txDelay  = modem.getTXDelay();
+				m_config->setSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
 			}
 		}
 	}
