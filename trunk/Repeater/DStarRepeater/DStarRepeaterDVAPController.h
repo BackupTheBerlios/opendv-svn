@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterModemDVAPController_H
-#define	DStarRepeaterModemDVAPController_H
+#ifndef	DStarRepeaterDVAPController_H
+#define	DStarRepeaterDVAPController_H
 
 #include "SerialDataController.h"
 #include "DStarRepeaterModem.h"
@@ -51,10 +51,10 @@ enum RESP_TYPE {
 	RT_FM_DATA
 };
 
-class CDStarRepeaterModemDVAPController : public wxThread, public IDStarRepeaterModem {
+class CDStarRepeaterDVAPController : public wxThread, public IDStarRepeaterModem {
 public:
-	CDStarRepeaterModemDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
-	virtual ~CDStarRepeaterModemDVAPController();
+	CDStarRepeaterDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
+	virtual ~CDStarRepeaterDVAPController();
 
 	virtual void* Entry();
 
@@ -68,7 +68,7 @@ public:
 	virtual bool getTX();
 
 	virtual bool getSquelch() const;
-	virtual int getSignal() const;
+	virtual int  getSignal() const;
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);

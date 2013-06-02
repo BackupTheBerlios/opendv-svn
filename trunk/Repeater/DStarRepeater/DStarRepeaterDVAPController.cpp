@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterModemDVAPController.h"
+#include "DStarRepeaterDVAPController.h"
 #include "CCITTChecksumReverse.h"
 #include "DStarDefines.h"
 #include "Timer.h"
@@ -127,7 +127,7 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-CDStarRepeaterModemDVAPController::CDStarRepeaterModemDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
+CDStarRepeaterDVAPController::CDStarRepeaterDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),
 m_serial(port, SERIAL_230400),
 m_frequency(frequency),
@@ -158,13 +158,13 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterModemDVAPController::~CDStarRepeaterModemDVAPController()
+CDStarRepeaterDVAPController::~CDStarRepeaterDVAPController()
 {
 	delete[] m_buffer;
 	delete[] m_readBuffer;
 }
 
-bool CDStarRepeaterModemDVAPController::start()
+bool CDStarRepeaterDVAPController::start()
 {
 	bool res = m_serial.open();
 	if (!res)
@@ -231,7 +231,7 @@ bool CDStarRepeaterModemDVAPController::start()
 	return true;
 }
 
-void* CDStarRepeaterModemDVAPController::Entry()
+void* CDStarRepeaterDVAPController::Entry()
 {
 	wxLogMessage(wxT("Starting DVAP Controller thread"));
 
@@ -357,7 +357,7 @@ void* CDStarRepeaterModemDVAPController::Entry()
 	return NULL;
 }
 
-DSMT_TYPE CDStarRepeaterModemDVAPController::read()
+DSMT_TYPE CDStarRepeaterDVAPController::read()
 {
 	m_readLength = 0U;
 
@@ -386,7 +386,7 @@ DSMT_TYPE CDStarRepeaterModemDVAPController::read()
 	}
 }
 
-CHeaderData* CDStarRepeaterModemDVAPController::readHeader()
+CHeaderData* CDStarRepeaterDVAPController::readHeader()
 {
 	if (m_readType != TAG_HEADER || m_readLength == 0U)
 		return NULL;
@@ -394,7 +394,7 @@ CHeaderData* CDStarRepeaterModemDVAPController::readHeader()
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterModemDVAPController::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterDVAPController::readData(unsigned char* data, unsigned int length, bool& end)
 {
 	end = false;
 
@@ -412,7 +412,7 @@ unsigned int CDStarRepeaterModemDVAPController::readData(unsigned char* data, un
 	}
 }
 
-bool CDStarRepeaterModemDVAPController::writeHeader(const CHeaderData& header)
+bool CDStarRepeaterDVAPController::writeHeader(const CHeaderData& header)
 {
 	m_streamId++;
 
@@ -473,7 +473,7 @@ bool CDStarRepeaterModemDVAPController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CDStarRepeaterDVAPController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	unsigned char buffer[20U];
 
@@ -510,39 +510,39 @@ bool CDStarRepeaterModemDVAPController::writeData(const unsigned char* data, uns
 	return true;
 }
 
-void CDStarRepeaterModemDVAPController::stop()
+void CDStarRepeaterDVAPController::stop()
 {
 	m_stopped = true;
 
 	Wait();
 }
 
-unsigned int CDStarRepeaterModemDVAPController::getSpace()
+unsigned int CDStarRepeaterDVAPController::getSpace()
 {
 	return m_space;
 }
 
-bool CDStarRepeaterModemDVAPController::getTX()
+bool CDStarRepeaterDVAPController::getTX()
 {
 	return m_tx;
 }
 
-bool CDStarRepeaterModemDVAPController::getSquelch() const
+bool CDStarRepeaterDVAPController::getSquelch() const
 {
 	return m_squelchOpen;
 }
 
-int CDStarRepeaterModemDVAPController::getSignal() const
+int CDStarRepeaterDVAPController::getSignal() const
 {
 	return m_signal;
 }
 
-void CDStarRepeaterModemDVAPController::writePoll()
+void CDStarRepeaterDVAPController::writePoll()
 {
 	m_serial.write(DVAP_ACK, DVAP_ACK_LEN);
 }
 
-bool CDStarRepeaterModemDVAPController::getName()
+bool CDStarRepeaterDVAPController::getName()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -576,7 +576,7 @@ bool CDStarRepeaterModemDVAPController::getName()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::getFirmware()
+bool CDStarRepeaterDVAPController::getFirmware()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -607,7 +607,7 @@ bool CDStarRepeaterModemDVAPController::getFirmware()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::getSerial()
+bool CDStarRepeaterDVAPController::getSerial()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -638,7 +638,7 @@ bool CDStarRepeaterModemDVAPController::getSerial()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::startDVAP()
+bool CDStarRepeaterDVAPController::startDVAP()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -666,7 +666,7 @@ bool CDStarRepeaterModemDVAPController::startDVAP()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::stopDVAP()
+bool CDStarRepeaterDVAPController::stopDVAP()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -694,7 +694,7 @@ bool CDStarRepeaterModemDVAPController::stopDVAP()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::setModulation()
+bool CDStarRepeaterDVAPController::setModulation()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -722,7 +722,7 @@ bool CDStarRepeaterModemDVAPController::setModulation()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::setMode()
+bool CDStarRepeaterDVAPController::setMode()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -750,7 +750,7 @@ bool CDStarRepeaterModemDVAPController::setMode()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::setSquelch()
+bool CDStarRepeaterDVAPController::setSquelch()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -782,7 +782,7 @@ bool CDStarRepeaterModemDVAPController::setSquelch()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::setPower()
+bool CDStarRepeaterDVAPController::setPower()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -816,7 +816,7 @@ bool CDStarRepeaterModemDVAPController::setPower()
 	return true;
 }
 
-bool CDStarRepeaterModemDVAPController::setFrequency()
+bool CDStarRepeaterDVAPController::setFrequency()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -885,7 +885,7 @@ bool CDStarRepeaterModemDVAPController::setFrequency()
 	return true;
 }
 
-RESP_TYPE CDStarRepeaterModemDVAPController::getResponse(unsigned char *buffer, unsigned int& length)
+RESP_TYPE CDStarRepeaterDVAPController::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	int ret = m_serial.read(buffer, DVAP_HEADER_LENGTH);
 	if (ret == 0)
@@ -967,7 +967,7 @@ RESP_TYPE CDStarRepeaterModemDVAPController::getResponse(unsigned char *buffer, 
 	}
 }
 
-void CDStarRepeaterModemDVAPController::resync()
+void CDStarRepeaterDVAPController::resync()
 {
 	wxLogWarning(wxT("Resynchronising the DVAP data stream"));
 

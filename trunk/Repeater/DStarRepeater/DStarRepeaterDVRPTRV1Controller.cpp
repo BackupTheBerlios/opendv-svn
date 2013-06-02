@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterModemDVRPTRV1Controller.h"
+#include "DStarRepeaterDVRPTRV1Controller.h"
 #include "CCITTChecksumReverse.h"
 #include "CCITTChecksum.h"
 #include "DStarDefines.h"
@@ -54,7 +54,7 @@ const unsigned char DVRPTR_NAK = 0x15U;
 
 const unsigned int MAX_RESPONSES = 30U;
 
-wxArrayString CDStarRepeaterModemDVRPTRV1Controller::getDevices()
+wxArrayString CDStarRepeaterDVRPTRV1Controller::getDevices()
 {
 #if defined(__WINDOWS__)
 	return CSerialDataController::getDevices();
@@ -83,7 +83,7 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-CDStarRepeaterModemDVRPTRV1Controller::CDStarRepeaterModemDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
+CDStarRepeaterDVRPTRV1Controller::CDStarRepeaterDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_port(port),
 m_path(path),
@@ -116,13 +116,13 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterModemDVRPTRV1Controller::~CDStarRepeaterModemDVRPTRV1Controller()
+CDStarRepeaterDVRPTRV1Controller::~CDStarRepeaterDVRPTRV1Controller()
 {
 	delete[] m_buffer;
 	delete[] m_readBuffer;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::start()
+bool CDStarRepeaterDVRPTRV1Controller::start()
 {
 	findPort();
 
@@ -139,7 +139,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::start()
 	return true;
 }
 
-void* CDStarRepeaterModemDVRPTRV1Controller::Entry()
+void* CDStarRepeaterDVRPTRV1Controller::Entry()
 {
 	wxLogMessage(wxT("Starting DV-RPTR1 Modem Controller thread"));
 
@@ -348,7 +348,7 @@ void* CDStarRepeaterModemDVRPTRV1Controller::Entry()
 	return NULL;
 }
 
-DSMT_TYPE CDStarRepeaterModemDVRPTRV1Controller::read()
+DSMT_TYPE CDStarRepeaterDVRPTRV1Controller::read()
 {
 	m_readLength = 0U;
 
@@ -377,7 +377,7 @@ DSMT_TYPE CDStarRepeaterModemDVRPTRV1Controller::read()
 	}
 }
 
-CHeaderData* CDStarRepeaterModemDVRPTRV1Controller::readHeader()
+CHeaderData* CDStarRepeaterDVRPTRV1Controller::readHeader()
 {
 	if (m_readType != TAG_HEADER || m_readLength == 0U)
 		return NULL;
@@ -385,7 +385,7 @@ CHeaderData* CDStarRepeaterModemDVRPTRV1Controller::readHeader()
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterModemDVRPTRV1Controller::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterDVRPTRV1Controller::readData(unsigned char* data, unsigned int length, bool& end)
 {
 	end = false;
 
@@ -403,7 +403,7 @@ unsigned int CDStarRepeaterModemDVRPTRV1Controller::readData(unsigned char* data
 	}
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::writeHeader(const CHeaderData& header)
+bool CDStarRepeaterDVRPTRV1Controller::writeHeader(const CHeaderData& header)
 {
 	if (!m_txEnabled)
 		return false;
@@ -510,7 +510,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::writeHeader(const CHeaderData& heade
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CDStarRepeaterDVRPTRV1Controller::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	if (!m_txEnabled)
 		return false;
@@ -596,24 +596,24 @@ bool CDStarRepeaterModemDVRPTRV1Controller::writeData(const unsigned char* data,
 	return true;
 }
 
-unsigned int CDStarRepeaterModemDVRPTRV1Controller::getSpace()
+unsigned int CDStarRepeaterDVRPTRV1Controller::getSpace()
 {
 	return m_space;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::getTX()
+bool CDStarRepeaterDVRPTRV1Controller::getTX()
 {
 	return m_tx;
 }
 
-void CDStarRepeaterModemDVRPTRV1Controller::stop()
+void CDStarRepeaterDVRPTRV1Controller::stop()
 {
 	m_stopped = true;
 
 	Wait();
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::readVersion()
+bool CDStarRepeaterDVRPTRV1Controller::readVersion()
 {
 	unsigned char buffer[10U];
 
@@ -669,7 +669,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::readVersion()
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::readStatus()
+bool CDStarRepeaterDVRPTRV1Controller::readStatus()
 {
 	unsigned char buffer[10U];
 
@@ -692,7 +692,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::readStatus()
 	return m_serial.write(buffer, 6U) == 6;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::setConfig()
+bool CDStarRepeaterDVRPTRV1Controller::setConfig()
 {
 	unsigned char buffer[20U];
 
@@ -764,7 +764,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::setConfig()
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::setEnabled(bool enable)
+bool CDStarRepeaterDVRPTRV1Controller::setEnabled(bool enable)
 {
 	unsigned char buffer[10U];
 
@@ -824,7 +824,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::setEnabled(bool enable)
 	return true;
 }
 
-RESP_TYPE_V1 CDStarRepeaterModemDVRPTRV1Controller::getResponse(unsigned char *buffer, unsigned int& length)
+RESP_TYPE_V1 CDStarRepeaterDVRPTRV1Controller::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
 	int ret = m_serial.read(buffer, 1U);
@@ -914,12 +914,12 @@ RESP_TYPE_V1 CDStarRepeaterModemDVRPTRV1Controller::getResponse(unsigned char *b
 	}
 }
 
-wxString CDStarRepeaterModemDVRPTRV1Controller::getPath() const
+wxString CDStarRepeaterDVRPTRV1Controller::getPath() const
 {
 	return m_path;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::findPort()
+bool CDStarRepeaterDVRPTRV1Controller::findPort()
 {
 	if (m_path.IsEmpty())
 		return false;
@@ -977,7 +977,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::findPort()
 	return false;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::findPath()
+bool CDStarRepeaterDVRPTRV1Controller::findPath()
 {
 #if defined(__WINDOWS__)
 #ifdef notdef
@@ -1061,7 +1061,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::findPath()
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::findModem()
+bool CDStarRepeaterDVRPTRV1Controller::findModem()
 {
 	m_serial.close();
 
@@ -1101,7 +1101,7 @@ bool CDStarRepeaterModemDVRPTRV1Controller::findModem()
 	return false;
 }
 
-bool CDStarRepeaterModemDVRPTRV1Controller::openModem()
+bool CDStarRepeaterDVRPTRV1Controller::openModem()
 {
 	bool ret = m_serial.open();
 	if (!ret)

@@ -18,7 +18,7 @@
 
 // TODO Handle flags 102 + 103
 
-#include "DStarRepeaterModemDVRPTRV2Controller.h"
+#include "DStarRepeaterDVRPTRV2Controller.h"
 #include "DStarDefines.h"
 #include "Timer.h"
 
@@ -30,7 +30,7 @@
 
 const unsigned int MAX_RESPONSES = 30U;
 
-wxArrayString CDStarRepeaterModemDVRPTRV2Controller::getDevices()
+wxArrayString CDStarRepeaterDVRPTRV2Controller::getDevices()
 {
 #if defined(__WINDOWS__)
 	return CSerialDataController::getDevices();
@@ -59,7 +59,7 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-CDStarRepeaterModemDVRPTRV2Controller::CDStarRepeaterModemDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
+CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_USB),
 m_usbPort(port),
@@ -92,7 +92,7 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterModemDVRPTRV2Controller::CDStarRepeaterModemDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
+CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_NETWORK),
 m_usbPort(),
@@ -126,7 +126,7 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterModemDVRPTRV2Controller::~CDStarRepeaterModemDVRPTRV2Controller()
+CDStarRepeaterDVRPTRV2Controller::~CDStarRepeaterDVRPTRV2Controller()
 {
 	delete m_usb;
 	delete m_network;
@@ -135,7 +135,7 @@ CDStarRepeaterModemDVRPTRV2Controller::~CDStarRepeaterModemDVRPTRV2Controller()
 	delete[] m_readBuffer;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::start()
+bool CDStarRepeaterDVRPTRV2Controller::start()
 {
 	findPort();
 
@@ -152,7 +152,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::start()
 	return true;
 }
 
-void* CDStarRepeaterModemDVRPTRV2Controller::Entry()
+void* CDStarRepeaterDVRPTRV2Controller::Entry()
 {
 	wxLogMessage(wxT("Starting DV-RPTR2 Modem Controller thread"));
 
@@ -308,7 +308,7 @@ void* CDStarRepeaterModemDVRPTRV2Controller::Entry()
 	return NULL;
 }
 
-DSMT_TYPE CDStarRepeaterModemDVRPTRV2Controller::read()
+DSMT_TYPE CDStarRepeaterDVRPTRV2Controller::read()
 {
 	m_readLength = 0U;
 
@@ -337,7 +337,7 @@ DSMT_TYPE CDStarRepeaterModemDVRPTRV2Controller::read()
 	}
 }
 
-CHeaderData* CDStarRepeaterModemDVRPTRV2Controller::readHeader()
+CHeaderData* CDStarRepeaterDVRPTRV2Controller::readHeader()
 {
 	if (m_readType != TAG_HEADER || m_readLength == 0U)
 		return NULL;
@@ -345,7 +345,7 @@ CHeaderData* CDStarRepeaterModemDVRPTRV2Controller::readHeader()
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterModemDVRPTRV2Controller::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterDVRPTRV2Controller::readData(unsigned char* data, unsigned int length, bool& end)
 {
 	end = false;
 
@@ -363,7 +363,7 @@ unsigned int CDStarRepeaterModemDVRPTRV2Controller::readData(unsigned char* data
 	}
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::writeHeader(const CHeaderData& header)
+bool CDStarRepeaterDVRPTRV2Controller::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer[105U];
 
@@ -421,7 +421,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::writeHeader(const CHeaderData& heade
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CDStarRepeaterDVRPTRV2Controller::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	unsigned char buffer[17U];
 
@@ -457,24 +457,24 @@ bool CDStarRepeaterModemDVRPTRV2Controller::writeData(const unsigned char* data,
 	return true;
 }
 
-unsigned int CDStarRepeaterModemDVRPTRV2Controller::getSpace()
+unsigned int CDStarRepeaterDVRPTRV2Controller::getSpace()
 {
 	return m_space;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::getTX()
+bool CDStarRepeaterDVRPTRV2Controller::getTX()
 {
 	return m_tx;
 }
 
-void CDStarRepeaterModemDVRPTRV2Controller::stop()
+void CDStarRepeaterDVRPTRV2Controller::stop()
 {
 	m_stopped = true;
 
 	Wait();
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::readSerial()
+bool CDStarRepeaterDVRPTRV2Controller::readSerial()
 {
 	unsigned char buffer[105U];
 
@@ -518,7 +518,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::readSerial()
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::readSpace()
+bool CDStarRepeaterDVRPTRV2Controller::readSpace()
 {
 	unsigned char buffer[10U];
 
@@ -538,7 +538,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::readSpace()
 	return writeModem(buffer, 10U);
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::setConfig()
+bool CDStarRepeaterDVRPTRV2Controller::setConfig()
 {
 	unsigned char buffer[105U];
 
@@ -599,7 +599,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::setConfig()
 	return true;
 }
 
-RESP_TYPE_V2 CDStarRepeaterModemDVRPTRV2Controller::getResponse(unsigned char *buffer, unsigned int& length)
+RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
 	int ret = readModem(buffer, 5U);
@@ -663,12 +663,12 @@ RESP_TYPE_V2 CDStarRepeaterModemDVRPTRV2Controller::getResponse(unsigned char *b
 	return RT2_UNKNOWN;
 }
 
-wxString CDStarRepeaterModemDVRPTRV2Controller::getPath() const
+wxString CDStarRepeaterDVRPTRV2Controller::getPath() const
 {
 	return m_usbPath;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::findPort()
+bool CDStarRepeaterDVRPTRV2Controller::findPort()
 {
 	if (m_connection != CT_USB)
 		return true;
@@ -729,7 +729,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::findPort()
 	return false;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::findPath()
+bool CDStarRepeaterDVRPTRV2Controller::findPath()
 {
 	if (m_connection != CT_USB)
 		return true;
@@ -816,7 +816,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::findPath()
 	return true;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::findModem()
+bool CDStarRepeaterDVRPTRV2Controller::findModem()
 {
 	closeModem();
 
@@ -856,7 +856,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::findModem()
 	return false;
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::openModem()
+bool CDStarRepeaterDVRPTRV2Controller::openModem()
 {
 	bool ret = false;
 
@@ -890,7 +890,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::openModem()
 	return true;
 }
 
-int CDStarRepeaterModemDVRPTRV2Controller::readModem(unsigned char* buffer, unsigned int length)
+int CDStarRepeaterDVRPTRV2Controller::readModem(unsigned char* buffer, unsigned int length)
 {
 	switch (m_connection) {
 		case CT_USB:
@@ -902,7 +902,7 @@ int CDStarRepeaterModemDVRPTRV2Controller::readModem(unsigned char* buffer, unsi
 	}
 }
 
-bool CDStarRepeaterModemDVRPTRV2Controller::writeModem(const unsigned char* buffer, unsigned int length)
+bool CDStarRepeaterDVRPTRV2Controller::writeModem(const unsigned char* buffer, unsigned int length)
 {
 	switch (m_connection) {
 		case CT_USB:
@@ -914,7 +914,7 @@ bool CDStarRepeaterModemDVRPTRV2Controller::writeModem(const unsigned char* buff
 	}
 }
 
-void CDStarRepeaterModemDVRPTRV2Controller::closeModem()
+void CDStarRepeaterDVRPTRV2Controller::closeModem()
 {
 	switch (m_connection) {
 		case CT_USB:

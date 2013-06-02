@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterModemDVAPController.h"
+#include "DStarRepeaterDVAPController.h"
 #include "DStarRepeaterStatusData.h"
 #include "DStarRepeaterTRXThread.h"
 #include "DStarRepeaterApp.h"
@@ -1779,7 +1779,7 @@ CDStarRepeaterStatusData* CDStarRepeaterTRXThread::getStatus()
 	}
 
 	if (m_type.IsSameAs(wxT("DVAP")) && m_modem != NULL) {
-		CDStarRepeaterModemDVAPController* dvap = static_cast<CDStarRepeaterModemDVAPController*>(m_modem);
+		CDStarRepeaterDVAPController* dvap = static_cast<CDStarRepeaterDVAPController*>(m_modem);
 		bool squelch = dvap->getSquelch();
 		int signal   = dvap->getSignal();
 		status->setDVAP(squelch, signal);
