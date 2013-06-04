@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -300,12 +300,12 @@ void CAPRSWriter::sendIdFrames()
 		wxString desc;
 		if (entry->getBand().Len() > 1U) {
 			if (entry->getFrequency() != 0.0)
-				desc.Printf(wxT("Data %.4lfMHz"), entry->getFrequency());
+				desc.Printf(wxT("Data %.5lfMHz"), entry->getFrequency());
 			else
 				desc = wxT("Data");
 		} else {
 			if (entry->getFrequency() != 0.0)
-				desc.Printf(wxT("Voice %.4lfMHz %c%.4lfMHz"),
+				desc.Printf(wxT("Voice %.5lfMHz %c%.4lfMHz"),
 						entry->getFrequency(),
 						entry->getOffset() < 0.0 ? wxT('-') : wxT('+'),
 						::fabs(entry->getOffset()));

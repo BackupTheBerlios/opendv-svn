@@ -2040,7 +2040,7 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_ATSTARTUP1, m_repeater1AtStartup);
 	m_config->Write(m_name + KEY_RECONNECT1, long(m_repeater1Reconnect));
 
-	text.Printf(wxT("%.4lf"), m_repeater1Frequency);
+	text.Printf(wxT("%.5lf"), m_repeater1Frequency);
 	m_config->Write(m_name + KEY_FREQUENCY1, text);
 
 	text.Printf(wxT("%.4lf"), m_repeater1Offset);
@@ -2069,7 +2069,7 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_ATSTARTUP2, m_repeater2AtStartup);
 	m_config->Write(m_name + KEY_RECONNECT2, long(m_repeater2Reconnect));
 
-	text.Printf(wxT("%.4lf"), m_repeater2Frequency);
+	text.Printf(wxT("%.5lf"), m_repeater2Frequency);
 	m_config->Write(m_name + KEY_FREQUENCY2, text);
 
 	text.Printf(wxT("%.4lf"), m_repeater2Offset);
@@ -2098,7 +2098,7 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_ATSTARTUP3, m_repeater3AtStartup);
 	m_config->Write(m_name + KEY_RECONNECT3, long(m_repeater3Reconnect));
 
-	text.Printf(wxT("%.4lf"), m_repeater3Frequency);
+	text.Printf(wxT("%.5lf"), m_repeater3Frequency);
 	m_config->Write(m_name + KEY_FREQUENCY3, text);
 
 	text.Printf(wxT("%.4lf"), m_repeater3Offset);
@@ -2127,7 +2127,7 @@ bool CIRCDDBGatewayConfig::write()
 	m_config->Write(m_name + KEY_ATSTARTUP4, m_repeater4AtStartup);
 	m_config->Write(m_name + KEY_RECONNECT4, long(m_repeater4Reconnect));
 
-	text.Printf(wxT("%.4lf"), m_repeater4Frequency);
+	text.Printf(wxT("%.5lf"), m_repeater4Frequency);
 	m_config->Write(m_name + KEY_FREQUENCY4, text);
 
 	text.Printf(wxT("%.4lf"), m_repeater4Offset);
@@ -2274,7 +2274,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_REFLECTOR1.c_str(), m_repeater1Reflector.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_ATSTARTUP1.c_str(), m_repeater1AtStartup ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RECONNECT1.c_str(), int(m_repeater1Reconnect)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%.4lf"), KEY_FREQUENCY1.c_str(), m_repeater1Frequency); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.5lf"), KEY_FREQUENCY1.c_str(), m_repeater1Frequency); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4lf"), KEY_OFFSET1.c_str(), m_repeater1Offset); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.3lf"), KEY_RANGE1.c_str(), m_repeater1Range); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.6lf"), KEY_LATITUDE1.c_str(), m_repeater1Latitude); file.AddLine(buffer);
@@ -2294,7 +2294,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_REFLECTOR2.c_str(), m_repeater2Reflector.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_ATSTARTUP2.c_str(), m_repeater2AtStartup ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RECONNECT2.c_str(), int(m_repeater2Reconnect)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%.4lf"), KEY_FREQUENCY2.c_str(), m_repeater2Frequency); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.5lf"), KEY_FREQUENCY2.c_str(), m_repeater2Frequency); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4lf"), KEY_OFFSET2.c_str(), m_repeater2Offset); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.3lf"), KEY_RANGE2.c_str(), m_repeater2Range); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.6lf"), KEY_LATITUDE2.c_str(), m_repeater2Latitude); file.AddLine(buffer);
@@ -2314,7 +2314,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_REFLECTOR3.c_str(), m_repeater3Reflector.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_ATSTARTUP3.c_str(), m_repeater3AtStartup ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RECONNECT3.c_str(), int(m_repeater3Reconnect)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%.4lf"), KEY_FREQUENCY3.c_str(), m_repeater3Frequency); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.5lf"), KEY_FREQUENCY3.c_str(), m_repeater3Frequency); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4lf"), KEY_OFFSET3.c_str(), m_repeater3Offset); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.3lf"), KEY_RANGE3.c_str(), m_repeater3Range); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.6lf"), KEY_LATITUDE3.c_str(), m_repeater3Latitude); file.AddLine(buffer);
@@ -2334,7 +2334,7 @@ bool CIRCDDBGatewayConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_REFLECTOR4.c_str(), m_repeater4Reflector.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_ATSTARTUP4.c_str(), m_repeater4AtStartup ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RECONNECT4.c_str(), int(m_repeater4Reconnect)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%.4lf"), KEY_FREQUENCY4.c_str(), m_repeater4Frequency); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.5lf"), KEY_FREQUENCY4.c_str(), m_repeater4Frequency); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4lf"), KEY_OFFSET4.c_str(), m_repeater4Offset); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.3lf"), KEY_RANGE4.c_str(), m_repeater4Range); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.6lf"), KEY_LATITUDE4.c_str(), m_repeater4Latitude); file.AddLine(buffer);
