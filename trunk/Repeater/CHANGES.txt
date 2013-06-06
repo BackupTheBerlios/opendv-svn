@@ -1863,3 +1863,4 @@ Added XRF727.
 --------
 
 Added XRF250.
+Add an optional startup delay for the DV-RPTR V1.

@@ -326,11 +326,11 @@ bool CDStarRepeaterD::createThread()
 		modem = new CDStarRepeaterDVAPController(port, frequency, power, squelch);
 	} else if (modemType.IsSameAs(wxT("DV-RPTR V1"))) {
 		wxString port;
-		bool rxInvert, txInvert, channel;
+		bool delay, rxInvert, txInvert, channel;
 		unsigned int modLevel, txDelay;
-		config.getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
-		wxLogInfo(wxT("DV-RPTR V1, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
-		modem = new CDStarRepeaterDVRPTRV1Controller(port, wxEmptyString, rxInvert, txInvert, channel, modLevel, txDelay);
+		config.getDVRPTR1(port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
+		wxLogInfo(wxT("DV-RPTR V1, port: %s, delay: %d, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(delay), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+		modem = new CDStarRepeaterDVRPTRV1Controller(port, wxEmptyString, delay, rxInvert, txInvert, channel, modLevel, txDelay);
 	} else if (modemType.IsSameAs(wxT("DV-RPTR V2"))) {
 		CONNECTION_TYPE connType;
 		wxString usbPort, address;

@@ -73,8 +73,8 @@ public:
 	void getGMSK(USB_INTERFACE& type, unsigned int& address) const;
 	void setGMSK(USB_INTERFACE type, unsigned int address);
 
-	void getDVRPTR1(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
-	void setDVRPTR1(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	void getDVRPTR1(wxString& port, bool& delay, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
+	void setDVRPTR1(const wxString& port, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 
 	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const;
 	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
@@ -159,6 +159,7 @@ private:
 
 	// DV-RPTR 1
 	wxString      m_dvrptr1Port;
+	bool          m_dvrptr1Delay;
 	bool          m_dvrptr1RXInvert;
 	bool          m_dvrptr1TXInvert;
 	bool          m_dvrptr1Channel;

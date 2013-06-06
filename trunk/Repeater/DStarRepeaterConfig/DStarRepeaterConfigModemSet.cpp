@@ -133,19 +133,20 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 		}
 	} else if (type.IsSameAs(wxT("DV-RPTR V1"))) {
 		wxString port;
-		bool txInvert, rxInvert, channel;
+		bool delay, txInvert, rxInvert, channel;
 		unsigned int modLevel, txDelay;
-		m_config->getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
-		CDStarRepeaterConfigDVRPTR1Set modem(this, -1, port, rxInvert, txInvert, channel, modLevel, txDelay);
+		m_config->getDVRPTR1(port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
+		CDStarRepeaterConfigDVRPTR1Set modem(this, -1, port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
 		if (modem.ShowModal() == wxID_OK) {
 			if (modem.Validate()) {
 				port     = modem.getPort();
+				delay    = modem.getDelay();
 				rxInvert = modem.getRXInvert();
 				txInvert = modem.getTXInvert();
 				channel  = modem.getChannel();
 				modLevel = modem.getModLevel();
 				txDelay  = modem.getTXDelay();
-				m_config->setDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+				m_config->setDVRPTR1(port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
 			}
 		}
 	} else if (type.IsSameAs(wxT("DV-RPTR V2"))) {

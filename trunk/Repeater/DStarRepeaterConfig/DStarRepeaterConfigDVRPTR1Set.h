@@ -26,12 +26,13 @@
 
 class CDStarRepeaterConfigDVRPTR1Set : public wxDialog {
 public:
-	CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDStarRepeaterConfigDVRPTR1Set();
 
 	virtual bool Validate();
 
 	virtual wxString     getPort() const;
+	virtual bool         getDelay() const;
 	virtual bool         getRXInvert() const;
 	virtual bool         getTXInvert() const;
 	virtual bool         getChannel() const;
@@ -40,6 +41,7 @@ public:
 
 private:
 	wxChoice* m_port;
+	wxChoice* m_delay;
 	wxChoice* m_txInvert;
 	wxChoice* m_rxInvert;
 	wxChoice* m_channel;

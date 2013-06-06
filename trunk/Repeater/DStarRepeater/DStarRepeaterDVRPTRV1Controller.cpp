@@ -83,10 +83,11 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
-CDStarRepeaterDVRPTRV1Controller::CDStarRepeaterDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
+CDStarRepeaterDVRPTRV1Controller::CDStarRepeaterDVRPTRV1Controller(const wxString& port, const wxString& path, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_port(port),
 m_path(path),
+m_delay(delay),
 m_rxInvert(rxInvert),
 m_txInvert(txInvert),
 m_channel(channel),
@@ -144,12 +145,12 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 	wxLogMessage(wxT("Starting DV-RPTR1 Modem Controller thread"));
 
 	// Clock every 5ms-ish
-	CTimer pollTimer(200U, 0U, 250U);
+	CTimer pollTimer(200U, 0U, 100U);
 
 	pollTimer.start();
 
 	while (!m_stopped) {
-		// Poll the modem status every 250ms
+		// Poll the modem status every 100ms
 		if (pollTimer.hasExpired()) {
 			bool ret = readStatus();
 			if (!ret) {
@@ -1106,6 +1107,9 @@ bool CDStarRepeaterDVRPTRV1Controller::openModem()
 	bool ret = m_serial.open();
 	if (!ret)
 		return false;
+
+	if (m_delay)
+		::wxMilliSleep(3000UL);
 
 	ret = readVersion();
 	if (!ret) {

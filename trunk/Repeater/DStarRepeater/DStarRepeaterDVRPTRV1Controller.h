@@ -47,7 +47,7 @@ enum RESP_TYPE_V1 {
 
 class CDStarRepeaterDVRPTRV1Controller : public wxThread, public IDStarRepeaterModem {
 public:
-	CDStarRepeaterDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	CDStarRepeaterDVRPTRV1Controller(const wxString& port, const wxString& path, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDStarRepeaterDVRPTRV1Controller();
 
 	virtual void* Entry();
@@ -73,6 +73,7 @@ public:
 private:
 	wxString                   m_port;
 	wxString                   m_path;
+	bool                       m_delay;
 	bool                       m_rxInvert;
 	bool                       m_txInvert;
 	bool                       m_channel;

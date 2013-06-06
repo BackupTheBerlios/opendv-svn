@@ -83,6 +83,7 @@ const wxString  KEY_GMSK_INTERFACE     = wxT("gmskInterfaceType");
 const wxString  KEY_GMSK_ADDRESS       = wxT("gmskAddress");
 
 const wxString  KEY_DVRPTR1_PORT       = wxT("dvrptr1Port");
+const wxString  KEY_DVRPTR1_DELAY      = wxT("dvrptr1Delay");
 const wxString  KEY_DVRPTR1_RXINVERT   = wxT("dvrptr1RXInvert");
 const wxString  KEY_DVRPTR1_TXINVERT   = wxT("dvrptr1TXInvert");
 const wxString  KEY_DVRPTR1_CHANNEL    = wxT("dvrptr1Channel");
@@ -173,6 +174,7 @@ const USB_INTERFACE   DEFAULT_GMSK_INTERFACE     = UI_LIBUSB;
 const unsigned int    DEFAULT_GMSK_ADDRESS       = 0x0300U;
 
 const wxString        DEFAULT_DVRPTR1_PORT       = wxEmptyString;
+const bool            DEFAULT_DVRPTR1_DELAY      = false;
 const bool            DEFAULT_DVRPTR1_RXINVERT   = false;
 const bool            DEFAULT_DVRPTR1_TXINVERT   = false;
 const bool            DEFAULT_DVRPTR1_CHANNEL    = false;
@@ -261,6 +263,7 @@ m_dvapSquelch(DEFAULT_DVAP_SQUELCH),
 m_gmskInterface(DEFAULT_GMSK_INTERFACE),
 m_gmskAddress(DEFAULT_GMSK_ADDRESS),
 m_dvrptr1Port(DEFAULT_DVRPTR1_PORT),
+m_dvrptr1Delay(DEFAULT_DVRPTR1_DELAY),
 m_dvrptr1RXInvert(DEFAULT_DVRPTR1_RXINVERT),
 m_dvrptr1TXInvert(DEFAULT_DVRPTR1_TXINVERT),
 m_dvrptr1Channel(DEFAULT_DVRPTR1_CHANNEL),
@@ -427,6 +430,8 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 
 	m_config->Read(m_name + KEY_DVRPTR1_PORT, &m_dvrptr1Port, DEFAULT_DVRPTR1_PORT);
 
+	m_config->Read(m_name + KEY_DVRPTR1_DELAY, &m_dvrptr1Delay, DEFAULT_DVRPTR1_DELAY);
+
 	m_config->Read(m_name + KEY_DVRPTR1_RXINVERT, &m_dvrptr1RXInvert, DEFAULT_DVRPTR1_RXINVERT);
 
 	m_config->Read(m_name + KEY_DVRPTR1_TXINVERT, &m_dvrptr1TXInvert, DEFAULT_DVRPTR1_TXINVERT);
@@ -540,6 +545,7 @@ m_dvapSquelch(DEFAULT_DVAP_SQUELCH),
 m_gmskInterface(DEFAULT_GMSK_INTERFACE),
 m_gmskAddress(DEFAULT_GMSK_ADDRESS),
 m_dvrptr1Port(DEFAULT_DVRPTR1_PORT),
+m_dvrptr1Delay(DEFAULT_DVRPTR1_DELAY),
 m_dvrptr1RXInvert(DEFAULT_DVRPTR1_RXINVERT),
 m_dvrptr1TXInvert(DEFAULT_DVRPTR1_TXINVERT),
 m_dvrptr1Channel(DEFAULT_DVRPTR1_CHANNEL),
@@ -747,6 +753,9 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 			m_gmskAddress = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_DVRPTR1_PORT)) {
 			m_dvrptr1Port = val;
+		} else if (key.IsSameAs(KEY_DVRPTR1_DELAY)) {
+			val.ToLong(&temp1);
+			m_dvrptr1Delay = temp1 == 1L;
 		} else if (key.IsSameAs(KEY_DVRPTR1_RXINVERT)) {
 			val.ToLong(&temp1);
 			m_dvrptr1RXInvert = temp1 == 1L;
@@ -1034,9 +1043,10 @@ void CDStarRepeaterConfig::setGMSK(USB_INTERFACE type, unsigned int address)
 	m_gmskAddress   = address;
 }
 
-void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& delay, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
 {
 	port     = m_dvrptr1Port;
+	delay    = m_dvrptr1Delay;
 	rxInvert = m_dvrptr1RXInvert;
 	txInvert = m_dvrptr1TXInvert;
 	channel  = m_dvrptr1Channel;
@@ -1044,9 +1054,10 @@ void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& rxInvert, bool& txIn
 	txDelay  = m_dvrptr1TXDelay;
 }
 
-void CDStarRepeaterConfig::setDVRPTR1(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+void CDStarRepeaterConfig::setDVRPTR1(const wxString& port, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
 {
 	m_dvrptr1Port     = port;
+	m_dvrptr1Delay    = delay;
 	m_dvrptr1RXInvert = rxInvert;
 	m_dvrptr1TXInvert = txInvert;
 	m_dvrptr1Channel  = channel;
@@ -1163,6 +1174,7 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_GMSK_ADDRESS, long(m_gmskAddress));
 
 	m_config->Write(m_name + KEY_DVRPTR1_PORT, m_dvrptr1Port);
+	m_config->Write(m_name + KEY_DVRPTR1_DELAY, m_dvrptr1Delay);
 	m_config->Write(m_name + KEY_DVRPTR1_RXINVERT, m_dvrptr1RXInvert);
 	m_config->Write(m_name + KEY_DVRPTR1_TXINVERT, m_dvrptr1TXInvert);
 	m_config->Write(m_name + KEY_DVRPTR1_CHANNEL, m_dvrptr1Channel);
@@ -1277,6 +1289,7 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_GMSK_ADDRESS.c_str(), m_gmskAddress); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR1_PORT.c_str(), m_dvrptr1Port.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_DELAY.c_str(), m_dvrptr1Delay ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_RXINVERT.c_str(), m_dvrptr1RXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_TXINVERT.c_str(), m_dvrptr1TXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_CHANNEL.c_str(), m_dvrptr1Channel ? 1 : 0); file.AddLine(buffer);
