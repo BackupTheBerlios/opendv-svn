@@ -42,9 +42,7 @@ private:
 	unsigned int m_pressCount;
 	wxChar       m_lastChar;
 
-	wxString processDExtra(const wxString& command) const;
-	wxString processDPlus(const wxString& command) const;
-	wxString processDCS(const wxString& command) const;
+	wxString processReflector(const wxString& prefix, const wxString& command) const;
 	wxString processCCS(const wxString& command) const;
 };
 

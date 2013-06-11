@@ -162,11 +162,11 @@ wxString CDTMF::translate()
 		return wxT("       L");
 
 	if (command.GetChar(0U) == wxT('*'))
-		return processDPlus(command.Mid(1U));
+		return processReflector(wxT("REF"), command.Mid(1U));
 	else if (command.GetChar(0U) == wxT('B'))
-		return processDExtra(command.Mid(1U));
+		return processReflector(wxT("XRF"), command.Mid(1U));
 	else if (command.GetChar(0U) == wxT('D'))
-		return processDCS(command.Mid(1U));
+		return processReflector(wxT("DCS"), command.Mid(1U));
 	else
 		return processCCS(command);
 }
@@ -181,49 +181,7 @@ void CDTMF::reset()
 	m_lastChar = wxT(' ');
 }
 
-wxString CDTMF::processDExtra(const wxString& command) const
-{
-	unsigned int len = command.Len();
-	if (len < 2U || len > 4U)
-		return wxEmptyString;
-
-	unsigned long n;
-	command.Left(len - 1U).ToULong(&n);
-	if (n == 0L)
-		return wxEmptyString;
-
-	wxChar c = command.GetChar(len - 1U);
-	if (c != wxT('A') && c != wxT('B') && c != wxT('C') && c != wxT('D'))
-		return wxEmptyString;
-
-	wxString out;
-	out.Printf(wxT("XRF%03lu%cL"), n, c);
-
-	return out;
-}
-
-wxString CDTMF::processDPlus(const wxString& command) const
-{
-	unsigned int len = command.Len();
-	if (len < 2U || len > 4U)
-		return wxEmptyString;
-
-	unsigned long n;
-	command.Left(len - 1U).ToULong(&n);
-	if (n == 0UL)
-		return wxEmptyString;
-
-	wxChar c = command.GetChar(len - 1U);
-	if (c != wxT('A') && c != wxT('B') && c != wxT('C') && c != wxT('D'))
-		return wxEmptyString;
-
-	wxString out;
-	out.Printf(wxT("REF%03lu%cL"), n, c);
-
-	return out;
-}
-
-wxString CDTMF::processDCS(const wxString& command) const
+wxString CDTMF::processReflector(const wxString& prefix, const wxString& command) const
 {
 	unsigned int len = command.Len();
 
@@ -238,7 +196,7 @@ wxString CDTMF::processDCS(const wxString& command) const
 			return wxEmptyString;
 
 		wxString out;
-		out.Printf(wxT("DCS%03lu%cL"), n, c);
+		out.Printf(wxT("%s%03lu%cL"), prefix.c_str(), n, c);
 	
 		return out;
 	} else {
@@ -258,7 +216,7 @@ wxString CDTMF::processDCS(const wxString& command) const
 		c = wxT('A') + n2 - 1UL;
 
 		wxString out;
-		out.Printf(wxT("DCS%03lu%cL"), n1, c);
+		out.Printf(wxT("%s%03lu%cL"), prefix.c_str(), n1, c);
 	
 		return out;
 	}
