@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130523
+ircDDB Gateway - 20130611
 =========================
 
 20101010
@@ -1323,7 +1323,7 @@ Stop the echoed audio from going out over reflector links.
 Updated XRF008s, REF035s, REF042s, and REF053s IP addresses.
 Added XRF727 and REF060.
 
-201305xx
+20130611
 --------
 
 Added XRF250.
@@ -1331,4 +1331,5 @@ Merge the local *_Hosts.txt file in the RemoteControl and TimerControl programs 
 Add another digit to the decimal part of the frequency to handle 6.25 kHz spacing repeaters.
 Added the USA QuadNET IRC network to the ircDDB configuration panels.
 Allow DTMF numbers to be used for linking to D-Plus and DExtra.
+Add remotecontrold to allow command line gateway control.
 Handle zero Timer Control actions properly.

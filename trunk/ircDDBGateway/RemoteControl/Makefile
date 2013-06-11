@@ -18,8 +18,7 @@ remotecontrold:	RemoteControlAppD.o RemoteControlCallsignData.o RemoteControlCon
 RemoteControlApp.o:		RemoteControlApp.cpp RemoteControlApp.h RemoteControlFrame.h RemoteControlConfig.h RemoteControlDefs.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c RemoteControlApp.cpp
 
-RemoteControlAppD.o:		RemoteControlAppD.cpp RemoteControlConfig.h RemoteControlRemoteControlHandler.h RemoteControlDefs.h ../Common/SHA256.h \
-				../Common/Defs.h
+RemoteControlAppD.o:		RemoteControlAppD.cpp RemoteControlConfig.h RemoteControlRemoteControlHandler.h RemoteControlDefs.h ../Common/SHA256.h ../Common/Defs.h
 				$(CC) $(CFLAGS) -c RemoteControlAppD.cpp
 
 RemoteControlCallsignData.o:		RemoteControlCallsignData.cpp RemoteControlCallsignData.h
