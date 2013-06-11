@@ -152,7 +152,7 @@ int main(int argc, char** argv)
 		::wxUninitialize();
 		return 1;
 	}
-	
+
 	CRemoteControlConfig config(new wxConfig(APPLICATION_NAME), name);
 
 	wxString address, password;
@@ -184,14 +184,14 @@ int main(int argc, char** argv)
 
 	unsigned int count = 0U;
 	while (count < 10U) {
-		RC_TYPE type = handler.readType();
-		if (type == RCT_NONE)
-			handler.retry();
+		::wxMilliSleep(100UL);
 
+		RC_TYPE type = handler.readType();
 		if (type == RCT_RANDOM)
 			break;
 
-		::wxMilliSleep(100UL);
+		if (type == RCT_NONE)
+			handler.retry();
 
 		count++;
 	}
@@ -208,10 +208,9 @@ int main(int argc, char** argv)
 
 	count = 0U;
 	while (count < 10U) {
-		RC_TYPE type = handler.readType();
-		if (type == RCT_NONE)
-			handler.retry();
+		::wxMilliSleep(100UL);
 
+		RC_TYPE type = handler.readType();
 		if (type == RCT_ACK)
 			break;
 
@@ -222,7 +221,8 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
-		::wxMilliSleep(100UL);
+		if (type == RCT_NONE)
+			handler.retry();
 
 		count++;
 	}
@@ -240,10 +240,9 @@ int main(int argc, char** argv)
 
 	count = 0U;
 	while (count < 10U) {
-		RC_TYPE type = handler.readType();
-		if (type == RCT_NONE)
-			handler.retry();
+		::wxMilliSleep(100UL);
 
+		RC_TYPE type = handler.readType();
 		if (type == RCT_ACK)
 			break;
 
@@ -254,7 +253,8 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
-		::wxMilliSleep(100UL);
+		if (type == RCT_NONE)
+			handler.retry();
 
 		count++;
 	}
