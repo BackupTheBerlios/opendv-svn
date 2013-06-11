@@ -16,9 +16,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "RemoteControlRemoteControlHandler.h"
 #include "RemoteControlConfig.h"
 #include "RemoteControlDefs.h"
-#include "Version.h"
+#include "SHA256.h"
+#include "Defs.h"
 
 #include <wx/cmdline.h>
 
@@ -59,8 +61,8 @@ int main(int argc, char** argv)
 
 	wxCmdLineParser parser(argc, argv);
 	parser.AddOption(NAME_OPTION, wxEmptyString, wxEmptyString, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
-	parser.AddParam(REPEATER_PARAM,  wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MANDATORY);
-	parser.AddParam(ACTION_PARAM,    wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MANDATORY);
+	parser.AddParam(REPEATER_PARAM,  wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
+	parser.AddParam(ACTION_PARAM,    wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddParam(RECONNECT_PARAM, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 	parser.AddParam(REFLECTOR_PARAM, wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
 
@@ -73,19 +75,30 @@ int main(int argc, char** argv)
 	wxString name;
 	parser.Found(NAME_OPTION, &name);
 
+	if (parser.GetParamCount() < 2U) {
+		::fprintf(stderr, "remotecontrold: invalid command line usage: remotecontrold <repeater> <link|unlink> [<reconnect> <reflector>], exiting\n");
+		::wxUninitialize();
+		return 1;
+	}
+
 	wxString repeater = parser.GetParam(0U);
-	repeater.Replace(wxT('_'), wxT(' '));
+	repeater.Replace(wxT("_"), wxT(" "));
+	repeater.MakeUpper();
 
 	wxString actionText = parser.GetParam(1U);
+	actionText.MakeLower();
 
 	wxString reconnectText;
-	if (parser.GetParamCount() > 2U)
-		reconnectText = parser.getParam(2U);
+	if (parser.GetParamCount() > 2U) {
+		reconnectText = parser.GetParam(2U);
+		reconnectText.MakeLower();
+	}
 
 	wxString reflector;
 	if (parser.GetParamCount() > 3U) {
-		reflector = parser.getParam(3U);
-		reflector.Replace(wxT('_'), wxT(' '));
+		reflector = parser.GetParam(3U);
+		reflector.Replace(wxT("_"), wxT(" "));
+		reflector.MakeUpper();
 	}
 
 	RECONNECT reconnect;
@@ -132,7 +145,7 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
-		reconnect = RECONNECT_NONE;
+		reconnect = RECONNECT_NEVER;
 		reflector.Clear();
 	} else {
 		::fprintf(stderr, "remotecontrold: invalid action value passed, only link or unlink is allowed, exiting\n");
@@ -144,7 +157,7 @@ int main(int argc, char** argv)
 
 	wxString address, password;
 	unsigned int port;
-	config,getConfig(address, port, password);
+	config.getConfig(address, port, password);
 
 	if (address.IsEmpty() || port == 0U || password.IsEmpty()) {
 		::fprintf(stderr, "remotecontrold: no address, port, or password is set, exiting\n");
@@ -221,7 +234,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	handler.setLogginIn(true);
+	handler.setLoggedIn(true);
 
 	handler.link(repeater, reconnect, reflector);
 
