@@ -1331,3 +1331,4 @@ Merge the local *_Hosts.txt file in the RemoteControl and TimerControl programs 
 Add another digit to the decimal part of the frequency to handle 6.25 kHz spacing repeaters.
 Added the USA QuadNET IRC network to the ircDDB configuration panels.
 Allow DTMF numbers to be used for linking to D-Plus and DExtra.
+Handle zero Timer Control actions properly.

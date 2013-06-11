@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,9 +36,6 @@ CTimerControlItemFile::~CTimerControlItemFile()
 bool CTimerControlItemFile::writeItems(CTimerControlItem** items, unsigned int count)
 {
 	wxMutexLocker locker(m_mutex);
-
-	if (count == 0U)
-		return true;
 
 	wxFFile file;
 	bool ret = file.Open(m_fileName, wxT("wb"));

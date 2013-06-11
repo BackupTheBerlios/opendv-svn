@@ -1,4 +1,4 @@
-all:			remotecontrol
+all:			remotecontrol remotecontrold
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
@@ -10,8 +10,16 @@ remotecontrol:	RemoteControlApp.o RemoteControlCallsignData.o RemoteControlConfi
 				RemoteControlRepeaterData.o RemoteControlRepeaterPanel.o RemoteControlStarNetGroup.o RemoteControlStarNetPanel.o \
 				RemoteControlStarNetUser.o ../Common/Common.a $(LIBS)
 
+remotecontrold:	RemoteControlAppD.o RemoteControlCallsignData.o RemoteControlConfig.o RemoteControlLinkData.o RemoteControlRemoteControlHandler.o \
+				RemoteControlRepeaterData.o RemoteControlStarNetGroup.o RemoteControlStarNetUser.o ../Common/Common.a
+				$(CC) $(LDFLAGS) -o remotecontrold RemoteControlAppD.o RemoteControlCallsignData.o RemoteControlConfig.o RemoteControlLinkData.o \
+				RemoteControlRemoteControlHandler.o	RemoteControlRepeaterData.o RemoteControlStarNetGroup.o RemoteControlStarNetUser.o ../Common/Common.a $(LIBS)
+
 RemoteControlApp.o:		RemoteControlApp.cpp RemoteControlApp.h RemoteControlFrame.h RemoteControlConfig.h RemoteControlDefs.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c RemoteControlApp.cpp
+
+RemoteControlAppD.o:		RemoteControlAppD.cpp RemoteControlConfig.h RemoteControlDefs.h ../Common/Version.h
+				$(CC) $(CFLAGS) -c RemoteControlAppD.cpp
 
 RemoteControlCallsignData.o:		RemoteControlCallsignData.cpp RemoteControlCallsignData.h
 				$(CC) $(CFLAGS) -c RemoteControlCallsignData.cpp
@@ -53,10 +61,11 @@ RemoteControlStarNetPanel.o:	RemoteControlStarNetPanel.cpp RemoteControlStarNetP
 RemoteControlStarNetUser.o:	RemoteControlStarNetUser.cpp RemoteControlStarNetUser.h
 				$(CC) $(CFLAGS) -c RemoteControlStarNetUser.cpp
 
-install:		remotecontrol
+install:		remotecontrol remotecontrold
 				install -d -g bin -o root -m 0775 $(BINDIR)
 				install -g bin -o root -m 0775 remotecontrol $(BINDIR)
+				install -g bin -o root -m 0775 remotecontrold $(BINDIR)
 
 clean:
-				rm -f core remotecontrol *.o *~ *.bak
+				rm -f core remotecontrol remotecontrold *.o *~ *.bak
 
