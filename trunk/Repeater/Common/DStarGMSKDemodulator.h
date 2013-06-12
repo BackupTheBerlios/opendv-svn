@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2010 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2010,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,25 +14,29 @@
 #ifndef	DStarGMSKDemodulator_H
 #define	DStarGMSKDemodulator_H
 
-#include "Demodulator.h"
+#include "DStarDefines.h"
 #include "FIRFilter.h"
+#include "Utils.h"
 
-class CDStarGMSKDemodulator : public IDemodulator {
+class CDStarGMSKDemodulator {
 public:
 	CDStarGMSKDemodulator();
-	virtual ~CDStarGMSKDemodulator();
+	~CDStarGMSKDemodulator();
 
-	virtual TRISTATE decode(wxFloat32 val, bool listening);
+	TRISTATE decode(wxFloat32 val);
 
-	virtual void setInvert(bool set);
+	void setInvert(bool set);
 
-	virtual void reset();
+	void reset();
+
+	void lock(bool on);
 
 private:
 	CFIRFilter   m_filter;
 	bool         m_invert;
 	unsigned int m_pll;
 	bool         m_prev;
+	bool         m_lock;
 };
 
 #endif

@@ -48,6 +48,7 @@ const unsigned char DVRPTR_MSG_RSVD1   = 0x1CU;
 const unsigned char DVRPTR_MSG_RSVD2   = 0x1DU;
 const unsigned char DVRPTR_MSG_RSVD3   = 0x1EU;
 const unsigned char DVRPTR_SET_TESTMDE = 0x1FU;
+const unsigned char DVRPTR_DEBUG       = 0x30U;		// Private
 
 const unsigned char DVRPTR_ACK = 0x06U;
 const unsigned char DVRPTR_NAK = 0x15U;
@@ -300,6 +301,10 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 			case RT1_GET_VERSION:
 			case RT1_GET_SERIAL:
 			case RT1_GET_CONFIG:
+				break;
+
+			case RT1_DEBUG:
+				CUtils::dump(wxT("DV-RPTR V1 Debug"), m_buffer + 4U, length - DVRPTR_HEADER_LENGTH - 1U);
 				break;
 
 			default:
@@ -837,10 +842,8 @@ RESP_TYPE_V1 CDStarRepeaterDVRPTRV1Controller::getResponse(unsigned char *buffer
 	if (ret == 0)
 		return RT1_TIMEOUT;
 
-	if (buffer[0U] != DVRPTR_FRAME_START) {
-		wxLogError(wxT("DV-RPTR frame start is incorrect - 0x%02X"), buffer[0U]);
-		return RT1_UNKNOWN;
-	}
+	if (buffer[0U] != DVRPTR_FRAME_START)
+		return RT1_TIMEOUT;
 
 	unsigned int offset = 1U;
 
@@ -910,6 +913,8 @@ RESP_TYPE_V1 CDStarRepeaterDVRPTRV1Controller::getResponse(unsigned char *buffer
 			return RT1_RXLOST;
 		case DVRPTR_SET_TESTMDE:
 			return RT1_SET_TESTMDE;
+		case DVRPTR_DEBUG:
+			return RT1_DEBUG;
 		default:
 			return RT1_UNKNOWN;
 	}
@@ -1109,7 +1114,7 @@ bool CDStarRepeaterDVRPTRV1Controller::openModem()
 		return false;
 
 	if (m_delay)
-		::wxMilliSleep(3000UL);
+		::wxMilliSleep(2000UL);
 
 	ret = readVersion();
 	if (!ret) {

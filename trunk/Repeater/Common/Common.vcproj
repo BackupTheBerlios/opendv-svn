@@ -552,10 +552,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Demodulator.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarDefines.h"
 				>
 			</File>

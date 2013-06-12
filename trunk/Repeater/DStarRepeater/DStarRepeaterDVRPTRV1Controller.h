@@ -42,7 +42,8 @@ enum RESP_TYPE_V1 {
 	RT1_DATA,
 	RT1_EOT,
 	RT1_RXLOST,
-	RT1_SET_TESTMDE
+	RT1_SET_TESTMDE,
+	RT1_DEBUG
 };
 
 class CDStarRepeaterDVRPTRV1Controller : public wxThread, public IDStarRepeaterModem {

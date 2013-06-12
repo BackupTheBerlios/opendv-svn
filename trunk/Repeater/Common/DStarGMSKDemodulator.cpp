@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2010 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2010,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -12,7 +12,6 @@
  */
 
 #include "DStarGMSKDemodulator.h"
-#include "DStarDefines.h"
 
 const wxFloat32 FILTER_COEFFS_TABLE[] = {
 	/* 2400 Hz */
@@ -53,7 +52,8 @@ CDStarGMSKDemodulator::CDStarGMSKDemodulator() :
 m_filter(FILTER_COEFFS_TABLE, FILTER_COEFFS_LENGTH),
 m_invert(false),
 m_pll(0U),
-m_prev(false)
+m_prev(false),
+m_lock(false)
 {
 }
 
@@ -61,7 +61,7 @@ CDStarGMSKDemodulator::~CDStarGMSKDemodulator()
 {
 }
 
-TRISTATE CDStarGMSKDemodulator::decode(wxFloat32 val, bool listening)
+TRISTATE CDStarGMSKDemodulator::decode(wxFloat32 val)
 {
 	TRISTATE state = STATE_UNKNOWN;
 
@@ -101,4 +101,9 @@ void CDStarGMSKDemodulator::reset()
 void CDStarGMSKDemodulator::setInvert(bool set)
 {
 	m_invert = set;
+}
+
+void CDStarGMSKDemodulator::lock(bool on)
+{
+	m_lock = on;
 }

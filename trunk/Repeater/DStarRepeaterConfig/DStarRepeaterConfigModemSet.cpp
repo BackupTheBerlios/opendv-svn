@@ -170,7 +170,8 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 	} else if (type.IsSameAs(wxT("Sound Card"))) {
 		wxString rxDevice, txDevice;
 		bool txInvert, rxInvert;
-		unsigned int modLevel, txDelay;
+		wxFloat32 modLevel;
+		unsigned int txDelay;
 		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
 		CDStarRepeaterConfigSoundCardSet modem(this, -1, rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
 		if (modem.ShowModal() == wxID_OK) {

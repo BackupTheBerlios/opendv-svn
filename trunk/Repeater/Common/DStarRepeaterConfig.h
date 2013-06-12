@@ -79,8 +79,8 @@ public:
 	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const;
 	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
 
-	void getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, unsigned int& modLevel, unsigned int& txDelay) const;
-	void setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, unsigned int modLevel, unsigned int txDelay);
+	void getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& modLevel, unsigned int& txDelay) const;
+	void setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 modLevel, unsigned int txDelay);
 
 	bool write();
 
@@ -179,7 +179,7 @@ private:
 	wxString      m_soundCardTXDevice;
 	bool          m_soundCardRXInvert;
 	bool          m_soundCardTXInvert;
-	unsigned int  m_soundCardModLevel;
+	wxFloat32     m_soundCardModLevel;
 	unsigned int  m_soundCardTXDelay;
 };
 

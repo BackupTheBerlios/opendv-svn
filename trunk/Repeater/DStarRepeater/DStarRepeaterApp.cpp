@@ -16,6 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DStarRepeaterSoundCardController.h"
 #include "DStarRepeaterDVRPTRV1Controller.h"
 #include "DStarRepeaterDVRPTRV2Controller.h"
 #include "DStarRepeaterDVAPController.h"
@@ -395,6 +396,14 @@ void CDStarRepeaterApp::createThread()
 		m_config->getGMSK(iface, address);
 		wxLogInfo(wxT("GMSK, interface: %d, address: %04X"), int(iface), address);
 		modem = new CDStarRepeaterGMSKController(iface, address);
+	} else if (modemType.IsSameAs(wxT("Sound Card"))) {
+		wxString rxDevice, txDevice;
+		bool rxInvert, txInvert;
+		wxFloat32 modLevel;
+		unsigned int txDelay;
+		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
+		wxLogInfo(wxT("Sound Card, devices: %s:%s, invert: %d:%d, tx level: %.2f, tx delay: %u ms"), rxDevice.c_str(), txDevice.c_str(), int(rxInvert), int(txInvert), modLevel, txDelay);
+		modem = new CDStarRepeaterSoundCardController(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());
 	}

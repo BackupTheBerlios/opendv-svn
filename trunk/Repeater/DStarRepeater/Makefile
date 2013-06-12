@@ -4,29 +4,30 @@ CFLAGS :=		-I../Common $(CFLAGS)
 
 dstarrepeater:	DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o \
 					DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o \
-					DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o ../Common/Common.a
+					DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o \
 					DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterDVAPController.o \
-					DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o ../Common/Common.a $(LIBS)
+					DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o \
+					../Common/Common.a $(LIBS)
 
 dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterStatusData.o \
 					DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o \
-					../Common/Common.a
+					DStarRepeaterSoundCardController.o ../Common/Common.a
 				$(CC) $(LDFLAGS) -o dstarrepeaterd DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
 					DStarRepeaterStatusData.o DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o \
-					DStarRepeaterGMSKController.o ../Common/Common.a $(LIBS)
+					DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o ../Common/Common.a $(LIBS)
 
 DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterFrame.h DStarRepeaterDefs.h DStarRepeaterStatusData.h DStarRepeaterLogger.h DStarRepeaterThreadHelper.h \
 					DStarRepeaterDVAPController.h DStarRepeaterDVRPTRV1Controller.h DStarRepeaterDVRPTRV2Controller.h DStarRepeaterGMSKController.h \
-					../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h ../Common/Version.h \
-					../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h ../Common/DStarRepeaterConfig.h \
-					../Common/ArduinoController.h
+					DStarRepeaterSoundCardController.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h \
+					../Common/Version.h ../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h \
+					../Common/DStarRepeaterConfig.h ../Common/ArduinoController.h
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterDefs.h DStarRepeaterDVAPController.h DStarRepeaterDVRPTRV1Controller.h DStarRepeaterGMSKController.h \
-					DStarRepeaterDVRPTRV2Controller.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
+					DStarRepeaterDVRPTRV2Controller.h DStarRepeaterSoundCardController.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
 					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
 					../Common/RaspberryController.h ../Common/ArduinoController.h ../Common/DStarRepeaterConfig.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
@@ -55,6 +56,11 @@ DStarRepeaterGMSKController.o:	DStarRepeaterGMSKController.cpp DStarRepeaterGMSK
 
 DStarRepeaterLogger.o:	DStarRepeaterLogger.cpp DStarRepeaterLogger.h DStarRepeaterApp.h
 				$(CC) $(CFLAGS) -c DStarRepeaterLogger.cpp
+
+DStarRepeaterSoundCardController.o:	DStarRepeaterSoundCardController.cpp DStarRepeaterSoundCardController.h DStarRepeaterModem.h \
+					../Common/SoundCardReaderWriter.h ../Common/RingBuffer.h ../Common/HeaderData.h ../Common/Utils.h ../Common/CCITTChecksumReverse.h \
+					../Common/DStarGMSKDemodulator.h ../Common/DStarGMSKModulator.h ../Common/AudioCallback.h ../Common/DStarDefines.h ../Common/Utils.h
+				$(CC) $(CFLAGS) -c DStarRepeaterSoundCardController.cpp
 
 DStarRepeaterStatusData.o:	DStarRepeaterStatusData.cpp DStarRepeaterStatusData.h DStarRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterStatusData.cpp

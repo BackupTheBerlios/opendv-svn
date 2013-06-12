@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\WinUSB&quot;;&quot;C:\wxWidgets-2.8.12\include\msvc&quot;;&quot;$(SolutionDir)Common&quot;;&quot;C:\wxWidgets-2.8.12\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\WinUSB&quot;;&quot;$(SolutionDir)..\portaudio\include&quot;;&quot;C:\wxWidgets-2.8.12\include\msvc&quot;;&quot;$(SolutionDir)Common&quot;;&quot;C:\wxWidgets-2.8.12\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;WINVER=0x0400;__WXMSW__;WXUSINGDLL;wxUSE_GUI=1;__WXDEBUG__;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib setupapi.lib hid.lib WinUSB.lib"
+				AdditionalDependencies="wsock32.lib setupapi.lib hid.lib WinUSB.lib portaudio_x86.lib "
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\WinUSB&quot;;&quot;$(SolutionDir)..\HID&quot;;&quot;C:\wxWidgets-2.8.12\lib\vc_dll&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\portaudio\build\msvc\Win32\Debug&quot;;&quot;$(SolutionDir)..\WinUSB&quot;;&quot;$(SolutionDir)..\HID&quot;;&quot;C:\wxWidgets-2.8.12\lib\vc_dll&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\WinUSB&quot;;&quot;C:\wxWidgets-2.8.12\include\msvc&quot;;&quot;$(SolutionDir)Common&quot;;&quot;C:\wxWidgets-2.8.12\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\WinUSB&quot;;&quot;$(SolutionDir)..\portaudio\include&quot;;&quot;C:\wxWidgets-2.8.12\include\msvc&quot;;&quot;$(SolutionDir)Common&quot;;&quot;C:\wxWidgets-2.8.12\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WINVER=0x0400;__WXMSW__;WXUSINGDLL;wxUSE_GUI=1;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -136,9 +136,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib setupapi.lib hid.lib WinUsb.lib"
+				AdditionalDependencies="wsock32.lib setupapi.lib hid.lib WinUsb.lib portaudio_x86.lib "
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\WinUSB&quot;;&quot;$(SolutionDir)..\HID&quot;;&quot;C:\wxWidgets-2.8.12\lib\vc_dll&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\portaudio\build\msvc\Win32\Release&quot;;&quot;$(SolutionDir)..\WinUSB&quot;;&quot;$(SolutionDir)..\HID&quot;;&quot;C:\wxWidgets-2.8.12\lib\vc_dll&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -209,6 +209,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterSoundCardController.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterStatusData.cpp"
 				>
 			</File>
@@ -272,6 +276,10 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterRXThread.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterSoundCardController.h"
 				>
 			</File>
 			<File

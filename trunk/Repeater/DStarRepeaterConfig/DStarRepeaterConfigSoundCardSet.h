@@ -26,7 +26,7 @@
 
 class CDStarRepeaterConfigSoundCardSet : public wxDialog {
 public:
-	CDStarRepeaterConfigSoundCardSet(wxWindow* parent, int id, const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, unsigned int modLevel, unsigned int txDelay);
+	CDStarRepeaterConfigSoundCardSet(wxWindow* parent, int id, const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 modLevel, unsigned int txDelay);
 	virtual ~CDStarRepeaterConfigSoundCardSet();
 
 	virtual bool Validate();
@@ -35,7 +35,7 @@ public:
 	virtual wxString     getTXDevice() const;
 	virtual bool         getRXInvert() const;
 	virtual bool         getTXInvert() const;
-	virtual unsigned int getModLevel() const;
+	virtual wxFloat32    getModLevel() const;
 	virtual unsigned int getTXDelay() const;
 
 private:

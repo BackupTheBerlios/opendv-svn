@@ -72,10 +72,10 @@ DStarFECDecoder.o:	DStarFECDecoder.cpp DStarFECDecoder.h FECDecoder.h
 DStarFECEncoder.o:	DStarFECEncoder.cpp DStarFECEncoder.h FECEncoder.h
 		$(CC) $(CFLAGS) -c DStarFECEncoder.cpp
 
-DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h Demodulator.h FIRFilter.h DStarDefines.h
+DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h FIRFilter.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c DStarGMSKDemodulator.cpp
 
-DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h Modulator.h FIRFilter.h
+DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h FIRFilter.h
 		$(CC) $(CFLAGS) -c DStarGMSKModulator.cpp
 
 DStarInterleaver.o:	DStarInterleaver.cpp DStarInterleaver.h DStarDefines.h Interleaver.h

@@ -1864,3 +1864,4 @@ Added XRF727.
 
 Added XRF250.
 Add an optional startup delay for the DV-RPTR V1.
+Add a sound card interface to the D-Star Repeater.

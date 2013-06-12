@@ -435,7 +435,7 @@ void CSoundCardRepeaterTXRXThread::receiveRadio()
 	}
 
 	for (unsigned int i = 0U; i < length; i++) {
-		TRISTATE state = m_demodulator.decode(audio[i] * m_rxLevel, m_rxState == DSRXS_LISTENING);
+		TRISTATE state = m_demodulator.decode(audio[i] * m_rxLevel);
 
 		switch (state) {
 			case STATE_TRUE:

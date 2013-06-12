@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,17 +14,16 @@
 #ifndef	DStarGMSKModulator_H
 #define	DStarGMSKModulator_H
 
-#include "Modulator.h"
 #include "FIRFilter.h"
 
-class CDStarGMSKModulator : public IModulator {
+class CDStarGMSKModulator {
 public:
 	CDStarGMSKModulator();
-	virtual ~CDStarGMSKModulator();
+	~CDStarGMSKModulator();
 
-	virtual unsigned int code(bool bit, wxFloat32* buffer, unsigned int length);
+	unsigned int code(bool bit, wxFloat32* buffer, unsigned int length);
 
-	virtual void setInvert(bool set);
+	void setInvert(bool set);
 
 private:
 	CFIRFilter m_filter;
