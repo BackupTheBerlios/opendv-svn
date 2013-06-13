@@ -22,6 +22,7 @@
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 150U;
 const unsigned int CONTROL_WIDTH2 = 300U;
+const unsigned int CONTROL_WIDTH3 = 350U;
 
 const unsigned int ADDRESS_LENGTH  = 15U;
 const unsigned int PORT_LENGTH     = 5U;
@@ -41,7 +42,7 @@ m_txDelay(NULL)
 	wxStaticText* rxDeviceLabel = new wxStaticText(this, -1, _("RX Device"));
 	sizer->Add(rxDeviceLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	m_rxDevice = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1));
+	m_rxDevice = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH3, -1));
 	sizer->Add(m_rxDevice, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxArrayString devs = CSoundCardReaderWriter::getReadDevices();
@@ -55,7 +56,7 @@ m_txDelay(NULL)
 	wxStaticText* txDeviceLabel = new wxStaticText(this, -1, _("TX Device"));
 	sizer->Add(txDeviceLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	m_txDevice = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1));
+	m_txDevice = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH3, -1));
 	sizer->Add(m_txDevice, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	devs = CSoundCardReaderWriter::getWriteDevices();

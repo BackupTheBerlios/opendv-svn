@@ -29,6 +29,11 @@
 
 #include <wx/wx.h>
 
+enum DSRSCC_STATE {
+	DSRSCCS_NONE,
+	DSRSCCS_HEADER,
+	DSRSCCS_DATA
+};
 
 class CDStarRepeaterSoundCardController : public wxThread, public IDStarRepeaterModem, public IAudioCallback {
 public:
@@ -61,15 +66,40 @@ private:
 	CRingBuffer<wxFloat32>     m_txAudio;
 	CRingBuffer<wxFloat32>     m_rxAudio;
 	bool                       m_stopped;
+	DSRSCC_STATE               m_rxState;
+	wxUint32                   m_patternBuffer;
 	wxMutex                    m_mutex;
 	unsigned char              m_readType;
 	unsigned int               m_readLength;
 	unsigned char*             m_readBuffer;
 	CDStarGMSKDemodulator      m_demodulator;
 	CDStarGMSKModulator        m_modulator;
+	unsigned int               m_preambleCount;
+	unsigned int               m_preambleTimer;
+	unsigned char*             m_rxBuffer;
+	unsigned int               m_rxBufferBits;
+	unsigned int               m_dataBytes;
+	unsigned int               m_mar;
+	int*                       m_pathMetric;
+	unsigned int*              m_pathMemory0;
+	unsigned int*              m_pathMemory1;
+	unsigned int*              m_pathMemory2;
+	unsigned int*              m_pathMemory3;
+	unsigned char*             m_fecOutput;
+
+	void processNone(bool bit);
+	void processHeader(bool bit);
+	void processData(bool bit);
+
+	bool rxHeader(unsigned char* in, unsigned char* out);
+	void acs(int* metric);
+	void viterbiDecode(int* data);
+	void traceBack();
 
 	void txHeader(const unsigned char* in, unsigned char* out);
 	void writeBits(unsigned char c);
+
+	unsigned int countBits(wxUint32 num);
 };
 
 #endif

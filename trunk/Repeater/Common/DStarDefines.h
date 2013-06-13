@@ -86,6 +86,7 @@ const unsigned int DV_FRAME_MAX_LENGTH_BITS  = DV_FRAME_LENGTH_BITS + 24U;
 const unsigned int DV_FRAME_MAX_LENGTH_BYTES = DV_FRAME_MAX_LENGTH_BITS / 8U;
 
 const unsigned int FEC_SECTION_LENGTH_BITS  = 660U;
+const unsigned int FEC_SECTION_LENGTH_BYTES = 83U;
 
 const unsigned int RADIO_HEADER_LENGTH_BITS  = 330U;
 const unsigned int RADIO_HEADER_LENGTH_BYTES = 41U;

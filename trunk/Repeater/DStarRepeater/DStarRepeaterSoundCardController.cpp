@@ -26,6 +26,30 @@ const unsigned char TAG_HEADER   = 0x00U;
 const unsigned char TAG_DATA     = 0x01U;
 const unsigned char TAG_DATA_END = 0x02U;
 
+const unsigned int  NIBBLE_BITS[] = {0U, 1U, 1U, 2U, 1U, 2U, 2U, 3U, 1U, 2U, 2U, 3U, 2U, 3U, 3U, 4U};
+
+const unsigned int MAX_SYNC_BYTES = 3U * DV_FRAME_LENGTH_BYTES + 1U;
+
+// D-Star bit order version of 0x55 0x55 0x55 0x55
+const wxUint32     BIT_SYNC_DATA = 0xAAAAAAAAU;
+const wxUint32     BIT_SYNC_MASK = 0xFFFFFFFFU;
+const unsigned int BIT_SYNC_ERRS = 1U;
+
+// D-Star bit order version of 0x55 0x55 0x6E 0x0A
+const wxUint32     FRAME_SYNC_DATA = 0xAAAA7650U;
+const wxUint32     FRAME_SYNC_MASK = 0x000FFFFFU;
+const unsigned int FRAME_SYNC_ERRS = 2U;
+
+// D-Star bit order version of 0x55 0x2D 0x16
+const wxUint32     DATA_SYNC_DATA = 0x00AAB468U;
+const wxUint32     DATA_SYNC_MASK = 0x00FFFFFFU;
+const unsigned int DATA_SYNC_ERRS = 3U;
+
+// D-Star bit order version of 0x55 0x55 0xC8 0x7A
+const wxUint32     END_SYNC_DATA = 0xAAAA135EU;
+const wxUint32     END_SYNC_MASK = 0xFFFFFFFFU;
+const unsigned int END_SYNC_ERRS = 3U;
+
 const unsigned char BIT_SYNC    = 0xAAU;
 
 const unsigned char FRAME_SYNC0 = 0xEAU;
@@ -34,6 +58,9 @@ const unsigned char FRAME_SYNC2 = 0x00U;
 
 const unsigned char BIT_MASK_TABLE0[] = {0x7FU, 0xBFU, 0xDFU, 0xEFU, 0xF7U, 0xFBU, 0xFDU, 0xFEU};
 const unsigned char BIT_MASK_TABLE1[] = {0x80U, 0x40U, 0x20U, 0x10U, 0x08U, 0x04U, 0x02U, 0x01U};
+
+#define WRITE_BIT(p,i,b)    p[(i)/8] = (b) ? (p[(i)/8] | BIT_MASK_TABLE1[(i)%8]) : (p[(i)/8] & BIT_MASK_TABLE0[(i)%8])
+#define READ_BIT(p,i)       (p[(i)/8] & BIT_MASK_TABLE1[(i)%8])
 
 const unsigned char INTERLEAVE_TABLE_TX[] = {
   0x00U, 0x04U, 0x04U, 0x00U, 0x07U, 0x04U, 0x0BU, 0x00U, 0x0EU, 0x04U,
@@ -335,15 +362,29 @@ m_sound(rxDevice, txDevice, DSTAR_RADIO_SAMPLE_RATE, DSTAR_RADIO_BLOCK_SIZE),
 m_modLevel(modLevel),
 m_txDelay(txDelay),
 m_rxData(1000U),
-m_rxAudio(4800U),
 m_txAudio(48000U),
+m_rxAudio(4800U),
 m_stopped(false),
+m_rxState(DSRSCCS_NONE),
+m_patternBuffer(0x00U),
 m_mutex(),
 m_readType(),
 m_readLength(0U),
 m_readBuffer(NULL),
 m_demodulator(),
-m_modulator()
+m_modulator(),
+m_preambleCount(0U),
+m_preambleTimer(0U),
+m_rxBuffer(NULL),
+m_rxBufferBits(0U),
+m_dataBytes(0U),
+m_mar(0U),
+m_pathMetric(NULL),
+m_pathMemory0(NULL),
+m_pathMemory1(NULL),
+m_pathMemory2(NULL),
+m_pathMemory3(NULL),
+m_fecOutput(NULL)
 {
 	wxASSERT(!rxDevice.IsEmpty());
 	wxASSERT(!txDevice.IsEmpty());
@@ -354,11 +395,26 @@ m_modulator()
 	m_sound.setCallback(this, 0U);
 
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
+	m_rxBuffer   = new unsigned char[FEC_SECTION_LENGTH_BYTES];
+
+	m_pathMetric  = new int[4U];
+	m_pathMemory0 = new unsigned int[42U];
+	m_pathMemory1 = new unsigned int[42U];
+	m_pathMemory2 = new unsigned int[42U];
+	m_pathMemory3 = new unsigned int[42U];
+	m_fecOutput   = new unsigned char[42U];
 }
 
 CDStarRepeaterSoundCardController::~CDStarRepeaterSoundCardController()
 {
 	delete[] m_readBuffer;
+	delete[] m_rxBuffer;
+	delete[] m_pathMetric;
+	delete[] m_pathMemory0;
+	delete[] m_pathMemory1;
+	delete[] m_pathMemory2;
+	delete[] m_pathMemory3;
+	delete[] m_fecOutput;
 }
 
 bool CDStarRepeaterSoundCardController::start()
@@ -379,6 +435,45 @@ void* CDStarRepeaterSoundCardController::Entry()
 	wxLogMessage(wxT("Starting Sound Card Controller thread"));
 
 	while (!m_stopped) {
+		wxFloat32 val;
+		while (m_rxAudio.getData(&val, 1U) == 1U) {
+			TRISTATE state = m_demodulator.decode(val);
+			switch (state) {
+				case STATE_TRUE:
+					switch (m_rxState) {
+						case DSRSCCS_NONE:
+							processNone(true);
+							break;
+						case DSRSCCS_HEADER:
+							processHeader(true);
+							break;
+						case DSRSCCS_DATA:
+							processData(true);
+							break;
+						default:
+							break;
+					}
+					break;
+				case STATE_FALSE:
+					switch (m_rxState) {
+						case DSRSCCS_NONE:
+							processNone(false);
+							break;
+						case DSRSCCS_HEADER:
+							processHeader(false);
+							break;
+						case DSRSCCS_DATA:
+							processData(false);
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
 		Sleep(10UL);
 	}
 
@@ -638,5 +733,414 @@ void CDStarRepeaterSoundCardController::writeBits(unsigned char c)
 		m_txAudio.addData(buffer, DSTAR_RADIO_BIT_LENGTH);
 
 		mask <<= 1;
+	}
+}
+
+void CDStarRepeaterSoundCardController::processNone(bool bit)
+{
+	m_patternBuffer <<= 1;
+    if (bit)
+		m_patternBuffer |= 0x01U;
+
+	// Fuzzy matching of the frame sync sequence
+	if (countBits((m_patternBuffer & FRAME_SYNC_MASK) ^ FRAME_SYNC_DATA) <= FRAME_SYNC_ERRS) {
+		// Lock the GMSK PLL to this signal
+		m_demodulator.lock(true);
+
+		::memset(m_rxBuffer, 0x00U, FEC_SECTION_LENGTH_BYTES);
+		m_rxBufferBits = 0U;
+
+		m_preambleTimer = 0U;
+		m_preambleCount = 0U;
+		m_rxState = DSRSCCS_HEADER;
+		return;
+	}
+
+	// Fuzzy matching of the data sync bit sequence
+	if (countBits((m_patternBuffer & DATA_SYNC_MASK) ^ DATA_SYNC_DATA) <= DATA_SYNC_ERRS) {
+		// Lock the GMSK PLL to this signal
+		m_demodulator.lock(true);
+
+		::memset(m_rxBuffer, 0x00U, DV_FRAME_LENGTH_BYTES);
+		m_rxBufferBits = 0U;
+
+		m_dataBytes = MAX_SYNC_BYTES;
+
+		m_preambleTimer = 0U;
+		m_preambleCount = 0U;
+		m_rxState = DSRSCCS_DATA;
+		return;
+	}
+
+	// Fuzzy matching of the bit sync sequence
+	if (countBits((m_patternBuffer & BIT_SYNC_MASK) ^ BIT_SYNC_DATA) <= BIT_SYNC_ERRS) {
+		m_patternBuffer = 0x00U;
+		if (m_preambleCount++ == 4U) {
+			m_demodulator.lock(true);
+  
+			m_preambleTimer = 600U;    // 1s = 4800 bits = 600 bytes
+			m_preambleCount = 0U;
+		}
+	}
+
+	// Handle the timeout of the preamble to release the demodulator lock
+	if (m_preambleTimer > 0U) {
+		m_preambleTimer--;
+		if (m_preambleTimer == 0U)
+			m_demodulator.lock(false);
+	}
+}
+
+void CDStarRepeaterSoundCardController::processHeader(bool bit)
+{
+	m_patternBuffer <<= 1;
+	m_rxBuffer[m_rxBufferBits / 8U] >>= 1;
+
+	if (bit) {
+		m_patternBuffer |= 0x01U;
+		m_rxBuffer[m_rxBufferBits / 8U] |= 0x80U;
+	}
+
+	m_rxBufferBits++;
+
+	// A full FEC header
+	if (m_rxBufferBits == FEC_SECTION_LENGTH_BITS) {
+		// Process the scrambling, interleaving and FEC, then return if the chcksum was correct
+		unsigned char header[RADIO_HEADER_LENGTH_BYTES];
+		bool ok = rxHeader(m_rxBuffer, header);
+		if (ok) {
+			// The checksum is correct
+			m_mutex.Lock();
+
+			unsigned int space = m_rxData.freeSpace();
+			if (space < 43U) {
+				wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
+			} else {
+				unsigned char data[2U];
+				data[0U] = TAG_HEADER;
+				data[1U] = RADIO_HEADER_LENGTH_BYTES;
+				m_rxData.addData(data, 2U);
+				m_rxData.addData(header, RADIO_HEADER_LENGTH_BYTES);
+			}
+
+			m_mutex.Unlock();
+
+			::memset(m_rxBuffer, 0x00U, DV_FRAME_LENGTH_BYTES);
+			m_rxBufferBits = 0U;
+
+			m_rxState = DSRSCCS_DATA;
+			m_dataBytes = MAX_SYNC_BYTES;
+		} else {
+			// Release PLL ACQ
+			m_demodulator.lock(false);
+
+			// The checksum failed, return to looking for syncs
+			m_patternBuffer = 0x00U;
+			m_rxState = DSRSCCS_NONE;
+		}
+	}
+}
+
+void CDStarRepeaterSoundCardController::processData(bool bit)
+{
+	m_patternBuffer <<= 1;
+	m_rxBuffer[m_rxBufferBits / 8U] >>= 1;
+
+	if (bit) {
+		m_patternBuffer |= 0x01U;
+		m_rxBuffer[m_rxBufferBits / 8U] |= 0x80U;
+	}
+
+	m_rxBufferBits++;
+
+	// Fuzzy matching of the end frame sequences
+	if (countBits((m_patternBuffer & END_SYNC_MASK) ^ END_SYNC_DATA) <= END_SYNC_ERRS) {
+		// Release the GMSK PLL
+		m_demodulator.lock(false);
+
+		m_mutex.Lock();
+
+		unsigned int space = m_rxData.freeSpace();
+		if (space < 2U) {
+			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
+		} else {
+			unsigned char data[2U];
+			data[0U] = TAG_DATA_END;
+			data[1U] = 0U;
+			m_rxData.addData(data, 2U);
+		}
+
+		m_mutex.Unlock();
+
+		m_patternBuffer = 0x00U;
+		m_rxState = DSRSCCS_NONE;
+		return;
+	}
+
+	// Fuzzy matching of the data sync bit sequence
+	bool syncSeen = false;
+	if (countBits((m_patternBuffer & DATA_SYNC_MASK) ^ DATA_SYNC_DATA) <= DATA_SYNC_ERRS) {
+		syncSeen = true;
+		m_dataBytes = MAX_SYNC_BYTES;
+	}
+
+	// We've not seen a data sync for too long, signal RXLOST and change to RX_NONE
+	if (m_dataBytes == 0U) {
+		// Release the GMSK PLL
+		m_demodulator.lock(false);
+
+		m_mutex.Lock();
+
+		unsigned int space = m_rxData.freeSpace();
+		if (space < 2U) {
+			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
+		} else {
+			unsigned char data[2U];
+			data[0U] = TAG_DATA_END;
+			data[1U] = 0U;
+			m_rxData.addData(data, 2U);
+		}
+
+		m_mutex.Unlock();
+
+		m_patternBuffer = 0x00U;
+		m_rxState = DSRSCCS_NONE;
+		return;
+	}
+
+	// Send a data frame to the host if the required number of bits have been received or a data sync has been
+	// seen. This latter case is probably not good news as bit synchronisation has slipped at some point.
+	if (m_rxBufferBits == DV_FRAME_LENGTH_BITS || syncSeen) {
+		m_mutex.Lock();
+
+		unsigned int space = m_rxData.freeSpace();
+		if (space < 14U) {
+			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
+		} else {
+			unsigned char data[2U];
+			data[0U] = TAG_DATA;
+			data[1U] = DV_FRAME_LENGTH_BYTES;
+			m_rxData.addData(data, 2U);
+			m_rxData.addData(m_rxBuffer, DV_FRAME_LENGTH_BYTES);
+		}
+
+		m_mutex.Unlock();
+    
+		// Start the next frame
+		::memset(m_rxBuffer, 0x00U, DV_FRAME_LENGTH_BYTES);
+		m_rxBufferBits = 0U;
+	}
+}
+
+unsigned int CDStarRepeaterSoundCardController::countBits(wxUint32 num)
+{
+    unsigned int count = 0U;
+
+    for (unsigned int i = 0U; i < 8U; i++)
+        count += NIBBLE_BITS[(num >> (i * 4U)) & 0x0FU];
+
+    return count;
+}
+
+bool CDStarRepeaterSoundCardController::rxHeader(unsigned char* in, unsigned char* out)
+{
+	int i;
+
+	// Descramble the header
+	for (i = 0; i < FEC_SECTION_LENGTH_BYTES; i++)
+		in[i] ^= SCRAMBLE_TABLE_RX[i];
+
+	unsigned char intermediate[84U];
+	for (i = 0; i < 84; i++)
+		intermediate[i] = 0x00U;
+
+	// Deinterleave the header
+	i = 0;
+	while (i < 660) {
+		unsigned char d = in[i / 8];
+
+		if (d & 0x80U)
+			intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+		i++;
+
+		if (d & 0x40U)
+			intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+		i++;
+
+		if (d & 0x20U)
+			intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+		i++;
+
+		if (d & 0x10U)
+			intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+		i++;
+
+		if (i < 660) {
+			if (d & 0x08U)
+				intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+			i++;
+
+			if (d & 0x04U)
+				intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+			i++;
+
+			if (d & 0x02U)
+				intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+			i++;
+
+			if (d & 0x01U)
+				intermediate[INTERLEAVE_TABLE_RX[i * 2U]] |= (0x80U >> INTERLEAVE_TABLE_RX[i * 2U + 1U]);
+			i++;
+		}
+	}
+
+	for (i = 0; i < 4; i++)
+		m_pathMetric[i] = 0;
+
+	int decodeData[2U];
+
+	m_mar = 0U;
+	for (i = 0; i < 660; i += 2) {
+		if (intermediate[i / 8] & (0x80U >> i % 8))
+			decodeData[1U] = 1U;
+		else
+			decodeData[1U] = 0U;
+
+		if (intermediate[i / 8] & (0x40U >> i % 8))
+			decodeData[0U] = 1U;
+		else
+			decodeData[0U] = 0U;
+
+		viterbiDecode(decodeData);
+	}
+
+	traceBack();
+
+	for (i = 0; i < RADIO_HEADER_LENGTH_BYTES; i++)
+		out[i] = 0x00U;
+
+	unsigned int j = 0;
+	for (i = 329; i >= 0; i--) {
+		if (READ_BIT(m_fecOutput, i))
+			out[j / 8] |= (0x01U << (j % 8));
+
+		j++;
+	}
+
+	CCCITTChecksumReverse cksum;
+	cksum.update(out, RADIO_HEADER_LENGTH_BYTES - 2U);
+
+	return cksum.check(out + RADIO_HEADER_LENGTH_BYTES - 2U);
+}
+
+void CDStarRepeaterSoundCardController::acs(int* metric)
+{
+	int tempMetric[4U];
+
+	unsigned int j = m_mar / 8U;
+	unsigned int k = m_mar % 8U;
+
+	// Pres. state = S0, Prev. state = S0 & S2
+	int m1 = metric[0U] + m_pathMetric[0U];
+	int m2 = metric[4U] + m_pathMetric[2U];
+	tempMetric[0U] = m1 < m2 ? m1 : m2;
+	if (m1 < m2)
+		m_pathMemory0[j] &= BIT_MASK_TABLE0[k];
+	else
+		m_pathMemory0[j] |= BIT_MASK_TABLE1[k];
+
+	// Pres. state = S1, Prev. state = S0 & S2
+	m1 = metric[1U] + m_pathMetric[0U];
+	m2 = metric[5U] + m_pathMetric[2U];
+	tempMetric[1U] = m1 < m2 ? m1 : m2;
+	if (m1 < m2)
+		m_pathMemory1[j] &= BIT_MASK_TABLE0[k];
+	else
+		m_pathMemory1[j] |= BIT_MASK_TABLE1[k];
+
+	// Pres. state = S2, Prev. state = S2 & S3
+	m1 = metric[2U] + m_pathMetric[1U];
+	m2 = metric[6U] + m_pathMetric[3U];
+	tempMetric[2U] = m1 < m2 ? m1 : m2;
+	if (m1 < m2)
+		m_pathMemory2[j] &= BIT_MASK_TABLE0[k];
+	else
+		m_pathMemory2[j] |= BIT_MASK_TABLE1[k];
+
+	// Pres. state = S3, Prev. state = S1 & S3
+ 	m1 = metric[3U] + m_pathMetric[1U];
+	m2 = metric[7U] + m_pathMetric[3U];
+	tempMetric[3U] = m1 < m2 ? m1 : m2;
+	if (m1 < m2)
+		m_pathMemory3[j] &= BIT_MASK_TABLE0[k];
+	else
+		m_pathMemory3[j] |= BIT_MASK_TABLE1[k];
+
+	for (unsigned int i = 0U; i < 4U; i++)
+		m_pathMetric[i] = tempMetric[i];
+
+	m_mar++;
+}
+ 
+void CDStarRepeaterSoundCardController::viterbiDecode(int* data)
+{
+	int metric[8U];
+
+	metric[0] = (data[1] ^ 0) + (data[0] ^ 0);
+	metric[1] = (data[1] ^ 1) + (data[0] ^ 1);
+	metric[2] = (data[1] ^ 1) + (data[0] ^ 0);
+	metric[3] = (data[1] ^ 0) + (data[0] ^ 1);
+	metric[4] = (data[1] ^ 1) + (data[0] ^ 1);
+	metric[5] = (data[1] ^ 0) + (data[0] ^ 0);
+	metric[6] = (data[1] ^ 0) + (data[0] ^ 1);
+	metric[7] = (data[1] ^ 1) + (data[0] ^ 0);
+
+	acs(metric);
+}
+
+void CDStarRepeaterSoundCardController::traceBack()
+{
+	// Start from the S0, t=31
+	unsigned int j = 0U;
+	unsigned int k = 0U;
+	for (int i = 329; i >= 0; i--) {
+		switch (j) {
+			case 0U: // if state = S0
+				if (READ_BIT(m_pathMemory0, i) == 0)
+					j = 0U;
+				else
+					j = 2U;
+				WRITE_BIT(m_fecOutput, k, 0);
+				k++;
+				break;
+
+
+			case 1U: // if state = S1
+				if (READ_BIT(m_pathMemory1, i) == 0)
+					j = 0U;
+				else
+ 					j = 2U;
+				WRITE_BIT(m_fecOutput, k, 1);
+				k++;
+ 				break;
+
+			case 2: // if state = S1
+				if (READ_BIT(m_pathMemory2, i) == 0)
+ 					j = 1U;
+				else
+					j = 3U;
+				WRITE_BIT(m_fecOutput, k, 0);
+				k++;
+				break;
+
+			case 3U: // if state = S1
+				if (READ_BIT(m_pathMemory3, i) == 0)
+					j = 1U;
+				else
+					j = 3U;
+				WRITE_BIT(m_fecOutput, k, 1);
+				k++;
+				break;
+		}
 	}
 }

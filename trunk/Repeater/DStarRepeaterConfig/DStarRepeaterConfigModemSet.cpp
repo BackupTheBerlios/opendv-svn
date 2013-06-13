@@ -32,7 +32,7 @@ BEGIN_EVENT_TABLE(CDStarRepeaterConfigModemSet, wxPanel)
 END_EVENT_TABLE()
 
 const unsigned int BORDER_SIZE   = 5U;
-const unsigned int CONTROL_WIDTH = 100U;
+const unsigned int CONTROL_WIDTH = 130U;
 
 CDStarRepeaterConfigModemSet::CDStarRepeaterConfigModemSet(wxWindow* parent, int id, const wxString& title, CDStarRepeaterConfig* config, const wxString& type) :
 wxPanel(parent, id),
