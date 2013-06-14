@@ -78,7 +78,7 @@ private:
 	unsigned int               m_preambleTimer;
 	unsigned char*             m_rxBuffer;
 	unsigned int               m_rxBufferBits;
-	unsigned int               m_dataBytes;
+	unsigned int               m_dataBits;
 	unsigned int               m_mar;
 	int*                       m_pathMetric;
 	unsigned int*              m_pathMemory0;
