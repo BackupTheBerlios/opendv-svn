@@ -60,9 +60,14 @@ const unsigned char FRAME_SYNC2 = 0x00U;
 
 const unsigned char BIT_MASK_TABLE0[] = {0x7FU, 0xBFU, 0xDFU, 0xEFU, 0xF7U, 0xFBU, 0xFDU, 0xFEU};
 const unsigned char BIT_MASK_TABLE1[] = {0x80U, 0x40U, 0x20U, 0x10U, 0x08U, 0x04U, 0x02U, 0x01U};
+const unsigned char BIT_MASK_TABLE2[] = {0xFEU, 0xFDU, 0xFBU, 0xF7U, 0xEFU, 0xDFU, 0xBFU, 0x7FU};
+const unsigned char BIT_MASK_TABLE3[] = {0x01U, 0x02U, 0x04U, 0x08U, 0x10U, 0x20U, 0x40U, 0x80U};
 
-#define WRITE_BIT(p,i,b)    p[(i)/8] = (b) ? (p[(i)/8] | BIT_MASK_TABLE1[(i)%8]) : (p[(i)/8] & BIT_MASK_TABLE0[(i)%8])
-#define READ_BIT(p,i)       (p[(i)/8] & BIT_MASK_TABLE1[(i)%8])
+#define	WRITE_BIT1(p,i,b)	p[(i)/8] = (b) ? (p[(i)/8] | BIT_MASK_TABLE1[(i)%8]) : (p[(i)/8] & BIT_MASK_TABLE0[(i)%8])
+#define	READ_BIT1(p,i)		(p[(i)/8] & BIT_MASK_TABLE1[(i)%8])
+
+#define	WRITE_BIT2(p,i,b)	p[(i)/8] = (b) ? (p[(i)/8] | BIT_MASK_TABLE3[(i)%8]) : (p[(i)/8] & BIT_MASK_TABLE2[(i)%8])
+#define	READ_BIT2(p,i)		(p[(i)/8] & BIT_MASK_TABLE3[(i)%8])
 
 const unsigned char INTERLEAVE_TABLE_TX[] = {
   0x00U, 0x04U, 0x04U, 0x00U, 0x07U, 0x04U, 0x0BU, 0x00U, 0x0EU, 0x04U,
@@ -802,13 +807,10 @@ void CDStarRepeaterSoundCardController::processNone(bool bit)
 void CDStarRepeaterSoundCardController::processHeader(bool bit)
 {
 	m_patternBuffer <<= 1;
-	m_rxBuffer[m_rxBufferBits / 8U] >>= 1;
-
-	if (bit) {
+	if (bit)
 		m_patternBuffer |= 0x01U;
-		m_rxBuffer[m_rxBufferBits / 8U] |= 0x80U;
-	}
 
+	WRITE_BIT2(m_rxBuffer, m_rxBufferBits, bit);
 	m_rxBufferBits++;
 
 	// A full FEC header
@@ -851,13 +853,10 @@ void CDStarRepeaterSoundCardController::processHeader(bool bit)
 void CDStarRepeaterSoundCardController::processData(bool bit)
 {
 	m_patternBuffer <<= 1;
-	m_rxBuffer[m_rxBufferBits / 8U] >>= 1;
-
-	if (bit) {
+	if (bit)
 		m_patternBuffer |= 0x01U;
-		m_rxBuffer[m_rxBufferBits / 8U] |= 0x80U;
-	}
 
+	WRITE_BIT2(m_rxBuffer, m_rxBufferBits, bit);
 	m_rxBufferBits++;
 
 	// Fuzzy matching of the end frame sequences
@@ -1028,7 +1027,7 @@ bool CDStarRepeaterSoundCardController::rxHeader(unsigned char* in, unsigned cha
 
 	unsigned int j = 0;
 	for (i = 329; i >= 0; i--) {
-		if (READ_BIT(m_fecOutput, i))
+		if (READ_BIT1(m_fecOutput, i))
 			out[j / 8] |= (0x01U << (j % 8));
 
 		j++;
@@ -1113,39 +1112,39 @@ void CDStarRepeaterSoundCardController::traceBack()
 	for (int i = 329; i >= 0; i--) {
 		switch (j) {
 			case 0U: // if state = S0
-				if (READ_BIT(m_pathMemory0, i) == 0)
+				if (READ_BIT1(m_pathMemory0, i) == 0)
 					j = 0U;
 				else
 					j = 2U;
-				WRITE_BIT(m_fecOutput, k, 0);
+				WRITE_BIT1(m_fecOutput, k, 0);
 				k++;
 				break;
 
 
 			case 1U: // if state = S1
-				if (READ_BIT(m_pathMemory1, i) == 0)
+				if (READ_BIT1(m_pathMemory1, i) == 0)
 					j = 0U;
 				else
  					j = 2U;
-				WRITE_BIT(m_fecOutput, k, 1);
+				WRITE_BIT1(m_fecOutput, k, 1);
 				k++;
  				break;
 
 			case 2: // if state = S1
-				if (READ_BIT(m_pathMemory2, i) == 0)
+				if (READ_BIT1(m_pathMemory2, i) == 0)
  					j = 1U;
 				else
 					j = 3U;
-				WRITE_BIT(m_fecOutput, k, 0);
+				WRITE_BIT1(m_fecOutput, k, 0);
 				k++;
 				break;
 
 			case 3U: // if state = S1
-				if (READ_BIT(m_pathMemory3, i) == 0)
+				if (READ_BIT1(m_pathMemory3, i) == 0)
 					j = 1U;
 				else
 					j = 3U;
-				WRITE_BIT(m_fecOutput, k, 1);
+				WRITE_BIT1(m_fecOutput, k, 1);
 				k++;
 				break;
 		}

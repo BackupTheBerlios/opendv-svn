@@ -1,4 +1,4 @@
-Repeater - 20130523
+Repeater - 20130615
 ===================
 
 20090530
@@ -1859,7 +1859,7 @@ Fixed GMSK Modem bug in the D-Star Repeater.
 Updated XRF008s IP addresses.
 Added XRF727.
 
-201305xx
+20130615
 --------
 
 Added XRF250.
