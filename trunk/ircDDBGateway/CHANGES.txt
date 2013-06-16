@@ -1333,3 +1333,8 @@ Added the USA QuadNET IRC network to the ircDDB configuration panels.
 Allow DTMF numbers to be used for linking to D-Plus and DExtra.
 Add remotecontrold to allow command line gateway control.
 Handle zero Timer Control actions properly.
+
+201306xx
+--------
+
+Merge the *_Hosts.txt files in the ircDDB Gateway Config program.

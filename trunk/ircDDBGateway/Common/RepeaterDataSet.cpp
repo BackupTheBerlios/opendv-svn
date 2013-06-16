@@ -149,51 +149,78 @@ m_reconnect(NULL)
 	m_reflector->Append(_("None"));
 
 	if (dplusEnabled) {
-		wxFileName fileName(wxFileName::GetHomeDir(), DPLUS_HOSTS_FILE_NAME);
-		if (!fileName.IsFileReadable()) {
-#if defined(__WINDOWS__)
-			fileName.Assign(::wxGetCwd(), DPLUS_HOSTS_FILE_NAME);
-#else
-			fileName.Assign(wxT(DATA_DIR), DPLUS_HOSTS_FILE_NAME);
-#endif
+		wxFileName fileName1(wxFileName::GetHomeDir(), DPLUS_HOSTS_FILE_NAME);
+		if (fileName1.IsFileReadable()) {
+			CHostFile file(fileName1.GetFullPath(), false);
+
+			for (unsigned int i = 0U; i < file.getCount(); i++)
+				m_reflector->Append(file.getName(i).Trim());
 		}
 
-		CHostFile file(fileName.GetFullPath(), false);
+#if defined(__WINDOWS__)
+		wxFileName fileName4(::wxGetCwd(), DPLUS_HOSTS_FILE_NAME);
+#else
+		wxFileName fileName4(wxT(DATA_DIR), DPLUS_HOSTS_FILE_NAME);
+#endif
+		if (fileName4.IsFileReadable()) {
+			CHostFile file(fileName4.GetFullPath(), false);
 
-		for (unsigned int i = 0U; i < file.getCount(); i++)
-			m_reflector->Append(file.getName(i));
+			for (unsigned int i = 0U; i < file.getCount(); i++) {
+				wxString name = file.getName(i).Trim();
+				if (m_reflector->FindString(name) == wxNOT_FOUND)
+					m_reflector->Append(name);
+			}
+		}
 	}
 
 	if (dExtraEnabled) {
-		wxFileName fileName(wxFileName::GetHomeDir(), DEXTRA_HOSTS_FILE_NAME);
-		if (!fileName.IsFileReadable()) {
-#if defined(__WINDOWS__)
-			fileName.Assign(::wxGetCwd(), DEXTRA_HOSTS_FILE_NAME);
-#else
-			fileName.Assign(wxT(DATA_DIR), DEXTRA_HOSTS_FILE_NAME);
-#endif
+		wxFileName fileName2(wxFileName::GetHomeDir(), DEXTRA_HOSTS_FILE_NAME);
+		if (fileName2.IsFileReadable()) {
+			CHostFile file(fileName2.GetFullPath(), false);
+
+			for (unsigned int i = 0U; i < file.getCount(); i++)
+				m_reflector->Append(file.getName(i).Trim());
 		}
 
-		CHostFile file(fileName.GetFullPath(), false);
+#if defined(__WINDOWS__)
+		wxFileName fileName5(::wxGetCwd(), DEXTRA_HOSTS_FILE_NAME);
+#else
+		wxFileName fileName5(wxT(DATA_DIR), DEXTRA_HOSTS_FILE_NAME);
+#endif
+		if (fileName5.IsFileReadable()) {
+			CHostFile file(fileName5.GetFullPath(), false);
 
-		for (unsigned int i = 0U; i < file.getCount(); i++)
-			m_reflector->Append(file.getName(i));
+			for (unsigned int i = 0U; i < file.getCount(); i++) {
+				wxString name = file.getName(i).Trim();
+				if (m_reflector->FindString(name) == wxNOT_FOUND)
+					m_reflector->Append(name);
+			}
+		}
 	}
 
 	if (dcsEnabled) {
-		wxFileName fileName(wxFileName::GetHomeDir(), DCS_HOSTS_FILE_NAME);
-		if (!fileName.IsFileReadable()) {
-#if defined(__WINDOWS__)
-			fileName.Assign(::wxGetCwd(), DCS_HOSTS_FILE_NAME);
-#else
-			fileName.Assign(wxT(DATA_DIR), DCS_HOSTS_FILE_NAME);
-#endif
+		wxFileName fileName3(wxFileName::GetHomeDir(), DCS_HOSTS_FILE_NAME);
+		if (fileName3.IsFileReadable()) {
+			CHostFile file(fileName3.GetFullPath(), false);
+
+			for (unsigned int i = 0U; i < file.getCount(); i++)
+				m_reflector->Append(file.getName(i).Trim());
 		}
 
-		CHostFile file(fileName.GetFullPath(), false);
+#if defined(__WINDOWS__)
+		wxFileName fileName6(::wxGetCwd(), DCS_HOSTS_FILE_NAME);
+#else
+		wxFileName fileName6(wxT(DATA_DIR), DCS_HOSTS_FILE_NAME);
+#endif
+		if (fileName6.IsFileReadable()) {
+			CHostFile file(fileName6.GetFullPath(), false);
 
-		for (unsigned int i = 0U; i < file.getCount(); i++)
-			m_reflector->Append(file.getName(i));
+			for (unsigned int i = 0U; i < file.getCount(); i++) {
+				wxString name = file.getName(i).Trim();
+				if (m_reflector->FindString(name) == wxNOT_FOUND)
+					m_reflector->Append(name);
+			}
+		}
 	}
 
 	sizer->Add(m_reflector, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
