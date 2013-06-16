@@ -142,10 +142,10 @@ m_controller(NULL)
 	noteBook->AddPage(m_control2, _("Control 2"), false);
 
 	wxString controllerType;
-	unsigned int activeHangTime;
-	m_config->getController(controllerType, activeHangTime);
+	unsigned int serialConfig, activeHangTime;
+	m_config->getController(controllerType, serialConfig, activeHangTime);
 
-	m_controller = new CDStarRepeaterConfigControllerSet(noteBook, -1, APPLICATION_NAME, controllerType, activeHangTime);
+	m_controller = new CDStarRepeaterConfigControllerSet(noteBook, -1, APPLICATION_NAME, controllerType, serialConfig, activeHangTime);
 	noteBook->AddPage(m_controller, _("Controller"), false);
 
 	sizer->Add(noteBook, 1, wxALL | wxGROW, BORDER_SIZE);
@@ -271,8 +271,9 @@ void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
 	m_config->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line, output1, output2, output3, output4);
 
 	wxString controllerType     = m_controller->getType();
+	unsigned int serialConfig   = m_controller->getConfig();
 	unsigned int activeHangTime = m_controller->getTime();
-	m_config->setController(controllerType, activeHangTime);
+	m_config->setController(controllerType, serialConfig, activeHangTime);
 
 	m_config->write();
 

@@ -65,6 +65,7 @@ const wxString  KEY_CONTROL_OUTPUT2    = wxT("controlOutput2");
 const wxString  KEY_CONTROL_OUTPUT3    = wxT("controlOutput3");
 const wxString  KEY_CONTROL_OUTPUT4    = wxT("controlOutput4");
 const wxString  KEY_CONTROLLER_TYPE    = wxT("controllerType");
+const wxString  KEY_SERIAL_CONFIG      = wxT("serialConfig");
 const wxString  KEY_ACTIVE_HANG_TIME   = wxT("activeHangTime");
 const wxString  KEY_OUTPUT1            = wxT("output1");
 const wxString  KEY_OUTPUT2            = wxT("output2");
@@ -152,6 +153,7 @@ const wxString        DEFAULT_CONTROL_OUTPUT2    = wxEmptyString;
 const wxString        DEFAULT_CONTROL_OUTPUT3    = wxEmptyString;
 const wxString        DEFAULT_CONTROL_OUTPUT4    = wxEmptyString;
 const wxString        DEFAULT_CONTROLLER_TYPE    = wxEmptyString;
+const unsigned int    DEFAULT_SERIAL_CONFIG      = 1U;
 const unsigned int    DEFAULT_ACTIVE_HANG_TIME   = 0U;
 const bool            DEFAULT_OUTPUT1            = false;
 const bool            DEFAULT_OUTPUT2            = false;
@@ -248,6 +250,7 @@ m_controlOutput2(DEFAULT_CONTROL_OUTPUT2),
 m_controlOutput3(DEFAULT_CONTROL_OUTPUT3),
 m_controlOutput4(DEFAULT_CONTROL_OUTPUT4),
 m_controllerType(DEFAULT_CONTROLLER_TYPE),
+m_serialConfig(DEFAULT_SERIAL_CONFIG),
 m_activeHangTime(DEFAULT_ACTIVE_HANG_TIME),
 m_output1(DEFAULT_OUTPUT1),
 m_output2(DEFAULT_OUTPUT2),
@@ -393,6 +396,9 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 
 	m_config->Read(m_name + KEY_CONTROLLER_TYPE, &m_controllerType, DEFAULT_CONTROLLER_TYPE);
 
+	m_config->Read(m_name + KEY_SERIAL_CONFIG, &temp, long(DEFAULT_SERIAL_CONFIG));
+	m_serialConfig = (unsigned int)temp;
+
 	m_config->Read(m_name + KEY_ACTIVE_HANG_TIME, &temp, long(DEFAULT_ACTIVE_HANG_TIME));
 	m_activeHangTime = (unsigned int)temp;
 
@@ -531,6 +537,7 @@ m_controlOutput2(DEFAULT_CONTROL_OUTPUT2),
 m_controlOutput3(DEFAULT_CONTROL_OUTPUT3),
 m_controlOutput4(DEFAULT_CONTROL_OUTPUT4),
 m_controllerType(DEFAULT_CONTROLLER_TYPE),
+m_serialConfig(DEFAULT_SERIAL_CONFIG),
 m_activeHangTime(DEFAULT_ACTIVE_HANG_TIME),
 m_output1(DEFAULT_OUTPUT1),
 m_output2(DEFAULT_OUTPUT2),
@@ -715,6 +722,9 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 			m_controlOutput4 = val;
 		} else if (key.IsSameAs(KEY_CONTROLLER_TYPE)) {
 			m_controllerType = val;
+		} else if (key.IsSameAs(KEY_SERIAL_CONFIG)) {
+			val.ToULong(&temp2);
+			m_serialConfig = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_ACTIVE_HANG_TIME)) {
 			val.ToULong(&temp2);
 			m_activeHangTime = (unsigned int)temp2;
@@ -967,15 +977,17 @@ void CDStarRepeaterConfig::setControl(bool enabled, const wxString& rpt1Callsign
 	m_controlOutput4      = output4;
 }
 
-void CDStarRepeaterConfig::getController(wxString& type, unsigned int& activeHangTime) const
+void CDStarRepeaterConfig::getController(wxString& type, unsigned int& serialConfig, unsigned int& activeHangTime) const
 {
 	type           = m_controllerType;
+	serialConfig   = m_serialConfig;
 	activeHangTime = m_activeHangTime;
 }
 
-void CDStarRepeaterConfig::setController(const wxString& type, unsigned int activeHangTime)
+void CDStarRepeaterConfig::setController(const wxString& type, unsigned int serialConfig, unsigned int activeHangTime)
 {
 	m_controllerType = type;
+	m_serialConfig   = serialConfig;
 	m_activeHangTime = activeHangTime;
 }
 
@@ -1158,6 +1170,7 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_CONTROL_OUTPUT3, m_controlOutput3);
 	m_config->Write(m_name + KEY_CONTROL_OUTPUT4, m_controlOutput4);
 	m_config->Write(m_name + KEY_CONTROLLER_TYPE, m_controllerType);
+	m_config->Write(m_name + KEY_SERIAL_CONFIG, long(m_serialConfig));
 	m_config->Write(m_name + KEY_ACTIVE_HANG_TIME, long(m_activeHangTime));
 	m_config->Write(m_name + KEY_OUTPUT1, m_output1);
 	m_config->Write(m_name + KEY_OUTPUT2, m_output2);
@@ -1274,6 +1287,7 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_CONTROL_OUTPUT3.c_str(), m_controlOutput3.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_CONTROL_OUTPUT4.c_str(), m_controlOutput4.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_CONTROLLER_TYPE.c_str(), m_controllerType.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SERIAL_CONFIG.c_str(), m_serialConfig); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_ACTIVE_HANG_TIME.c_str(), m_activeHangTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_OUTPUT1.c_str(), m_output1 ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_OUTPUT2.c_str(), m_output2 ? 1 : 0); file.AddLine(buffer);

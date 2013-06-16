@@ -26,6 +26,7 @@
 #include "DStarRepeaterTRXThread.h"
 #include "DStarRepeaterRXThread.h"
 #include "DStarRepeaterTXThread.h"
+#include "SerialLineController.h"
 #include "DStarRepeaterConfig.h"
 #if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
@@ -374,9 +375,9 @@ bool CDStarRepeaterD::createThread()
 	}
 
 	wxString controllerType;
-	unsigned int activeHangTime;
-	config.getController(controllerType, activeHangTime);
-	wxLogInfo(wxT("Controller set to %s, active hang time: %u ms"), controllerType.c_str(), activeHangTime);
+	unsigned int serialConfig, activeHangTime;
+	config.getController(controllerType, serialConfig, activeHangTime);
+	wxLogInfo(wxT("Controller set to %s, config: %u, active hang time: %u ms"), controllerType.c_str(), serialConfig, activeHangTime);
 
 	CExternalController* controller = NULL;
 
@@ -385,6 +386,8 @@ bool CDStarRepeaterD::createThread()
 		unsigned long num;
 		port.ToULong(&num);
 		controller = new CExternalController(new CK8055Controller(num));
+	} else if (controllerType.StartsWith(wxT("Serial - "), &port)) {
+		controller = new CExternalController(new CSerialLineController(port, serialConfig));
 	} else if (controllerType.StartsWith(wxT("Arduino - "), &port)) {
 		controller = new CExternalController(new CArduinoController(port));
 #if defined(RASPBERRY_PI)

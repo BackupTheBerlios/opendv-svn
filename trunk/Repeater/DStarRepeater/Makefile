@@ -22,14 +22,14 @@ DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.
 					DStarRepeaterDVAPController.h DStarRepeaterDVRPTRV1Controller.h DStarRepeaterDVRPTRV2Controller.h DStarRepeaterGMSKController.h \
 					DStarRepeaterSoundCardController.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/ExternalController.h ../Common/RepeaterProtocolHandler.h \
 					../Common/Version.h ../Common/CallsignList.h ../Common/DummyController.h ../Common/K8055Controller.h ../Common/RaspberryController.h \
-					../Common/DStarRepeaterConfig.h ../Common/ArduinoController.h
+					../Common/DStarRepeaterConfig.h ../Common/ArduinoController.h ../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c DStarRepeaterApp.cpp
 
 DStarRepeaterD.o:	DStarRepeaterD.cpp DStarRepeaterD.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
 					DStarRepeaterRXThread.h DStarRepeaterDefs.h DStarRepeaterDVAPController.h DStarRepeaterDVRPTRV1Controller.h DStarRepeaterGMSKController.h \
 					DStarRepeaterDVRPTRV2Controller.h DStarRepeaterSoundCardController.h ../Common/DStarDefines.h ../Common/Logger.h ../Common/RepeaterProtocolHandler.h \
 					../Common/Version.h ../Common/CallsignList.h ../Common/ExternalController.h ../Common/DummyController.h ../Common/K8055Controller.h \
-					../Common/RaspberryController.h ../Common/ArduinoController.h ../Common/DStarRepeaterConfig.h
+					../Common/RaspberryController.h ../Common/ArduinoController.h ../Common/DStarRepeaterConfig.h ../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c DStarRepeaterD.cpp
 
 DStarRepeaterDVAPController.o:	DStarRepeaterDVAPController.cpp DStarRepeaterDVAPController.h DStarRepeaterModem.h ../Common/SerialDataController.h \

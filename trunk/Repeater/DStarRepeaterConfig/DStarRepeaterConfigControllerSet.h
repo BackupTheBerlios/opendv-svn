@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,18 +23,21 @@
 
 class CDStarRepeaterConfigControllerSet : public wxPanel {
 public:
-	CDStarRepeaterConfigControllerSet(wxWindow* parent, int id, const wxString& title, const wxString& type, unsigned int time);
+	CDStarRepeaterConfigControllerSet(wxWindow* parent, int id, const wxString& title, const wxString& type, unsigned int config, unsigned int time);
 	virtual ~CDStarRepeaterConfigControllerSet();
 
 	virtual bool Validate();
 
 	virtual wxString getType() const;
 
+	virtual unsigned int getConfig() const;
+
 	virtual unsigned int getTime() const;
 
 private:
 	wxString  m_title;
 	wxChoice* m_type;
+	wxChoice* m_config;
 	wxSlider* m_time;
 };
 

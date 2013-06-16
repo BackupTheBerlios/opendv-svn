@@ -55,8 +55,8 @@ public:
 	void getControl(bool& enabled, wxString& rpt1Callsign, wxString& rpt2Callsign, wxString& shutdown, wxString& startup, wxString& status1, wxString& status2, wxString& status3, wxString& status4, wxString& status5, wxString& command1, wxString& command1Line, wxString& command2, wxString& command2Line, wxString& command3, wxString& command3Line, wxString& command4, wxString& command4Line, wxString& output1, wxString& output2, wxString& output3, wxString& output4) const;
 	void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4);
 
-	void getController(wxString& type, unsigned int& activeHangTime) const;
-	void setController(const wxString& type, unsigned int activeHangTime);
+	void getController(wxString& type, unsigned int& serialConfig, unsigned int& activeHangTime) const;
+	void setController(const wxString& type, unsigned int serialConfig, unsigned int activeHangTime);
 
 	void getOutputs(bool& out1, bool& out2, bool& out3, bool& out4) const;
 	void setOutputs(bool out1, bool out2, bool out3, bool out4);
@@ -138,6 +138,7 @@ private:
 	wxString      m_controlOutput3;
 	wxString      m_controlOutput4;
 	wxString      m_controllerType;
+	unsigned int  m_serialConfig;
 	unsigned int  m_activeHangTime;
 	bool          m_output1;
 	bool          m_output2;

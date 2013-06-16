@@ -53,12 +53,21 @@ public:
 	static wxArrayString getDevices();
 
 private:
-	wxString     m_device;
-	SERIAL_SPEED m_speed;
+	wxString       m_device;
+	SERIAL_SPEED   m_speed;
 #if defined(__WINDOWS__)
-	HANDLE       m_handle;
+	HANDLE         m_handle;
+	OVERLAPPED     m_readOverlapped;
+	OVERLAPPED     m_writeOverlapped;
+	unsigned char* m_readBuffer;
+	unsigned int   m_readLength;
+	bool           m_readPending;
 #else
-	int          m_fd;
+	int            m_fd;
+#endif
+
+#if defined(__WINDOWS__)
+	int readNonblock(unsigned char* buffer, unsigned int length);
 #endif
 };
 
