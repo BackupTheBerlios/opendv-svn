@@ -363,10 +363,11 @@ const unsigned char SCRAMBLE_TABLE_RX[] = {
   0x7BU, 0x9AU, 0x04U, 0x22U, 0xA3U, 0x6BU, 0x83U, 0x59U, 0x39U, 0x6FU,
   0x00U};
 
-CDStarRepeaterSoundCardController::CDStarRepeaterSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 modLevel, unsigned int txDelay) :
+CDStarRepeaterSoundCardController::CDStarRepeaterSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_sound(rxDevice, txDevice, DSTAR_RADIO_SAMPLE_RATE, DSTAR_RADIO_BLOCK_SIZE),
-m_modLevel(modLevel),
+m_rxLevel(rxLevel),
+m_txLevel(txLevel),
 m_txDelay(txDelay),
 m_rxData(1000U),
 m_txAudio(48000U),
@@ -444,7 +445,7 @@ void* CDStarRepeaterSoundCardController::Entry()
 	while (!m_stopped) {
 		wxFloat32 val;
 		while (m_rxAudio.getData(&val, 1U) == 1U) {
-			TRISTATE state = m_demodulator.decode(val);
+			TRISTATE state = m_demodulator.decode(val * m_rxLevel);
 			switch (state) {
 				case STATE_TRUE:
 					switch (m_rxState) {
@@ -600,8 +601,10 @@ bool CDStarRepeaterSoundCardController::writeHeader(const CHeaderData& header)
 bool CDStarRepeaterSoundCardController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	if (end) {
-		for (unsigned int i = 0U; i < END_PATTERN_LENGTH_BYTES; i++)
-			writeBits(END_PATTERN_BYTES[i]);
+		for (unsigned int j = 0U; j < 3U; j++) {
+			for (unsigned int i = 0U; i < END_PATTERN_LENGTH_BYTES; i++)
+				writeBits(END_PATTERN_BYTES[i]);
+		}
 	} else {
 		for (unsigned int i = 0U; i < length; i++)
 			writeBits(data[i]);
@@ -739,7 +742,7 @@ void CDStarRepeaterSoundCardController::writeBits(unsigned char c)
 		m_modulator.code(bit, buffer, DSTAR_RADIO_BIT_LENGTH);
 
 		for (unsigned int j = 0U; j < DSTAR_RADIO_BIT_LENGTH; j++)
-			buffer[j] *= m_modLevel;
+			buffer[j] *= m_txLevel;
 
 		m_txAudio.addData(buffer, DSTAR_RADIO_BIT_LENGTH);
 

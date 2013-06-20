@@ -170,19 +170,20 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 	} else if (type.IsSameAs(wxT("Sound Card"))) {
 		wxString rxDevice, txDevice;
 		bool txInvert, rxInvert;
-		wxFloat32 modLevel;
+		wxFloat32 rxLevel, txLevel;
 		unsigned int txDelay;
-		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
-		CDStarRepeaterConfigSoundCardSet modem(this, -1, rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
+		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
+		CDStarRepeaterConfigSoundCardSet modem(this, -1, rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
 		if (modem.ShowModal() == wxID_OK) {
 			if (modem.Validate()) {
 				rxDevice = modem.getRXDevice();
 				txDevice = modem.getTXDevice();
 				rxInvert = modem.getRXInvert();
 				txInvert = modem.getTXInvert();
-				modLevel = modem.getModLevel();
+				rxLevel  = modem.getRXLevel();
+				txLevel  = modem.getTXLevel();
 				txDelay  = modem.getTXDelay();
-				m_config->setSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
+				m_config->setSoundCard(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
 			}
 		}
 	}

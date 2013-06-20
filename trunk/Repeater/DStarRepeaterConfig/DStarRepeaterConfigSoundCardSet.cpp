@@ -28,13 +28,14 @@ const unsigned int ADDRESS_LENGTH  = 15U;
 const unsigned int PORT_LENGTH     = 5U;
 
 
-CDStarRepeaterConfigSoundCardSet::CDStarRepeaterConfigSoundCardSet(wxWindow* parent, int id, const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 modLevel, unsigned int txDelay) :
+CDStarRepeaterConfigSoundCardSet::CDStarRepeaterConfigSoundCardSet(wxWindow* parent, int id, const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay) :
 wxDialog(parent, id, wxString(_("Sound Card Settings"))),
 m_rxDevice(NULL),
 m_txDevice(NULL),
 m_rxInvert(NULL),
 m_txInvert(NULL),
-m_modLevel(NULL),
+m_rxLevel(NULL),
+m_txLevel(NULL),
 m_txDelay(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
@@ -85,12 +86,19 @@ m_txDelay(NULL)
 	sizer->Add(m_txInvert, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_txInvert->SetSelection(txInvert ? 1 : 0);
 
-	wxStaticText* modLevelLabel = new wxStaticText(this, -1, _("TX Level (%)"));
-	sizer->Add(modLevelLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	wxStaticText* rxLevelLabel = new wxStaticText(this, -1, _("RX Level (%)"));
+	sizer->Add(rxLevelLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	int level = int(modLevel * 100.0F + 0.5F);
-	m_modLevel = new wxSlider(this, -1, level, 0, 100, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
-	sizer->Add(m_modLevel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	int level = int(rxLevel * 100.0F + 0.5F);
+	m_rxLevel = new wxSlider(this, -1, level, 0, 100, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
+	sizer->Add(m_rxLevel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* txLevelLabel = new wxStaticText(this, -1, _("TX Level (%)"));
+	sizer->Add(txLevelLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	level = int(txLevel * 100.0F + 0.5F);
+	m_txLevel = new wxSlider(this, -1, level, 0, 100, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
+	sizer->Add(m_txLevel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* txDelayLabel = new wxStaticText(this, -1, _("TX Delay (ms)"));
 	sizer->Add(txDelayLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -166,9 +174,14 @@ bool CDStarRepeaterConfigSoundCardSet::getTXInvert() const
 	return n == 1;
 }
 
-wxFloat32 CDStarRepeaterConfigSoundCardSet::getModLevel() const
+wxFloat32 CDStarRepeaterConfigSoundCardSet::getRXLevel() const
 {
-	return wxFloat32(m_modLevel->GetValue()) / 100.0F;
+	return wxFloat32(m_rxLevel->GetValue()) / 100.0F;
+}
+
+wxFloat32 CDStarRepeaterConfigSoundCardSet::getTXLevel() const
+{
+	return wxFloat32(m_txLevel->GetValue()) / 100.0F;
 }
 
 unsigned int CDStarRepeaterConfigSoundCardSet::getTXDelay() const

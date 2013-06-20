@@ -102,7 +102,8 @@ const wxString  KEY_SOUNDCARD_RXDEVICE = wxT("soundCardRXDevice");
 const wxString  KEY_SOUNDCARD_TXDEVICE = wxT("soundCardTXDevice");
 const wxString  KEY_SOUNDCARD_RXINVERT = wxT("soundCardRXInvert");
 const wxString  KEY_SOUNDCARD_TXINVERT = wxT("soundCardTXInvert");
-const wxString  KEY_SOUNDCARD_MODLEVEL = wxT("soundCardModLevel");
+const wxString  KEY_SOUNDCARD_RXLEVEL  = wxT("soundCardRXLevel");
+const wxString  KEY_SOUNDCARD_TXLEVEL  = wxT("soundCardTXLevel");
 const wxString  KEY_SOUNDCARD_TXDELAY  = wxT("soundCardTXDelay");
 
 
@@ -194,7 +195,8 @@ const wxString        DEFAULT_SOUNDCARD_RXDEVICE = wxEmptyString;
 const wxString        DEFAULT_SOUNDCARD_TXDEVICE = wxEmptyString;
 const bool            DEFAULT_SOUNDCARD_RXINVERT = false;
 const bool            DEFAULT_SOUNDCARD_TXINVERT = false;
-const wxFloat32       DEFAULT_SOUNDCARD_MODLEVEL = 1.0F;
+const wxFloat32       DEFAULT_SOUNDCARD_RXLEVEL  = 1.0F;
+const wxFloat32       DEFAULT_SOUNDCARD_TXLEVEL  = 1.0F;
 const unsigned int    DEFAULT_SOUNDCARD_TXDELAY  = 150U;
 
 
@@ -282,7 +284,8 @@ m_soundCardRXDevice(DEFAULT_SOUNDCARD_RXDEVICE),
 m_soundCardTXDevice(DEFAULT_SOUNDCARD_TXDEVICE),
 m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
 m_soundCardTXInvert(DEFAULT_SOUNDCARD_TXINVERT),
-m_soundCardModLevel(DEFAULT_SOUNDCARD_MODLEVEL),
+m_soundCardRXLevel(DEFAULT_SOUNDCARD_RXLEVEL),
+m_soundCardTXLevel(DEFAULT_SOUNDCARD_TXLEVEL),
 m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 {
 	wxASSERT(config != NULL);
@@ -474,8 +477,11 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 
 	m_config->Read(m_name + KEY_SOUNDCARD_TXINVERT, &m_soundCardTXInvert, DEFAULT_SOUNDCARD_TXINVERT);
 
-	m_config->Read(m_name + KEY_SOUNDCARD_MODLEVEL, &temp1, double(DEFAULT_SOUNDCARD_MODLEVEL));
-	m_soundCardModLevel = wxFloat32(temp1);
+	m_config->Read(m_name + KEY_SOUNDCARD_RXLEVEL, &temp1, double(DEFAULT_SOUNDCARD_RXLEVEL));
+	m_soundCardRXLevel = wxFloat32(temp1);
+
+	m_config->Read(m_name + KEY_SOUNDCARD_TXLEVEL, &temp1, double(DEFAULT_SOUNDCARD_TXLEVEL));
+	m_soundCardTXLevel = wxFloat32(temp1);
 
 	m_config->Read(m_name + KEY_SOUNDCARD_TXDELAY, &temp, long(DEFAULT_SOUNDCARD_TXDELAY));
 	m_soundCardTXDelay = (unsigned int)temp;
@@ -569,7 +575,8 @@ m_soundCardRXDevice(DEFAULT_SOUNDCARD_RXDEVICE),
 m_soundCardTXDevice(DEFAULT_SOUNDCARD_TXDEVICE),
 m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
 m_soundCardTXInvert(DEFAULT_SOUNDCARD_TXINVERT),
-m_soundCardModLevel(DEFAULT_SOUNDCARD_MODLEVEL),
+m_soundCardRXLevel(DEFAULT_SOUNDCARD_RXLEVEL),
+m_soundCardTXLevel(DEFAULT_SOUNDCARD_TXLEVEL),
 m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 {
 	wxASSERT(!dir.IsEmpty());
@@ -809,9 +816,12 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 		} else if (key.IsSameAs(KEY_SOUNDCARD_TXINVERT)) {
 			val.ToLong(&temp1);
 			m_soundCardTXInvert = temp1 == 1L;
-		} else if (key.IsSameAs(KEY_SOUNDCARD_MODLEVEL)) {
+		} else if (key.IsSameAs(KEY_SOUNDCARD_RXLEVEL)) {
 			val.ToDouble(&temp3);
-			m_soundCardModLevel = wxFloat32(temp3);
+			m_soundCardRXLevel = wxFloat32(temp3);
+		} else if (key.IsSameAs(KEY_SOUNDCARD_TXLEVEL)) {
+			val.ToDouble(&temp3);
+			m_soundCardTXLevel = wxFloat32(temp3);
 		} else if (key.IsSameAs(KEY_SOUNDCARD_TXDELAY)) {
 			val.ToULong(&temp2);
 			m_soundCardTXDelay = (unsigned int)temp2;
@@ -1099,23 +1109,25 @@ void CDStarRepeaterConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString
 	m_dvrptr2ModLevel   = modLevel;
 }
 
-void CDStarRepeaterConfig::getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& modLevel, unsigned int& txDelay) const
+void CDStarRepeaterConfig::getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& rxLevel, wxFloat32& txLevel, unsigned int& txDelay) const
 {
 	rxDevice = m_soundCardRXDevice;
 	txDevice = m_soundCardTXDevice;
 	rxInvert = m_soundCardRXInvert;
 	txInvert = m_soundCardTXInvert;
-	modLevel = m_soundCardModLevel;
+	rxLevel  = m_soundCardRXLevel;
+	txLevel  = m_soundCardTXLevel;
 	txDelay  = m_soundCardTXDelay;
 }
 
-void CDStarRepeaterConfig::setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 modLevel, unsigned int txDelay)
+void CDStarRepeaterConfig::setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay)
 {
 	m_soundCardRXDevice = rxDevice;
 	m_soundCardTXDevice = txDevice;
 	m_soundCardRXInvert = rxInvert;
 	m_soundCardTXInvert = txInvert;
-	m_soundCardModLevel = modLevel;
+	m_soundCardRXLevel  = rxLevel;
+	m_soundCardTXLevel  = txLevel;
 	m_soundCardTXDelay  = txDelay;
 }
 
@@ -1207,8 +1219,9 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_SOUNDCARD_TXDEVICE, m_soundCardTXDevice);
 	m_config->Write(m_name + KEY_SOUNDCARD_RXINVERT, m_soundCardRXInvert);
 	m_config->Write(m_name + KEY_SOUNDCARD_TXINVERT, m_soundCardTXInvert);
-	m_config->Write(m_name + KEY_SOUNDCARD_MODLEVEL, double(m_soundCardModLevel));
-	m_config->Write(m_name + KEY_SOUNDCARD_TXDELAY, long(m_soundCardTXDelay));
+	m_config->Write(m_name + KEY_SOUNDCARD_RXLEVEL,  double(m_soundCardRXLevel));
+	m_config->Write(m_name + KEY_SOUNDCARD_TXLEVEL,  double(m_soundCardTXLevel));
+	m_config->Write(m_name + KEY_SOUNDCARD_TXDELAY,  long(m_soundCardTXDelay));
 
 	m_config->Flush();
 
@@ -1323,7 +1336,8 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_TXDEVICE.c_str(), m_soundCardTXDevice.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_SOUNDCARD_RXINVERT.c_str(), m_soundCardRXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_SOUNDCARD_TXINVERT.c_str(), m_soundCardTXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_MODLEVEL.c_str(), m_soundCardModLevel); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_RXLEVEL.c_str(), m_soundCardRXLevel); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_TXLEVEL.c_str(), m_soundCardTXLevel); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SOUNDCARD_TXDELAY.c_str(), m_soundCardTXDelay); file.AddLine(buffer);
 
 	bool ret = file.Write();

@@ -37,7 +37,7 @@ enum DSRSCC_STATE {
 
 class CDStarRepeaterSoundCardController : public wxThread, public IDStarRepeaterModem, public IAudioCallback {
 public:
-	CDStarRepeaterSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 modLevel, unsigned int txDelay);
+	CDStarRepeaterSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
 	virtual ~CDStarRepeaterSoundCardController();
 
 	virtual void* Entry();
@@ -60,7 +60,8 @@ public:
 
 private:
 	CSoundCardReaderWriter     m_sound;
-	wxFloat32                  m_modLevel;
+	wxFloat32                  m_rxLevel;
+	wxFloat32                  m_txLevel;
 	unsigned int               m_txDelay;
 	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<wxFloat32>     m_txAudio;

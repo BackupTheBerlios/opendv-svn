@@ -16,7 +16,8 @@ DStarRepeaterConfigApp.o:	DStarRepeaterConfigApp.cpp DStarRepeaterConfigApp.h DS
 DStarRepeaterConfigCallsignSet.o:	DStarRepeaterConfigCallsignSet.cpp DStarRepeaterConfigCallsignSet.h ../Common/CallsignTextCtrl.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigCallsignSet.cpp
 
-DStarRepeaterConfigControllerSet.o:	DStarRepeaterConfigControllerSet.cpp DStarRepeaterConfigControllerSet.h ../Common/SerialDataController.h
+DStarRepeaterConfigControllerSet.o:	DStarRepeaterConfigControllerSet.cpp DStarRepeaterConfigControllerSet.h ../Common/SerialDataController.h \
+					../Common/SerialLineController.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigControllerSet.cpp
 
 DStarRepeaterConfigDVAPSet.o:	DStarRepeaterConfigDVAPSet.cpp DStarRepeaterConfigDVAPSet.h ../Common/SerialDataController.h ../Common/DStarDefines.h

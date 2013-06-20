@@ -400,11 +400,11 @@ void CDStarRepeaterApp::createThread()
 	} else if (modemType.IsSameAs(wxT("Sound Card"))) {
 		wxString rxDevice, txDevice;
 		bool rxInvert, txInvert;
-		wxFloat32 modLevel;
+		wxFloat32 rxLevel, txLevel;
 		unsigned int txDelay;
-		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
-		wxLogInfo(wxT("Sound Card, devices: %s:%s, invert: %d:%d, tx level: %.2f, tx delay: %u ms"), rxDevice.c_str(), txDevice.c_str(), int(rxInvert), int(txInvert), modLevel, txDelay);
-		modem = new CDStarRepeaterSoundCardController(rxDevice, txDevice, rxInvert, txInvert, modLevel, txDelay);
+		m_config->getSoundCard(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
+		wxLogInfo(wxT("Sound Card, devices: %s:%s, invert: %d:%d, levels: %.2f:%.2f, tx delay: %u ms"), rxDevice.c_str(), txDevice.c_str(), int(rxInvert), int(txInvert), rxLevel, txLevel, txDelay);
+		modem = new CDStarRepeaterSoundCardController(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());
 	}
