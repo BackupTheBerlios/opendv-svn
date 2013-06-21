@@ -1337,6 +1337,7 @@ Handle zero Timer Control actions properly.
 201306xx
 --------
 
+Allow multiple links to co-operating DExtra reflectors.
 Merge the *_Hosts.txt files in the ircDDB Gateway Config program.
 Allow for the extra digit in the frequency to be handled by the GUI.
 Updated REF047s IP address.

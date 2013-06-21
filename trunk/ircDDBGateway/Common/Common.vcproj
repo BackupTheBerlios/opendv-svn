@@ -249,6 +249,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DExtraProtocolHandlerPool.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DExtraSet.cpp"
 				>
 			</File>
@@ -564,6 +568,10 @@
 			</File>
 			<File
 				RelativePath=".\DExtraProtocolHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DExtraProtocolHandlerPool.h"
 				>
 			</File>
 			<File

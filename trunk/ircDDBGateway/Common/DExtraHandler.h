@@ -19,7 +19,7 @@
 #ifndef	DExtraHander_H
 #define	DExtraHander_H
 
-#include "DExtraProtocolHandler.h"
+#include "DExtraProtocolHandlerPool.h"
 #include "ReflectorCallback.h"
 #include "DStarDefines.h"
 #include "HeaderLogger.h"
@@ -50,7 +50,8 @@ public:
 	static void initialise(unsigned int maxReflectors);
 
 	static void setCallsign(const wxString& callsign);
-	static void setDExtraProtocolHandler(CDExtraProtocolHandler* handler);
+	static void setDExtraProtocolHandlerPool(CDExtraProtocolHandlerPool* pool);
+	static void setDExtraProtocolIncoming(CDExtraProtocolHandler* handler);
 	static void setHeaderLogger(CHeaderLogger* logger);
 	static void setMaxDongles(unsigned int maxDongles);
 
@@ -80,8 +81,8 @@ public:
 	static wxString getDongles();
 
 protected:
-	CDExtraHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, const in_addr& address, unsigned int port, DIRECTION direction);
-	CDExtraHandler(const wxString& reflector, const in_addr& address, unsigned int port, DIRECTION direction);
+	CDExtraHandler(IReflectorCallback* handler, const wxString& reflector, const wxString& repeater, CDExtraProtocolHandler* protoHandler, const in_addr& address, unsigned int port, DIRECTION direction);
+	CDExtraHandler(CDExtraProtocolHandler* protoHandler, const wxString& reflector, const in_addr& address, unsigned int port, DIRECTION direction);
 	~CDExtraHandler();
 
 	void processInt(CHeaderData& header);
@@ -94,33 +95,35 @@ protected:
 	bool clockInt(unsigned int ms);
 
 private:
-	static unsigned int            m_maxReflectors;
-	static unsigned int            m_maxDongles;
-	static CDExtraHandler**        m_reflectors;
+	static unsigned int                m_maxReflectors;
+	static unsigned int                m_maxDongles;
+	static CDExtraHandler**            m_reflectors;
 
-	static wxString                m_callsign;
-	static CDExtraProtocolHandler* m_handler;
+	static wxString                    m_callsign;
+	static CDExtraProtocolHandlerPool* m_pool;
+	static CDExtraProtocolHandler*     m_incoming;
 
-	static bool                    m_stateChange;
+	static bool                        m_stateChange;
 
-	static CHeaderLogger*          m_headerLogger;
+	static CHeaderLogger*              m_headerLogger;
 
-	wxString            m_reflector;
-	wxString            m_repeater;
-	in_addr             m_yourAddress;
-	unsigned int        m_yourPort;
-	DIRECTION           m_direction;
-	DEXTRA_STATE        m_linkState;
-	IReflectorCallback* m_destination;
-	time_t              m_time;
-	CTimer              m_pollTimer;
-	CTimer              m_pollInactivityTimer;
-	CTimer              m_tryTimer;
-	unsigned int        m_tryCount;
-	unsigned int        m_dExtraId;
-	unsigned int        m_dExtraSeq;
-	CTimer              m_inactivityTimer;
-	CHeaderData*        m_header;
+	wxString                m_reflector;
+	wxString                m_repeater;
+	CDExtraProtocolHandler* m_handler;
+	in_addr                 m_yourAddress;
+	unsigned int            m_yourPort;
+	DIRECTION               m_direction;
+	DEXTRA_STATE            m_linkState;
+	IReflectorCallback*     m_destination;
+	time_t                  m_time;
+	CTimer                  m_pollTimer;
+	CTimer                  m_pollInactivityTimer;
+	CTimer                  m_tryTimer;
+	unsigned int            m_tryCount;
+	unsigned int            m_dExtraId;
+	unsigned int            m_dExtraSeq;
+	CTimer                  m_inactivityTimer;
+	CHeaderData*            m_header;
 
 	unsigned int calcBackoff();
 };

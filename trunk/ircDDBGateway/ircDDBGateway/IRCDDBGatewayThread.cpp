@@ -59,7 +59,7 @@ m_gatewayAddress(),
 m_icomRepeaterHandler(NULL),
 m_hbRepeaterHandler(NULL),
 m_dummyRepeaterHandler(NULL),
-m_dextraHandler(NULL),
+m_dextraPool(NULL),
 m_dplusPool(NULL),
 m_dcsPool(NULL),
 m_g2Handler(NULL),
@@ -155,12 +155,17 @@ void CIRCDDBGatewayThread::run()
 		file.Close();
 
 	wxString dextraAddress = m_dextraEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
-	m_dextraHandler = new CDExtraProtocolHandler(DEXTRA_PORT, dextraAddress);
-	ret = m_dextraHandler->open();
+	m_dextraPool = new CDExtraProtocolHandlerPool(MAX_OUTGOING + 1U, DEXTRA_PORT, dextraAddress);
+	ret = m_dextraPool->open();
 	if (!ret) {
-		wxLogError(wxT("Could not open the DExtra protocol handler"));
-		delete m_dextraHandler;
-		m_dextraHandler = NULL;
+		wxLogError(wxT("Could not open the DExtra protocol pool"));
+		delete m_dextraPool;
+		m_dextraPool = NULL;
+	} else {
+		// Allocate the incoming port
+		CDExtraProtocolHandler* handler = m_dextraPool->getHandler(DEXTRA_PORT);
+		CDExtraHandler::setDExtraProtocolIncoming(handler);
+		CDExtraHandler::setDExtraProtocolHandlerPool(m_dextraPool);
 	}
 
 	wxString dplusAddress = m_dplusEnabled ? m_gatewayAddress : LOOPBACK_ADDRESS;
@@ -200,7 +205,7 @@ void CIRCDDBGatewayThread::run()
 	}
 
 	// Wait here until we have the essentials to run
-	while (!m_killed && (m_dextraHandler == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
+	while (!m_killed && (m_dextraPool == NULL || m_dplusPool == NULL || m_dcsPool == NULL || m_g2Handler == NULL || (m_icomRepeaterHandler == NULL && m_hbRepeaterHandler == NULL && m_dummyRepeaterHandler == NULL) || m_gatewayCallsign.IsEmpty()))
 		::wxMilliSleep(500UL);		// 1/2 sec
 
 	if (m_killed)
@@ -229,7 +234,6 @@ void CIRCDDBGatewayThread::run()
 	CG2Handler::setHeaderLogger(headerLogger);
 
 	CDExtraHandler::setCallsign(m_gatewayCallsign);
-	CDExtraHandler::setDExtraProtocolHandler(m_dextraHandler);
 	CDExtraHandler::setHeaderLogger(headerLogger);
 	CDExtraHandler::setMaxDongles(m_dextraMaxDongles);
 
@@ -398,8 +402,8 @@ void CIRCDDBGatewayThread::run()
 	if (server != NULL)
 		server->stop();
 
-	m_dextraHandler->close();
-	delete m_dextraHandler;
+	m_dextraPool->close();
+	delete m_dextraPool;
 
 	m_dplusPool->close();
 	delete m_dplusPool;
@@ -838,11 +842,11 @@ void CIRCDDBGatewayThread::processRepeater(IRepeaterProtocolHandler* handler)
 void CIRCDDBGatewayThread::processDExtra()
 {
 	for (;;) {
-		DEXTRA_TYPE type = m_dextraHandler->read();
+		DEXTRA_TYPE type = m_dextraPool->read();
 
 		switch (type) {
 			case DE_POLL: {
-					CPollData* poll = m_dextraHandler->readPoll();
+					CPollData* poll = m_dextraPool->readPoll();
 					if (poll != NULL) {
 						CDExtraHandler::process(*poll);
 						delete poll;
@@ -851,7 +855,7 @@ void CIRCDDBGatewayThread::processDExtra()
 				break;
 
 			case DE_CONNECT: {
-					CConnectData* connect = m_dextraHandler->readConnect();
+					CConnectData* connect = m_dextraPool->readConnect();
 					if (connect != NULL) {
 						CDExtraHandler::process(*connect);
 						delete connect;
@@ -860,7 +864,7 @@ void CIRCDDBGatewayThread::processDExtra()
 				break;
 
 			case DE_HEADER: {
-					CHeaderData* header = m_dextraHandler->readHeader();
+					CHeaderData* header = m_dextraPool->readHeader();
 					if (header != NULL) {
 						// wxLogMessage(wxT("DExtra header - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s"), header->getMyCall1().c_str(), header->getMyCall2().c_str(), header->getYourCall().c_str(), header->getRptCall1().c_str(), header->getRptCall2().c_str());
 						CDExtraHandler::process(*header);
@@ -870,7 +874,7 @@ void CIRCDDBGatewayThread::processDExtra()
 				break;
 
 			case DE_AMBE: {
-					CAMBEData* data = m_dextraHandler->readAMBE();
+					CAMBEData* data = m_dextraPool->readAMBE();
 					if (data != NULL) {
 						CDExtraHandler::process(*data);
 						delete data;

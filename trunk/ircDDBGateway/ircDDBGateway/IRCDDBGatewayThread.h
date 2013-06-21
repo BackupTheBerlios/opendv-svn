@@ -22,11 +22,11 @@
 #include "DummyRepeaterProtocolHandler.h"
 #include "IcomRepeaterProtocolHandler.h"
 #include "HBRepeaterProtocolHandler.h"
+#include "DExtraProtocolHandlerPool.h"
 #include "DPlusProtocolHandlerPool.h"
 #include "RepeaterProtocolHandler.h"
 #include "IRCDDBGatewayStatusData.h"
 #include "DCSProtocolHandlerPool.h"
-#include "DExtraProtocolHandler.h"
 #include "G2ProtocolHandler.h"
 #include "RemoteHandler.h"
 #include "CacheManager.h"
@@ -85,7 +85,7 @@ private:
 	CIcomRepeaterProtocolHandler*  m_icomRepeaterHandler;
 	CHBRepeaterProtocolHandler*    m_hbRepeaterHandler;
 	CDummyRepeaterProtocolHandler* m_dummyRepeaterHandler;
-	CDExtraProtocolHandler*        m_dextraHandler;
+	CDExtraProtocolHandlerPool*    m_dextraPool;
 	CDPlusProtocolHandlerPool*     m_dplusPool;
 	CDCSProtocolHandlerPool*       m_dcsPool;
 	CG2ProtocolHandler*       m_g2Handler;
