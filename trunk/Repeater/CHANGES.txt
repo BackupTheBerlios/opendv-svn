@@ -1874,3 +1874,4 @@ Try overlapped serial I/O under Windows again.
 Add the serial port PTT control to the D-Star Repeater.
 Add /dev/ttyS* devices to the serial control list.
 Added a receive level setting to the sound card driver in the D-Star Repeater.
+Fixed DV-RPTR V1 bug in the D-Star Repeater.
