@@ -533,7 +533,7 @@ unsigned int CDStarRepeaterSoundCardController::readData(unsigned char* data, un
 {
 	end = false;
 
-	if ((m_readType != TAG_DATA && m_readType != TAG_DATA_END) || m_readLength == 0U)
+	if (m_readType != TAG_DATA && m_readType != TAG_DATA_END)
 		return 0U;
 
 	end = m_readType == TAG_DATA_END;

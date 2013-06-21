@@ -349,7 +349,7 @@ unsigned int CDStarRepeaterDVRPTRV2Controller::readData(unsigned char* data, uns
 {
 	end = false;
 
-	if ((m_readType != TAG_DATA && m_readType != TAG_DATA_END) || m_readLength == 0U)
+	if (m_readType != TAG_DATA && m_readType != TAG_DATA_END)
 		return 0U;
 
 	end = m_readType == TAG_DATA_END;
