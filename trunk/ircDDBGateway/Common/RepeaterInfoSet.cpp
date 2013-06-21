@@ -24,7 +24,7 @@ const unsigned int CONTROL_WIDTH2 = 80U;
 const unsigned int CONTROL_WIDTH3 = 40U;
 
 const unsigned int DESCRIPTION_LENGTH = 20U;
-const unsigned int FREQUENCY_LENGTH   = 8U;
+const unsigned int FREQUENCY_LENGTH   = 9U;
 const unsigned int OFFSET_LENGTH      = 6U;
 const unsigned int PORT_LENGTH        = 5U;
 const unsigned int URL_LENGTH         = 40U;
@@ -51,7 +51,7 @@ m_url(NULL)
 	sizer->Add(frequencyLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	wxString buffer;
-	buffer.Printf(wxT("%.4lf"), frequency);
+	buffer.Printf(wxT("%.5lf"), frequency);
 
 	m_frequency = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_frequency->SetMaxLength(FREQUENCY_LENGTH);
