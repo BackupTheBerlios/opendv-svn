@@ -38,7 +38,7 @@ public:
 	bool headerReady() const;
 	bool dataReady() const;
 
-	bool isEmpty() const;
+	bool isEmpty();
 
 	void reset();
 

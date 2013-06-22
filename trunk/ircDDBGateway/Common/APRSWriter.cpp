@@ -176,7 +176,7 @@ void CAPRSWriter::writeData(const wxString& callsign, const CAMBEData& data)
 		return;
 	}
 
-	unsigned char buffer[300U];
+	unsigned char buffer[400U];
 	data.getData(buffer, DV_FRAME_MAX_LENGTH_BYTES);
 
 	bool complete = collector->writeData(buffer + VOICE_FRAME_LENGTH_BYTES);
@@ -200,7 +200,7 @@ void CAPRSWriter::writeData(const wxString& callsign, const CAMBEData& data)
 		return;
 	}
 
-	unsigned int length = collector->getData(buffer, 300U);
+	unsigned int length = collector->getData(buffer, 400U);
 	wxString text((char*)buffer, wxConvLocal, length);
 
 	int n = text.Find(wxT(':'));
@@ -225,8 +225,8 @@ void CAPRSWriter::writeData(const wxString& callsign, const CAMBEData& data)
 	wxString output;
 	output.Printf(wxT("%s,qAR,%s-%s:%s"), header.c_str(), entry->getCallsign().c_str(), entry->getBand().c_str(), body.c_str());
 
-	char ascii[300U];
-	::memset(ascii, 0x00, 300U);
+	char ascii[500U];
+	::memset(ascii, 0x00, 500U);
 	for (unsigned int i = 0U; i < output.Len(); i++)
 		ascii[i] = output.GetChar(i);
 

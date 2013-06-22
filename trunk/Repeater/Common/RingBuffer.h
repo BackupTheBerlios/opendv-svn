@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2006-2009,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2006-2009,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ public:
 	m_buffer(NULL),
 	m_iPtr(0U),
 	m_oPtr(0U),
-	m_state(RBSTATE_EMPTY)
+	m_state(RBSTATE_EMPTY),
+	m_mutex()
 	{
 		wxASSERT(length > 0U);
 
@@ -50,6 +51,8 @@ public:
 
 	unsigned int addData(const T* buffer, unsigned int nSamples)
 	{
+		wxMutexLocker locker(m_mutex);
+
 		unsigned int space = freeSpace();
 
 		if (nSamples >= space) {
@@ -71,6 +74,8 @@ public:
 
 	unsigned int getData(T* buffer, unsigned int nSamples)
 	{
+		wxMutexLocker locker(m_mutex);
+
 		unsigned int space = dataSpace();
 
 		if (nSamples >= space) {
@@ -90,8 +95,10 @@ public:
 		return nSamples;
 	}
 
-	unsigned int peek(T* buffer, unsigned int nSamples) const
+	unsigned int peek(T* buffer, unsigned int nSamples)
 	{
+		wxMutexLocker locker(m_mutex);
+
 		unsigned int space = dataSpace();
 
 		if (nSamples >= space)
@@ -110,6 +117,8 @@ public:
 
 	void clear()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		m_iPtr  = 0U;
 		m_oPtr  = 0U;
 		m_state = RBSTATE_EMPTY;
@@ -117,8 +126,10 @@ public:
 		::memset(m_buffer, 0x00, m_length * sizeof(T));
 	}
 
-	unsigned int freeSpace() const
+	unsigned int freeSpace()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		if (isEmpty())
 			return m_length;
 
@@ -131,8 +142,10 @@ public:
 		return m_length - (m_iPtr - m_oPtr);
 	}
 
-	unsigned int dataSpace() const
+	unsigned int dataSpace()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		if (isEmpty())
 			return 0U;
 
@@ -145,13 +158,17 @@ public:
 		return m_length - (m_oPtr - m_iPtr);
 	}
 
-	bool isEmpty() const
+	bool isEmpty()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		return m_state == RBSTATE_EMPTY;
 	}
 
-	bool isFull() const
+	bool isFull()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		return m_state == RBSTATE_FULL;
 	}
 
@@ -161,6 +178,7 @@ private:
 	unsigned int m_iPtr;
 	unsigned int m_oPtr;
 	RBSTATE      m_state;
+	wxMutex      m_mutex;
 };
 
 #endif

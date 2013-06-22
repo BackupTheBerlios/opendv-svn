@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -203,7 +203,6 @@ bool CParrotControllerThread::receive(NETWORK_TYPE type)
 {
 	unsigned char buffer[255U];
 	unsigned int length;
-	bool res;
 	bool end;
 
 	switch (type) {
@@ -213,7 +212,7 @@ bool CParrotControllerThread::receive(NETWORK_TYPE type)
 				return false;
 			wxLogMessage(wxT("Radio header received - My: %s/%s  Your: %s  Rpt1: %s  Rpt2: %s  Flags: %02X %02X %02X"), m_header->getMyCall1().c_str(), m_header->getMyCall2().c_str(), m_header->getYourCall().c_str(), m_header->getRptCall1().c_str(), m_header->getRptCall2().c_str(), m_header->getFlag1(), m_header->getFlag2(), m_header->getFlag3());
 
-			res = m_writer.open(*m_header);
+			m_writer.open(*m_header);
 			m_fileName = m_writer.getFileName();
 			wxLogMessage(wxT("Writing to %s"), m_fileName.c_str());
 			m_watchdogTimer.start();

@@ -85,9 +85,6 @@ void* CAPRSWriterThread::Entry()
 
 			::strcat(p, "\r\n");
 
-#if defined(DUMP_TX)
-			CUtils::dump(wxT("Sending APRS Data"), (unsigned char*)p, ::strlen(p));
-#else
 			bool ret = m_socket.write((unsigned char*)p, ::strlen(p));
 			if (!ret) {
 				m_connected = false;
@@ -106,7 +103,7 @@ void* CAPRSWriterThread::Entry()
 					wxLogError(wxT("Error when reading from the APRS server"));
 				}
 			}
-#endif
+
 			delete[] p;
 		}
 

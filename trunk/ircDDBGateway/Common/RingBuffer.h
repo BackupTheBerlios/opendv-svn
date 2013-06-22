@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2006-2009 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2006-2009,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ public:
 	m_length(length),
 	m_buffer(NULL),
 	m_iPtr(0U),
-	m_oPtr(0U)
+	m_oPtr(0U),
+	m_mutex()
 	{
 		wxASSERT(length > 0U);
 
@@ -43,6 +44,8 @@ public:
 
 	void addData(const T data)
 	{
+		wxMutexLocker locker(m_mutex);
+
 		m_buffer[m_iPtr++] = data;
 
 		if (m_iPtr == m_length)
@@ -51,6 +54,8 @@ public:
 
 	T getData()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		if (m_iPtr == m_oPtr)
 			return 0;
 
@@ -64,19 +69,25 @@ public:
 
 	void clear()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		m_iPtr  = 0U;
 		m_oPtr  = 0U;
 
 		::memset(m_buffer, 0x00, m_length * sizeof(T));
 	}
 
-	bool isEmpty() const
+	bool isEmpty()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		return m_iPtr == m_oPtr;
 	}
 
-	T peek() const
+	T peek()
 	{
+		wxMutexLocker locker(m_mutex);
+
 		if (m_iPtr == m_oPtr)
 			return 0;
 
@@ -88,6 +99,7 @@ private:
 	T*           m_buffer;
 	unsigned int m_iPtr;
 	unsigned int m_oPtr;
+	wxMutex      m_mutex;
 };
 
 #endif

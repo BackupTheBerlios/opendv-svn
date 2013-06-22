@@ -116,7 +116,7 @@ bool COutputQueue::dataReady() const
 	return m_header == NULL && m_count >= m_threshold;
 }
 
-bool COutputQueue::isEmpty() const
+bool COutputQueue::isEmpty()
 {
 	return m_header == NULL && m_data.isEmpty();
 }
