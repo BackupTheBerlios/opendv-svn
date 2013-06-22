@@ -190,10 +190,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SlowDataDecoder.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SlowDataEncoder.cpp"
 				>
 			</File>
@@ -253,10 +249,6 @@
 			</File>
 			<File
 				RelativePath=".\RestrictedTextCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SlowDataDecoder.h"
 				>
 			</File>
 			<File

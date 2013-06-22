@@ -1,7 +1,7 @@
 all:		Common.a
 
 OBJS :=	AddressTextCtrl.o CallsignTextCtrl.o CCITTChecksumReverse.o DVTOOLFileReader.o DVTOOLFileWriter.o HeaderData.o Logger.o PortTextCtrl.o \
-		RestrictedTextCtrl.o SlowDataDecoder.o SlowDataEncoder.o Timer.o UDPReaderWriter.o Utils.o
+		RestrictedTextCtrl.o SlowDataEncoder.o Timer.o UDPReaderWriter.o Utils.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -32,9 +32,6 @@ PortTextCtrl.o:	PortTextCtrl.cpp PortTextCtrl.h RestrictedTextCtrl.h
 
 RestrictedTextCtrl.o:	RestrictedTextCtrl.cpp RestrictedTextCtrl.h
 		$(CC) $(CFLAGS) -c RestrictedTextCtrl.cpp
-
-SlowDataDecoder.o:	SlowDataDecoder.cpp SlowDataDecoder.h DStarDefines.h HeaderData.h CCITTChecksumReverse.h
-		$(CC) $(CFLAGS) -c SlowDataDecoder.cpp
 
 SlowDataEncoder.o:	SlowDataEncoder.cpp SlowDataEncoder.h DStarDefines.h HeaderData.h CCITTChecksumReverse.h
 		$(CC) $(CFLAGS) -c SlowDataEncoder.cpp

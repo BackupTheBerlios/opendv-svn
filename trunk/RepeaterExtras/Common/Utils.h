@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -24,13 +24,7 @@ enum TRISTATE {
 
 class CUtils {
 public:
-	static void          dump(const wxChar* title, const bool* data, unsigned int length);
-	static void          dumpRev(const wxChar* title, const bool* data, unsigned int length);
-	static void          dump(const wxChar* title, const unsigned char* data, unsigned int length);
-	static unsigned char bitsToByte(const bool* bits);
-	static unsigned char bitsToByteRev(const bool* bits);
-	static void          byteToBits(unsigned char byte, bool* bits);
-	static void          byteToBitsRev(unsigned char byte, bool* bits);
+	static void dump(const wxChar* title, const unsigned char* data, unsigned int length);
 
 private:
 };
