@@ -1,4 +1,4 @@
-Repeater - 20130615
+Repeater - 20130622
 ===================
 
 20090530
@@ -1866,7 +1866,7 @@ Added XRF250.
 Add an optional startup delay for the DV-RPTR V1.
 Add a sound card interface to the D-Star Repeater.
 
-201306xx
+20130622
 --------
 
 Added XRF310.

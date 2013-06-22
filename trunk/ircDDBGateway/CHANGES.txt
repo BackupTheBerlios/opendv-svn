@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130611
+ircDDB Gateway - 20130622
 =========================
 
 20101010
@@ -1334,7 +1334,7 @@ Allow DTMF numbers to be used for linking to D-Plus and DExtra.
 Add remotecontrold to allow command line gateway control.
 Handle zero Timer Control actions properly.
 
-201306xx
+20130622
 --------
 
 Allow multiple links to co-operating DExtra reflectors.
