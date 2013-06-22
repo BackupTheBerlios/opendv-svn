@@ -1,0 +1,7 @@
+Repeater - 20130622
+===================
+
+201306xx
+--------
+
+Split the DCSGateway, DExtraGateway, and ParrotController from the Repeater package.
