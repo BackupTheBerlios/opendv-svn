@@ -1,0 +1,8 @@
+Repeater - 20130622
+===================
+
+201306xx
+--------
+
+Split from the main Repeater package.
+Removed the URI USB support.
