@@ -51,8 +51,8 @@ const wxFloat32 DCBLOCK_GAIN = 1.0F;
 
 const unsigned int PLLMAX     = 0x10000U;
 const unsigned int PLLINC     = PLLMAX / DSTAR_RADIO_BIT_LENGTH;
-const unsigned int INC_LOCK   = 16U;
-const unsigned int INC_UNLOCK = 32U;
+const unsigned int INC_LOCK   = PLLINC / 64U;
+const unsigned int INC_UNLOCK = PLLINC / 32U;
 
 CDStarGMSKDemodulator::CDStarGMSKDemodulator() :
 m_filter(FILTER_COEFFS_TABLE, FILTER_COEFFS_LENGTH),
@@ -80,9 +80,9 @@ TRISTATE CDStarGMSKDemodulator::decode(wxFloat32 val)
 
 	if (bit != m_prev) {
 		if (m_pll < (PLLMAX / 2U))
-			m_pll += PLLINC / m_inc;
+			m_pll += m_inc;
 		else
-			m_pll -= PLLINC / m_inc;
+			m_pll -= m_inc;
 	}
 
 	m_prev = bit;
