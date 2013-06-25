@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,21 +14,21 @@
 #ifndef	FIRFilter_H
 #define	FIRFilter_H
 
-#include "Filter.h"
+#include <wx/wx.h>
 
-class CFIRFilter : public IFilter {
+class CFIRFilter {
 public:
 	CFIRFilter(const wxFloat32* taps, unsigned int length);
 	CFIRFilter();
-	virtual ~CFIRFilter();
+	~CFIRFilter();
 
-	virtual void      setTaps(const wxFloat32* taps, unsigned int length);
+	void      setTaps(const wxFloat32* taps, unsigned int length);
 
-	virtual wxFloat32 process(wxFloat32 val);
-	virtual void      process(wxFloat32* inOut, unsigned int length);
-	virtual void      process(const wxFloat32* in, wxFloat32* out, unsigned int length);
+	wxFloat32 process(wxFloat32 val);
+	void      process(wxFloat32* inOut, unsigned int length);
+	void      process(const wxFloat32* in, wxFloat32* out, unsigned int length);
 
-	virtual void      reset();
+	void      reset();
 
 private:
 	wxFloat32*   m_taps;

@@ -1879,6 +1879,7 @@ Fixed bugs in the D-Star Repeater regarding end of incoming transmissions.
 201306xx
 --------
 
+Remove the Analogue Repeater from the Repeater package.
 Remove the DCSGateway, DExtraGateway, and ParrotController from the Repeater package.
 Add a DC blocker to the sound card GMSK demodulator.
 Implement GMSK PLL locking.

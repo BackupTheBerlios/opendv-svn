@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,18 +14,18 @@
 #ifndef	FirstOrderIIR_H
 #define	FirstOrderIIR_H
 
-#include "Filter.h"
+#include <wx/wx.h>
 
-class CFirstOrderIIR : public IFilter {
+class CFirstOrderIIR {
 public:
 	CFirstOrderIIR(wxFloat32 a1, wxFloat32 b0, wxFloat32 b1, wxFloat32 gain);
-	virtual ~CFirstOrderIIR();
+	~CFirstOrderIIR();
 
-	virtual wxFloat32 process(wxFloat32 val);
-	virtual void      process(const wxFloat32* in, wxFloat32* out, unsigned int length);
-	virtual void      process(wxFloat32* inOut, unsigned int length);
+	wxFloat32 process(wxFloat32 val);
+	void      process(const wxFloat32* in, wxFloat32* out, unsigned int length);
+	void      process(wxFloat32* inOut, unsigned int length);
 
-	virtual void reset();
+	void reset();
 
 private:
 	wxFloat32 m_a1;

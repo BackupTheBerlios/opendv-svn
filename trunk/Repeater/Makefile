@@ -5,11 +5,8 @@
 
 include settings.mk
 
-all:	AnalogueRepeater/analoguerepeater DStarRepeater/dstarrepeater DStarRepeaterConfig/dstarrepeaterconfig DummyRepeater/dummyrepeater DVAPNode/dvapnode \
+all:	DStarRepeater/dstarrepeater DStarRepeaterConfig/dstarrepeaterconfig DummyRepeater/dummyrepeater DVAPNode/dvapnode \
 			DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
-
-AnalogueRepeater/analoguerepeater:	Common/Common.a
-		make -C AnalogueRepeater
 
 DStarRepeater/dstarrepeater:	Common/Common.a
 		make -C DStarRepeater
@@ -40,7 +37,6 @@ Common/Common.a:
 
 install:	all
 		install -d -g bin -o root -m 0775 $(BINDIR)
-		make -C AnalogueRepeater install
 		make -C Data install
 		make -C DStarRepeater install
 		make -C DStarRepeaterConfig install
@@ -54,7 +50,6 @@ install:	all
 clean:
 		rm -f core *~ *.bak
 		make -C Common clean
-		make -C AnalogueRepeater clean
 		make -C DStarRepeater clean
 		make -C DStarRepeaterConfig clean
 		make -C DummyRepeater clean

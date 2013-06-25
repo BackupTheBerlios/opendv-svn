@@ -46,7 +46,6 @@ Section "Repeater Program Files" SecProgram
 
   SetOutPath "$INSTDIR"
 
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\AnalogueRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DStarRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DStarRepeaterConfig.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DummyRepeater.exe"
@@ -88,7 +87,6 @@ Section "Repeater Program Files" SecProgram
 
   ;Create start menu entry
   CreateDirectory "$SMPROGRAMS\Repeater"
-  CreateShortCut "$SMPROGRAMS\Repeater\Analogue Repeater.lnk"        "$INSTDIR\AnalogueRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater.lnk"          "$INSTDIR\DStarRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater Config.lnk"   "$INSTDIR\DStarRepeaterConfig.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DummyRepeater.exe"
@@ -117,7 +115,6 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\Repeater\*.*"
   RMDir  "$SMPROGRAMS\Repeater"
 
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\Analogue Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\D-Star Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Dummy Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\DVAP Node"

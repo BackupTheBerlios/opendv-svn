@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,14 +14,12 @@
 #ifndef	DStarFECEncoder_H
 #define	DStarFECEncoder_H
 
-#include "FECEncoder.h"
-
-class CDStarFECEncoder : public IFECEncoder {
+class CDStarFECEncoder {
 public:
 	CDStarFECEncoder();
-	virtual ~CDStarFECEncoder();
+	~CDStarFECEncoder();
 
-	virtual void encode(const bool* in, bool* out, unsigned int inLen, unsigned int& outLen);
+	void encode(const bool* in, bool* out, unsigned int inLen, unsigned int& outLen);
 
 private:
 };

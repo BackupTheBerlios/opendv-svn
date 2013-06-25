@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,20 +14,18 @@
 #ifndef	DStarScrambler_H
 #define	DStarScrambler_H
 
-#include "Scrambler.h"
-
-class CDStarScrambler : public IScrambler {
+class CDStarScrambler {
 public:
 	CDStarScrambler();
-	virtual ~CDStarScrambler();
+	~CDStarScrambler();
 
-	virtual void process(bool* inOut, unsigned int length);
-	virtual void process(const bool* in, bool* out, unsigned int length);
+	void process(bool* inOut, unsigned int length);
+	void process(const bool* in, bool* out, unsigned int length);
 
-	virtual void process(unsigned char* inOut, unsigned int length);
-	virtual void process(const unsigned char* in, unsigned char* out, unsigned int length);
+	void process(unsigned char* inOut, unsigned int length);
+	void process(const unsigned char* in, unsigned char* out, unsigned int length);
 
-	virtual void reset();
+	void reset();
 
 private:
 	unsigned int m_count;

@@ -218,14 +218,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CWKeyer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CWTextCtrl.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarFECDecoder.cpp"
 				>
 			</File>
@@ -251,18 +243,6 @@
 			</File>
 			<File
 				RelativePath=".\DStarScrambler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DTMFController.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DTMFDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DTMFTextCtrl.cpp"
 				>
 			</File>
 			<File
@@ -350,10 +330,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NCO.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\NetworkController.cpp"
 				>
 			</File>
@@ -422,10 +398,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TimeoutTones.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Timer.cpp"
 				>
 			</File>
@@ -442,15 +414,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\VOGAD.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\WAVFileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVFileStore.cpp"
 				>
 			</File>
 			<File
@@ -473,10 +437,6 @@
 			</File>
 			<File
 				RelativePath=".\AMBEFEC.h"
-				>
-			</File>
-			<File
-				RelativePath=".\AnalogueDefines.h"
 				>
 			</File>
 			<File
@@ -544,14 +504,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CWKeyer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CWTextCtrl.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarDefines.h"
 				>
 			</File>
@@ -581,18 +533,6 @@
 			</File>
 			<File
 				RelativePath=".\DStarScrambler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DTMFController.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DTMFDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DTMFTextCtrl.h"
 				>
 			</File>
 			<File
@@ -632,27 +572,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FECDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FECEncoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Filter.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FIRFilter.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FirstOrderIIR.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FixedAudioSource.h"
 				>
 			</File>
 			<File
@@ -681,10 +605,6 @@
 			</File>
 			<File
 				RelativePath=".\HeaderData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Interleaver.h"
 				>
 			</File>
 			<File
@@ -717,10 +637,6 @@
 			</File>
 			<File
 				RelativePath=".\Modulator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NCO.h"
 				>
 			</File>
 			<File
@@ -772,10 +688,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Scrambler.h"
-				>
-			</File>
-			<File
 				RelativePath=".\SerialDataController.h"
 				>
 			</File>
@@ -800,10 +712,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TimeoutTones.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Timer.h"
 				>
 			</File>
@@ -824,15 +732,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\VOGAD.h"
-				>
-			</File>
-			<File
 				RelativePath=".\WAVFileReader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVFileStore.h"
 				>
 			</File>
 			<File

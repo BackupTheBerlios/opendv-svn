@@ -27,6 +27,7 @@
 #include "FixedAudioSource.h"
 #include "AnalogueDefines.h"
 #include "DTMFController.h"
+#include "FirstOrderIIR.h"
 #include "WAVFileReader.h"
 #include "AudioCallback.h"
 #include "TimeoutTones.h"
@@ -35,7 +36,6 @@
 #include "FIRFilter.h"
 #include "Goertzel.h"
 #include "PTTDelay.h"
-#include "Filter.h"
 #include "Timer.h"
 #include "VOGAD.h"
 #include "NCO.h"
@@ -139,15 +139,15 @@ private:
 	wxFloat32                 m_ackLevel;
 	wxFloat32                 m_ctcssLevel;
 	CAudioDelay*              m_radioAudioDelay;
-	IFilter*                  m_radioDeEmphasis;
-	IFilter*                  m_radioPreEmphasis;
+	CFirstOrderIIR*           m_radioDeEmphasis;
+	CFirstOrderIIR*           m_radioPreEmphasis;
 	CFIRFilter                m_audioFilter;
 	wxFloat32                 m_audioLevel;
 	CVOGAD                    m_radioAudioVOGAD;
 	CVOGAD                    m_extAudioVOGAD;
 	CAudioDelay*              m_extAudioDelay;
-	IFilter*                  m_extDeEmphasis;
-	IFilter*                  m_extPreEmphasis;
+	CFirstOrderIIR*           m_extDeEmphasis;
+	CFirstOrderIIR*           m_extPreEmphasis;
 	bool                      m_extBackground;
 	ANALOGUE_CALLSIGN_START   m_callsignAtStart;
 	bool                      m_callsignAtEnd;

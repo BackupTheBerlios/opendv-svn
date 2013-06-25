@@ -82,8 +82,8 @@ AnalogueRepeaterThreadHelper.o:	AnalogueRepeaterThreadHelper.cpp AnalogueRepeate
 AnalogueRepeaterThread.o:	AnalogueRepeaterThread.cpp AnalogueRepeaterThread.h AnalogueRepeaterDefs.h AnalogueRepeaterApp.h AnalogueRepeaterStatusData.h \
 							../Common/FIRFilter.h ../Common/SoundCardReaderWriter.h ../Common/ExternalController.h ../Common/NetworkController.h \
 							../Common/WAVFileReader.h ../Common/AudioCallback.h ../Common/TimeoutTones.h ../Common/RingBuffer.h ../Common/Goertzel.h \
-							../Common/FixedAudioSource.h ../Common/Filter.h ../Common/Timer.h ../Common/NCO.h ../Common/VOGAD.h \
-							../Common/FirstOrderIIR.h ../Common/FIRFilter.h ../Common/AudioDelay.h ../Common/PTTDelay.h ../Common/AnalogueDefines.h \
+							../Common/FixedAudioSource.h ../Common/Timer.h ../Common/NCO.h ../Common/VOGAD.h \
+							../Common/FirstOrderIIR.h ../Common/AudioDelay.h ../Common/PTTDelay.h ../Common/AnalogueDefines.h \
 							../Common/DTMFController.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterThread.cpp
 

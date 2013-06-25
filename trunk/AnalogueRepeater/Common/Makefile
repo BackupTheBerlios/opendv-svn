@@ -40,7 +40,7 @@ ExternalController.o:	ExternalController.cpp ExternalController.h AnalogueDefine
 FirstOrderIIR.o:	FirstOrderIIR.cpp FirstOrderIIR.h
 		$(CC) $(CFLAGS) -c FirstOrderIIR.cpp
 
-FIRFilter.o:	FIRFilter.cpp FIRFilter.h Filter.h
+FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
 
 Goertzel.o:	Goertzel.cpp Goertzel.h Utils.h

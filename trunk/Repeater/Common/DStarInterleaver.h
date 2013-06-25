@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,15 +14,13 @@
 #ifndef	DStarInterleaver_H
 #define	DStarInterleaver_H
 
-#include "Interleaver.h"
-
-class CDStarInterleaver : public IInterleaver {
+class CDStarInterleaver {
 public:
 	CDStarInterleaver();
-	virtual ~CDStarInterleaver();
+	~CDStarInterleaver();
 
-	virtual void interleave(const bool* in, bool* out, unsigned int length);
-	virtual void deinterleave(const bool* in, bool* out, unsigned int length);
+	void interleave(const bool* in, bool* out, unsigned int length);
+	void deinterleave(const bool* in, bool* out, unsigned int length);
 
 private:
 };

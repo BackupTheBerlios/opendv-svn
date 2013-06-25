@@ -1,13 +1,13 @@
 all:		Common.a
 
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o ArduinoController.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o \
-		CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o CWKeyer.o CWTextCtrl.o DStarFECDecoder.o DStarFECEncoder.o \
-		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o \
-		DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
-		FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o \
-		NCO.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
-		RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o \
-		SoundCardReaderWriter.o TCPReaderWriter.o TimeoutTones.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o WAVFileWriter.o
+		CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
+		DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o \
+		DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o \
+		K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o \
+		PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o \
+		SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o \
+		WAVFileReader.o WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -60,16 +60,10 @@ Control2Set.o:	Control2Set.cpp Control2Set.h CallsignTextCtrl.h DStarDefines.h
 Correlator.o:	Correlator.cpp Correlator.h
 		$(CC) $(CFLAGS) -c Correlator.cpp
 
-CWKeyer.o:	CWKeyer.cpp CWKeyer.h FixedAudioSource.h
-		$(CC) $(CFLAGS) -c CWKeyer.cpp
-
-CWTextCtrl.o:	CWTextCtrl.cpp CWTextCtrl.h RestrictedTextCtrl.h
-		$(CC) $(CFLAGS) -c CWTextCtrl.cpp
-
-DStarFECDecoder.o:	DStarFECDecoder.cpp DStarFECDecoder.h FECDecoder.h
+DStarFECDecoder.o:	DStarFECDecoder.cpp DStarFECDecoder.h
 		$(CC) $(CFLAGS) -c DStarFECDecoder.cpp
 
-DStarFECEncoder.o:	DStarFECEncoder.cpp DStarFECEncoder.h FECEncoder.h
+DStarFECEncoder.o:	DStarFECEncoder.cpp DStarFECEncoder.h
 		$(CC) $(CFLAGS) -c DStarFECEncoder.cpp
 
 DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h FIRFilter.h FirstOrderIIR.h DStarDefines.h Utils.h
@@ -78,23 +72,14 @@ DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h FIRFilte
 DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h FIRFilter.h
 		$(CC) $(CFLAGS) -c DStarGMSKModulator.cpp
 
-DStarInterleaver.o:	DStarInterleaver.cpp DStarInterleaver.h DStarDefines.h Interleaver.h
+DStarInterleaver.o:	DStarInterleaver.cpp DStarInterleaver.h DStarDefines.h
 		$(CC) $(CFLAGS) -c DStarInterleaver.cpp
 
 DStarRepeaterConfig.o:	DStarRepeaterConfig.cpp DStarRepeaterConfig.h DStarDefines.h
 		$(CC) $(CFLAGS) -c DStarRepeaterConfig.cpp
 
-DStarScrambler.o:	DStarScrambler.cpp DStarScrambler.h Scrambler.h
+DStarScrambler.o:	DStarScrambler.cpp DStarScrambler.h
 		$(CC) $(CFLAGS) -c DStarScrambler.cpp
-
-DTMFController.o:	DTMFController.cpp DTMFController.h DTMFDecoder.h
-		$(CC) $(CFLAGS) -c DTMFController.cpp
-
-DTMFDecoder.o:	DTMFDecoder.cpp DTMFDecoder.h Goertzel.h
-		$(CC) $(CFLAGS) -c DTMFDecoder.cpp
-
-DTMFTextCtrl.o:	DTMFTextCtrl.cpp DTMFTextCtrl.h RestrictedTextCtrl.h
-		$(CC) $(CFLAGS) -c DTMFTextCtrl.cpp
 
 DummyController.o:	DummyController.cpp DummyController.h HardwareController.h
 		$(CC) $(CFLAGS) -c DummyController.cpp
@@ -125,7 +110,7 @@ ExternalController.o:	ExternalController.cpp ExternalController.h DStarDefines.h
 FirstOrderIIR.o:	FirstOrderIIR.cpp FirstOrderIIR.h
 		$(CC) $(CFLAGS) -c FirstOrderIIR.cpp
 
-FIRFilter.o:	FIRFilter.cpp FIRFilter.h Filter.h
+FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
 
 GMSKModemLibUsb.o:	GMSKModemLibUsb.cpp GMSKModemLibUsb.h GMSKModem.h HeaderData.h DStarDefines.h Utils.h
@@ -157,9 +142,6 @@ Logger.o:	Logger.cpp Logger.h
 
 MessageTextCtrl.o:	MessageTextCtrl.cpp MessageTextCtrl.h RestrictedTextCtrl.h
 		$(CC) $(CFLAGS) -c MessageTextCtrl.cpp
-
-NCO.o:		NCO.cpp NCO.h
-		$(CC) $(CFLAGS) -c NCO.cpp
 
 NetworkController.o:	NetworkController.cpp NetworkController.h SerialLineController.h
 		$(CC) $(CFLAGS) -c NetworkController.cpp
@@ -214,9 +196,6 @@ SoundCardReaderWriter.o:	SoundCardReaderWriter.cpp SoundCardReaderWriter.h Audio
 TCPReaderWriter.o:	TCPReaderWriter.cpp TCPReaderWriter.h UDPReaderWriter.h
 				$(CC) $(CFLAGS) -c TCPReaderWriter.cpp
 
-TimeoutTones.o:	TimeoutTones.cpp TimeoutTones.h NCO.h
-		$(CC) $(CFLAGS) -c TimeoutTones.cpp
-
 Timer.o:	Timer.cpp Timer.h
 		$(CC) $(CFLAGS) -c Timer.cpp
 
@@ -229,14 +208,8 @@ URIUSBController.o:	URIUSBController.cpp URIUSBController.h HardwareController.h
 Utils.o:	Utils.cpp Utils.h
 		$(CC) $(CFLAGS) -c Utils.cpp
 
-VOGAD.o:	VOGAD.cpp VOGAD.h
-		$(CC) $(CFLAGS) -c VOGAD.cpp
-
 WAVFileReader.o:	WAVFileReader.cpp WAVFileReader.h
 		$(CC) $(CFLAGS) -c WAVFileReader.cpp
-
-WAVFileStore.o:	WAVFileStore.cpp WAVFileStore.h FixedAudioSource.h WAVFileReader.h AnalogueDefines.h
-		$(CC) $(CFLAGS) -c WAVFileStore.cpp
 
 WAVFileWriter.o:	WAVFileWriter.cpp WAVFileWriter.h
 		$(CC) $(CFLAGS) -c WAVFileWriter.cpp
