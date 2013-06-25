@@ -64,12 +64,13 @@
 # 2013-03-15 dl5di    allow new OZ callsign format
 # 2013-04-07 dl5di    removing repeater modules added
 # 2013-04-08 dl5di	  cleanups
+# 2013-06-24 dl5di	  bugfixes
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="CentOS-20130408"
+rev="CentOS-20130624"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1982,7 +1983,7 @@ function reflector_setup(){
 # reflector#=XRF023 D
 #
 
-	rptr = $1
+	rptr=$1
 	var="reflector$rptr"
 	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
@@ -3159,7 +3160,7 @@ while [ "$SELECT" -ne 99 ]; do
 	select_item "(0-99)" 99 0
 	RET=$?
 	if [ $RET -ne 1 ]; then
-		SELECT = 0
+		SELECT=0
 	fi
 
 	Dat=`date +%Y%m%d%H%M`
