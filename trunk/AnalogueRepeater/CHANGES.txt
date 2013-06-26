@@ -4,5 +4,6 @@ Analogue Repeater - 20130622
 201306xx
 --------
 
+Added daemon info to the logs.
 Split from the main Repeater package.
 Removed the URI USB support.

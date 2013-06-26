@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ bool CTimeServerD::init()
 		new wxLogNull;
 	}
 
-	wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" - ") + VERSION);
+	wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" daemon - ") + VERSION);
 
 	// Log the SVN revsion and the version of wxWidgets and the Operating System
 	wxLogInfo(SVNREV);

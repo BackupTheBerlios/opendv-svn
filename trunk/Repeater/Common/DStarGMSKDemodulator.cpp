@@ -55,8 +55,8 @@ const unsigned int INC_LOCK   = PLLINC / 64U;
 const unsigned int INC_UNLOCK = PLLINC / 32U;
 
 CDStarGMSKDemodulator::CDStarGMSKDemodulator() :
-m_filter(FILTER_COEFFS_TABLE, FILTER_COEFFS_LENGTH),
 m_dcBlock(DCBLOCK_A1, DCBLOCK_B0, DCBLOCK_B1, DCBLOCK_GAIN),
+m_filter(FILTER_COEFFS_TABLE, FILTER_COEFFS_LENGTH),
 m_invert(false),
 m_pll(0U),
 m_prev(false),

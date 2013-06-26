@@ -1342,3 +1342,8 @@ Merge the *_Hosts.txt files in the ircDDB Gateway Config program.
 Allow for the extra digit in the frequency to be handled by the GUI.
 Updated REF047s IP address.
 Added XRF310.
+
+201306xx
+--------
+
+Added daemon info to the logs.

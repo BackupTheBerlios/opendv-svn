@@ -163,7 +163,7 @@ bool CSoundCardRepeaterD::init()
 		new wxLogNull;
 	}
 
-	wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" - ") + VERSION);
+	wxLogInfo(wxT("Starting ") + APPLICATION_NAME + wxT(" daemon - ") + VERSION);
 
 	// Log the SVN revsion and the version of wxWidgets and the Operating System
 	wxLogInfo(SVNREV);

@@ -89,11 +89,16 @@ void CDStarRepeaterTXThread::run()
 	m_pollTimer.start();
 	m_statusTimer.start();
 
+	wxString hardware = m_type;
+	int n = hardware.Find(wxT(' '));
+	if (n != wxNOT_FOUND)
+		hardware = m_type.Left(n);
+
 	wxString pollText;
 #if defined(__WINDOWS__)
-	pollText.Printf(wxT("win_%s-%s"), m_type.c_str(), VERSION.c_str());
+	pollText.Printf(wxT("win_%s-%s"), hardware.c_str(), VERSION.c_str());
 #else
-	pollText.Printf(wxT("linux_%s-%s"), m_type.c_str(), VERSION.c_str());
+	pollText.Printf(wxT("linux_%s-%s"), hardware.c_str(), VERSION.c_str());
 #endif
 	pollText.Replace(wxT(" "), wxT("-"));
 	pollText.MakeLower();
