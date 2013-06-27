@@ -842,9 +842,6 @@ RESP_TYPE_V1 CDStarRepeaterDVRPTRV1Controller::getResponse(unsigned char *buffer
 	if (ret == 0)
 		return RT1_TIMEOUT;
 
-	if (buffer[0U] != DVRPTR_FRAME_START)
-		return RT1_TIMEOUT;
-
 	unsigned int offset = 1U;
 
 	while (offset < DVRPTR_HEADER_LENGTH) {

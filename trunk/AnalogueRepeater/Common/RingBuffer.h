@@ -34,8 +34,7 @@ public:
 	m_buffer(NULL),
 	m_iPtr(0U),
 	m_oPtr(0U),
-	m_state(RBSTATE_EMPTY),
-	m_mutex()
+	m_state(RBSTATE_EMPTY)
 	{
 		wxASSERT(length > 0U);
 
@@ -51,16 +50,12 @@ public:
 
 	unsigned int addData(const T* buffer, unsigned int nSamples)
 	{
-		wxMutexLocker locker(m_mutex);
-
 		unsigned int space = freeSpace();
 
-		if (nSamples >= space) {
-			nSamples = space;
-			m_state = RBSTATE_FULL;
-		} else {
-			m_state = RBSTATE_DATA;
-		}
+		if (nSamples > space)
+			return 0U;
+
+		m_state = (nSamples == space) ? RBSTATE_FULL : RBSTATE_DATA;
 
 		for (unsigned int i = 0U; i < nSamples; i++) {
 			m_buffer[m_iPtr++] = buffer[i];
@@ -74,16 +69,12 @@ public:
 
 	unsigned int getData(T* buffer, unsigned int nSamples)
 	{
-		wxMutexLocker locker(m_mutex);
-
 		unsigned int space = dataSpace();
 
-		if (nSamples >= space) {
-			nSamples = space;
-			m_state = RBSTATE_EMPTY;
-		} else {
-			m_state = RBSTATE_DATA;
-		}
+		if (space < nSamples)
+			return 0U;
+
+		m_state = (nSamples == space) ? RBSTATE_EMPTY : RBSTATE_DATA;
 
 		for (unsigned int i = 0U; i < nSamples; i++) {
 			buffer[i] = m_buffer[m_oPtr++];
@@ -97,12 +88,10 @@ public:
 
 	unsigned int peek(T* buffer, unsigned int nSamples)
 	{
-		wxMutexLocker locker(m_mutex);
-
 		unsigned int space = dataSpace();
 
-		if (nSamples >= space)
-			nSamples = space;
+		if (space < nSamples)
+			return 0U;
 
 		unsigned int ptr = m_oPtr;
 		for (unsigned int i = 0U; i < nSamples; i++) {
@@ -117,8 +106,6 @@ public:
 
 	void clear()
 	{
-		wxMutexLocker locker(m_mutex);
-
 		m_iPtr  = 0U;
 		m_oPtr  = 0U;
 		m_state = RBSTATE_EMPTY;
@@ -128,8 +115,6 @@ public:
 
 	unsigned int freeSpace()
 	{
-		wxMutexLocker locker(m_mutex);
-
 		if (isEmpty())
 			return m_length;
 
@@ -144,8 +129,6 @@ public:
 
 	unsigned int dataSpace()
 	{
-		wxMutexLocker locker(m_mutex);
-
 		if (isEmpty())
 			return 0U;
 
@@ -160,15 +143,11 @@ public:
 
 	bool isEmpty()
 	{
-		wxMutexLocker locker(m_mutex);
-
 		return m_state == RBSTATE_EMPTY;
 	}
 
 	bool isFull()
 	{
-		wxMutexLocker locker(m_mutex);
-
 		return m_state == RBSTATE_FULL;
 	}
 
@@ -178,7 +157,6 @@ private:
 	unsigned int m_iPtr;
 	unsigned int m_oPtr;
 	RBSTATE      m_state;
-	wxMutex      m_mutex;
 };
 
 #endif
