@@ -274,8 +274,8 @@ void* CDStarRepeaterDVAPController::Entry()
 			case RT_HEADER: {
 					m_mutex.Lock();
 
-					unsigned int space = m_rxData.freeSpace();
-					if (space < 43U) {
+					bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + 2U);
+					if (!ret) {
 						wxLogMessage(wxT("Out of space in the DVAP RX queue"));
 					} else {
 						unsigned char hdr[2U];
@@ -293,8 +293,8 @@ void* CDStarRepeaterDVAPController::Entry()
 			case RT_GMSK_DATA: {
 					m_mutex.Lock();
 
-					unsigned int space = m_rxData.freeSpace();
-					if (space < (length - 4U)) {
+					bool ret = m_rxData.hasSpace(length - 4U);
+					if (!ret) {
 						wxLogMessage(wxT("Out of space in the DVAP RX queue"));
 					} else {
 						bool end = (m_buffer[4U] & 0x40U) == 0x40U;
@@ -322,7 +322,7 @@ void* CDStarRepeaterDVAPController::Entry()
 
 		// Use the status packet every 20ms to trigger the sending of data to the DVAP
 		if (m_space > 0U && type == RT_STATE) {
-			if (!m_txData.isEmpty()) {
+			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
 				unsigned char len = 0U;
@@ -361,10 +361,10 @@ DSMT_TYPE CDStarRepeaterDVAPController::read()
 {
 	m_readLength = 0U;
 
-	wxMutexLocker locker(m_mutex);
-
 	if (m_rxData.isEmpty())
 		return DSMTT_NONE;
+
+	wxMutexLocker locker(m_mutex);
 
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
@@ -461,8 +461,8 @@ bool CDStarRepeaterDVAPController::writeHeader(const CHeaderData& header)
 
 	wxMutexLocker locker(m_mutex);
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < 48U)
+	bool ret = m_txData.hasSpace(DVAP_HEADER_LEN + 1U);
+	if (!ret)
 		return false;
 
 	unsigned char len = DVAP_HEADER_LEN;
@@ -495,8 +495,8 @@ bool CDStarRepeaterDVAPController::writeData(const unsigned char* data, unsigned
 
 	wxMutexLocker locker(m_mutex);
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < 19U)
+	bool ret = m_txData.hasSpace(DVAP_GMSK_DATA_LEN + 1U);
+	if (!ret)
 		return false;
 
 	unsigned char len = DVAP_GMSK_DATA_LEN;

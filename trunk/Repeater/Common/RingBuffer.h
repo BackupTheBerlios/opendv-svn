@@ -21,26 +21,19 @@
 
 #include <wx/wx.h>
 
-enum RBSTATE {
-	RBSTATE_EMPTY,
-	RBSTATE_FULL,
-	RBSTATE_DATA
-};
-
 template<class T> class CRingBuffer {
 public:
 	CRingBuffer(unsigned int length) :
 	m_length(length),
 	m_buffer(NULL),
 	m_iPtr(0U),
-	m_oPtr(0U),
-	m_state(RBSTATE_EMPTY)
+	m_oPtr(0U)
 	{
 		wxASSERT(length > 0U);
 
 		m_buffer = new T[length];
 
-		::memset(m_buffer, 0x00, length * sizeof(T));
+		::memset(m_buffer, 0x00, m_length * sizeof(T));
 	}
 
 	~CRingBuffer()
@@ -50,12 +43,8 @@ public:
 
 	unsigned int addData(const T* buffer, unsigned int nSamples)
 	{
-		unsigned int space = freeSpace();
-
-		if (nSamples > space)
+		if (nSamples > freeSpace())
 			return 0U;
-
-		m_state = (nSamples == space) ? RBSTATE_FULL : RBSTATE_DATA;
 
 		for (unsigned int i = 0U; i < nSamples; i++) {
 			m_buffer[m_iPtr++] = buffer[i];
@@ -69,12 +58,10 @@ public:
 
 	unsigned int getData(T* buffer, unsigned int nSamples)
 	{
-		unsigned int space = dataSpace();
+		unsigned int data = dataSize();
 
-		if (space < nSamples)
-			return 0U;
-
-		m_state = (nSamples == space) ? RBSTATE_EMPTY : RBSTATE_DATA;
+		if (data < nSamples)
+			nSamples = data;
 
 		for (unsigned int i = 0U; i < nSamples; i++) {
 			buffer[i] = m_buffer[m_oPtr++];
@@ -88,10 +75,10 @@ public:
 
 	unsigned int peek(T* buffer, unsigned int nSamples)
 	{
-		unsigned int space = dataSpace();
+		unsigned int data = dataSize();
 
-		if (space < nSamples)
-			return 0U;
+		if (data < nSamples)
+			nSamples = data;
 
 		unsigned int ptr = m_oPtr;
 		for (unsigned int i = 0U; i < nSamples; i++) {
@@ -108,47 +95,34 @@ public:
 	{
 		m_iPtr  = 0U;
 		m_oPtr  = 0U;
-		m_state = RBSTATE_EMPTY;
 
 		::memset(m_buffer, 0x00, m_length * sizeof(T));
 	}
 
-	unsigned int freeSpace()
+	unsigned int freeSpace() const
 	{
-		if (isEmpty())
-			return m_length;
-
-		if (isFull())
-			return 0U;
+		if (m_oPtr == m_iPtr)
+			return m_length - 1U;
 
 		if (m_oPtr > m_iPtr)
-			return m_oPtr - m_iPtr;
+			return m_oPtr - m_iPtr - 1U;
 
-		return m_length - (m_iPtr - m_oPtr);
+		return m_length - (m_iPtr - m_oPtr) - 1U;
 	}
 
-	unsigned int dataSpace()
+	bool hasSpace(unsigned int length) const
 	{
-		if (isEmpty())
-			return 0U;
-
-		if (isFull())
-			return m_length;
-
-		if (m_iPtr >= m_oPtr)
-			return m_iPtr - m_oPtr;
-
-		return m_length - (m_oPtr - m_iPtr);
+		return freeSpace() > length;
 	}
 
-	bool isEmpty()
+	bool hasData() const
 	{
-		return m_state == RBSTATE_EMPTY;
+		return m_oPtr != m_iPtr;
 	}
 
-	bool isFull()
+	bool isEmpty() const
 	{
-		return m_state == RBSTATE_FULL;
+		return m_oPtr == m_iPtr;
 	}
 
 private:
@@ -156,7 +130,14 @@ private:
 	T*           m_buffer;
 	unsigned int m_iPtr;
 	unsigned int m_oPtr;
-	RBSTATE      m_state;
+
+	unsigned int dataSize() const
+	{
+		if (m_iPtr >= m_oPtr)
+			return m_iPtr - m_oPtr;
+
+		return m_length - (m_oPtr - m_iPtr);
+	}
 };
 
 #endif

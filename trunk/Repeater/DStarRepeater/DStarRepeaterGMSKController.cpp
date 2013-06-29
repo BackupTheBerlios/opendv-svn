@@ -179,7 +179,7 @@ void* CDStarRepeaterGMSKController::Entry()
 			}
 		}
 
-		if (writeLength == 0U && !m_txData.isEmpty()) {
+		if (writeLength == 0U && m_txData.hasData()) {
 			m_mutex.Lock();
 
 			m_txData.getData(&writeType, 1U);
@@ -246,10 +246,10 @@ DSMT_TYPE CDStarRepeaterGMSKController::read()
 {
 	m_readLength = 0U;
 
-	wxMutexLocker locker(m_mutex);
-
 	if (m_rxData.isEmpty())
 		return DSMTT_NONE;
+
+	wxMutexLocker locker(m_mutex);
 
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
@@ -329,8 +329,8 @@ bool CDStarRepeaterGMSKController::writeHeader(const CHeaderData& header)
 
 	wxMutexLocker locker(m_mutex);
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < RADIO_HEADER_LENGTH_BYTES)
+	bool ret = m_txData.hasSpace(RADIO_HEADER_LENGTH_BYTES);
+	if (!ret)
 		return false;
 
 	unsigned char data[2U];
@@ -347,8 +347,8 @@ bool CDStarRepeaterGMSKController::writeData(const unsigned char* data, unsigned
 {
 	wxMutexLocker locker(m_mutex);
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < 14U)
+	bool ret = m_txData.hasSpace(DV_FRAME_LENGTH_BYTES + 2U);
+	if (!ret)
 		return false;
 
 	unsigned char buffer[2U];

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -86,10 +86,9 @@ unsigned int COutputQueue::addData(const unsigned char *data, unsigned int lengt
 {
 	wxASSERT(data != NULL);
 
-	unsigned int space = m_data.freeSpace();
-	unsigned int needed = length + 2U;
-	if (space <= needed) {
-		// XXX wxLogWarning(wxT("Not enough space in the output queue, %u <= %u"), space, needed);
+	bool ret = m_data.hasSpace(length + 2U);
+	if (!ret) {
+		// XXX wxLogWarning(wxT("Not enough space in the output queue"));
 		return 0U;
 	}
 

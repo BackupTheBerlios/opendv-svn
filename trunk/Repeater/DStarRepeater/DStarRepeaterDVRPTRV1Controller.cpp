@@ -199,8 +199,8 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 					if (correct) {
 						m_mutex.Lock();
 
-						unsigned int space = m_rxData.freeSpace();
-						if (space < 43U) {
+						bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + 2U);
+						if (!ret) {
 							wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 						} else {
 							unsigned char data[2U];
@@ -229,8 +229,8 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 				} else {
 					m_mutex.Lock();
 
-					unsigned int space = m_rxData.freeSpace();
-					if (space < 14U) {
+					bool ret = m_rxData.hasSpace(DV_FRAME_LENGTH_BYTES + 2U);
+					if (!ret) {
 						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 					} else {
 						unsigned char data[2U];
@@ -249,8 +249,8 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 			case RT1_EOT: {
 					m_mutex.Lock();
 
-					unsigned int space = m_rxData.freeSpace();
-					if (space < 2U) {
+					bool ret = m_rxData.hasSpace(2U);
+					if (!ret) {
 						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 					} else {
 						unsigned char data[2U];
@@ -269,8 +269,8 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 			case RT1_RXLOST: {
 					m_mutex.Lock();
 
-					unsigned int space = m_rxData.freeSpace();
-					if (space < 2U) {
+					bool ret = m_rxData.hasSpace(2U);
+					if (!ret) {
 						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 					} else {
 						unsigned char data[2U];
@@ -314,7 +314,7 @@ void* CDStarRepeaterDVRPTRV1Controller::Entry()
 		}
 
 		if (m_space > 0U) {
-			if (!m_txData.isEmpty()) {
+			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
 				unsigned char len = 0U;
@@ -358,10 +358,10 @@ DSMT_TYPE CDStarRepeaterDVRPTRV1Controller::read()
 {
 	m_readLength = 0U;
 
-	wxMutexLocker locker(m_mutex);
-
 	if (m_rxData.isEmpty())
 		return DSMTT_NONE;
+
+	wxMutexLocker locker(m_mutex);
 
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
@@ -499,8 +499,8 @@ bool CDStarRepeaterDVRPTRV1Controller::writeHeader(const CHeaderData& header)
 
 	wxMutexLocker locker(m_mutex);
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < 62U)
+	bool ret = m_txData.hasSpace(62U);
+	if (!ret)
 		return false;
 
 	unsigned char len1 = 8U;
@@ -545,8 +545,8 @@ bool CDStarRepeaterDVRPTRV1Controller::writeData(const unsigned char* data, unsi
 
 		wxMutexLocker locker(m_mutex);
 
-		unsigned int space = m_txData.freeSpace();
-		if (space < 9U)
+		bool ret = m_txData.hasSpace(9U);
+		if (!ret)
 			return false;
 
 		unsigned char len = 8U;
@@ -590,8 +590,8 @@ bool CDStarRepeaterDVRPTRV1Controller::writeData(const unsigned char* data, unsi
 
 	wxMutexLocker locker(m_mutex);
 
-	unsigned int space = m_txData.freeSpace();
-	if (space < 25U)
+	bool ret = m_txData.hasSpace(25U);
+	if (!ret)
 		return false;
 
 	unsigned char len = 24U;

@@ -519,7 +519,7 @@ void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent& event)
 	wxString starNetLink3             = m_starNet3->getReflector();
 	m_config->setStarNet3(starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3, starNetLink3);
 #else
-	m_config->setStarNet3(starNetBand2, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3);
+	m_config->setStarNet3(starNetBand3, starNetCallsign3, starNetLogoff3, starNetInfo3, starNetPermanent3, starNetUserTimeout3, starNetGroupTimeout3, starNetCallsignSwitch3, starNetTXMsgSwitch3);
 #endif
 
 	wxString starNetBand4             = m_starNet4->getBand();

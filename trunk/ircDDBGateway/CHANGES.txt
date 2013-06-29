@@ -1347,3 +1347,4 @@ Added XRF310.
 --------
 
 Added daemon info to the logs.
+Fixed STARmet Digital configuration bug in ircDDB Gateway Config.

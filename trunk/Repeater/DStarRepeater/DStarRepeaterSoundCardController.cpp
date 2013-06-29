@@ -496,10 +496,10 @@ DSMT_TYPE CDStarRepeaterSoundCardController::read()
 {
 	m_readLength = 0U;
 
-	wxMutexLocker locker(m_mutex);
-
 	if (m_rxData.isEmpty())
 		return DSMTT_NONE;
+
+	wxMutexLocker locker(m_mutex);
 
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
@@ -624,7 +624,7 @@ unsigned int CDStarRepeaterSoundCardController::getSpace()
 
 bool CDStarRepeaterSoundCardController::getTX()
 {
-	return m_txAudio.dataSpace() > 0U;
+	return m_txAudio.hasData();
 }
 
 void CDStarRepeaterSoundCardController::stop()
@@ -825,8 +825,8 @@ void CDStarRepeaterSoundCardController::processHeader(bool bit)
 			// The checksum is correct
 			m_mutex.Lock();
 
-			unsigned int space = m_rxData.freeSpace();
-			if (space < 43U) {
+			bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + 2U);
+			if (!ret) {
 				wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 			} else {
 				unsigned char data[2U];
@@ -870,8 +870,8 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 
 		m_mutex.Lock();
 
-		unsigned int space = m_rxData.freeSpace();
-		if (space < 2U) {
+		bool ret = m_rxData.hasSpace(2U);
+		if (!ret) {
 			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 		} else {
 			unsigned char data[2U];
@@ -902,8 +902,8 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 
 		m_mutex.Lock();
 
-		unsigned int space = m_rxData.freeSpace();
-		if (space < 2U) {
+		bool ret = m_rxData.hasSpace(2U);
+		if (!ret) {
 			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 		} else {
 			unsigned char data[2U];
@@ -922,8 +922,8 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 	if (m_rxBufferBits == DV_FRAME_LENGTH_BITS || syncSeen) {
 		m_mutex.Lock();
 
-		unsigned int space = m_rxData.freeSpace();
-		if (space < 14U) {
+		bool ret = m_rxData.hasSpace(DV_FRAME_LENGTH_BYTES + 2U);
+		if (!ret) {
 			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
 		} else {
 			unsigned char data[2U];
