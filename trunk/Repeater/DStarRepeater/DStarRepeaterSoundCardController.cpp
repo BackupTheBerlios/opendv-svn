@@ -24,10 +24,6 @@
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-const unsigned char TAG_HEADER   = 0x00U;
-const unsigned char TAG_DATA     = 0x01U;
-const unsigned char TAG_DATA_END = 0x02U;
-
 const unsigned int  NIBBLE_BITS[] = {0U, 1U, 1U, 2U, 1U, 2U, 2U, 3U, 1U, 2U, 2U, 3U, 2U, 3U, 3U, 4U};
 
 const unsigned int MAX_SYNC_BITS = 50U * DV_FRAME_LENGTH_BITS;
@@ -376,7 +372,7 @@ m_stopped(false),
 m_rxState(DSRSCCS_NONE),
 m_patternBuffer(0x00U),
 m_mutex(),
-m_readType(),
+m_readType(DSMTT_NONE),
 m_readLength(0U),
 m_readBuffer(NULL),
 m_demodulator(),
@@ -504,39 +500,25 @@ DSMT_TYPE CDStarRepeaterSoundCardController::read()
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
 
-	m_readType   = hdr[0U];
+	m_readType   = DSMT_TYPE(hdr[0U]);
 	m_readLength = hdr[1U];
 	m_rxData.getData(m_readBuffer, m_readLength);
 
-	switch (m_readType) {
-		case TAG_HEADER:
-			return DSMTT_HEADER;
-
-		case TAG_DATA:
-		case TAG_DATA_END:
-			return DSMTT_DATA;
-
-		default:
-			return DSMTT_NONE;
-	}
+	return m_readType;
 }
 
 CHeaderData* CDStarRepeaterSoundCardController::readHeader()
 {
-	if (m_readType != TAG_HEADER || m_readLength == 0U)
+	if (m_readType != DSMTT_HEADER)
 		return NULL;
 
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterSoundCardController::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterSoundCardController::readData(unsigned char* data, unsigned int length)
 {
-	end = false;
-
-	if (m_readType != TAG_DATA && m_readType != TAG_DATA_END)
+	if (m_readType != DSMTT_DATA)
 		return 0U;
-
-	end = m_readType == TAG_DATA_END;
 
 	if (length < m_readLength) {
 		::memcpy(data, m_readBuffer, length);
@@ -825,16 +807,12 @@ void CDStarRepeaterSoundCardController::processHeader(bool bit)
 			// The checksum is correct
 			m_mutex.Lock();
 
-			bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + 2U);
-			if (!ret) {
-				wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-			} else {
-				unsigned char data[2U];
-				data[0U] = TAG_HEADER;
-				data[1U] = RADIO_HEADER_LENGTH_BYTES;
-				m_rxData.addData(data, 2U);
-				m_rxData.addData(header, RADIO_HEADER_LENGTH_BYTES);
-			}
+			unsigned char data[2U];
+			data[0U] = DSMTT_HEADER;
+			data[1U] = RADIO_HEADER_LENGTH_BYTES;
+			m_rxData.addData(data, 2U);
+
+			m_rxData.addData(header, RADIO_HEADER_LENGTH_BYTES);
 
 			m_mutex.Unlock();
 
@@ -870,15 +848,10 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 
 		m_mutex.Lock();
 
-		bool ret = m_rxData.hasSpace(2U);
-		if (!ret) {
-			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-		} else {
-			unsigned char data[2U];
-			data[0U] = TAG_DATA_END;
-			data[1U] = 0U;
-			m_rxData.addData(data, 2U);
-		}
+		unsigned char data[2U];
+		data[0U] = DSMTT_EOT;
+		data[1U] = 0U;
+		m_rxData.addData(data, 2U);
 
 		m_mutex.Unlock();
 
@@ -902,15 +875,10 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 
 		m_mutex.Lock();
 
-		bool ret = m_rxData.hasSpace(2U);
-		if (!ret) {
-			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-		} else {
-			unsigned char data[2U];
-			data[0U] = TAG_DATA_END;
-			data[1U] = 0U;
-			m_rxData.addData(data, 2U);
-		}
+		unsigned char data[2U];
+		data[0U] = DSMTT_LOST;
+		data[1U] = 0U;
+		m_rxData.addData(data, 2U);
 
 		m_mutex.Unlock();
 
@@ -922,16 +890,12 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 	if (m_rxBufferBits == DV_FRAME_LENGTH_BITS || syncSeen) {
 		m_mutex.Lock();
 
-		bool ret = m_rxData.hasSpace(DV_FRAME_LENGTH_BYTES + 2U);
-		if (!ret) {
-			wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-		} else {
-			unsigned char data[2U];
-			data[0U] = TAG_DATA;
-			data[1U] = DV_FRAME_LENGTH_BYTES;
-			m_rxData.addData(data, 2U);
-			m_rxData.addData(m_rxBuffer, DV_FRAME_LENGTH_BYTES);
-		}
+		unsigned char data[2U];
+		data[0U] = DSMTT_DATA;
+		data[1U] = DV_FRAME_LENGTH_BYTES;
+		m_rxData.addData(data, 2U);
+
+		m_rxData.addData(m_rxBuffer, DV_FRAME_LENGTH_BYTES);
 
 		m_mutex.Unlock();
     

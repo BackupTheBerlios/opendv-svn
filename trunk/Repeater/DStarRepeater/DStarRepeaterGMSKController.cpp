@@ -27,10 +27,6 @@ const unsigned char DVRPTR_HEADER_LENGTH = 5U;
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-const unsigned char TAG_HEADER   = 0x00U;
-const unsigned char TAG_DATA     = 0x01U;
-const unsigned char TAG_DATA_END = 0x02U;
-
 CDStarRepeaterGMSKController::CDStarRepeaterGMSKController(USB_INTERFACE iface, unsigned int address) :
 wxThread(wxTHREAD_JOINABLE),
 m_modem(NULL),
@@ -41,7 +37,7 @@ m_tx(false),
 m_space(0U),
 m_stopped(false),
 m_mutex(),
-m_readType(),
+m_readType(DSMTT_NONE),
 m_readLength(0U),
 m_readBuffer(NULL)
 {
@@ -108,7 +104,7 @@ void* CDStarRepeaterGMSKController::Entry()
 
 	bool rx = false;
 
-	unsigned char  writeType   = TAG_HEADER;;
+	DSMT_TYPE      writeType   = DSMTT_HEADER;
 	unsigned char  writeLength = 0U;
 	unsigned char* writeBuffer = new unsigned char[BUFFER_LENGTH];
 
@@ -128,11 +124,9 @@ void* CDStarRepeaterGMSKController::Entry()
 
 					if (end) {
 						unsigned char data[2U];
-						data[0U] = TAG_DATA_END;
-						data[1U] = DV_FRAME_LENGTH_BYTES;
+						data[0U] = DSMTT_EOT;
+						data[1U] = 0U;
 						m_rxData.addData(data, 2U);
-
-						m_rxData.addData(END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES);
 
 						dataTimer.stop();
 						hdrTimer.start();
@@ -145,7 +139,7 @@ void* CDStarRepeaterGMSKController::Entry()
 						readLength++;
 						if (readLength >= DV_FRAME_LENGTH_BYTES) {
 							unsigned char data[2U];
-							data[0U] = TAG_DATA;
+							data[0U] = DSMTT_DATA;
 							data[1U] = DV_FRAME_LENGTH_BYTES;
 							m_rxData.addData(data, 2U);
 
@@ -163,7 +157,7 @@ void* CDStarRepeaterGMSKController::Entry()
 					// CUtils::dump(wxT("Read Header"), buffer, ret);
 
 					unsigned char data[2U];
-					data[0U] = TAG_HEADER;
+					data[0U] = DSMTT_HEADER;
 					data[1U] = RADIO_HEADER_LENGTH_BYTES - 2U;
 					m_rxData.addData(data, 2U);
 
@@ -182,7 +176,9 @@ void* CDStarRepeaterGMSKController::Entry()
 		if (writeLength == 0U && m_txData.hasData()) {
 			m_mutex.Lock();
 
-			m_txData.getData(&writeType, 1U);
+			unsigned char type = writeType;
+			m_txData.getData(&type, 1U);
+
 			m_txData.getData(&writeLength, 1U);
 			m_txData.getData(writeBuffer, writeLength);
 
@@ -190,7 +186,7 @@ void* CDStarRepeaterGMSKController::Entry()
 		}
 
 		if (writeLength > 0U) {
-			if (writeType == TAG_HEADER) {
+			if (writeType == DSMTT_HEADER) {
 				// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
 				m_modem->writeHeader(writeBuffer, writeLength);
 				m_modem->setPTT(true);
@@ -203,7 +199,7 @@ void* CDStarRepeaterGMSKController::Entry()
 						writeLength -= ret;
 						m_space--;
 
-						if (writeType == TAG_DATA_END)
+						if (writeType == DSMTT_EOT)
 							m_modem->setPTT(false);
 					}
 				}
@@ -254,39 +250,25 @@ DSMT_TYPE CDStarRepeaterGMSKController::read()
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
 
-	m_readType   = hdr[0U];
+	m_readType   = DSMT_TYPE(hdr[0U]);
 	m_readLength = hdr[1U];
 	m_rxData.getData(m_readBuffer, m_readLength);
 
-	switch (m_readType) {
-		case TAG_HEADER:
-			return DSMTT_HEADER;
-
-		case TAG_DATA:
-		case TAG_DATA_END:
-			return DSMTT_DATA;
-
-		default:
-			return DSMTT_NONE;
-	}
+	return m_readType;
 }
 
 CHeaderData* CDStarRepeaterGMSKController::readHeader()
 {
-	if (m_readType != TAG_HEADER || m_readLength == 0U)
+	if (m_readType != DSMTT_HEADER)
 		return NULL;
 
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterGMSKController::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterGMSKController::readData(unsigned char* data, unsigned int length)
 {
-	end = false;
-
-	if (m_readType != TAG_DATA && m_readType != TAG_DATA_END)
+	if (m_readType != DSMTT_DATA)
 		return 0U;
-
-	end = m_readType == TAG_DATA_END;
 
 	if (length < m_readLength) {
 		::memcpy(data, m_readBuffer, length);
@@ -334,7 +316,7 @@ bool CDStarRepeaterGMSKController::writeHeader(const CHeaderData& header)
 		return false;
 
 	unsigned char data[2U];
-	data[0U] = TAG_HEADER;
+	data[0U] = DSMTT_HEADER;
 	data[1U] = RADIO_HEADER_LENGTH_BYTES - 2U;
 	m_txData.addData(data, 2U);
 
@@ -352,7 +334,7 @@ bool CDStarRepeaterGMSKController::writeData(const unsigned char* data, unsigned
 		return false;
 
 	unsigned char buffer[2U];
-	buffer[0U] = end ? TAG_DATA_END : TAG_DATA;
+	buffer[0U] = end ? DSMTT_EOT : DSMTT_DATA;
 	buffer[1U] = DV_FRAME_LENGTH_BYTES;
 	m_txData.addData(buffer, 2U);
 

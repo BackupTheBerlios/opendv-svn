@@ -41,7 +41,7 @@ public:
 
 	virtual DSMT_TYPE    read();
 	virtual CHeaderData* readHeader();
-	virtual unsigned int readData(unsigned char* data, unsigned int length, bool& end);
+	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
@@ -57,7 +57,7 @@ private:
 	unsigned int               m_space;
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
-	unsigned char              m_readType;
+	DSMT_TYPE                  m_readType;
 	unsigned int               m_readLength;
 	unsigned char*             m_readBuffer;
 };

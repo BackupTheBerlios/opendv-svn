@@ -123,10 +123,6 @@ const unsigned int MAX_RESPONSES = 20U;
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-const unsigned char TAG_HEADER   = 0x00U;
-const unsigned char TAG_DATA     = 0x01U;
-const unsigned char TAG_DATA_END = 0x02U;
-
 CDStarRepeaterDVAPController::CDStarRepeaterDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),
 m_serial(port, SERIAL_230400),
@@ -145,7 +141,7 @@ m_rxData(1000U),
 m_txData(1000U),
 m_stopped(false),
 m_mutex(),
-m_readType(),
+m_readType(DSMTT_NONE),
 m_readLength(0U),
 m_readBuffer(NULL)
 {
@@ -272,40 +268,35 @@ void* CDStarRepeaterDVAPController::Entry()
 				startDVAP();
 				break;
 			case RT_HEADER: {
-					m_mutex.Lock();
+					wxMutexLocker locker(m_mutex);
 
-					bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + 2U);
-					if (!ret) {
-						wxLogMessage(wxT("Out of space in the DVAP RX queue"));
-					} else {
-						unsigned char hdr[2U];
-						hdr[0U] = TAG_HEADER;
-						hdr[1U] = RADIO_HEADER_LENGTH_BYTES;
-						m_rxData.addData(hdr, 2U);
-						m_rxData.addData(m_buffer + 6U, RADIO_HEADER_LENGTH_BYTES);
-					}
+					unsigned char hdr[2U];
+					hdr[0U] = DSMTT_HEADER;
+					hdr[1U] = RADIO_HEADER_LENGTH_BYTES;
+					m_rxData.addData(hdr, 2U);
 
-					m_mutex.Unlock();
+					m_rxData.addData(m_buffer + 6U, RADIO_HEADER_LENGTH_BYTES);
 				}
 				break;
 			case RT_HEADER_ACK:
 				break;
 			case RT_GMSK_DATA: {
-					m_mutex.Lock();
+					wxMutexLocker locker(m_mutex);
 
-					bool ret = m_rxData.hasSpace(length - 4U);
-					if (!ret) {
-						wxLogMessage(wxT("Out of space in the DVAP RX queue"));
-					} else {
-						bool end = (m_buffer[4U] & 0x40U) == 0x40U;
+					bool end = (m_buffer[4U] & 0x40U) == 0x40U;
+					if (end) {
 						unsigned char hdr[2U];
-						hdr[0U] = end ? TAG_DATA_END : TAG_DATA;
+						hdr[0U] = DSMTT_EOT;
+						hdr[1U] = 0U;
+						m_rxData.addData(hdr, 2U);
+					} else {
+						unsigned char hdr[2U];
+						hdr[0U] = DSMTT_DATA;
 						hdr[1U] = length - 6U;
 						m_rxData.addData(hdr, 2U);
+
 						m_rxData.addData(m_buffer + 6U, length - 6U);
 					}
-
-					m_mutex.Unlock();
 				}
 				break;
 			case RT_FM_DATA:
@@ -369,39 +360,25 @@ DSMT_TYPE CDStarRepeaterDVAPController::read()
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
 
-	m_readType   = hdr[0U];
+	m_readType   = DSMT_TYPE(hdr[0U]);
 	m_readLength = hdr[1U];
 	m_rxData.getData(m_readBuffer, m_readLength);
 
-	switch (m_readType) {
-		case TAG_HEADER:
-			return DSMTT_HEADER;
-
-		case TAG_DATA:
-		case TAG_DATA_END:
-			return DSMTT_DATA;
-
-		default:
-			return DSMTT_NONE;
-	}
+	return m_readType;
 }
 
 CHeaderData* CDStarRepeaterDVAPController::readHeader()
 {
-	if (m_readType != TAG_HEADER || m_readLength == 0U)
+	if (m_readType != DSMTT_HEADER)
 		return NULL;
 
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterDVAPController::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterDVAPController::readData(unsigned char* data, unsigned int length)
 {
-	end = false;
-
-	if (m_readType != TAG_DATA && m_readType != TAG_DATA_END)
+	if (m_readType != DSMTT_DATA)
 		return 0U;
-
-	end = m_readType == TAG_DATA_END;
 
 	if (length < m_readLength) {
 		::memcpy(data, m_readBuffer, length);

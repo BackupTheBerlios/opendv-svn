@@ -16,8 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// TODO Handle flags 102 + 103
-
 #include "DStarRepeaterDVRPTRV2Controller.h"
 #include "DStarDefines.h"
 #include "Timer.h"
@@ -55,10 +53,6 @@ wxArrayString CDStarRepeaterDVRPTRV2Controller::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-const unsigned char TAG_HEADER   = 0x00U;
-const unsigned char TAG_DATA     = 0x01U;
-const unsigned char TAG_DATA_END = 0x02U;
-
 CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_USB),
@@ -80,7 +74,7 @@ m_rx(false),
 m_space(0U),
 m_stopped(false),
 m_mutex(),
-m_readType(),
+m_readType(DSMTT_NONE),
 m_readLength(0U),
 m_readBuffer(NULL)
 {
@@ -113,7 +107,7 @@ m_rx(false),
 m_space(0U),
 m_stopped(false),
 m_mutex(),
-m_readType(),
+m_readType(DSMTT_NONE),
 m_readLength(0U),
 m_readBuffer(NULL)
 {
@@ -194,62 +188,52 @@ void* CDStarRepeaterDVRPTRV2Controller::Entry()
 
 			case RT2_HEADER: {
 					// CUtils::dump(wxT("RT2_HEADER"), m_buffer, length);
-					m_mutex.Lock();
+					wxMutexLocker locker(m_mutex);
 
-					bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + DV_FRAME_LENGTH_BYTES + 4U);
-					if (!ret) {
-						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-					} else {
-						unsigned char data[2U];
-						data[0U] = TAG_HEADER;
-						data[1U] = RADIO_HEADER_LENGTH_BYTES;
-						m_rxData.addData(data, 2U);
-						m_rxData.addData(m_buffer + 9U, RADIO_HEADER_LENGTH_BYTES - 2U);
+					unsigned char data[2U];
+					data[0U] = DSMTT_HEADER;
+					data[1U] = RADIO_HEADER_LENGTH_BYTES;
+					m_rxData.addData(data, 2U);
 
-						// Dummy checksum
-						data[0U] = 0xFFU;
-						data[1U] = 0xFFU;
-						m_rxData.addData(data, 2U);
+					m_rxData.addData(m_buffer + 9U, RADIO_HEADER_LENGTH_BYTES - 2U);
 
-						data[0U] = TAG_DATA;
-						data[1U] = DV_FRAME_LENGTH_BYTES;
-						m_rxData.addData(data, 2U);
-						m_rxData.addData(m_buffer + 51U, DV_FRAME_LENGTH_BYTES);
+					// Dummy checksum
+					data[0U] = 0xFFU;
+					data[1U] = 0xFFU;
+					m_rxData.addData(data, 2U);
 
-						m_rx = true;
-					}
+					data[0U] = DSMTT_DATA;
+					data[1U] = DV_FRAME_LENGTH_BYTES;
+					m_rxData.addData(data, 2U);
 
-					m_mutex.Unlock();
+					m_rxData.addData(m_buffer + 51U, DV_FRAME_LENGTH_BYTES);
+
+					m_rx = true;
 				}
 				break;
 
 			case RT2_DATA: {
 					// CUtils::dump(wxT("RT2_DATA"), m_buffer, length);
-					m_mutex.Lock();
+					wxMutexLocker locker(m_mutex);
 
-					bool ret = m_rxData.hasSpace(DV_FRAME_LENGTH_BYTES + 4U);
-					if (!ret) {
-						wxLogMessage(wxT("Out of space in the DV-RPTR RX queue"));
-					} else {
-						unsigned char data[2U];
-						data[0U] = TAG_DATA;
-						data[1U] = DV_FRAME_LENGTH_BYTES;
+					unsigned char data[2U];
+					data[0U] = DSMTT_DATA;
+					data[1U] = DV_FRAME_LENGTH_BYTES;
+					m_rxData.addData(data, 2U);
+
+					m_rxData.addData(m_buffer + 5U, DV_FRAME_LENGTH_BYTES);
+
+					m_rx = true;
+
+					// End of transmission?
+					bool end = (m_buffer[19U] & 0x40U) == 0x40U;
+					if (end) {
+						data[0U] = DSMTT_EOT;
+						data[1U] = 0U;
 						m_rxData.addData(data, 2U);
-						m_rxData.addData(m_buffer + 5U, DV_FRAME_LENGTH_BYTES);
 
-						m_rx = true;
-
-						// End of transmission?
-						if ((m_buffer[19U] & 0x40U) == 0x40U) {
-							data[0U] = TAG_DATA_END;
-							data[1U] = 0U;
-							m_rxData.addData(data, 2U);
-
-							m_rx = false;
-						}
+						m_rx = false;
 					}
-
-					m_mutex.Unlock();
 				}
 				break;
 
@@ -320,39 +304,25 @@ DSMT_TYPE CDStarRepeaterDVRPTRV2Controller::read()
 	unsigned char hdr[2U];
 	m_rxData.getData(hdr, 2U);
 
-	m_readType   = hdr[0U];
+	m_readType   = DSMT_TYPE(hdr[0U]);
 	m_readLength = hdr[1U];
 	m_rxData.getData(m_readBuffer, m_readLength);
 
-	switch (m_readType) {
-		case TAG_HEADER:
-			return DSMTT_HEADER;
-
-		case TAG_DATA:
-		case TAG_DATA_END:
-			return DSMTT_DATA;
-
-		default:
-			return DSMTT_NONE;
-	}
+	return m_readType;
 }
 
 CHeaderData* CDStarRepeaterDVRPTRV2Controller::readHeader()
 {
-	if (m_readType != TAG_HEADER || m_readLength == 0U)
+	if (m_readType != DSMTT_HEADER)
 		return NULL;
 
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterDVRPTRV2Controller::readData(unsigned char* data, unsigned int length, bool& end)
+unsigned int CDStarRepeaterDVRPTRV2Controller::readData(unsigned char* data, unsigned int length)
 {
-	end = false;
-
-	if (m_readType != TAG_DATA && m_readType != TAG_DATA_END)
+	if (m_readType != DSMTT_DATA)
 		return 0U;
-
-	end = m_readType == TAG_DATA_END;
 
 	if (length < m_readLength) {
 		::memcpy(data, m_readBuffer, length);
@@ -824,7 +794,7 @@ bool CDStarRepeaterDVRPTRV2Controller::findModem()
 	if (m_rx) {
 		m_mutex.Lock();
 		unsigned char data[2U];
-		data[0U] = TAG_DATA_END;
+		data[0U] = DSMTT_EOT;
 		data[1U] = 0U;
 		m_rxData.addData(data, 2U);
 		m_mutex.Unlock();

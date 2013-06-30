@@ -26,7 +26,9 @@
 enum DSMT_TYPE {
 	DSMTT_NONE,
 	DSMTT_HEADER,
-	DSMTT_DATA
+	DSMTT_DATA,
+	DSMTT_EOT,
+	DSMTT_LOST
 };
 
 class IDStarRepeaterModem {
@@ -41,7 +43,7 @@ public:
 
 	virtual DSMT_TYPE read() = 0;
 	virtual CHeaderData* readHeader() = 0;
-	virtual unsigned int readData(unsigned char* data, unsigned int length, bool& end) = 0;
+	virtual unsigned int readData(unsigned char* data, unsigned int length) = 0;
 
 	virtual void stop() = 0;
 

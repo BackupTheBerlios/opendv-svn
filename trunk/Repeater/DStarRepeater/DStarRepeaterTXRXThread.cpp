@@ -298,44 +298,33 @@ void CDStarRepeaterTXRXThread::receiveModem()
 					receiveHeader(header);
 				} else if (type == DSMTT_DATA) {
 					unsigned char data[20U];
-					bool end;
-					unsigned int length = m_modem->readData(data, 20U, end);
-
-					if (end) {
-						setRadioState(DSRXS_LISTENING);
-					} else {
-						setRadioState(DSRXS_PROCESS_SLOW_DATA);
-						receiveSlowData(data, length);
-					}
+					unsigned int length = m_modem->readData(data, 20U);
+					setRadioState(DSRXS_PROCESS_SLOW_DATA);
+					receiveSlowData(data, length);
 				}
 				break;
 
 			case DSRXS_PROCESS_SLOW_DATA:
 				if (type == DSMTT_DATA) {
 					unsigned char data[20U];
-					bool end;
-					unsigned int length = m_modem->readData(data, 20U, end);
-
-					if (end)
-						setRadioState(DSRXS_LISTENING);
-					else
-						receiveSlowData(data, length);
+					unsigned int length = m_modem->readData(data, 20U);
+					receiveSlowData(data, length);
+				} else if (type == DSMTT_EOT || type == DSMTT_LOST) {
+					setRadioState(DSRXS_LISTENING);
 				}
 				break;
 
 			case DSRXS_PROCESS_DATA:
 				if (type == DSMTT_DATA) {
 					unsigned char data[20U];
-					bool end;
-					unsigned int length = m_modem->readData(data, 20U, end);
-
-					if (end) {
-						processRadioFrame(data, FRAME_END);
-						setRadioState(DSRXS_LISTENING);
-						endOfRadioData();
-					} else {
-						receiveRadioData(data, length);
-					}
+					unsigned int length = m_modem->readData(data, 20U);
+					receiveRadioData(data, length);
+				} else if (type == DSMTT_EOT || type == DSMTT_LOST) {
+					unsigned char data[20U];
+					::memcpy(data, END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES);
+					processRadioFrame(data, FRAME_END);
+					setRadioState(DSRXS_LISTENING);
+					endOfRadioData();
 				}
 				break;
 		}
