@@ -1,4 +1,4 @@
-Repeater - 20130622
+Repeater - 20130702
 ===================
 
 20090530
@@ -1876,7 +1876,7 @@ Add /dev/ttyS* devices to the serial control list.
 Added a receive level setting to the sound card driver in the D-Star Repeater.
 Fixed bugs in the D-Star Repeater regarding end of incoming transmissions.
 
-201306xx
+20130702
 --------
 
 Added daemon info to the log.

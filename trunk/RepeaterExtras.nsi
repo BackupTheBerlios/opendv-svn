@@ -11,8 +11,8 @@
 ;Configuration
 
   ;General
-  Name "Repeater Extras 20130622"
-  OutFile "RepeaterExtras-20130622.exe"
+  Name "Repeater Extras 20130702"
+  OutFile "RepeaterExtras-20130702.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\Repeater Extras"

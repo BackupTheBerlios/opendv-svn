@@ -1,7 +1,7 @@
-Analogue Repeater - 20130622
+Analogue Repeater - 20130702
 ============================
 
-201306xx
+20130702
 --------
 
 Added daemon info to the logs.
