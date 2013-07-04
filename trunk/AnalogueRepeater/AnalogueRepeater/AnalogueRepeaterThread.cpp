@@ -190,7 +190,8 @@ m_externalCount(0U),
 m_relayCount(0U),
 m_transmitCount(0U),
 m_timeCount(0U),
-m_lastHour(0U)
+m_lastHour(0U),
+m_aprsrx()
 {
 }
 
@@ -313,6 +314,7 @@ void CAnalogueRepeaterThread::run()
 		unsigned int nAudio;
 		wxFloat32 audio[ANALOGUE_RADIO_BLOCK_SIZE];
 		if (m_state == ARS_RELAYING_RADIO && m_squelch != AS_CLOSED) {
+			m_aprsrx.process(radioAudio, nRadio);		// XXX
 			nAudio = nRadio;
 			m_radioAudioVOGAD.process(radioAudio, audio, nAudio);
 		} else if (m_state == ARS_RELAYING_EXTERNAL && m_squelch != AS_CLOSED) {

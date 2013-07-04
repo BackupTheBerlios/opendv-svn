@@ -126,7 +126,14 @@ bool CIRCDDBGatewayApp::OnInit()
 	}
 	frameName.Append(VERSION);
 
-	m_frame = new CIRCDDBGatewayFrame(frameName, m_gui);
+	wxPoint position = wxDefaultPosition;
+
+	int x, y;
+	m_config->getPosition(x, y);
+	if (x >= 0 && y >= 0)
+		position = wxPoint(x, y);
+
+	m_frame = new CIRCDDBGatewayFrame(frameName, position, m_gui);
 	m_frame->Show();
 
 	SetTopWindow(m_frame);
@@ -207,6 +214,12 @@ void CIRCDDBGatewayApp::showLog(const wxString& text)
 CIRCDDBGatewayStatusData* CIRCDDBGatewayApp::getStatus() const
 {
 	return m_thread->getStatus();
+}
+
+void CIRCDDBGatewayApp::setPosition(int x, int y)
+{
+	m_config->setPosition(x, y);
+	m_config->write();
 }
 
 void CIRCDDBGatewayApp::createThread()

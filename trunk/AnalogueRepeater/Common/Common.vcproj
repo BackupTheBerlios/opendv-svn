@@ -158,6 +158,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\APRSRX.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ArduinoController.cpp"
 				>
 			</File>
@@ -281,6 +285,10 @@
 			</File>
 			<File
 				RelativePath=".\AnalogueDefines.h"
+				>
+			</File>
+			<File
+				RelativePath=".\APRSRX.h"
 				>
 			</File>
 			<File

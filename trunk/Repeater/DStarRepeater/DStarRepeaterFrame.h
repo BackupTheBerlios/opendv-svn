@@ -25,7 +25,7 @@
 
 class CDStarRepeaterFrame : public wxFrame {
 public:
-	CDStarRepeaterFrame(const wxString& title, const wxString& type, bool gui);
+	CDStarRepeaterFrame(const wxString& title, const wxString& type, const wxPoint& position, bool gui);
 	virtual ~CDStarRepeaterFrame();
 
 	virtual void setLogging(bool logging);

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 #include "FIRFilter.h"
 #include "Goertzel.h"
 #include "PTTDelay.h"
+#include "APRSRX.h"
 #include "Timer.h"
 #include "VOGAD.h"
 #include "NCO.h"
@@ -180,6 +181,7 @@ private:
 	unsigned int              m_transmitCount;
 	unsigned int              m_timeCount;
 	unsigned int              m_lastHour;
+	CAPRSRX                   m_aprsrx;
 
 	void getAudio(wxFloat32* radioAudio, wxFloat32* extAudio, unsigned int& nRadio, unsigned int& nExt);
 	ANALOGUE_SQUELCH checkRadioSquelch(const wxFloat32* audio, unsigned int length, ANALOGUE_SQUELCH squelch);

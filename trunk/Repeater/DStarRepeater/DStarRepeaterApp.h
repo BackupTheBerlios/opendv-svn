@@ -53,6 +53,8 @@ public:
 
 	virtual void setLogging(bool logging);
 
+	virtual void setPosition(int x, int y);
+
 	virtual void shutdown();
 	virtual void startup();
 	virtual void command1();

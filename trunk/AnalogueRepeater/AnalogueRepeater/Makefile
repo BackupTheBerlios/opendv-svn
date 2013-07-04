@@ -84,7 +84,7 @@ AnalogueRepeaterThread.o:	AnalogueRepeaterThread.cpp AnalogueRepeaterThread.h An
 							../Common/WAVFileReader.h ../Common/AudioCallback.h ../Common/TimeoutTones.h ../Common/RingBuffer.h ../Common/Goertzel.h \
 							../Common/FixedAudioSource.h ../Common/Timer.h ../Common/NCO.h ../Common/VOGAD.h \
 							../Common/FirstOrderIIR.h ../Common/AudioDelay.h ../Common/PTTDelay.h ../Common/AnalogueDefines.h \
-							../Common/DTMFController.h
+							../Common/DTMFController.h ../Common/APRSRX.h
 				$(CC) $(CFLAGS) -c AnalogueRepeaterThread.cpp
 
 AnalogueRepeaterTimesSet.o:	AnalogueRepeaterTimesSet.cpp AnalogueRepeaterTimesSet.h

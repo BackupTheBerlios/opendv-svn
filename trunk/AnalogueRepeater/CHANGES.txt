@@ -1,4 +1,4 @@
-Analogue Repeater - 20130702
+Analogue Repeater - 20130704
 ============================
 
 20130702
@@ -7,3 +7,8 @@ Analogue Repeater - 20130702
 Added daemon info to the logs.
 Split from the main Repeater package.
 Removed the URI USB support.
+
+20130704
+--------
+
+Added basic AX.25 receiving.

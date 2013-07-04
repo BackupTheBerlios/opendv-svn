@@ -49,6 +49,8 @@ public:
 
 	virtual CIRCDDBGatewayStatusData* getStatus() const;
 
+	virtual void setPosition(int x, int y);
+
 private:
 	wxString                    m_name;
 	bool                        m_nolog;

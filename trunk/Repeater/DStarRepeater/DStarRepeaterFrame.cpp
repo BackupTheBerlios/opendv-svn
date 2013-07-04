@@ -81,8 +81,8 @@ const unsigned int LABEL_WIDTH    = 70U;
 const unsigned int LOGTEXT_WIDTH  = 710U;
 #endif
 
-CDStarRepeaterFrame::CDStarRepeaterFrame(const wxString& title, const wxString& type, bool gui) :
-wxFrame(NULL, -1, title),
+CDStarRepeaterFrame::CDStarRepeaterFrame(const wxString& title, const wxString& type, const wxPoint& position, bool gui) :
+wxFrame(NULL, -1, title, position),
 m_logging(NULL),
 m_rxState(NULL),
 m_rptState(NULL),
@@ -369,6 +369,11 @@ void CDStarRepeaterFrame::onQuit(wxCommandEvent& event)
 
 void CDStarRepeaterFrame::onClose(wxCloseEvent& event)
 {
+	int x, y;
+	GetPosition(&x, &y);
+	if (x >= 0 && y >= 0)
+		::wxGetApp().setPosition(x, y);
+
 	Destroy();
 }
 

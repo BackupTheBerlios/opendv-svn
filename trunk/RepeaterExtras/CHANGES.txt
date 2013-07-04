@@ -5,3 +5,9 @@ Repeater Extras - 20130702
 --------
 
 Split the DCSGateway, DExtraGateway, and ParrotController from the Repeater package.
+
+201307xx
+--------
+
+Added XRF444.
+Added DCS044.

@@ -26,7 +26,7 @@
 
 class CIRCDDBGatewayFrame : public wxFrame {
 public:
-	CIRCDDBGatewayFrame(const wxString& title, bool gui);
+	CIRCDDBGatewayFrame(const wxString& title, const wxPoint& position, bool gui);
 	virtual ~CIRCDDBGatewayFrame();
 
 	virtual void onQuit(wxCommandEvent& event);

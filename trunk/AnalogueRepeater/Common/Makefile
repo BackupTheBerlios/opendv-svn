@@ -1,14 +1,18 @@
 all:		Common.a
 
-OBJS :=	ActiveHangSet.o ArduinoController.o AudioDelay.o CWKeyer.o CWTextCtrl.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o ExternalController.o \
-		FirstOrderIIR.o FIRFilter.o Goertzel.o K8055Controller.o LogEvent.o Logger.o NCO.o NetworkController.o PTTDelay.o RaspberryController.o RestrictedTextCtrl.o \
-		SerialDataController.o SerialLineController.o SoundCardReaderWriter.o TimeoutTones.o Timer.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o
+OBJS :=	ActiveHangSet.o APRSRX.o ArduinoController.o AudioDelay.o CWKeyer.o CWTextCtrl.o DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o \
+		ExternalController.o FirstOrderIIR.o FIRFilter.o Goertzel.o K8055Controller.o LogEvent.o Logger.o NCO.o NetworkController.o PTTDelay.o RaspberryController.o \
+		RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SoundCardReaderWriter.o TimeoutTones.o Timer.o Utils.o VOGAD.o WAVFileReader.o \
+		WAVFileStore.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
 
 ActiveHangSet.o:	ActiveHangSet.cpp ActiveHangSet.h
 		$(CC) $(CFLAGS) -c ActiveHangSet.cpp
+
+APRSRX.o:	APRSRX.cpp APRSRX.h AnalogueDefines.h Utils.h
+		$(CC) $(CFLAGS) -c APRSRX.cpp
 
 ArduinoController.o:	ArduinoController.cpp ArduinoController.h SerialDataController.h HardwareController.h
 		$(CC) $(CFLAGS) -c ArduinoController.cpp

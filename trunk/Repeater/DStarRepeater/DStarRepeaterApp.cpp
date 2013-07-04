@@ -141,7 +141,14 @@ bool CDStarRepeaterApp::OnInit()
 	wxString type;
 	m_config->getModem(type);
 
-	m_frame = new CDStarRepeaterFrame(frameName, type, m_gui);
+	wxPoint position = wxDefaultPosition;
+
+	int x, y;
+	m_config->getPosition(x, y);
+	if (x >= 0 && y >= 0)
+		position = wxPoint(x, y);
+
+	m_frame = new CDStarRepeaterFrame(frameName, type, position, m_gui);
 	m_frame->Show();
 
 	SetTopWindow(m_frame);
@@ -244,6 +251,12 @@ void CDStarRepeaterApp::setLogging(bool logging)
 	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());
 
 	m_thread->setLogging(logging, m_audioDir);
+}
+
+void CDStarRepeaterApp::setPosition(int x, int y)
+{
+	m_config->setPosition(x, y);
+	m_config->write();
 }
 
 void CDStarRepeaterApp::shutdown()
