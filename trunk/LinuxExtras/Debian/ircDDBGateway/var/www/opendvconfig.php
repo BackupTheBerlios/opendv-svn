@@ -22,7 +22,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 }
 
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20130417";
+$rev="20130705";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -179,7 +179,7 @@ if ($helpfile = fopen($helpfilename,'r')) {
 
     <tr <?php echo "bgcolor=$col[1]" ?> >
 	<td align=left width=333><a class="tooltip" href="#">echoEnabled=<input type=checkbox name="echoEnabled" value="<?php if(isset($_POST['echoEnabled'])) echo $_POST['echoEnabled']; ?>" <?php if(isset($_POST['echoEnabled']) && ($_POST['echoEnabled'] == 1)){ echo 'checked';} ?>><span><?php echo $helptext[echoEnabled] ?></span></a></td>
-	<td align=left width=333><a class="tooltip" href="#">infoEnabled=<input type=checkbox name="infoEnabled" value="<?php if(isset($_POST['incoEnabled'])) echo $_POST['infoEnabled']; ?>" <?php if(isset($_POST['infoEnabled']) && ($_POST['infoEnabled'] == 1)){ echo 'checked';} ?>><span><?php echo $helptext[infoEnabled] ?></span></a></td>
+	<td align=left width=333><a class="tooltip" href="#">infoEnabled=<input type=checkbox name="infoEnabled" value="<?php if(isset($_POST['infoEnabled'])) echo $_POST['infoEnabled']; ?>" <?php if(isset($_POST['infoEnabled']) && ($_POST['infoEnabled'] == 1)){ echo 'checked';} ?>><span><?php echo $helptext[infoEnabled] ?></span></a></td>
 	<td align=left width=333>&nbsp;</td>
     </tr>
 
