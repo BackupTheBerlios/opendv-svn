@@ -318,12 +318,13 @@ bool CAnalogueRepeaterD::createThread()
 	wxLogInfo(wxT("Tones set to: toneburst enable: %u, threshold: %.3f, CTCSS freq: %.1f Hz, internal: %u, threshold: %.3f, level: %.3f, hang time: %u ms, output: %d"), tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime * 20U, ctcssOutput);
 
 	ANALOGUE_CALLSIGN_START callsignAtStart;
+	unsigned int callsignStartDelay;
 	bool callsignAtEnd;
 	ANALOGUE_TIMEOUT_TYPE timeoutType;
 	ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff;
-	config.getFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
-	m_thread->setFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
-	wxLogInfo(wxT("Feel set to: callsignAtStart: %d, callsignAtEnd: %u, timeoutType: %d, callsignHoldoff: %d"), callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	config.getFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
+	m_thread->setFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
+	wxLogInfo(wxT("Feel set to: callsignAtStart: %d, callsignStartDelay: %u s, callsignAtEnd: %u, timeoutType: %d, callsignHoldoff: %d"), callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 
 	wxString readDevice, writeDevice;
 	unsigned int audioDelay;

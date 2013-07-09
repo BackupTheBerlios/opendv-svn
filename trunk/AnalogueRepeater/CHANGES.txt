@@ -12,3 +12,8 @@ Removed the URI USB support.
 --------
 
 Added basic AX.25 receiving.
+
+201307xx
+--------
+
+Added optional delay before sending the opening callsign.

@@ -40,6 +40,7 @@ private:
 	unsigned int   m_bitBuf;
 
 	void rxbit(bool bit);
+	void decodeMicE(const unsigned char* packet, unsigned int length);
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2010,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,15 @@
 #include "AnalogueRepeaterFeelSet.h"
 
 const unsigned int CONTROL_SIZE = 175U;
+const unsigned int TIMES_WIDTH  = 300U;
 
 const unsigned int BORDER_SIZE = 5U;
 
-CAnalogueRepeaterFeelSet::CAnalogueRepeaterFeelSet(wxWindow* parent, int id, const wxString& title, ANALOGUE_CALLSIGN_START callAtStart, bool callAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF holdoff) :
+CAnalogueRepeaterFeelSet::CAnalogueRepeaterFeelSet(wxWindow* parent, int id, const wxString& title, ANALOGUE_CALLSIGN_START callAtStart, unsigned int startDelay, bool callAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF holdoff) :
 wxPanel(parent, id),
 m_title(title),
 m_callAtStart(NULL),
+m_startDelay(NULL),
 m_callAtEnd(NULL),
 m_timeoutType(NULL),
 m_holdoff(NULL)
@@ -41,6 +43,12 @@ m_holdoff(NULL)
 	m_callAtStart->Append(_("On Latch"));
 	sizer->Add(m_callAtStart, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_callAtStart->SetSelection(int(callAtStart));
+
+	wxStaticText* startDelayLabel = new wxStaticText(this, -1, _("Start Delay (s)"));
+	sizer->Add(startDelayLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_startDelay = new wxSlider(this, -1, startDelay, 0, 5, wxDefaultPosition, wxSize(TIMES_WIDTH, -1), wxSL_HORIZONTAL | wxSL_LABELS);
+	sizer->Add(m_startDelay, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* callAtEndLabel = new wxStaticText(this, -1, _("End Callsign"));
 	sizer->Add(callAtEndLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
@@ -102,6 +110,11 @@ bool CAnalogueRepeaterFeelSet::Validate()
 ANALOGUE_CALLSIGN_START CAnalogueRepeaterFeelSet::getCallAtStart() const
 {
 	return ANALOGUE_CALLSIGN_START(m_callAtStart->GetCurrentSelection());
+}
+
+unsigned int CAnalogueRepeaterFeelSet::getStartDelay() const
+{
+	return m_startDelay->GetValue();
 }
 
 bool CAnalogueRepeaterFeelSet::getCallAtEnd() const

@@ -180,8 +180,10 @@ void CAPRSRX::rxbit(bool bit)
 	m_bitStream |= bit ? 0x01U : 0x00U;
 
 	if ((m_bitStream & 0xFFU) == 0x7EU) {
-		if (m_state && (m_ptr - m_buf) > 9U)
-			CUtils::dump(wxT("AX.25 Packet"), m_buf, m_ptr - m_buf);
+		if (m_state && (m_ptr - m_buf) > 0U) {
+			CUtils::dump(wxT("AX.25 RX Packet"), m_buf, m_ptr - m_buf);
+			decodeMicE(m_buf, m_ptr - m_buf);
+		}
 
 		m_state  = true;
 		m_ptr    = m_buf;
@@ -215,4 +217,93 @@ void CAPRSRX::rxbit(bool bit)
 	}
 
 	m_bitBuf >>= 1;
+}
+
+void CAPRSRX::decodeMicE(const unsigned char* packet, unsigned int length)
+{
+	const unsigned char* ptr = packet + 13U;
+
+	// There are digipeters, find their end
+	for (unsigned int n = 0U; (*ptr & 0x01U) == 0x00U && n < 7U; n++)
+		ptr += 7U;
+
+	ptr++;		// Point to the type
+
+	// Check type and PID
+	if (ptr[0U] != 0x03U || ptr[1U] != 0xF0U || ptr[2U] != 0x60U)
+		return;
+
+	ptr += 3U;	// Point to the rest of the info field
+
+	wxLogMessage(wxT("Source callsign: %c%c%c%c%c%c-%u"), packet[7U] >> 1, packet[8U] >> 1, packet[9U] >> 1,
+		packet[10U] >> 1, packet[11U] >> 1, packet[12U] >> 1, (packet[13U] & 0x1EU) >> 1);
+
+	if ((packet[6U] & 0x1EU) == 0x02U)
+		wxLogMessage(wxT("Destination callsign: WIDE-1"));
+
+	bool north = (packet[3U] & 0x80U) == 0x80U;
+	bool west  = (packet[5U] & 0x80U) == 0x80U;
+	bool cent  = (packet[4U] & 0x80U) == 0x80U;
+
+	unsigned char latText[6U];
+	for (unsigned int i = 0U; i < 6U; i++) {
+		unsigned char c = packet[i] >> 1;
+		if (c >= 'A' && c <= 'J')
+			latText[i] = c - '0' - 17U;
+		else if (c >= 'P' && c <= 'Y')
+			latText[i] = c - '0' - 32U;
+		else if (c == 'K' || c == 'L' || c == 'Z')
+			return;
+		else
+			latText[i] = c - '0';
+	}
+
+	wxFloat32 latitude = wxFloat32(latText[0U] * 10U + latText[1U]);
+	wxFloat32 latMin   = wxFloat32(latText[2U] * 1000U + latText[3U] * 100U + latText[4U] * 10U + latText[5U]) / 100.0F;
+	latitude += latMin / 60.0F;
+	if (!north)
+		latitude = -latitude;
+
+	wxFloat32 longitude = wxFloat32(ptr[0U] - 28U);
+	wxFloat32 lonMin    = wxFloat32(ptr[1U] - 28U);
+	if (cent)
+		longitude += 100.0F;
+	if (longitude >= 180.0F && longitude <= 189.0F)
+		longitude -= 80.0F;
+	else if (longitude >= 190.0F && longitude <= 199.0F)
+		longitude -= 190.0F;
+	if (lonMin >= 60.0F)
+		lonMin -= 60.0F;
+	lonMin += wxFloat32(ptr[2U] - 28U) / 100.0F;
+	longitude += lonMin / 60.0F;
+	if (west)
+		longitude = -longitude;
+
+	wxLogMessage(wxT("Latitude: %f deg, Longitude: %f deg"), latitude, longitude);
+
+	unsigned int speed  = (ptr[3U] - 28U) * 10U;
+	unsigned int course = ptr[5U] - 28U;
+	unsigned int cs     = ptr[4U] - 28U;
+	unsigned int csTemp = cs / 10U;
+	speed += csTemp;
+	if (speed > 800U)
+		speed -= 800U;
+	course += 100U * (cs - csTemp * 10U);
+	if (course > 400U)
+		course -= 400U;
+
+	wxLogMessage(wxT("Speed: %u mph, course: %u deg"), speed, course);
+
+	wxLogMessage(wxT("APRS symbols: %c %c"), ptr[6U], ptr[7U]);
+
+	ptr += 9U;
+
+	if (ptr[3U] == '}') {
+		unsigned int altitude = (ptr[0U] - 33U) * 8281U + (ptr[1U] - 33U) * 91U + (ptr[2U] - 33U) - 10000U;
+		wxLogMessage(wxT("Altitude: %u m"), altitude);
+		ptr += 4U;
+	}
+
+	wxString text((char*)ptr, wxConvLocal, length - (ptr - packet));
+	wxLogMessage(wxT("Text: %s"), text.c_str());
 }

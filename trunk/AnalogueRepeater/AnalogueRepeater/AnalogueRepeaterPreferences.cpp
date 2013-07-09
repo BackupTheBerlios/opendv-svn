@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ CAnalogueRepeaterPreferences::CAnalogueRepeaterPreferences(wxWindow* parent, int
 		unsigned int timeout, unsigned int lockoutTime, unsigned int hangTime, unsigned int latchTime,
 		bool tbEnable, bool ctcssInternal, wxFloat32 tbThreshold, wxFloat32 ctcssFreq, wxFloat32 ctcssThresh,
 		wxFloat32 ctcssLevel, unsigned int ctcssHangTime, ANALOGUE_CTCSS_OUTPUT ctcssOutput,
-		ANALOGUE_CALLSIGN_START callsignAtStart, ANALOGUE_TIMEOUT_TYPE timeoutType, bool callsignAtEnd,
-		ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff, const wxString& radioReadDevice,
+		ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, ANALOGUE_TIMEOUT_TYPE timeoutType,
+		bool callsignAtEnd, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff, const wxString& radioReadDevice,
 		const wxString& radioWriteDevice, unsigned int radioAudioDelay, bool radioDeEmphasis,
 		bool radioPreEmphasis, bool radioVOGAD, ANALOGUE_EXTERNAL_MODE externalMode,
 		bool externalVOGAD, const wxString& externalReadDevice, const wxString& externalWriteDevice,
@@ -75,7 +75,7 @@ m_active(NULL)
 	m_tones = new CAnalogueRepeaterTonesSet(noteBook, -1, APPLICATION_NAME, tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput);
 	noteBook->AddPage(m_tones, _("Access Tones"), false);
 
-	m_feel = new CAnalogueRepeaterFeelSet(noteBook, -1, APPLICATION_NAME, callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	m_feel = new CAnalogueRepeaterFeelSet(noteBook, -1, APPLICATION_NAME, callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 	noteBook->AddPage(m_feel, _("Feel"), false);
 
 	m_radio = new CAnalogueRepeaterRadioSet(noteBook, -1, APPLICATION_NAME, radioReadDevice, radioWriteDevice, radioAudioDelay, radioDeEmphasis, radioPreEmphasis, radioVOGAD);
@@ -306,6 +306,11 @@ ANALOGUE_CTCSS_OUTPUT CAnalogueRepeaterPreferences::getCTCSSOutput() const
 ANALOGUE_CALLSIGN_START CAnalogueRepeaterPreferences::getCallAtStart() const
 {
 	return m_feel->getCallAtStart();
+}
+
+unsigned int CAnalogueRepeaterPreferences::getCallStartDelay() const
+{
+	return m_feel->getStartDelay();
 }
 
 bool CAnalogueRepeaterPreferences::getCallAtEnd() const

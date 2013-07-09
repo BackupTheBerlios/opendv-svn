@@ -31,6 +31,8 @@
 #include "CWKeyer.h"
 #include "Version.h"
 #include "Logger.h"
+#include "APRSRX.h"
+#include "APRSTX.h"
 
 #include <wx/cmdline.h>
 #include <wx/filename.h>
@@ -276,14 +278,14 @@ void CAnalogueRepeaterApp::setTones(bool tbEnable, wxFloat32 tbThreshold, wxFloa
 	m_config->setTones(tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput);
 }
 
-void CAnalogueRepeaterApp::getFeel(ANALOGUE_CALLSIGN_START& callsignAtStart, bool& callsignAtEnd, ANALOGUE_TIMEOUT_TYPE& timeoutType, ANALOGUE_CALLSIGN_HOLDOFF& callsignHoldoff) const
+void CAnalogueRepeaterApp::getFeel(ANALOGUE_CALLSIGN_START& callsignAtStart, unsigned int& callsignStartDelay, bool& callsignAtEnd, ANALOGUE_TIMEOUT_TYPE& timeoutType, ANALOGUE_CALLSIGN_HOLDOFF& callsignHoldoff) const
 {
-	m_config->getFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	m_config->getFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 }
 
-void CAnalogueRepeaterApp::setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff)
+void CAnalogueRepeaterApp::setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff)
 {
-	m_config->setFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	m_config->setFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 }
 
 void CAnalogueRepeaterApp::getRadio(wxString& readDevice, wxString& writeDevice, unsigned int& delay, bool& deEmphasis, bool& preEmphasis, bool& vogad) const
@@ -544,12 +546,13 @@ void CAnalogueRepeaterApp::createThread()
 	wxLogInfo(wxT("Tones set to: toneburst enable: %u, threshold: %.3f, CTCSS freq: %.1f Hz, internal: %u, threshold: %.3f, level: %.3f, hang time: %u ms, output: %d"), tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime * 20U, ctcssOutput);
 
 	ANALOGUE_CALLSIGN_START callsignAtStart;
+	unsigned int callsignStartDelay;
 	bool callsignAtEnd;
 	ANALOGUE_TIMEOUT_TYPE timeoutType;
 	ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff;
-	getFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
-	thread->setFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
-	wxLogInfo(wxT("Feel set to: callsignAtStart: %d, callsignAtEnd: %u, timeoutType: %d, callsignHoldoff: %d"), callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	getFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
+	thread->setFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
+	wxLogInfo(wxT("Feel set to: callsignAtStart: %d, callsignStartDelay: %u s, callsignAtEnd: %u, timeoutType: %d, callsignHoldoff: %d"), callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 
 	wxString readDevice, writeDevice;
 	unsigned int audioDelay;
@@ -646,6 +649,12 @@ void CAnalogueRepeaterApp::createThread()
 	getDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
 	thread->setDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
 	wxLogInfo(wxT("DTMF: Radio: %d, External: %d, Shutdown: %s, Startup: %s, Timeout: %s, Time Reset: %s, Command1: %s = %s, Command2: %s = %s, Output1: %s, Output2: %s, Output3: %s, Output4: %s, Threshold: %f"), dtmfRadio, dtmfExternal, dtmfShutdown.c_str(), dtmfStartup.c_str(), dtmfTimeout.c_str(), dtmfTimeReset.c_str(), dtmfCommand1.c_str(), dtmfCommand1Line.c_str(), dtmfCommand2.c_str(), dtmfCommand2Line.c_str(), dtmfOutput1.c_str(), dtmfOutput2.c_str(), dtmfOutput3.c_str(), dtmfOutput4.c_str(), dtmfThreshold);
+
+	CAPRSTX* aprsTx = new CAPRSTX(wxT("G4KLX"), 53.169F, -1.194F, 100U, wxT("144.6500 MHz Mansfield Woodhouse"));
+	thread->setAPRSTX(aprsTx);
+
+	CAPRSRX* aprsRx = new CAPRSRX;
+	thread->setAPRSRX(aprsRx);
 
 	unsigned int activeHangTime;
 	getActiveHang(activeHangTime);

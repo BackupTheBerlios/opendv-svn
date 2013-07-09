@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2010,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,12 +26,13 @@
 
 class CAnalogueRepeaterFeelSet : public wxPanel {
 public:
-	CAnalogueRepeaterFeelSet(wxWindow* parent, int id, const wxString& title, ANALOGUE_CALLSIGN_START callAtStart, bool callAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF holdoff);
+	CAnalogueRepeaterFeelSet(wxWindow* parent, int id, const wxString& title, ANALOGUE_CALLSIGN_START callAtStart, unsigned int startDelay, bool callAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF holdoff);
 	virtual ~CAnalogueRepeaterFeelSet();
 
 	virtual bool Validate();
 
 	virtual ANALOGUE_CALLSIGN_START   getCallAtStart() const;
+	virtual unsigned int              getStartDelay() const;
 	virtual bool                      getCallAtEnd() const;
 	virtual ANALOGUE_TIMEOUT_TYPE     getTimeoutType() const;
 	virtual ANALOGUE_CALLSIGN_HOLDOFF getHoldoff() const;
@@ -39,6 +40,7 @@ public:
 private:
 	wxString  m_title;
 	wxChoice* m_callAtStart;
+	wxSlider* m_startDelay;
 	wxChoice* m_callAtEnd;
 	wxChoice* m_timeoutType;
 	wxChoice* m_holdoff;

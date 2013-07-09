@@ -417,9 +417,10 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 
 	ANALOGUE_CALLSIGN_START callsignAtStart;
 	ANALOGUE_TIMEOUT_TYPE timeoutType;
+	unsigned int callsignStartDelay;
 	bool callsignAtEnd;
 	ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff;
-	::wxGetApp().getFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	::wxGetApp().getFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 
 	wxString radioReadDevice, radioWriteDevice;
 	unsigned int radioAudioDelay;
@@ -451,7 +452,7 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 		beacon1, beacon2Source, beacon2, idSpeed, idFreq, idLevel1, idLevel2, ackRadioSource, ackRadio,
 		ackExternalSource, ackExternal, ackBatterySource, ackBattery, ackSpeed, ackFreq, ackDelay, ackMinimum,
 		ackLevel, callsignTime, timeout, lockoutTime, hangTime, latchTime, tbEnable, ctcssInternal, tbThreshold,
-		ctcssFreq, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput, callsignAtStart, timeoutType,
+		ctcssFreq, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput, callsignAtStart, callsignStartDelay, timeoutType,
 		callsignAtEnd, callsignHoldoff, radioReadDevice, radioWriteDevice, radioAudioDelay, radioDeEmphasis,
 		radioPreEmphasis, radioVOGAD, externalMode, externalVOGAD, externalReadDevice, externalWriteDevice, 
 		externalAudioDelay, externalDeEmphasis, externalPreEmphasis, externalDevice, externalTXPin,
@@ -506,11 +507,12 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 	ctcssOutput   = dialog1.getCTCSSOutput();
 	::wxGetApp().setTones(tbEnable, tbThreshold, ctcssFreq, ctcssInternal, ctcssThresh, ctcssLevel, ctcssHangTime, ctcssOutput);
 
-	callsignAtStart = dialog1.getCallAtStart();
-	callsignAtEnd   = dialog1.getCallAtEnd();
-	timeoutType     = dialog1.getTimeoutType();
-	callsignHoldoff = dialog1.getHoldoff();
-	::wxGetApp().setFeel(callsignAtStart, callsignAtEnd, timeoutType, callsignHoldoff);
+	callsignAtStart    = dialog1.getCallAtStart();
+	callsignStartDelay = dialog1.getCallStartDelay();
+	callsignAtEnd      = dialog1.getCallAtEnd();
+	timeoutType        = dialog1.getTimeoutType();
+	callsignHoldoff    = dialog1.getHoldoff();
+	::wxGetApp().setFeel(callsignAtStart, callsignStartDelay, callsignAtEnd, timeoutType, callsignHoldoff);
 
 	radioReadDevice  = dialog1.getRadioReadDevice();
 	radioWriteDevice = dialog1.getRadioWriteDevice();

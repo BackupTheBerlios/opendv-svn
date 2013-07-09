@@ -48,8 +48,8 @@ public:
 	void getTones(bool& tbEnable, wxFloat32& tbThreshold, wxFloat32& ctcssFreq, bool& ctcssInternal, wxFloat32& ctcssThresh, wxFloat32& ctcssLevel, unsigned int& ctcssHangTime, ANALOGUE_CTCSS_OUTPUT& ctcssOutput) const;
 	void setTones(bool tbEnable, wxFloat32 tbThreshold, wxFloat32 ctcssFreq, bool ctcssInternal, wxFloat32 ctcssThresh, wxFloat32 ctcssLevel, unsigned int ctcssHangTime, ANALOGUE_CTCSS_OUTPUT ctcssOutput);
 
-	void getFeel(ANALOGUE_CALLSIGN_START& callsignAtStart, bool& callsignAtEnd, ANALOGUE_TIMEOUT_TYPE& timeoutType, ANALOGUE_CALLSIGN_HOLDOFF& callsignHoldoff) const;
-	void setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff);
+	void getFeel(ANALOGUE_CALLSIGN_START& callsignAtStart, unsigned int& callsignStartDelay, bool& callsignAtEnd, ANALOGUE_TIMEOUT_TYPE& timeoutType, ANALOGUE_CALLSIGN_HOLDOFF& callsignHoldoff) const;
+	void setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff);
 
 	void getRadio(wxString& readDevice, wxString& writeDevice, unsigned int& delay, bool& deEmphasis, bool& preEmphasis, bool& vogad) const;
 	void setRadio(const wxString& readDevice, const wxString& writeDevice, unsigned int delay, bool deEmphasis, bool preEmphasis, bool vogad);
@@ -123,6 +123,7 @@ private:
 	unsigned int  m_ctcssHangTime;
 	ANALOGUE_CTCSS_OUTPUT     m_ctcssOutput;
 	ANALOGUE_CALLSIGN_START   m_callAtStart;
+	unsigned int              m_callStartDelay;
 	bool                      m_callAtEnd;
 	ANALOGUE_TIMEOUT_TYPE     m_timeoutType;
 	ANALOGUE_CALLSIGN_HOLDOFF m_callHoldoff;

@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2010,2011 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2010,2011,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -79,6 +79,12 @@ enum ANALOGUE_CTCSS_OUTPUT {
 enum AUDIO_SOURCE {
 	AS_CW_KEYER,
 	AS_WAV_FILE
+};
+
+enum SB2_STATE {
+	SB2S_NONE,
+	SB2S_ID,
+	SB2S_APRS
 };
 
 #endif

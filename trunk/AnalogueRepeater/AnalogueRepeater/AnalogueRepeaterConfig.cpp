@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -59,10 +59,11 @@ const wxString KEY_CTCSS_LEVEL         = wxT("ctcssLevel");
 const wxString KEY_CTCSS_HANG_TIME     = wxT("ctcssHangTime");
 const wxString KEY_CTCSS_OUTPUT        = wxT("ctcssOutput");
 
-const wxString KEY_CALLSIGN_AT_START   = wxT("callAtStart");
-const wxString KEY_CALLSIGN_AT_END     = wxT("callAtEnd");
-const wxString KEY_TIMEOUT_TYPE        = wxT("timeoutType");
-const wxString KEY_CALLSIGN_HOLDOFF    = wxT("callHoldoff");
+const wxString KEY_CALLSIGN_AT_START    = wxT("callAtStart");
+const wxString KEY_CALLSIGN_START_DELAY = wxT("callStartDelay");
+const wxString KEY_CALLSIGN_AT_END      = wxT("callAtEnd");
+const wxString KEY_TIMEOUT_TYPE         = wxT("timeoutType");
+const wxString KEY_CALLSIGN_HOLDOFF     = wxT("callHoldoff");
 
 const wxString KEY_RADIO_READ_DEVICE   = wxT("radioReadDevice");
 const wxString KEY_RADIO_WRITE_DEVICE  = wxT("radioWriteDevice");
@@ -156,10 +157,11 @@ const wxFloat32             DEFAULT_CTCSS_LEVEL      = 0.5F;
 const unsigned int          DEFAULT_CTCSS_HANG_TIME  = 0U;
 const ANALOGUE_CTCSS_OUTPUT DEFAULT_CTCSS_OUTPUT     = ACO_WHEN_OPEN;
 
-const ANALOGUE_CALLSIGN_START   DEFAULT_CALLSIGN_AT_START = ACS_NONE;
-const bool                      DEFAULT_CALLSIGN_AT_END   = true;
-const ANALOGUE_TIMEOUT_TYPE     DEFAULT_TIMEOUT_TYPE      = ATT_DL;
-const ANALOGUE_CALLSIGN_HOLDOFF DEFAULT_CALLSIGN_HOLDOFF  = ACH_NONE;
+const ANALOGUE_CALLSIGN_START   DEFAULT_CALLSIGN_AT_START    = ACS_NONE;
+const unsigned int              DEFAULT_CALLSIGN_START_DELAY = 0U;
+const bool                      DEFAULT_CALLSIGN_AT_END      = true;
+const ANALOGUE_TIMEOUT_TYPE     DEFAULT_TIMEOUT_TYPE         = ATT_DL;
+const ANALOGUE_CALLSIGN_HOLDOFF DEFAULT_CALLSIGN_HOLDOFF     = ACH_NONE;
 
 const wxString     DEFAULT_RADIO_READ_DEVICE    = wxEmptyString;
 const wxString     DEFAULT_RADIO_WRITE_DEVICE   = wxEmptyString;
@@ -256,6 +258,7 @@ m_ctcssLevel(DEFAULT_CTCSS_LEVEL),
 m_ctcssHangTime(DEFAULT_CTCSS_HANG_TIME),
 m_ctcssOutput(DEFAULT_CTCSS_OUTPUT),
 m_callAtStart(DEFAULT_CALLSIGN_AT_START),
+m_callStartDelay(DEFAULT_CALLSIGN_START_DELAY),
 m_callAtEnd(DEFAULT_CALLSIGN_AT_END),
 m_timeoutType(DEFAULT_TIMEOUT_TYPE),
 m_callHoldoff(DEFAULT_CALLSIGN_HOLDOFF),
@@ -415,6 +418,9 @@ m_y(DEFAULT_WINDOW_Y)
 	m_config->Read(m_name + KEY_CALLSIGN_AT_START, &temp1, long(DEFAULT_CALLSIGN_AT_START));
 	m_callAtStart = ANALOGUE_CALLSIGN_START(temp1);
 
+	m_config->Read(m_name + KEY_CALLSIGN_START_DELAY, &temp1, long(DEFAULT_CALLSIGN_START_DELAY));
+	m_callStartDelay = (unsigned int)temp1;
+
 	m_config->Read(m_name + KEY_CALLSIGN_AT_END, &m_callAtEnd, DEFAULT_CALLSIGN_AT_END);
 
 	m_config->Read(m_name + KEY_TIMEOUT_TYPE, &temp1, long(DEFAULT_TIMEOUT_TYPE));
@@ -572,6 +578,7 @@ m_ctcssLevel(DEFAULT_CTCSS_LEVEL),
 m_ctcssHangTime(DEFAULT_CTCSS_HANG_TIME),
 m_ctcssOutput(DEFAULT_CTCSS_OUTPUT),
 m_callAtStart(DEFAULT_CALLSIGN_AT_START),
+m_callStartDelay(DEFAULT_CALLSIGN_START_DELAY),
 m_callAtEnd(DEFAULT_CALLSIGN_AT_END),
 m_timeoutType(DEFAULT_TIMEOUT_TYPE),
 m_callHoldoff(DEFAULT_CALLSIGN_HOLDOFF),
@@ -766,6 +773,9 @@ m_y(DEFAULT_WINDOW_Y)
 		} else if (key.IsSameAs(KEY_CALLSIGN_AT_START)) {
 			val.ToLong(&temp1);
 			m_callAtStart = ANALOGUE_CALLSIGN_START(temp1);
+		} else if (key.IsSameAs(KEY_CALLSIGN_START_DELAY)) {
+			val.ToULong(&temp2);
+			m_callStartDelay = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_CALLSIGN_AT_END)) {
 			val.ToLong(&temp1);
 			m_callAtEnd = temp1 == 1L;
@@ -1010,20 +1020,22 @@ void CAnalogueRepeaterConfig::setTones(bool tbEnable, wxFloat32 tbThreshold, wxF
 	m_ctcssOutput        = ctcssOutput;
 }
 
-void CAnalogueRepeaterConfig::getFeel(ANALOGUE_CALLSIGN_START& callsignAtStart, bool& callsignAtEnd, ANALOGUE_TIMEOUT_TYPE& timeoutType, ANALOGUE_CALLSIGN_HOLDOFF& callsignHoldoff) const
+void CAnalogueRepeaterConfig::getFeel(ANALOGUE_CALLSIGN_START& callsignAtStart, unsigned int& callsignStartDelay, bool& callsignAtEnd, ANALOGUE_TIMEOUT_TYPE& timeoutType, ANALOGUE_CALLSIGN_HOLDOFF& callsignHoldoff) const
 {
-	callsignAtStart = m_callAtStart;
-	callsignAtEnd   = m_callAtEnd;
-	timeoutType     = m_timeoutType;
-	callsignHoldoff = m_callHoldoff;
+	callsignAtStart    = m_callAtStart;
+	callsignStartDelay = m_callStartDelay;
+	callsignAtEnd      = m_callAtEnd;
+	timeoutType        = m_timeoutType;
+	callsignHoldoff    = m_callHoldoff;
 }
 
-void CAnalogueRepeaterConfig::setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff)
+void CAnalogueRepeaterConfig::setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff)
 {
-	m_callAtStart = callsignAtStart;
-	m_callAtEnd   = callsignAtEnd;
-	m_timeoutType = timeoutType;
-	m_callHoldoff = callsignHoldoff;
+	m_callAtStart    = callsignAtStart;
+	m_callStartDelay = callsignStartDelay;
+	m_callAtEnd      = callsignAtEnd;
+	m_timeoutType    = timeoutType;
+	m_callHoldoff    = callsignHoldoff;
 }
 
 void CAnalogueRepeaterConfig::getRadio(wxString& readDevice, wxString& writeDevice, unsigned int& delay, bool& deEmphasis, bool& preEmphasis, bool& vogad) const
@@ -1214,6 +1226,7 @@ bool CAnalogueRepeaterConfig::write()
 	m_config->Write(m_name + KEY_CTCSS_HANG_TIME, long(m_ctcssHangTime));
 	m_config->Write(m_name + KEY_CTCSS_OUTPUT, long(m_ctcssOutput));
 	m_config->Write(m_name + KEY_CALLSIGN_AT_START, long(m_callAtStart));
+	m_config->Write(m_name + KEY_CALLSIGN_START_DELAY, long(m_callStartDelay));
 	m_config->Write(m_name + KEY_CALLSIGN_AT_END, m_callAtEnd);
 	m_config->Write(m_name + KEY_TIMEOUT_TYPE, long(m_timeoutType));
 	m_config->Write(m_name + KEY_CALLSIGN_HOLDOFF, long(m_callHoldoff));
@@ -1329,6 +1342,7 @@ bool CAnalogueRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"),   KEY_CTCSS_HANG_TIME.c_str(), m_ctcssHangTime); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"),   KEY_CTCSS_OUTPUT.c_str(), int(m_ctcssOutput)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"),   KEY_CALLSIGN_AT_START.c_str(), int(m_callAtStart)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"),   KEY_CALLSIGN_START_DELAY.c_str(), m_callStartDelay); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"),   KEY_CALLSIGN_AT_END.c_str(), m_callAtEnd ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"),   KEY_TIMEOUT_TYPE.c_str(), int(m_timeoutType)); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"),   KEY_CALLSIGN_HOLDOFF.c_str(), int(m_callHoldoff)); file.AddLine(buffer);

@@ -141,6 +141,7 @@ m_batteryAck(NULL),
 m_timeoutTimer(1000U),
 m_lockoutTimer(1000U),
 m_callsignTimer(1000U),
+m_callsignStartTimer(1000U),
 m_hangTimer(1000U),
 m_latchTimer(1000U),
 m_minimumTimer(1000U),
@@ -170,7 +171,7 @@ m_firstTime(false),
 m_sendOpen(false),
 m_sendClose(false),
 m_sendBeacon1(false),
-m_sendBeacon2(false),
+m_sendBeacon2(SB2S_NONE),
 m_sendAck(ACK_NONE),
 m_radioDTMF(NULL),
 m_extDTMF(NULL),
@@ -191,7 +192,8 @@ m_relayCount(0U),
 m_transmitCount(0U),
 m_timeCount(0U),
 m_lastHour(0U),
-m_aprsrx()
+m_aprsRx(NULL),
+m_aprsTx(NULL)
 {
 }
 
@@ -274,7 +276,7 @@ void CAnalogueRepeaterThread::run()
 			continue;
 
 		// Set the output state
-		if (m_state != ARS_LISTENING || m_sendBeacon2 || m_sendOpen || m_sendClose || m_sendBeacon1 || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
+		if (m_state != ARS_LISTENING || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_sendBeacon1 || m_callsignStartTimer.isRunning() || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
 			m_controller->setActive(true);
 		} else {
 			m_controller->setActive(false);
@@ -308,13 +310,15 @@ void CAnalogueRepeaterThread::run()
 		m_radioTransmit = m_state == ARS_RELAYING_RADIO  || m_state == ARS_RELAYING_EXTERNAL ||
 						  m_state == ARS_WAITING_RADIO   || m_state == ARS_WAITING_EXTERNAL  ||
 						  m_state == ARS_TIMEOUT_RADIO   || m_state == ARS_TIMEOUT_EXTERNAL  ||
-						  m_sendBeacon1 || m_sendBeacon2 || m_sendOpen || m_sendClose;
+						  m_sendBeacon1 || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_callsignStartTimer.isRunning();
 
 		// The audio is chosen depending on the squelch and state
 		unsigned int nAudio;
 		wxFloat32 audio[ANALOGUE_RADIO_BLOCK_SIZE];
 		if (m_state == ARS_RELAYING_RADIO && m_squelch != AS_CLOSED) {
-			m_aprsrx.process(radioAudio, nRadio);		// XXX
+			// if (m_aprsRx != NULL)						XXX
+			//	m_aprsRx->process(radioAudio, nRadio);		XXX
+
 			nAudio = nRadio;
 			m_radioAudioVOGAD.process(radioAudio, audio, nAudio);
 		} else if (m_state == ARS_RELAYING_EXTERNAL && m_squelch != AS_CLOSED) {
@@ -365,6 +369,9 @@ void CAnalogueRepeaterThread::run()
 
 		// Add tones
 		sendTones(audio, nAudio);
+
+		if (m_aprsRx != NULL)						// XXX
+			m_aprsRx->process(audio, nAudio);		// XXX
 
 		// Filter the audio
 		filterAudio(audio, nAudio);
@@ -435,6 +442,8 @@ void CAnalogueRepeaterThread::run()
 	delete m_radioAck;
 	delete m_extAck;
 	delete m_batteryAck;
+	delete m_aprsRx;
+	delete m_aprsTx;
 }
 
 void CAnalogueRepeaterThread::kill()
@@ -508,11 +517,13 @@ void CAnalogueRepeaterThread::setTones(bool toneburst, wxFloat32 tbThreshold, wx
 	m_ctcssHangTimer.setTimeout(0U, ctcssHangTime * 20U);
 }
 
-void CAnalogueRepeaterThread::setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff)
+void CAnalogueRepeaterThread::setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff)
 {
 	m_callsignAtStart = callsignAtStart;
 	m_callsignAtEnd   = callsignAtEnd;
 	m_callsignHoldoff = callsignHoldoff;
+
+	m_callsignStartTimer.setTimeout(callsignStartDelay);
 
 	m_timeoutTones = new CTimeoutTones(ANALOGUE_RADIO_SAMPLE_RATE, timeoutType);
 }
@@ -606,6 +617,20 @@ void CAnalogueRepeaterThread::setDTMF(bool radio, bool external, const wxString&
 void CAnalogueRepeaterThread::setActiveHang(unsigned int time)
 {
 	m_activeHangTimer.setTimeout(time);
+}
+
+void CAnalogueRepeaterThread::setAPRSRX(CAPRSRX* aprsRx)
+{
+	wxASSERT(aprsRx != NULL);
+
+	m_aprsRx = aprsRx;
+}
+
+void CAnalogueRepeaterThread::setAPRSTX(CAPRSTX* aprsTx)
+{
+	wxASSERT(aprsTx != NULL);
+
+	m_aprsTx = aprsTx;
 }
 
 #if defined(__WXDEBUG__)
@@ -908,7 +933,7 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 		return;
 	}
 
-	if (m_sendBeacon2) {
+	if (m_sendBeacon2 == SB2S_ID) {
 		unsigned int len;
 		if (m_state == ARS_LISTENING)
 			len = m_beacon2->getAudio(audio, length, m_idLevel1);
@@ -916,8 +941,30 @@ void CAnalogueRepeaterThread::sendTones(wxFloat32* audio, unsigned int length)
 			len = m_beacon2->getAudio(audio, length, m_idLevel2);
 
 		if (len < length) {
-			m_sendBeacon2 = false;
 			m_beacon2->reset();
+
+			// Transmit the APRS beacon after the main beacon, if it exists and the repeater hasn't been opened
+			if (m_aprsTx == NULL || m_state != ARS_LISTENING) {
+				m_sendBeacon2 = SB2S_NONE;
+				m_callsignTimer.reset();
+				return;
+			} else {
+				m_sendBeacon2 = SB2S_APRS;
+				length -= len;
+			}
+		}
+	}
+
+	if (m_sendBeacon2 == SB2S_APRS) {
+		unsigned int len;
+		if (m_state == ARS_LISTENING)
+			len = m_aprsTx->getAudio(audio, length, m_idLevel1);
+		else
+			len = m_aprsTx->getAudio(audio, length, m_idLevel2);
+
+		if (len < length) {
+			m_sendBeacon2 = SB2S_NONE;
+			m_aprsTx->reset();
 			m_callsignTimer.reset();
 		}
 
@@ -1015,12 +1062,20 @@ void CAnalogueRepeaterThread::clock(unsigned int ms)
 	m_callsignTimer.clock(ms);
 	if (m_callsignTimer.hasExpired()) {
 		if (m_state == ARS_LISTENING) {
-			if (!m_beacon2->isEmpty())
-				m_sendBeacon2 = true;
+			if (!m_beacon2->isEmpty() && m_sendBeacon2 == SB2S_NONE)
+				m_sendBeacon2 = SB2S_ID;
+			else if (m_aprsTx != NULL && m_sendBeacon2 == SB2S_NONE)
+				m_sendBeacon2 = SB2S_APRS;
 		} else {
-			if (!m_beacon1->isEmpty())
+			if (!m_beacon1->isEmpty() && !m_sendBeacon1)
 				m_sendBeacon1 = true;
 		}
+	}
+
+	m_callsignStartTimer.clock(ms);
+	if (m_callsignStartTimer.isRunning() && m_callsignStartTimer.hasExpired()) {
+		m_sendOpen = true;
+		m_callsignStartTimer.stop();
 	}
 
 	m_hangTimer.clock(ms);
@@ -1181,10 +1236,11 @@ void CAnalogueRepeaterThread::setState(ANALOGUE_RPT_STATE state)
 			m_timeoutTimer.stop();
 			m_lockoutTimer.stop();
 			m_callsignTimer.start();
+			m_callsignStartTimer.stop();
 			m_radioTransmit = false;
 			m_extTransmit   = false;
 			m_sendBeacon1   = false;
-			m_sendBeacon2   = false;
+			m_sendBeacon2   = SB2S_NONE;
 			m_sendOpen      = false;
 			m_sendClose     = false;
 			m_sendAck       = ACK_NONE;
@@ -1221,10 +1277,11 @@ void CAnalogueRepeaterThread::setState(ANALOGUE_RPT_STATE state)
 			m_lockoutTimer.stop();
 			m_callsignTimer.stop();
 			m_activeHangTimer.stop();
+			m_callsignStartTimer.stop();
 			m_radioTransmit = false;
 			m_extTransmit   = false;
 			m_sendBeacon1   = false;
-			m_sendBeacon2   = false;
+			m_sendBeacon2   = SB2S_NONE;
 			m_sendOpen      = false;
 			m_sendClose     = false;
 			m_sendAck       = ACK_NONE;
@@ -1521,44 +1578,59 @@ void CAnalogueRepeaterThread::command2()
 
 void CAnalogueRepeaterThread::sendOpen()
 {
-	// Already sending, ignore request
-	if (m_sendBeacon1 || m_sendBeacon2 || m_sendOpen || m_sendClose)
+	// Already sending, or waiting to send, ignore request
+	if (m_sendBeacon1 || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_callsignStartTimer.isRunning())
 		return;
 
 	unsigned int t1, t2;
 
 	switch (m_callsignHoldoff) {
 		case ACH_NONE:
-			m_sendOpen = true;
+			if (m_callsignStartTimer.getTimeout() > 0U)
+				m_callsignStartTimer.start();
+			else
+				m_sendOpen = true;
 			break;
 
 		case ACH_14:
 			t1 = m_callsignTimer.getTimeout() / 4U;
 			t2 = m_callsignTimer.getTimer();
-			if (t2 >= t1)
-				m_sendOpen = true;
+			if (t2 >= t1) {
+				if (m_callsignStartTimer.getTimeout() > 0U)
+					m_callsignStartTimer.start();
+				else
+					m_sendOpen = true;
+			}
 			break;
 
 		case ACH_12:
 			t1 = m_callsignTimer.getTimeout() / 2U;
 			t2 = m_callsignTimer.getTimer();
-			if (t2 >= t1)
-				m_sendOpen = true;
+			if (t2 >= t1) {
+				if (m_callsignStartTimer.getTimeout() > 0U)
+					m_callsignStartTimer.start();
+				else
+					m_sendOpen = true;
+			}
 			break;
 
 		case ACH_34:
 			t1 = 3U * m_callsignTimer.getTimeout() / 4U;
 			t2 = m_callsignTimer.getTimer();
-			if (t2 >= t1)
-				m_sendOpen = true;
+			if (t2 >= t1) {
+				if (m_callsignStartTimer.getTimeout() > 0U)
+					m_callsignStartTimer.start();
+				else
+					m_sendOpen = true;
+			}
 			break;
 	}
 }
 
 void CAnalogueRepeaterThread::sendClose()
 {
-	// Already sending, ignore request
-	if (m_sendBeacon1 || m_sendBeacon2 || m_sendOpen || m_sendClose)
+	// Already sending, or waiting to send, ignore request
+	if (m_sendBeacon1 || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_callsignStartTimer.isRunning())
 		return;
 
 	unsigned int t1, t2;
@@ -1593,8 +1665,8 @@ void CAnalogueRepeaterThread::sendClose()
 
 void CAnalogueRepeaterThread::sendCallsign()
 {
-	// Already sending, ignore request
-	if (m_sendBeacon1 || m_sendBeacon2 || m_sendOpen || m_sendClose)
+	// Already sending, or waiting to send, ignore request
+	if (m_sendBeacon1 || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_callsignStartTimer.isRunning())
 		return;
 
 	unsigned int t1, t2;

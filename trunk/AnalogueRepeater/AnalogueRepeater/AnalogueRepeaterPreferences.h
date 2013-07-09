@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@ public:
 		unsigned int lockoutTime, unsigned int hangTime, unsigned int latchTime, bool tbEnable,
 		bool ctcssInternal, wxFloat32 tbThreshold, wxFloat32 ctcssFreq, wxFloat32 ctcssThresh,
 		wxFloat32 ctcssLevel, unsigned int ctcssHangTime, ANALOGUE_CTCSS_OUTPUT ctcssOutput,
-		ANALOGUE_CALLSIGN_START callsignAtStart, ANALOGUE_TIMEOUT_TYPE timeoutType, bool callsignAtEnd,
-		ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff, const wxString& radioReadDevice,
+		ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, ANALOGUE_TIMEOUT_TYPE timeoutType,
+		bool callsignAtEnd, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff, const wxString& radioReadDevice,
 		const wxString& radioWriteDevice, unsigned int radioAudioDelay, bool radioDeEmphasis,
 		bool radioPreEmphasis, bool radioVOGAD, ANALOGUE_EXTERNAL_MODE externalMode, bool externalVOGAD,
 		const wxString& externalReadDevice, const wxString& externalWriteDevice, unsigned int externalAudioDelay,
@@ -106,6 +106,7 @@ public:
 	virtual ANALOGUE_CTCSS_OUTPUT getCTCSSOutput() const;
 
 	virtual ANALOGUE_CALLSIGN_START   getCallAtStart() const;
+	virtual unsigned int              getCallStartDelay() const;
 	virtual bool                      getCallAtEnd() const;
 	virtual ANALOGUE_TIMEOUT_TYPE     getTimeoutType() const;
 	virtual ANALOGUE_CALLSIGN_HOLDOFF getHoldoff() const;

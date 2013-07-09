@@ -37,6 +37,7 @@
 #include "Goertzel.h"
 #include "PTTDelay.h"
 #include "APRSRX.h"
+#include "APRSTX.h"
 #include "Timer.h"
 #include "VOGAD.h"
 #include "NCO.h"
@@ -64,7 +65,7 @@ public:
 	virtual void setAck(IFixedAudioSource* radioAck, IFixedAudioSource* extAck, IFixedAudioSource* batteryAck, wxFloat32 level, unsigned int ack, unsigned int minimum);
 	virtual void setTimes(unsigned int callsignTime, unsigned int timeout, unsigned int lockoutTime, unsigned int hangTime, unsigned int& latchTime);
 	virtual void setTones(bool tbEnable, wxFloat32 tbThreshold, wxFloat32 ctcssFreq, bool ctcssInternal, wxFloat32 ctcssThresh, wxFloat32 ctcssLevel, unsigned int ctcssHangTime, ANALOGUE_CTCSS_OUTPUT ctcssOutput);
-	virtual void setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff);
+	virtual void setFeel(ANALOGUE_CALLSIGN_START callsignAtStart, unsigned int callsignStartDelay, bool callsignAtEnd, ANALOGUE_TIMEOUT_TYPE timeoutType, ANALOGUE_CALLSIGN_HOLDOFF callsignHoldoff);
 	virtual void setRadio(CSoundCardReaderWriter* soundcard, unsigned int audioDelay, bool deEmphasis, bool preEmphasis, bool vogad);
 	virtual void setExternal(ANALOGUE_EXTERNAL_MODE mode, CSoundCardReaderWriter* soundcard, unsigned int audioDelay, bool deEmphasis, bool preEmphasis, bool vogad, CNetworkController* controller, bool background);
 	virtual void setController(CExternalController* controller, unsigned int pttDelay, unsigned int squelchDelay);
@@ -74,6 +75,8 @@ public:
 		const wxString& command2Line, const wxString& output1, const wxString& output2, const wxString& output3,
 		const wxString& output4, wxFloat32 threshold);
 	virtual void setActiveHang(unsigned int time);
+	virtual void setAPRSRX(CAPRSRX* aprsRx);
+	virtual void setAPRSTX(CAPRSTX* aprsTx);
 #if defined(__WXDEBUG__)
 	virtual void setReader(CWAVFileReader* reader);
 #endif
@@ -131,6 +134,7 @@ private:
 	CTimer                    m_timeoutTimer;
 	CTimer                    m_lockoutTimer;
 	CTimer                    m_callsignTimer;
+	CTimer                    m_callsignStartTimer;
 	CTimer                    m_hangTimer;
 	CTimer                    m_latchTimer;
 	CTimer                    m_minimumTimer;
@@ -160,7 +164,7 @@ private:
 	bool                      m_sendOpen;
 	bool                      m_sendClose;
 	bool                      m_sendBeacon1;
-	bool                      m_sendBeacon2;
+	SB2_STATE                 m_sendBeacon2;
 	ACK_TYPE                  m_sendAck;
 	CDTMFController*          m_radioDTMF;
 	CDTMFController*          m_extDTMF;
@@ -181,7 +185,8 @@ private:
 	unsigned int              m_transmitCount;
 	unsigned int              m_timeCount;
 	unsigned int              m_lastHour;
-	CAPRSRX                   m_aprsrx;
+	CAPRSRX*                  m_aprsRx;
+	CAPRSTX*                  m_aprsTx;
 
 	void getAudio(wxFloat32* radioAudio, wxFloat32* extAudio, unsigned int& nRadio, unsigned int& nExt);
 	ANALOGUE_SQUELCH checkRadioSquelch(const wxFloat32* audio, unsigned int length, ANALOGUE_SQUELCH squelch);
