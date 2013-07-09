@@ -1349,5 +1349,5 @@ Added XRF310.
 Added daemon info to the logs.
 Fixed STARmet Digital configuration bug in ircDDB Gateway Config.
 Restore ircDDB Gateway window at startup.
-Added DCS044.
-Added XRF444.
+Added DCS023 and DCS044.
+Added XRF121, XRF444, and XRFWDX.

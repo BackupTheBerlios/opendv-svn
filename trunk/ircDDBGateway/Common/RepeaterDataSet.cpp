@@ -229,7 +229,8 @@ m_reconnect(NULL)
 		m_reflector->SetSelection(0);
 	} else {
 		wxString name = reflector;
-		name.SetChar(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+		name.Truncate(7U);
+		name.Trim();
 		bool res = m_reflector->SetStringSelection(name);
 		if (!res)
 			m_reflector->SetSelection(0);
