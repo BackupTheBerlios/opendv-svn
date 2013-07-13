@@ -17,16 +17,10 @@
  */
 
 #include "AnalogueDefines.h"
+#include "AX25Checksum.h"
+#include "AX25TX.h"
 #include "APRSTX.h"
 #include "Utils.h"
-
-const unsigned int FREQ_MARK  = 1200U;
-const unsigned int FREQ_SPACE = 2200U;
-const unsigned int BAUD       = 1200U;
-
-const unsigned char AX25_FLAG    = 0x7EU;
-const unsigned int  AX25_BAUD    = 1200U;
-const unsigned int  AX25_BIT_LEN = ANALOGUE_RADIO_SAMPLE_RATE / BAUD;
 
 CAPRSTX::CAPRSTX(const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, unsigned int altitude, const wxString& text) :
 m_audio(NULL),
@@ -136,38 +130,15 @@ m_offset(0U)
 			packet[len++] = text.GetChar(i);
 	}
 
-	CUtils::dump(wxT("AX.25 TX Packet"), packet, len);
+	CAX25Checksum csum;
+	len = csum.calculate(packet, len);
 
-	wxFloat32 tone  = 1200.0F;
-	wxFloat32 phase = 0.0F;
-	unsigned char mask;
+	CUtils::dump(wxT("AX.25 TX Packet"), packet, len);
 
 	insertSilence(100U);
 
-	for (unsigned int i = 0U, mask = 0x01U; i < 8U; i++, mask <<= 1)
-		transmitBit((AX25_FLAG & mask) == mask, tone, phase);
-
-	unsigned int oneCount = 0U;
-
-	for (unsigned int byte = 0U; byte < len; byte++) {
-		for (unsigned int i = 0U, mask = 0x01U; i < 8U; i++, mask <<= 1) {
-			bool bit = (packet[byte] & mask) == mask;
-			transmitBit(bit, tone, phase);
-
-			if (bit)
-				oneCount++;
-			else
-				oneCount = 0U;
-
-			if (oneCount == 5U) {
-				transmitBit(false, tone, phase);
-				oneCount = 0U;
-			}
-		}
-	}
-
-	for (unsigned int i = 0U, mask = 0x01U; i < 8U; i++, mask <<= 1)
-		transmitBit((AX25_FLAG & mask) == mask, tone, phase);
+	CAX25TX tx;
+	m_length += tx.getAudio(m_audio + m_length, packet, len);
 
 	insertSilence(100U);
 }
@@ -201,24 +172,6 @@ bool CAPRSTX::isEmpty() const
 void CAPRSTX::reset()
 {
 	m_offset = 0U;
-}
-void CAPRSTX::transmitBit(bool bit, wxFloat32& tone, wxFloat32& phase)
-{
-	// NRZI
-	if (!bit) {
-		if (tone == 1200.0F)
-			tone = 2200.0F;
-		else
-			tone = 1200.0F;
-	}
-
-	wxFloat32 incr = 2.0F * M_PI * tone / wxFloat32(ANALOGUE_RADIO_SAMPLE_RATE);
-
-	for (unsigned int i = 0U; i < AX25_BIT_LEN; i++) {
-		m_audio[m_length] = ::sin(phase);
-		phase += incr;
-		m_length++;
-	}
 }
 
 void CAPRSTX::insertSilence(unsigned int ms)

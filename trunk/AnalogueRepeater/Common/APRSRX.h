@@ -39,6 +39,9 @@ private:
 	unsigned int   m_bitStream;
 	unsigned int   m_bitBuf;
 
+	bool           m_dump;
+	wxString       m_dumper;
+
 	void rxbit(bool bit);
 	void decodeMicE(const unsigned char* packet, unsigned int length);
 };

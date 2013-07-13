@@ -1351,3 +1351,4 @@ Fixed STARmet Digital configuration bug in ircDDB Gateway Config.
 Restore ircDDB Gateway window at startup.
 Added DCS023 and DCS044.
 Added XRF121, XRF444, and XRFWDX.
+Updated XRF901s IP address.

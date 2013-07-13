@@ -18,13 +18,14 @@
  */
 
 #include "AnalogueDefines.h"
+#include "AX25Checksum.h"
 #include "APRSRX.h"
 #include "Utils.h"
 
 const unsigned int FREQ_MARK  = 1200U;
 const unsigned int FREQ_SPACE = 2200U;
 const unsigned int BAUD       = 1200U;
-const unsigned int SUBSAMP    = 2U;
+const unsigned int SUBSAMP    = 4U;			// 2U
 
 const unsigned int CORRLEN    = ANALOGUE_RADIO_SAMPLE_RATE / BAUD;
 const unsigned int PHASEINC   = 0x10000U * BAUD * SUBSAMP / ANALOGUE_RADIO_SAMPLE_RATE;
@@ -55,7 +56,9 @@ m_buf(NULL),
 m_ptr(NULL),
 m_state(false),
 m_bitStream(0x00U),
-m_bitBuf(0x00U)
+m_bitBuf(0x00U),
+m_dump(false),
+m_dumper()
 {
 	wxFloat32 f;
 	unsigned int i;
@@ -120,6 +123,7 @@ m_bitBuf(0x00U)
 
 CAPRSRX::~CAPRSRX()
 {
+	wxLogMessage(wxT("RX Dumper: %s"), m_dumper.c_str());
 	delete[] m_buf;
 	delete[] m_corrMarkI;
 	delete[] m_corrMarkQ;
@@ -182,10 +186,13 @@ void CAPRSRX::rxbit(bool bit)
 	if ((m_bitStream & 0xFFU) == 0x7EU) {
 		if (m_state && (m_ptr - m_buf) > 0U) {
 			CUtils::dump(wxT("AX.25 RX Packet"), m_buf, m_ptr - m_buf);
-			decodeMicE(m_buf, m_ptr - m_buf);
+
+			if ((m_ptr - m_buf) >= 25U)
+				decodeMicE(m_buf, m_ptr - m_buf);
 		}
 
 		m_state  = true;
+		m_dump   = true;
 		m_ptr    = m_buf;
 		m_bitBuf = 0x80U;
 		return;
@@ -211,7 +218,12 @@ void CAPRSRX::rxbit(bool bit)
 			return;
 		}
 
-		*m_ptr++ = m_bitBuf >> 1;
+		unsigned char byte = m_bitBuf >> 1;
+		*m_ptr++ = byte;
+		wxString t;
+		t.Printf(wxT("%u%u%u%u%u%u%u%u "), byte & 0x01U ? 1U : 0U, byte & 0x02U ? 1U : 0U, byte & 0x04U ? 1U : 0U, byte & 0x08U ? 1U : 0U, byte & 0x10U ? 1U : 0U, byte & 0x20U ? 1U : 0U, byte & 0x40U ? 1U : 0U, byte & 0x80U ? 1U : 0U);
+		m_dumper.Append(t);
+		// *m_ptr++ = m_bitBuf >> 1;
 		m_bitBuf = 0x80U;
 		return;
 	}
@@ -221,6 +233,11 @@ void CAPRSRX::rxbit(bool bit)
 
 void CAPRSRX::decodeMicE(const unsigned char* packet, unsigned int length)
 {
+	CAX25Checksum csum;
+	bool ok = csum.check(packet, length);
+	if (!ok)
+		return;
+
 	const unsigned char* ptr = packet + 13U;
 
 	// There are digipeters, find their end
@@ -304,6 +321,9 @@ void CAPRSRX::decodeMicE(const unsigned char* packet, unsigned int length)
 		ptr += 4U;
 	}
 
-	wxString text((char*)ptr, wxConvLocal, length - (ptr - packet));
-	wxLogMessage(wxT("Text: %s"), text.c_str());
+	unsigned int len = length - (ptr - packet);
+	if (len > 0U) {
+		wxString text((char*)ptr, wxConvLocal, len);
+		wxLogMessage(wxT("Text: %s"), text.c_str());
+	}
 }

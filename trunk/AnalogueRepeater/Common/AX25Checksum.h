@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2013 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2011,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -11,28 +11,21 @@
  *	GNU General Public License for more details.
  */
 
-#ifndef	APRSTX_H
-#define	APRSTX_H
+#ifndef	AX25Checksum_H
+#define	AX25Checksum_H
 
 #include <wx/wx.h>
 
-class CAPRSTX {
+class CAX25Checksum {
 public:
-	CAPRSTX(const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, unsigned int altitude, const wxString& text);
-	~CAPRSTX();
+	CAX25Checksum();
+	~CAX25Checksum();
 
-	unsigned int getAudio(wxFloat32* audio, unsigned int length, wxFloat32 amplitude);
+	bool check(const unsigned char* data, unsigned int length);
 
-	bool isEmpty() const;
-
-	void reset();
+	unsigned int calculate(unsigned char* data, unsigned int length);
 
 private:
-	wxFloat32*   m_audio;
-	unsigned int m_length;
-	unsigned int m_offset;
-
-	void insertSilence(unsigned int ms);
 };
 
 #endif
