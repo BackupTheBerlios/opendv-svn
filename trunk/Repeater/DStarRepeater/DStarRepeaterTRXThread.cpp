@@ -88,6 +88,7 @@ m_mode(MODE_DUPLEX),
 m_ack(AT_BER),
 m_restriction(false),
 m_rpt1Validation(true),
+m_errorReply(true),
 m_controlEnabled(false),
 m_controlRPT1(),
 m_controlRPT2(),
@@ -376,7 +377,7 @@ void CDStarRepeaterTRXThread::kill()
 	m_killed = true;
 }
 
-void CDStarRepeaterTRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
+void CDStarRepeaterTRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
@@ -396,6 +397,7 @@ void CDStarRepeaterTRXThread::setCallsign(const wxString& callsign, const wxStri
 	m_restriction    = restriction;
 	m_rpt1Validation = rpt1Validation;
 	m_blanking       = dtmfBlanking;
+	m_errorReply     = errorReply;
 }
 
 void CDStarRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* handler)
@@ -1098,7 +1100,7 @@ void CDStarRepeaterTRXThread::repeaterStateMachine()
 
 		case DSRS_INVALID_WAIT:
 			if (m_ackTimer.hasExpired()) {
-				if (m_mode != MODE_GATEWAY)
+				if (m_mode != MODE_GATEWAY && m_errorReply)
 					transmitErrorStatus();
 				setRepeaterState(DSRS_LISTENING);
 				m_activeHangTimer.start();

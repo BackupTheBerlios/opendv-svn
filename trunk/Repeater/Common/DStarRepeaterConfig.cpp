@@ -25,6 +25,7 @@ const wxString  KEY_ACK                = wxT("ack");
 const wxString  KEY_RESTRICTION        = wxT("restriction");
 const wxString  KEY_RPT1_VALIDATION    = wxT("rpt1Validation");
 const wxString  KEY_DTMF_BLANKING      = wxT("dtmfBlanking");
+const wxString  KEY_ERROR_REPLY        = wxT("errorReply");
 const wxString  KEY_GATEWAY_ADDRESS    = wxT("gatewayAddress");
 const wxString  KEY_GATEWAY_PORT       = wxT("gatewayPort");
 const wxString  KEY_LOCAL_ADDRESS      = wxT("localAddress");
@@ -114,6 +115,7 @@ const ACK_TYPE        DEFAULT_ACK                = AT_BER;
 const bool            DEFAULT_RESTRICTION        = false;
 const bool            DEFAULT_RPT1_VALIDATION    = true;
 const bool            DEFAULT_DTMF_BLANKING      = true;
+const bool            DEFAULT_ERROR_REPLY        = true;
 const wxString        DEFAULT_GATEWAY_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_GATEWAY_PORT       = 20010U;
 const wxString        DEFAULT_LOCAL_ADDRESS      = wxT("127.0.0.1");
@@ -212,6 +214,7 @@ m_ack(DEFAULT_ACK),
 m_restriction(DEFAULT_RESTRICTION),
 m_rpt1Validation(DEFAULT_RPT1_VALIDATION),
 m_dtmfBlanking(DEFAULT_DTMF_BLANKING),
+m_errorReply(DEFAULT_ERROR_REPLY),
 m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
@@ -311,6 +314,8 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 	m_config->Read(m_name + KEY_RPT1_VALIDATION, &m_rpt1Validation, DEFAULT_RPT1_VALIDATION);
 
 	m_config->Read(m_name + KEY_DTMF_BLANKING, &m_dtmfBlanking, DEFAULT_DTMF_BLANKING);
+
+	m_config->Read(m_name + KEY_ERROR_REPLY, &m_errorReply, DEFAULT_ERROR_REPLY);
 
 	m_config->Read(m_name + KEY_GATEWAY_ADDRESS, &m_gatewayAddress, DEFAULT_GATEWAY_ADDRESS);
 
@@ -503,6 +508,7 @@ m_ack(DEFAULT_ACK),
 m_restriction(DEFAULT_RESTRICTION),
 m_rpt1Validation(DEFAULT_RPT1_VALIDATION),
 m_dtmfBlanking(DEFAULT_DTMF_BLANKING),
+m_errorReply(DEFAULT_ERROR_REPLY),
 m_gatewayAddress(DEFAULT_GATEWAY_ADDRESS),
 m_gatewayPort(DEFAULT_GATEWAY_PORT),
 m_localAddress(DEFAULT_LOCAL_ADDRESS),
@@ -639,6 +645,9 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 		} else if (key.IsSameAs(KEY_DTMF_BLANKING)) {
 			val.ToLong(&temp1);
 			m_dtmfBlanking = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_ERROR_REPLY)) {
+			val.ToLong(&temp1);
+			m_errorReply = temp1 == 1L;
 		} else if (key.IsSameAs(KEY_GATEWAY_ADDRESS)) {
 			m_gatewayAddress = val;
 		} else if (key.IsSameAs(KEY_GATEWAY_PORT)) {
@@ -839,7 +848,7 @@ CDStarRepeaterConfig::~CDStarRepeaterConfig()
 
 #endif
 
-void CDStarRepeaterConfig::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation, bool& dtmfBlanking) const
+void CDStarRepeaterConfig::getCallsign(wxString& callsign, wxString& gateway, DSTAR_MODE& mode, ACK_TYPE& ack, bool& restriction, bool& rpt1Validation, bool& dtmfBlanking, bool& errorReply) const
 {
 	callsign       = m_callsign;
 	gateway        = m_gateway;
@@ -848,9 +857,10 @@ void CDStarRepeaterConfig::getCallsign(wxString& callsign, wxString& gateway, DS
 	restriction    = m_restriction;
 	rpt1Validation = m_rpt1Validation;
 	dtmfBlanking   = m_dtmfBlanking;
+	errorReply     = m_errorReply;
 }
 
-void CDStarRepeaterConfig::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
+void CDStarRepeaterConfig::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply)
 {
 	m_callsign       = callsign;
 	m_gateway        = gateway;
@@ -859,6 +869,7 @@ void CDStarRepeaterConfig::setCallsign(const wxString& callsign, const wxString&
 	m_restriction    = restriction;
 	m_rpt1Validation = rpt1Validation;
 	m_dtmfBlanking   = dtmfBlanking;
+	m_errorReply     = errorReply;
 }
 
 void CDStarRepeaterConfig::getNetwork(wxString& gatewayAddress, unsigned int& gatewayPort, wxString& localAddress, unsigned int& localPort) const
@@ -1142,6 +1153,7 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_RESTRICTION, m_restriction);
 	m_config->Write(m_name + KEY_RPT1_VALIDATION, m_rpt1Validation);
 	m_config->Write(m_name + KEY_DTMF_BLANKING, m_dtmfBlanking);
+	m_config->Write(m_name + KEY_ERROR_REPLY, m_errorReply);
 	m_config->Write(m_name + KEY_GATEWAY_ADDRESS, m_gatewayAddress);
 	m_config->Write(m_name + KEY_GATEWAY_PORT, long(m_gatewayPort));
 	m_config->Write(m_name + KEY_LOCAL_ADDRESS, m_localAddress);
@@ -1260,6 +1272,7 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_RESTRICTION.c_str(), m_restriction ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_RPT1_VALIDATION.c_str(), m_rpt1Validation ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DTMF_BLANKING.c_str(), m_dtmfBlanking ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_ERROR_REPLY.c_str(), m_errorReply ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_GATEWAY_ADDRESS.c_str(), m_gatewayAddress.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_GATEWAY_PORT.c_str(), m_gatewayPort); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_LOCAL_ADDRESS.c_str(), m_localAddress.c_str()); file.AddLine(buffer);

@@ -26,7 +26,7 @@
 
 class CDStarRepeaterConfigCallsignSet : public wxPanel {
 public:
-	CDStarRepeaterConfigCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
+	CDStarRepeaterConfigCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply);
 	virtual ~CDStarRepeaterConfigCallsignSet();
 
 	virtual bool Validate();
@@ -38,6 +38,7 @@ public:
 	virtual bool       getRestriction() const;
 	virtual bool       getRPT1Validation() const;
 	virtual bool       getDTMFBlanking() const;
+	virtual bool       getErrorReply() const;
 
 	virtual void onMode(wxCommandEvent& event);
 
@@ -51,6 +52,7 @@ private:
 	wxChoice*          m_restriction;
 	wxChoice*          m_rpt1Validation;
 	wxChoice*          m_dtmfBlanking;
+	wxChoice*          m_errorReply;
 
 	DECLARE_EVENT_TABLE()
 };

@@ -30,7 +30,7 @@ BEGIN_EVENT_TABLE(CDStarRepeaterConfigCallsignSet, wxPanel)
 END_EVENT_TABLE()
 
 
-CDStarRepeaterConfigCallsignSet::CDStarRepeaterConfigCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) :
+CDStarRepeaterConfigCallsignSet::CDStarRepeaterConfigCallsignSet(wxWindow* parent, int id, const wxString& title, const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply) :
 wxPanel(parent, id),
 m_title(title),
 m_callsign(NULL),
@@ -40,7 +40,8 @@ m_mode(NULL),
 m_ack(NULL),
 m_restriction(NULL),
 m_rpt1Validation(NULL),
-m_dtmfBlanking(NULL)
+m_dtmfBlanking(NULL),
+m_errorReply(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(3);
 
@@ -147,6 +148,18 @@ m_dtmfBlanking(NULL)
 	sizer->Add(m_dtmfBlanking, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_dtmfBlanking->SetSelection(dtmfBlanking ? 1 : 0);
 
+	wxStaticText* dummy5 = new wxStaticText(this, -1, wxEmptyString);
+	sizer->Add(dummy5, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* errorReplyLabel = new wxStaticText(this, -1, _("Error Reply"));
+	sizer->Add(errorReplyLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+
+	m_errorReply = new wxChoice(this, -1, wxDefaultPosition, wxSize(CALLSIGN_WIDTH, -1));
+	m_errorReply->Append(_("Off"));
+	m_errorReply->Append(_("On"));
+	sizer->Add(m_errorReply, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+	m_errorReply->SetSelection(errorReply ? 1 : 0);
+
 	SetAutoLayout(true);
 
 	sizer->Fit(this);
@@ -208,6 +221,12 @@ bool CDStarRepeaterConfigCallsignSet::Validate()
 
 	if (m_dtmfBlanking->GetSelection() == wxNOT_FOUND) {
 		wxMessageDialog dialog(this, _("DTMF Blanking is not set"), m_title + _(" Error"), wxICON_ERROR);
+		dialog.ShowModal();
+		return false;
+	}
+
+	if (m_errorReply->GetSelection() == wxNOT_FOUND) {
+		wxMessageDialog dialog(this, _("Error Reply is not set"), m_title + _(" Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		return false;
 	}
@@ -297,6 +316,13 @@ bool CDStarRepeaterConfigCallsignSet::getRPT1Validation() const
 bool CDStarRepeaterConfigCallsignSet::getDTMFBlanking() const
 {
 	int n = m_dtmfBlanking->GetCurrentSelection();
+
+	return n == 1;
+}
+
+bool CDStarRepeaterConfigCallsignSet::getErrorReply() const
+{
+	int n = m_errorReply->GetCurrentSelection();
 
 	return n == 1;
 }

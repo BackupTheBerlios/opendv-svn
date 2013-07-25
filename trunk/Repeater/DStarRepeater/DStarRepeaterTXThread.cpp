@@ -163,7 +163,7 @@ void CDStarRepeaterTXThread::kill()
 	m_killed = true;
 }
 
-void CDStarRepeaterTXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking)
+void CDStarRepeaterTXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;

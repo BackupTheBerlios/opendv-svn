@@ -83,10 +83,10 @@ m_controller(NULL)
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
 	ACK_TYPE ack;
-	bool restriction, rpt1Validation, dtmfBlanking;
-	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	bool restriction, rpt1Validation, dtmfBlanking, errorReply;
+	m_config->getCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking, errorReply);
 
-	m_callsign = new CDStarRepeaterConfigCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	m_callsign = new CDStarRepeaterConfigCallsignSet(noteBook, -1, APPLICATION_NAME, callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking, errorReply);
 	noteBook->AddPage(m_callsign, _("Callsign"), true);
 
 	wxString gatewayAddress, localAddress;
@@ -217,7 +217,8 @@ void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
 	bool restriction    = m_callsign->getRestriction();
 	bool rpt1Validation = m_callsign->getRPT1Validation();
 	bool dtmfBlanking   = m_callsign->getDTMFBlanking();
-	m_config->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking);
+	bool errorReply     = m_callsign->getErrorReply();
+	m_config->setCallsign(callsign, gateway, mode, ack, restriction, rpt1Validation, dtmfBlanking, errorReply);
 
 	wxString gatewayAddress  = m_network->getGatewayAddress();
 	unsigned int gatewayPort = m_network->getGatewayPort();

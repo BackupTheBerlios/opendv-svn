@@ -45,7 +45,7 @@ public:
 	CDStarRepeaterTRXThread(const wxString& type);
 	virtual ~CDStarRepeaterTRXThread();
 
-	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking);
+	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
 	virtual void setModem(IDStarRepeaterModem* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
@@ -131,6 +131,7 @@ private:
 	ACK_TYPE                   m_ack;
 	bool                       m_restriction;
 	bool                       m_rpt1Validation;
+	bool                       m_errorReply;
 	bool                       m_controlEnabled;
 	wxString                   m_controlRPT1;
 	wxString                   m_controlRPT2;
