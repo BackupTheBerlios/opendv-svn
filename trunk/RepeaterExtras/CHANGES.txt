@@ -9,6 +9,6 @@ Split the DCSGateway, DExtraGateway, and ParrotController from the Repeater pack
 201307xx
 --------
 
-Added XRF121, XRF444, and XRFWDX.
+Added XRF121, XRF444, XRF858, and XRFWDX.
 Added DCS023 and DCS044.
 Updated XRF901s IP address.
