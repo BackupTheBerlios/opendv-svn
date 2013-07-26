@@ -1,4 +1,4 @@
-Repeater - 20130702
+Repeater - 20130726
 ===================
 
 20090530
@@ -1886,7 +1886,7 @@ Remove the DCSGateway, DExtraGateway, and ParrotController from the Repeater pac
 Add a DC blocker to the sound card GMSK demodulator.
 Implement GMSK PLL locking.
 
-201307xx
+20130726
 --------
 
 Restore D-Star Repeater window position on startup.
