@@ -109,9 +109,11 @@ unsigned int CCallsignServer::process(const wxString& hostname, unsigned int por
 	if (n >= 0)
 		offset += n;
 
-	while (n >= 0) {
+	while (n >= 0 && offset < length) {
 		n = socket.read(buffer + offset, 2000U, TCP_TIMEOUT);
-		if (n > 0)
+		if (n == 0)
+			Sleep(TCP_TIMEOUT * 1000UL);
+		else if (n > 0)
 			offset += n;
 	}
 
@@ -135,13 +137,16 @@ unsigned int CCallsignServer::process(const wxString& hostname, unsigned int por
 			if (p2 != NULL && p3 != NULL) {
 				wxString name    = wxString(p2, wxConvLocal);
 				wxString address = wxString(p3, wxConvLocal);
-				wxLogMessage(wxT("DExtra: %s\t%s"), name.c_str(), address.c_str());
 
-				name.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-				name.Append(wxT("G"));
-				m_cache->updateGateway(name, address, DP_DEXTRA, false, true);
+				if (!address.IsSameAs(wxT("0.0.0.0"))) {
+					wxLogMessage(wxT("DExtra: %s\t%s"), name.c_str(), address.c_str());
 
-				dextraCount++;
+					name.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+					name.Append(wxT("G"));
+					m_cache->updateGateway(name, address, DP_DEXTRA, false, true);
+
+					dextraCount++;
+				}
 			}
 		} else if (::strncmp(p, "DCS", 3U) == 0) {
 			char* p2 = ::strtok(p, " \t\r\n");
@@ -150,13 +155,16 @@ unsigned int CCallsignServer::process(const wxString& hostname, unsigned int por
 			if (p2 != NULL && p3 != NULL) {
 				wxString name    = wxString(p2, wxConvLocal);
 				wxString address = wxString(p3, wxConvLocal);
-				wxLogMessage(wxT("DCS: %s\t%s"), name.c_str(), address.c_str());
 
-				name.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
-				name.Append(wxT("G"));
-				m_cache->updateGateway(name, address, DP_DCS, false, true);
+				if (!address.IsSameAs(wxT("0.0.0.0"))) {
+					wxLogMessage(wxT("DCS: %s\t%s"), name.c_str(), address.c_str());
 
-				dcsCount++;
+					name.resize(LONG_CALLSIGN_LENGTH - 1U, wxT(' '));
+					name.Append(wxT("G"));
+					m_cache->updateGateway(name, address, DP_DCS, false, true);
+
+					dcsCount++;
+				}
 			}
 		}
 

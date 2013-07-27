@@ -1357,3 +1357,4 @@ Updated XRF901s IP address.
 --------
 
 Updated XRF012s IP address.
+Added new Quadnet ircDDB server.
