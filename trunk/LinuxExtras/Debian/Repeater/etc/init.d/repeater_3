@@ -15,7 +15,7 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=repeater             # Introduce a short description here
-NAME=repeater_1           # Introduce the short server's name here
+NAME=repeater_3           # Introduce the short server's name here
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
