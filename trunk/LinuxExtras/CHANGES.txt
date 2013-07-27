@@ -2,6 +2,38 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Update of Startup-Scripts
+FOUND: 2013-07-21
+REPORTED: DL5DI
+SOLVED: 2013-07-26
+COMMIT: 2013-07-27
+
+The former Debian startscipts won't work on multi-repeater systems:
+- The option "start-stop-daemon --status" recommended by somebody a few months ago, is no standard and not available on all Debian 6/7 platforms.
+A replacement for the "--status" option was copied from other standard Debian scripts.
+
+- The PID-file is created with wrong PID (thread based) when using "--make-pidfile". This is useless and creates issues with the watchdog feature.
+The PID-File is now generated with ps->grep in an own function.
+
+The ntp-option is now in comment for Debian, but still active for Raspbian.
+This feature is only necessary to overcome the panic threshold on systems which do not have a hardware clock.
+The package builder will activate it for armel and armhf, but not for i386 and amd64.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: Split repeater package
+FOUND: 2013-06-25
+REPORTED: DL5DI
+SOLVED: 2013-07-02
+COMMIT: 2013-07-02
+
+- packaging scripts changed for splitted packages:
+-- Repeater
+-- AnalogueRepeater
+-- RepeaterExtras
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Option to remove repeater modules
 FOUND: 2013-03-10
 REPORTED: DL5DI

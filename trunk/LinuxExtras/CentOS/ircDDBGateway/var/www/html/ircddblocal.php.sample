@@ -10,7 +10,7 @@ $configPath='/etc';
 $gatewayConfigPath = '/etc/ircddbgateway';
 $defaultConfPath = '/etc/default';
 $sharedFilesPath = '/usr/local/etc';
-$sysconfigPath = '/etc/sysconfig';
+$sysConfigPath = '/etc/sysconfig';
 //
 // Setting only needed if DD-Mode is in use:
 // Location of dhcpd.leases file

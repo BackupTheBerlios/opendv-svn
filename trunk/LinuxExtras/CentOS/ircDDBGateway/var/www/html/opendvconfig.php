@@ -288,7 +288,7 @@ $stnparms=array("starNetBand","starNetCallsign","starNetLogoff","starNetInfo","s
     print"</table>";
 
     for ($i=1;$i<5;$i++){
-	$rptrConfigPath = "$sysconfigPath/repeater_$i";
+	$rptrConfigPath = "$sysConfigPath/repeater_$i";
 	if ($rconfigfile = fopen($rptrConfigPath,'r')) {
     	    while ($line = fgets($rconfigfile)) {
         	list($key,$value) = split("=",$line);
@@ -311,10 +311,10 @@ $stnparms=array("starNetBand","starNetCallsign","starNetLogoff","starNetInfo","s
 	if(strlen($configs[$param]) == 0){
 	    continue;
 	}
-	$sysconfigFilename = $sysconfigPath . "/" . "repeater_" . $i;
-	if ($sysconfigFile = fopen($sysconfigFilename,'r')) {
+	$sysConfigFilename = $sysConfigPath . "/" . "repeater_" . $i;
+	if ($sysConfigFile = fopen($sysConfigFilename,'r')) {
 	    echo"<table BORDER=1>";
-	    while ($line = fgets($sysconfigFile)){
+	    while ($line = fgets($sysConfigFile)){
 		# REPEATER_PATH=/usr/local/bin/dvrptrrepeaterd
 		list($key,$value) = split("=",$line);
 		if($key == REPEATER_PATH){

@@ -22,7 +22,7 @@ if ($configfile = fopen($gatewayConfigPath,'r')) {
 }
 
 $progname = basename($_SERVER['SCRIPT_FILENAME'],".php");
-$rev="20130705";
+$rev="20130726";
 $MYCALL=strtoupper($callsign);
 $col[0] = "#f0f0f0";
 $col[1] = "#f0f0a0";
@@ -288,7 +288,7 @@ $stnparms=array("starNetBand","starNetCallsign","starNetLogoff","starNetInfo","s
     print"</table>";
 
     for ($i=1;$i<5;$i++){
-	$rptrConfigPath = "$sysconfigPath/repeater_$i";
+	$rptrConfigPath = "$sysConfigPath/repeater_$i";
 	if ($rconfigfile = fopen($rptrConfigPath,'r')) {
     	    while ($line = fgets($rconfigfile)) {
         	list($key,$value) = split("=",$line);
@@ -311,13 +311,13 @@ $stnparms=array("starNetBand","starNetCallsign","starNetLogoff","starNetInfo","s
 	if(strlen($configs[$param]) == 0){
 	    continue;
 	}
-	$sysconfigFilename = $sysconfigPath . "/" . "repeater_" . $i;
-	if ($sysconfigFile = fopen($sysconfigFilename,'r')) {
+	$sysConfigFilename = $sysConfigPath . "/" . "repeater_" . $i;
+	if ($sysConfigFile = fopen($sysConfigFilename,'r')) {
 	    echo"<table BORDER=1>";
-	    while ($line = fgets($sysconfigFile)){
-		# REPEATER_PATH=/usr/local/bin/dvrptrrepeaterd
+	    while ($line = fgets($sysConfigFile)){
+		# DAEMON_PATH=/usr/local/bin/dvrptrrepeaterd
 		list($key,$value) = split("=",$line);
-		if($key == REPEATER_PATH){
+		if($key == DAEMON_PATH){
 		    $temp = explode("/",$value);
 		    end($temp);
 		    $rptrdaemon = rtrim(current($temp),"d\r\n");;
