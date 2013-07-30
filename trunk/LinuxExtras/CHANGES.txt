@@ -2,6 +2,17 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: Update of Documentation
+FOUND: 2013-07-21
+REPORTED: DL5DI
+SOLVED: 2013-07-29
+COMMIT: 2013-07-29
+
+- Documentation for Repeater updated, URL for initial repository changed
+- Documentation for AnalogueRepeater added
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Update of Startup-Scripts
 FOUND: 2013-07-21
 REPORTED: DL5DI
