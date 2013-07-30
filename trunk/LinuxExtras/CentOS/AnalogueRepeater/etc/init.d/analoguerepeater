@@ -4,8 +4,8 @@
 # Hans-J. Barthen (DL5DI) - dl5di@darc.de
 #
 # chkconfig: 345 99 01
-# description: Starts the G4KLX ParrotController
-# config: /etc/sysconfig/parrotcontroller
+# description: Starts the G4KLX AnalogueRepeater
+# config: /etc/sysconfig/analoguerepeater
 #
 
 

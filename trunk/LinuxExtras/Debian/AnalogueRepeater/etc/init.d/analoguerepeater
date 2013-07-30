@@ -16,7 +16,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=analoguerepeater     # Introduce a short description here
 NAME=analoguerepeater     # Introduce the short server's name here
-DAEMON_PATH=dvrptrrepeaterd
+DAEMON_PATH=analoguerepeaterd
 DAEMON_ARGS=""            # Arguments to run the daemon with
 DAEMON_USER=opendv
 PIDFILE=/var/run/$NAME.pid
@@ -60,7 +60,7 @@ do_start()
 		$DAEMON_ARGS \
 		|| return 2
 	# create a watchdog entry to the crontab
-	echo "*/10 * * * * root ps aux | grep $DAEMON_PATH | grep -vq grep || /etc/init.d/repeater_1 start" > /etc/cron.d/repeater_1
+	echo "*/10 * * * * root ps aux | grep $DAEMON_PATH | grep -vq grep || /etc/init.d/analoguerepeater start" > /etc/cron.d/analoguerepeater
 }
 
 #
@@ -87,7 +87,7 @@ do_stop()
 	# Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	# remove watchdog entry from crontab
-	rm -f /etc/cron.d/repeater_1
+	rm -f /etc/cron.d/analogue_repeater
 	return "$RETVAL"
 }
 

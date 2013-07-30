@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# ircDDBGateway start script for GUI
+# AnalogueRepeater start script for GUI
 # Hans-J. Barthen (DL5DI) - dl5di@gmx.de
 #
-# description: Starts the G4KLX ircDDBGateway in GUI mode and sets the LC_NUMERIC LOCALE
+# description: Starts the G4KLX AnalogueRepeater in GUI mode and sets the LC_NUMERIC LOCALE
 # to en_US.UTF-8 to make the configfile compatible for GUI and daemon modem.
-# config: /etc/sysconfig/ircddbgateway
+# config: /etc/sysconfig/analoguerepeater
 #
 
 if [ $UID -ne 0 ]; then
@@ -17,9 +17,7 @@ if [ $UID -ne 0 ]; then
 fi
 
 xhost -
-# start parallel task to configure dd-mode network settings (if enabled)
-/usr/bin/ircddbgateway-ddmode.sh &
 
-# start ircddbgateway
-su -c "/usr/bin/ircddbgateway -gui -logdir=/var/log/opendv" opendv
+# start analoguerepeater
+su -c "/usr/bin/analoguerepeater -gui -logdir=/var/log/opendv" opendv
 xhost +

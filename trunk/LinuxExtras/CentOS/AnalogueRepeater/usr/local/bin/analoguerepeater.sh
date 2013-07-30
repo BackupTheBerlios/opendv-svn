@@ -5,7 +5,7 @@
 #
 # description: Starts the G4KLX AnalogueRepeater in GUI mode and sets the LC_NUMERIC LOCALE
 # to en_US.UTF-8 to make the configfile compatible for GUI and daemon mode.
-# config: /etc/sysconfig/ircddbgateway
+# config: /etc/sysconfig/analoguerepeater
 #
 
 if [ $UID -ne 0 ]; then
