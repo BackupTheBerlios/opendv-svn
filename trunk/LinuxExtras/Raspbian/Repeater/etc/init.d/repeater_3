@@ -80,7 +80,7 @@ do_start()
 	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS" | grep -v grep | awk '{print $2}' > $PIDFILE
 
 	# create a watchdog entry to the crontab
-	echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_ARGS' | grep -v grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
+	echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_ARGS' | grep -vq grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
 }
 
 #
