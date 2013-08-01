@@ -51,7 +51,7 @@ dostart() {
     echo "PID: $1"
     echo "$1" > /var/run/$me.pid
 # create a watchdog entry to the crontab
-    echo "*/10 * * * * root ps aux | grep $REPEATER_PATH | grep -oq \" 1$\" || /etc/init.d/$me start" > /etc/cron.d/$me
+    echo "*/10 * * * * root ps aux | grep '$REPEATER_PATH $REPEATER_OPTIONS' || /etc/init.d/$me start" > /etc/cron.d/$me
     return $RETVAL
 }
 

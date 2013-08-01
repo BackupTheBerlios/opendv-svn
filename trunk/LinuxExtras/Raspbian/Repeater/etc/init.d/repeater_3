@@ -80,7 +80,7 @@ do_start()
 	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS" | grep -v grep | awk '{print $2}' > $PIDFILE
 
 	# create a watchdog entry to the crontab
-	echo "*/10 * * * * root ps aux | grep "$DAEMON_PATH $DAEMON_ARGS" | grep -v grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
+	echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_ARGS' | grep -v grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
 }
 
 #
@@ -93,18 +93,14 @@ do_stop()
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
+
+	# create pidfile, daemon might have been started without using this script
+	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS" | grep -v grep | awk '{print $2}' > $PIDFILE
+
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
 	RETVAL="$?"
 	[ "$RETVAL" = 2 ] && return 2
-	# Wait for children to finish too if this is a daemon that forks
-	# and if the daemon is only ever run from this initscript.
-	# If the above conditions are not satisfied then add some other code
-	# that waits for the process to drop all resources that could be
-	# needed by services started subsequently.  A last resort is to
-	# sleep for some time.
-	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON_PATH
-	[ "$?" = 2 ] && return 2
-	# Many daemons don't delete their pidfiles when they exit.
+
 	rm -f $PIDFILE
 	# remove watchdog entry from crontab
 	rm -f /etc/cron.d/$NAME
