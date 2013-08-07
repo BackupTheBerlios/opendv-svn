@@ -546,7 +546,6 @@ bool CDStarRepeaterDVRPTRV2Controller::setConfig()
 	unsigned int length;
 	RESP_TYPE_V2 resp;
 	do {
-
 		::wxMilliSleep(10UL);
 
 		resp = getResponse(m_buffer, length);
@@ -571,8 +570,8 @@ bool CDStarRepeaterDVRPTRV2Controller::setConfig()
 
 RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer, unsigned int& length)
 {
-	// Get the start of the frame or nothing at all
-	int ret = readModem(buffer, 5U);
+	// Get the first 'H'
+	int ret = readModem(buffer + 0U, 1U);
 	if (ret < 0) {
 		wxLogError(wxT("Error when reading from the DV-RPTR"));
 		return RT2_ERROR;
@@ -580,6 +579,24 @@ RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer
 
 	if (ret == 0)
 		return RT2_TIMEOUT;
+
+	if (buffer[0U] != 'H')
+		return RT2_TIMEOUT;
+
+	// Get the reset of the frame
+	unsigned int offset = 1U;
+	while (offset < 5U) {
+		int ret = readModem(buffer + offset, 5U - offset);
+		if (ret < 0) {
+			wxLogError(wxT("Error when reading from the DV-RPTR"));
+			return RT2_ERROR;
+		}
+
+		if (ret == 0)
+			::wxMilliSleep(10UL);
+		else
+			offset += ret;
+	}
 
 	if (::memcmp(buffer + 0U, "HEAD", 4U) != 0) {
 		wxLogError(wxT("DV-RPTR frame start is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[0U], buffer[1U], buffer[2U], buffer[3U]);
@@ -596,8 +613,6 @@ RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer
 		wxLogError(wxT("DV-RPTR frame type is incorrect - 0x%02X"), buffer[4U]);
 		return RT2_UNKNOWN;
 	}
-
-	unsigned int offset = 5U;
 
 	while (offset < length) {
 		int ret = readModem(buffer + offset, length - offset);
@@ -626,6 +641,8 @@ RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer
 		return RT2_CONFIG;
 	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
+	} else if (::memcmp(buffer + 5U, "9021", 4U) == 0) {
+		return RT2_TIMEOUT;
 	}
 
 	wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
