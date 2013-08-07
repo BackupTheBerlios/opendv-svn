@@ -247,6 +247,7 @@ void* CDVRPTRControllerV2::Entry()
 
 			// These should not be received in this loop, but don't complain if we do
 			case RT2_QUERY:
+			case RT2_ATCONFIG:
 			case RT2_CONFIG:
 				break;
 
@@ -624,6 +625,8 @@ RESP_TYPE_V2 CDVRPTRControllerV2::getResponse(unsigned char *buffer, unsigned in
 		return RT2_CONFIG;
 	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
 		return RT2_SPACE;
+	} else if (::memcmp(buffer + 5U, "9021", 4U) == 0) {
+		return RT2_ATCONFIG;
 	}
 
 	wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
