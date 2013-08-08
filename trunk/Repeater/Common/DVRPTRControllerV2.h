@@ -36,8 +36,7 @@ enum RESP_TYPE_V2 {
 	RT2_QUERY,
 	RT2_CONFIG,
 	RT2_HEADER,
-	RT2_DATA,
-	RT2_ATCONFIG
+	RT2_DATA
 };
 
 class CDVRPTRControllerV2 : public IDVRPTRController, public wxThread {
