@@ -65,6 +65,23 @@ bool CDDData::setIcomRepeaterData(const unsigned char *data, unsigned int length
 	return true;
 }
 
+bool CDDData::setHBRepeaterData(const unsigned char *data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort)
+{
+	wxASSERT(data != NULL);
+	wxASSERT(length >= 60U);
+
+	m_header.setData(data, length, false);
+
+	m_length = length - 44U;
+
+	if (m_length > BUFFER_LENGTH)
+		m_length = BUFFER_LENGTH;
+
+	::memcpy(m_frame, data + 44U, m_length);
+
+	return true;
+}
+
 unsigned int CDDData::getIcomRepeaterData(unsigned char *data, unsigned int length)
 {
 	wxASSERT(data != NULL);
@@ -98,7 +115,7 @@ unsigned int CDDData::getIcomRepeaterData(unsigned char *data, unsigned int leng
 
 	data[16] = 0xC0;				// DD Data
 
-	m_header.getData(data + 17U, RADIO_HEADER_LENGTH_BYTES);
+	m_header.getData(data + 17U, RADIO_HEADER_LENGTH_BYTES, true);
 
 	// Another length field
 	data[58] = m_length % 256U;
@@ -108,6 +125,26 @@ unsigned int CDDData::getIcomRepeaterData(unsigned char *data, unsigned int leng
 	::memcpy(data + 60U, m_frame, m_length);
 
 	return 60U + m_length;
+}
+
+unsigned int CDDData::getHBRepeaterData(unsigned char *data, unsigned int length)
+{
+	wxASSERT(data != NULL);
+	wxASSERT(length >= 1600U);
+
+	data[0] = 'D';
+	data[1] = 'S';
+	data[2] = 'R';
+	data[3] = 'P';
+
+	data[4] = 0x24U;
+
+	m_header.getData(data + 5U, RADIO_HEADER_LENGTH_BYTES, false);
+
+	// Now copy the payload
+	::memcpy(data + 44U, m_frame, m_length);
+
+	return 44U + m_length;
 }
 
 unsigned int CDDData::getRptSeq() const

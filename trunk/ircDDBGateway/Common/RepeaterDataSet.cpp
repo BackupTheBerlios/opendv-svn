@@ -509,19 +509,16 @@ RECONNECT CRepeaterDataSet::getReconnect() const
 void CRepeaterDataSet::onBand(wxCommandEvent &event)
 {
 	if (isDDMode()) {
-		m_type->SetSelection(1);
 		m_reflector->SetSelection(0);
 		m_channel->SetSelection(0);
 		m_startup->SetSelection(0);
 		m_reconnect->SetSelection(0);
 
-		m_type->Disable();
 		m_reflector->Disable();
 		m_channel->Disable();
 		m_startup->Disable();
 		m_reconnect->Disable();
 	} else {
-		m_type->Enable();
 		m_reflector->Enable();
 		m_channel->Enable();
 		m_startup->Enable();

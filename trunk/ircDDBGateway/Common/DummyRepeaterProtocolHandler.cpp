@@ -60,6 +60,11 @@ bool CDummyRepeaterProtocolHandler::writeAMBE(CAMBEData& data)
 
 bool CDummyRepeaterProtocolHandler::writeDD(CDDData& data)
 {
+	unsigned char buffer[2000U];
+	unsigned int length = data.getHBRepeaterData(buffer, 2000U);
+
+	CUtils::dump(wxT("DD Data"), buffer, length);
+
 	return true;
 }
 

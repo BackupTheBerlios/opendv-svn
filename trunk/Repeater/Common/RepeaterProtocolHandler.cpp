@@ -362,6 +362,10 @@ bool CRepeaterProtocolHandler::readPackets()
 			m_type = NETWORK_DATA;
 			return false;
 		}
+
+		else if (m_buffer[4] == 0x24U) {
+			// Silently ignore DD data
+		}
 	}
 
 	CUtils::dump(wxT("Unknown packet from the Gateway"), m_buffer, m_length);

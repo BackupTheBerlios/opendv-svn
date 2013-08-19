@@ -822,7 +822,7 @@ void CHeaderData::setCQCQCQ()
 	::memcpy(m_yourCall, "CQCQCQ  ", LONG_CALLSIGN_LENGTH);
 }
 
-bool CHeaderData::setData(const unsigned char *data, unsigned int length)
+bool CHeaderData::setData(const unsigned char *data, unsigned int length, bool check)
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= RADIO_HEADER_LENGTH_BYTES);
@@ -837,13 +837,16 @@ bool CHeaderData::setData(const unsigned char *data, unsigned int length)
 	::memcpy(m_myCall1,  data + 27U, LONG_CALLSIGN_LENGTH);
 	::memcpy(m_myCall2,  data + 35U, SHORT_CALLSIGN_LENGTH);
 
-	CCCITTChecksum cksum;
-	cksum.update(data, RADIO_HEADER_LENGTH_BYTES - 2U);
-
-	return cksum.check(data + RADIO_HEADER_LENGTH_BYTES - 2U);
+	if (check) {
+		CCCITTChecksum cksum;
+		cksum.update(data, RADIO_HEADER_LENGTH_BYTES - 2U);
+		return cksum.check(data + RADIO_HEADER_LENGTH_BYTES - 2U);
+	} else {
+		return true;
+	}
 }
 
-unsigned int CHeaderData::getData(unsigned char *data, unsigned int length) const
+unsigned int CHeaderData::getData(unsigned char *data, unsigned int length, bool check) const
 {
 	wxASSERT(data != NULL);
 	wxASSERT(length >= RADIO_HEADER_LENGTH_BYTES);
@@ -858,11 +861,15 @@ unsigned int CHeaderData::getData(unsigned char *data, unsigned int length) cons
 	::memcpy(data + 27U, m_myCall1,  LONG_CALLSIGN_LENGTH);
 	::memcpy(data + 35U, m_myCall2,  SHORT_CALLSIGN_LENGTH);
 
-	CCCITTChecksum csum;
-	csum.update(data, RADIO_HEADER_LENGTH_BYTES - 2U);
-	csum.result(data + RADIO_HEADER_LENGTH_BYTES - 2U);
+	if (check) {
+		CCCITTChecksum csum;
+		csum.update(data, RADIO_HEADER_LENGTH_BYTES - 2U);
+		csum.result(data + RADIO_HEADER_LENGTH_BYTES - 2U);
 
-	return RADIO_HEADER_LENGTH_BYTES;
+		return RADIO_HEADER_LENGTH_BYTES;
+	} else {
+		return RADIO_HEADER_LENGTH_BYTES - 2U;
+	}
 }
 
 void CHeaderData::setDestination(const in_addr& address, unsigned int port)

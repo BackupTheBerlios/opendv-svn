@@ -76,7 +76,15 @@ bool CHBRepeaterProtocolHandler::writeAMBE(CAMBEData& data)
 
 bool CHBRepeaterProtocolHandler::writeDD(CDDData& data)
 {
+	unsigned char buffer[2000U];
+	unsigned int length = data.getHBRepeaterData(buffer, 2000U);
+
+#if defined(DUMP_TX)
+	CUtils::dump(wxT("Sending DD Data"), buffer, length);
 	return true;
+#else
+	return m_socket.write(buffer, length, data.getYourAddress(), data.getYourPort());
+#endif
 }
 
 bool CHBRepeaterProtocolHandler::writeText(CTextData& text)
@@ -144,6 +152,12 @@ bool CHBRepeaterProtocolHandler::readPackets()
 		// User data
 		else if (m_buffer[4] == 0x21U) {
 			m_type = RT_AMBE;
+			return false;
+		}
+
+		// DD data
+		else if (m_buffer[4] == 0x24U) {
+			m_type = RT_DD;
 			return false;
 		}
 
@@ -250,7 +264,19 @@ CHeardData* CHBRepeaterProtocolHandler::readHeard()
 
 CDDData* CHBRepeaterProtocolHandler::readDD()
 {
-	return NULL;
+	if (m_type != RT_DD)
+		return NULL;
+
+	CDDData* data = new CDDData;
+
+	bool res = data->setHBRepeaterData(m_buffer, m_length, m_address, m_port);
+	if (!res) {
+		wxLogError(wxT("Invalid DD data from the repeater"));
+		delete data;
+		return NULL;
+	}
+
+	return data;
 }
 
 void CHBRepeaterProtocolHandler::close()

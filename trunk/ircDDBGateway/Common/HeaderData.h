@@ -90,8 +90,8 @@ public:
 	void setRepeaters(const wxString& rpt1, const wxString& rpt2);
 	void setDestination(const in_addr& address, unsigned int port);
 
-	bool setData(const unsigned char* data, unsigned int length);
-	unsigned int getData(unsigned char* data, unsigned int length) const;
+	bool setData(const unsigned char* data, unsigned int length, bool check);
+	unsigned int getData(unsigned char* data, unsigned int length, bool check) const;
 
 	in_addr      getYourAddress() const;
 	unsigned int getYourPort() const;

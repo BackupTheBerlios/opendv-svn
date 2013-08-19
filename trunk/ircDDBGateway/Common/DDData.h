@@ -36,7 +36,10 @@ public:
 	~CDDData();
 
 	bool setIcomRepeaterData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort);
+	bool setHBRepeaterData(const unsigned char* data, unsigned int length, const in_addr& yourAddress, unsigned int yourPort);
+
 	unsigned int getIcomRepeaterData(unsigned char* data, unsigned int length);
+	unsigned int getHBRepeaterData(unsigned char* data, unsigned int length);
 
 	unsigned char getBand1() const;
 	unsigned char getBand2() const;
