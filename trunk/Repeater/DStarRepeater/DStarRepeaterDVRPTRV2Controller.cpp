@@ -571,7 +571,7 @@ bool CDStarRepeaterDVRPTRV2Controller::setConfig()
 RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
-	int ret = readModem(buffer, 5U);
+	int ret = readModem(buffer + 0U, 5U);
 	if (ret < 0) {
 		wxLogError(wxT("Error when reading from the DV-RPTR"));
 		return RT2_ERROR;
@@ -580,70 +580,73 @@ RESP_TYPE_V2 CDStarRepeaterDVRPTRV2Controller::getResponse(unsigned char *buffer
 	if (ret == 0)
 		return RT2_TIMEOUT;
 
-	while (ret > 0) {
-		if (::memcmp(buffer + 0U, "HEAD", 4U) == 0) {
-			if (buffer[4U] == 'X') {
-				length = 105U;
-			} else if (buffer[4U] == 'Y') {
-				length = 10U;
-			} else if (buffer[4U] == 'Z') {
-				length = 20U;
-			} else {
-				wxLogError(wxT("DV-RPTR frame type is incorrect - 0x%02X"), buffer[4U]);
-				return RT2_UNKNOWN;
-			}
+	while (::memcmp(buffer + 0U, "HEAD", 4U) != 0) {
+		buffer[0U] = buffer[1U];
+		buffer[1U] = buffer[2U];
+		buffer[2U] = buffer[3U];
+		buffer[3U] = buffer[4U];
 
-			unsigned int offset = 5U;
-
-			while (offset < length) {
-				int ret = readModem(buffer + offset, length - offset);
-				if (ret < 0) {
-					wxLogError(wxT("Error when reading from the DV-RPTR"));
-					return RT2_ERROR;
-				}
-
-				if (ret > 0)
-					offset += ret;
-
-				if (ret == 0)
-					Sleep(5UL);
-			}
-
-			// CUtils::dump(wxT("Received"), buffer, length);
-
-			if (::memcmp(buffer + 0U, "HEADZ", 5U) == 0) {
-				return RT2_DATA;
-			} else if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
-				if (buffer[104U] == 0x01U)
-					return RT2_HEADER;
-			} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
-				return RT2_QUERY;
-			} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
-				return RT2_CONFIG;
-			} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
-				return RT2_SPACE;
-			} else if (::memcmp(buffer + 5U, "9021", 4U) == 0) {
-				return RT2_TIMEOUT;
-			}
-
-			wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
-
-			return RT2_UNKNOWN;
-		} else {
-			for (unsigned int i = 0U; i < 4U; i++)
-				buffer[i] = buffer[i + 1U];
-
-			ret = readModem(buffer + 4U, 1U);
-			if (ret < 0) {
-				wxLogError(wxT("Error when reading from the DV-RPTR"));
-				return RT2_ERROR;
-			}
-
-			// CUtils::dump(wxT("Resync"), buffer, 5U);
+		ret = readModem(buffer + 4U, 1U);
+		if (ret < 0) {
+			wxLogError(wxT("Error when reading from the DV-RPTR"));
+			return RT2_ERROR;
 		}
+
+		if (ret == 0)
+			return RT2_TIMEOUT;
 	}
 
-	return RT2_TIMEOUT;
+	switch (buffer[4U]) {
+		case 'X':
+			length = 105U;
+			break;
+		case 'Y':
+			length = 10U;
+			break;
+		case 'Z':
+			length = 20U;
+			break;
+		default:
+			wxLogError(wxT("DV-RPTR frame type is incorrect - 0x%02X"), buffer[4U]);
+			return RT2_UNKNOWN;
+	}
+
+	unsigned int offset = 5U;
+
+	while (offset < length) {
+		int ret = readModem(buffer + offset, length - offset);
+		if (ret < 0) {
+			wxLogError(wxT("Error when reading from the DV-RPTR"));
+			return RT2_ERROR;
+		}
+
+		if (ret > 0)
+			offset += ret;
+
+		if (ret == 0)
+			Sleep(5UL);
+	}
+
+	// CUtils::dump(wxT("Received"), buffer, length);
+
+	if (::memcmp(buffer + 0U, "HEADZ", 5U) == 0) {
+		return RT2_DATA;
+	} else if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
+		if (buffer[104U] == 0x01U)
+			return RT2_HEADER;
+	} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
+		return RT2_QUERY;
+	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
+		return RT2_CONFIG;
+	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
+		return RT2_SPACE;
+	} else if (::memcmp(buffer + 5U, "9021", 4U) == 0) {
+		return RT2_TIMEOUT;
+	}
+
+	wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
+
+	return RT2_UNKNOWN;
 }
 
 wxString CDStarRepeaterDVRPTRV2Controller::getPath() const
