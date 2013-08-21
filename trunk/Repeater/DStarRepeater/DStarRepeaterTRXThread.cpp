@@ -350,6 +350,9 @@ void CDStarRepeaterTRXThread::run()
 		wxString message(e.what(), wxConvLocal);
 		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
+	catch (...) {
+		wxLogError(wxT("Unknown exception raised"));
+	}
 
 	wxLogMessage(wxT("Stopping the D-Star repeater thread"));
 
