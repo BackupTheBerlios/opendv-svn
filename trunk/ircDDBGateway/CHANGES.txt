@@ -1360,3 +1360,4 @@ Updated XRF012 and XRF119s IP addresses.
 Added DCS024 and DCS025.
 Added new Quadnet ircDDB server.
 Add homebrew DD data support.
+Catch exceptions in the ircDDB Gateway and STARnet Digital Server.

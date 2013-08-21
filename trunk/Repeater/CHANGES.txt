@@ -1896,3 +1896,4 @@ Allow for the error reply to be disabled.
 --------
 
 Make DV-RPTR V2 handling better.
+Catch exceptions in the D-Star Repeater.

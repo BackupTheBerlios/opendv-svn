@@ -91,26 +91,32 @@ void CDStarRepeaterRXThread::run()
 
 	wxStopWatch stopWatch;
 
-	while (!m_killed) {
-		stopWatch.Start();
+	try {
+		while (!m_killed) {
+			stopWatch.Start();
 
-		receiveModem();
+			receiveModem();
 
-		receiveNetwork();
+			receiveNetwork();
 
-		// Send the network poll if needed and restart the timer
-		if (m_pollTimer.hasExpired()) {
-			m_protocolHandler->writePoll(pollText);
-			m_pollTimer.reset();
+			// Send the network poll if needed and restart the timer
+			if (m_pollTimer.hasExpired()) {
+				m_protocolHandler->writePoll(pollText);
+				m_pollTimer.reset();
+			}
+
+			unsigned long ms = stopWatch.Time();
+			if (ms < CYCLE_TIME) {
+				::wxMilliSleep(CYCLE_TIME - ms);
+				clock(CYCLE_TIME);
+			} else {
+				clock(ms);
+			}
 		}
-
-		unsigned long ms = stopWatch.Time();
-		if (ms < CYCLE_TIME) {
-			::wxMilliSleep(CYCLE_TIME - ms);
-			clock(CYCLE_TIME);
-		} else {
-			clock(ms);
-		}
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
 
 	wxLogMessage(wxT("Stopping the D-Star receiver thread"));

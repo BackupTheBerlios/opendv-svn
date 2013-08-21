@@ -129,76 +129,82 @@ void CDStarRepeaterTXRXThread::run()
 
 	wxStopWatch stopWatch;
 
-	while (!m_killed) {
-		stopWatch.Start();
+	try {
+		while (!m_killed) {
+			stopWatch.Start();
 
-		if (m_statusTimer.hasExpired() || m_space == 0U) {
-			m_space = m_modem->getSpace();
-			m_tx    = m_modem->getTX();
-			m_statusTimer.reset();
-		}
+			if (m_statusTimer.hasExpired() || m_space == 0U) {
+				m_space = m_modem->getSpace();
+				m_tx    = m_modem->getTX();
+				m_statusTimer.reset();
+			}
 
-		receiveModem();
+			receiveModem();
 
-		receiveNetwork();
+			receiveNetwork();
 
-		repeaterStateMachine();
+			repeaterStateMachine();
 
-		// Send the network poll if needed and restart the timer
-		if (m_pollTimer.hasExpired()) {
-			m_protocolHandler->writePoll(pollText);
-			m_pollTimer.reset();
-		}
+			// Send the network poll if needed and restart the timer
+			if (m_pollTimer.hasExpired()) {
+				m_protocolHandler->writePoll(pollText);
+				m_pollTimer.reset();
+			}
 
-		// Clock the heartbeat output every one second
-		if (m_heartbeatTimer.hasExpired()) {
-			m_controller->setHeartbeat();
-			m_heartbeatTimer.reset();
-		}
+			// Clock the heartbeat output every one second
+			if (m_heartbeatTimer.hasExpired()) {
+				m_controller->setHeartbeat();
+				m_heartbeatTimer.reset();
+			}
 
-		// Set the output state
-		if (m_tx || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
-			m_controller->setActive(true);
-		} else {
-			m_controller->setActive(false);
-			m_activeHangTimer.stop();
-		}
-
-		// Check the shutdown state, state changes are done here to bypass the state machine which is
-		// frozen when m_disable is asserted
-		m_disable = m_controller->getDisable();
-		if (m_disable) {
-			if (m_rptState != DSRS_SHUTDOWN) {
-				m_watchdogTimer.stop();
-				m_activeHangTimer.stop();
-				for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
-					m_networkQueue[i]->reset();
+			// Set the output state
+			if (m_tx || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
+				m_controller->setActive(true);
+			} else {
 				m_controller->setActive(false);
-				m_controller->setRadioTransmit(false);
-				m_rptState = DSRS_SHUTDOWN;
+				m_activeHangTimer.stop();
 			}
-		} else {
-			if (m_rptState == DSRS_SHUTDOWN) {
-				m_watchdogTimer.stop();
-				m_rptState = DSRS_LISTENING;
-				m_protocolHandler->reset();
+
+			// Check the shutdown state, state changes are done here to bypass the state machine which is
+			// frozen when m_disable is asserted
+			m_disable = m_controller->getDisable();
+			if (m_disable) {
+				if (m_rptState != DSRS_SHUTDOWN) {
+					m_watchdogTimer.stop();
+					m_activeHangTimer.stop();
+					for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
+						m_networkQueue[i]->reset();
+					m_controller->setActive(false);
+					m_controller->setRadioTransmit(false);
+					m_rptState = DSRS_SHUTDOWN;
+				}
+			} else {
+				if (m_rptState == DSRS_SHUTDOWN) {
+					m_watchdogTimer.stop();
+					m_rptState = DSRS_LISTENING;
+					m_protocolHandler->reset();
+				}
+			}
+
+			if (m_networkQueue[m_readNum]->dataReady())
+				transmitNetworkData();
+			else if (m_networkQueue[m_readNum]->headerReady())
+				transmitNetworkHeader();
+
+			m_controller->setRadioTransmit(m_tx);
+
+			unsigned long ms = stopWatch.Time();
+			if (ms < CYCLE_TIME) {
+				::wxMilliSleep(CYCLE_TIME - ms);
+				clock(CYCLE_TIME);
+			} else {
+				clock(ms);
 			}
 		}
-
-		if (m_networkQueue[m_readNum]->dataReady())
-			transmitNetworkData();
-		else if (m_networkQueue[m_readNum]->headerReady())
-			transmitNetworkHeader();
-
-		m_controller->setRadioTransmit(m_tx);
-
-		unsigned long ms = stopWatch.Time();
-		if (ms < CYCLE_TIME) {
-			::wxMilliSleep(CYCLE_TIME - ms);
-			clock(CYCLE_TIME);
-		} else {
-			clock(ms);
-		}
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
 
 	wxLogMessage(wxT("Stopping the D-Star transmitter and receiver thread"));

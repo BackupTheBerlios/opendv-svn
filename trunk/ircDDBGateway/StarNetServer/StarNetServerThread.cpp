@@ -189,33 +189,39 @@ void CStarNetServerThread::run()
 
 	m_statusTimer.start();
 
-	while (!m_killed) {
-		processIrcDDB();
-		processG2();
+	try {
+		while (!m_killed) {
+			processIrcDDB();
+			processG2();
 #if defined(DEXTRA_LINK)
-		processDExtra();
+			processDExtra();
 #endif
 #if defined(DCS_LINK)
-		processDCS();
+			processDCS();
 #endif
-		if (m_remote != NULL)
-			m_remote->process();
+			if (m_remote != NULL)
+				m_remote->process();
 
-		unsigned long ms = stopWatch.Time();
-		stopWatch.Start();
+			unsigned long ms = stopWatch.Time();
+			stopWatch.Start();
 
-		m_statusTimer.clock(ms);
+			m_statusTimer.clock(ms);
 
-		CG2Handler::clock(ms);
-		CStarNetHandler::clock(ms);
+			CG2Handler::clock(ms);
+			CStarNetHandler::clock(ms);
 #if defined(DEXTRA_LINK)
-		CDExtraHandler::clock(ms);
+			CDExtraHandler::clock(ms);
 #endif
 #if defined(DCS_LINK)
-		CDCSHandler::clock(ms);
+			CDCSHandler::clock(ms);
 #endif
 
-		::wxMilliSleep(TIME_PER_TIC_MS);
+			::wxMilliSleep(TIME_PER_TIC_MS);
+		}
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
 
 	wxLogMessage(wxT("Stopping the StarNet Server thread"));

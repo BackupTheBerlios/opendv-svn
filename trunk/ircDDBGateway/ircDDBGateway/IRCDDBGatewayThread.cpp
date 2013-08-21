@@ -323,69 +323,75 @@ void CIRCDDBGatewayThread::run()
 
 	m_statusTimer2.start();
 
-	while (!m_killed) {
-		if (m_icomRepeaterHandler != NULL)
-			processRepeater(m_icomRepeaterHandler);
+	try {
+		while (!m_killed) {
+			if (m_icomRepeaterHandler != NULL)
+				processRepeater(m_icomRepeaterHandler);
 
-		if (m_hbRepeaterHandler != NULL)
-			processRepeater(m_hbRepeaterHandler);
+			if (m_hbRepeaterHandler != NULL)
+				processRepeater(m_hbRepeaterHandler);
 
-		if (m_dummyRepeaterHandler != NULL)
-			processRepeater(m_dummyRepeaterHandler);
+			if (m_dummyRepeaterHandler != NULL)
+				processRepeater(m_dummyRepeaterHandler);
 
-		if (m_irc != NULL)
-			processIrcDDB();
+			if (m_irc != NULL)
+				processIrcDDB();
 
-		processDExtra();
-		processDPlus();
-		processDCS();
-		processG2();
-		CCCSHandler::process();
+			processDExtra();
+			processDPlus();
+			processDCS();
+			processG2();
+			CCCSHandler::process();
 
-		if (m_ddModeEnabled)
-			processDD();
+			if (m_ddModeEnabled)
+				processDD();
 
-		if (m_remote != NULL)
-			m_remote->process();
+			if (m_remote != NULL)
+				m_remote->process();
 
-		unsigned long ms = stopWatch.Time();
-		stopWatch.Start();
+			unsigned long ms = stopWatch.Time();
+			stopWatch.Start();
 
-		CRepeaterHandler::clock(ms);
-		CG2Handler::clock(ms);
-		CDExtraHandler::clock(ms);
-		CDPlusHandler::clock(ms);
-		CDCSHandler::clock(ms);
-		CStarNetHandler::clock(ms);
-		CDDHandler::clock(ms);
-	 	CCCSHandler::clock(ms);
+			CRepeaterHandler::clock(ms);
+			CG2Handler::clock(ms);
+			CDExtraHandler::clock(ms);
+			CDPlusHandler::clock(ms);
+			CDCSHandler::clock(ms);
+			CStarNetHandler::clock(ms);
+			CDDHandler::clock(ms);
+	 		CCCSHandler::clock(ms);
 
-		m_statusTimer2.clock(ms);
+			m_statusTimer2.clock(ms);
 
-		m_statusFileTimer.clock(ms);
-		if (m_statusFileTimer.hasExpired()) {
-			readStatusFiles();
-			m_statusFileTimer.reset();
-		}
-
-		if (m_aprsWriter != NULL)
-			m_aprsWriter->clock(ms);
-
-		if (m_logEnabled) {
-			m_statusTimer1.clock(ms);
-			if (m_statusTimer1.hasExpired()) {
-				bool ret1 = CDExtraHandler::stateChange();
-				bool ret2 = CDPlusHandler::stateChange();
-				bool ret3 = CDCSHandler::stateChange();
-				bool ret4 = CCCSHandler::stateChange();
-				if (ret1 || ret2 || ret3 || ret4)
-					writeStatus();
-	
-				m_statusTimer1.reset();
+			m_statusFileTimer.clock(ms);
+			if (m_statusFileTimer.hasExpired()) {
+				readStatusFiles();
+				m_statusFileTimer.reset();
 			}
-		}
 
-		::wxMilliSleep(TIME_PER_TIC_MS);
+			if (m_aprsWriter != NULL)
+				m_aprsWriter->clock(ms);
+
+			if (m_logEnabled) {
+				m_statusTimer1.clock(ms);
+				if (m_statusTimer1.hasExpired()) {
+					bool ret1 = CDExtraHandler::stateChange();
+					bool ret2 = CDPlusHandler::stateChange();
+					bool ret3 = CDCSHandler::stateChange();
+					bool ret4 = CCCSHandler::stateChange();
+					if (ret1 || ret2 || ret3 || ret4)
+						writeStatus();
+		
+					m_statusTimer1.reset();
+				}
+			}
+
+			::wxMilliSleep(TIME_PER_TIC_MS);
+		}
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
 
 	wxLogMessage(wxT("Stopping the ircDDB Gateway thread"));

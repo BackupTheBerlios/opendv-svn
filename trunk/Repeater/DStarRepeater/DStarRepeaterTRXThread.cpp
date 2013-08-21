@@ -205,144 +205,150 @@ void CDStarRepeaterTRXThread::run()
 
 	wxStopWatch stopWatch;
 
-	while (!m_killed) {
-		stopWatch.Start();
+	try {
+		while (!m_killed) {
+			stopWatch.Start();
 
-		if (m_statusTimer.hasExpired() || m_space == 0U) {
-			m_space = m_modem->getSpace();
-			m_tx    = m_modem->getTX();
-			m_statusTimer.reset();
-		}
+			if (m_statusTimer.hasExpired() || m_space == 0U) {
+				m_space = m_modem->getSpace();
+				m_tx    = m_modem->getTX();
+				m_statusTimer.reset();
+			}
 
-		receiveModem();
+			receiveModem();
 
-		receiveNetwork();
+			receiveNetwork();
 
-		repeaterStateMachine();
+			repeaterStateMachine();
 
-		// Send the network poll if needed and restart the timer
-		if (m_pollTimer.hasExpired()) {
-			m_protocolHandler->writePoll(pollText);
-			m_pollTimer.reset();
-		}
+			// Send the network poll if needed and restart the timer
+			if (m_pollTimer.hasExpired()) {
+				m_protocolHandler->writePoll(pollText);
+				m_pollTimer.reset();
+			}
 
-		// Send the beacon and restart the timer
-		if (m_beaconTimer.isRunning() && m_beaconTimer.hasExpired()) {
-			m_beacon->sendBeacon();
-			m_beaconTimer.reset();
-		}
+			// Send the beacon and restart the timer
+			if (m_beaconTimer.isRunning() && m_beaconTimer.hasExpired()) {
+				m_beacon->sendBeacon();
+				m_beaconTimer.reset();
+			}
 
-		// Send the announcement and restart the timer
-		if (m_announcementTimer.isRunning() && m_announcementTimer.hasExpired()) {
-			m_announcement->startAnnouncement();
-			m_announcementTimer.reset();
-		}
+			// Send the announcement and restart the timer
+			if (m_announcementTimer.isRunning() && m_announcementTimer.hasExpired()) {
+				m_announcement->startAnnouncement();
+				m_announcementTimer.reset();
+			}
 
-		// Send the status 1 message after a few seconds
-		if (m_status1Timer.isRunning() && m_status1Timer.hasExpired()) {
-			m_status1Timer.stop();
-			if (m_rptState == DSRS_LISTENING)
-				transmitUserStatus(0U);
-		}
+			// Send the status 1 message after a few seconds
+			if (m_status1Timer.isRunning() && m_status1Timer.hasExpired()) {
+				m_status1Timer.stop();
+				if (m_rptState == DSRS_LISTENING)
+					transmitUserStatus(0U);
+			}
 
-		// Send the status 2 message after a few seconds
-		if (m_status2Timer.isRunning() && m_status2Timer.hasExpired()) {
-			m_status2Timer.stop();
-			if (m_rptState == DSRS_LISTENING)
-				transmitUserStatus(1U);
-		}
+			// Send the status 2 message after a few seconds
+			if (m_status2Timer.isRunning() && m_status2Timer.hasExpired()) {
+				m_status2Timer.stop();
+				if (m_rptState == DSRS_LISTENING)
+					transmitUserStatus(1U);
+			}
 
-		// Send the status 3 message after a few seconds
-		if (m_status3Timer.isRunning() && m_status3Timer.hasExpired()) {
-			m_status3Timer.stop();
-			if (m_rptState == DSRS_LISTENING)
-				transmitUserStatus(2U);
-		}
+			// Send the status 3 message after a few seconds
+			if (m_status3Timer.isRunning() && m_status3Timer.hasExpired()) {
+				m_status3Timer.stop();
+				if (m_rptState == DSRS_LISTENING)
+					transmitUserStatus(2U);
+			}
 
-		// Send the status 4 message after a few seconds
-		if (m_status4Timer.isRunning() && m_status4Timer.hasExpired()) {
-			m_status4Timer.stop();
-			if (m_rptState == DSRS_LISTENING)
-				transmitUserStatus(3U);
-		}
+			// Send the status 4 message after a few seconds
+			if (m_status4Timer.isRunning() && m_status4Timer.hasExpired()) {
+				m_status4Timer.stop();
+				if (m_rptState == DSRS_LISTENING)
+					transmitUserStatus(3U);
+			}
 
-		// Send the status 5 message after a few seconds
-		if (m_status5Timer.isRunning() && m_status5Timer.hasExpired()) {
-			m_status5Timer.stop();
-			if (m_rptState == DSRS_LISTENING)
-				transmitUserStatus(4U);
-		}
+			// Send the status 5 message after a few seconds
+			if (m_status5Timer.isRunning() && m_status5Timer.hasExpired()) {
+				m_status5Timer.stop();
+				if (m_rptState == DSRS_LISTENING)
+					transmitUserStatus(4U);
+			}
 
-		// Clock the heartbeat output every one second
-		if (m_heartbeatTimer.hasExpired()) {
-			m_controller->setHeartbeat();
-			m_heartbeatTimer.reset();
-		}
+			// Clock the heartbeat output every one second
+			if (m_heartbeatTimer.hasExpired()) {
+				m_controller->setHeartbeat();
+				m_heartbeatTimer.reset();
+			}
 
-		// Set the output state
-		if (m_rptState == DSRS_VALID      || m_rptState == DSRS_INVALID      || m_rptState == DSRS_TIMEOUT      ||
-			m_rptState == DSRS_VALID_WAIT || m_rptState == DSRS_INVALID_WAIT || m_rptState == DSRS_TIMEOUT_WAIT ||
-			m_rptState == DSRS_NETWORK    || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
-			m_controller->setActive(true);
-		} else {
-			m_controller->setActive(false);
-			m_activeHangTimer.stop();
-		}
-
-		// Check the shutdown state, state changes are done here to bypass the state machine which is
-		// frozen when m_disable or m_shutdown are asserted
-		m_disable = m_controller->getDisable();
-		if (m_disable || m_shutdown) {
-			if (m_rptState != DSRS_SHUTDOWN) {
-				m_timeoutTimer.stop();
-				m_watchdogTimer.stop();
-				m_activeHangTimer.stop();
-				m_ackTimer.stop();
-				m_beaconTimer.stop();
-				m_announcementTimer.stop();
-				m_localQueue.reset();
-				m_radioQueue.reset();
-				for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
-					m_networkQueue[i]->reset();
+			// Set the output state
+			if (m_rptState == DSRS_VALID      || m_rptState == DSRS_INVALID      || m_rptState == DSRS_TIMEOUT      ||
+				m_rptState == DSRS_VALID_WAIT || m_rptState == DSRS_INVALID_WAIT || m_rptState == DSRS_TIMEOUT_WAIT ||
+				m_rptState == DSRS_NETWORK    || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
+				m_controller->setActive(true);
+			} else {
 				m_controller->setActive(false);
-				m_controller->setRadioTransmit(false);
-				m_rptState = DSRS_SHUTDOWN;
+				m_activeHangTimer.stop();
 			}
-		} else {
-			if (m_rptState == DSRS_SHUTDOWN) {
-				m_timeoutTimer.stop();
-				m_watchdogTimer.stop();
-				m_ackTimer.stop();
-				m_beaconTimer.start();
-				m_announcementTimer.start();
-				m_rptState = DSRS_LISTENING;
-				if (m_protocolHandler != NULL)	// Tell the protocol handler
-					m_protocolHandler->reset();
+
+			// Check the shutdown state, state changes are done here to bypass the state machine which is
+			// frozen when m_disable or m_shutdown are asserted
+			m_disable = m_controller->getDisable();
+			if (m_disable || m_shutdown) {
+				if (m_rptState != DSRS_SHUTDOWN) {
+					m_timeoutTimer.stop();
+					m_watchdogTimer.stop();
+					m_activeHangTimer.stop();
+					m_ackTimer.stop();
+					m_beaconTimer.stop();
+					m_announcementTimer.stop();
+					m_localQueue.reset();
+					m_radioQueue.reset();
+					for (unsigned int i = 0U; i < NETWORK_QUEUE_COUNT; i++)
+						m_networkQueue[i]->reset();
+					m_controller->setActive(false);
+					m_controller->setRadioTransmit(false);
+					m_rptState = DSRS_SHUTDOWN;
+				}
+			} else {
+				if (m_rptState == DSRS_SHUTDOWN) {
+					m_timeoutTimer.stop();
+					m_watchdogTimer.stop();
+					m_ackTimer.stop();
+					m_beaconTimer.start();
+					m_announcementTimer.start();
+					m_rptState = DSRS_LISTENING;
+					if (m_protocolHandler != NULL)	// Tell the protocol handler
+						m_protocolHandler->reset();
+				}
+			}
+
+			if (m_radioQueue.dataReady())
+				transmitRadioData();
+			else if (m_localQueue.dataReady())
+				transmitLocalData();
+			else if (m_networkQueue[m_readNum]->dataReady())
+				transmitNetworkData();
+			else if (m_radioQueue.headerReady())
+				transmitRadioHeader();
+			else if (m_localQueue.headerReady())
+				transmitLocalHeader();
+			else if (m_networkQueue[m_readNum]->headerReady())
+				transmitNetworkHeader();
+
+			m_controller->setRadioTransmit(m_tx);
+
+			unsigned long ms = stopWatch.Time();
+			if (ms < CYCLE_TIME) {
+				::wxMilliSleep(CYCLE_TIME - ms);
+				clock(CYCLE_TIME);
+			} else {
+				clock(ms);
 			}
 		}
-
-		if (m_radioQueue.dataReady())
-			transmitRadioData();
-		else if (m_localQueue.dataReady())
-			transmitLocalData();
-		else if (m_networkQueue[m_readNum]->dataReady())
-			transmitNetworkData();
-		else if (m_radioQueue.headerReady())
-			transmitRadioHeader();
-		else if (m_localQueue.headerReady())
-			transmitLocalHeader();
-		else if (m_networkQueue[m_readNum]->headerReady())
-			transmitNetworkHeader();
-
-		m_controller->setRadioTransmit(m_tx);
-
-		unsigned long ms = stopWatch.Time();
-		if (ms < CYCLE_TIME) {
-			::wxMilliSleep(CYCLE_TIME - ms);
-			clock(CYCLE_TIME);
-		} else {
-			clock(ms);
-		}
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
 
 	wxLogMessage(wxT("Stopping the D-Star repeater thread"));

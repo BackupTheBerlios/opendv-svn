@@ -108,46 +108,52 @@ void CDStarRepeaterTXThread::run()
 
 	wxStopWatch stopWatch;
 
-	while (!m_killed) {
-		stopWatch.Start();
+	try {
+		while (!m_killed) {
+			stopWatch.Start();
 
-		if (m_statusTimer.hasExpired() || m_space == 0U) {
-			m_space = m_modem->getSpace();
-			m_tx    = m_modem->getTX();
-			m_statusTimer.reset();
-		}
+			if (m_statusTimer.hasExpired() || m_space == 0U) {
+				m_space = m_modem->getSpace();
+				m_tx    = m_modem->getTX();
+				m_statusTimer.reset();
+			}
 
-		receiveNetwork();
+			receiveNetwork();
 
-		receiveModem();
+			receiveModem();
 
-		if (m_state == DSRS_NETWORK) {
-			if (m_watchdogTimer.hasExpired()) {
-				wxLogMessage(wxT("Network watchdog has expired"));
-				// Send end of transmission data to the radio
-				m_networkQueue[m_writeNum]->addData(END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES, true);
-				endOfNetworkData();
+			if (m_state == DSRS_NETWORK) {
+				if (m_watchdogTimer.hasExpired()) {
+					wxLogMessage(wxT("Network watchdog has expired"));
+					// Send end of transmission data to the radio
+					m_networkQueue[m_writeNum]->addData(END_PATTERN_BYTES, DV_FRAME_LENGTH_BYTES, true);
+					endOfNetworkData();
+				}
+			}
+
+			// Send the network poll if needed and restart the timer
+			if (m_pollTimer.hasExpired()) {
+				m_protocolHandler->writePoll(pollText);
+				m_pollTimer.reset();
+			}
+
+			if (m_networkQueue[m_readNum]->dataReady())
+				transmitNetworkData();
+			else if (m_networkQueue[m_readNum]->headerReady())
+				transmitNetworkHeader();
+
+			unsigned long ms = stopWatch.Time();
+			if (ms < CYCLE_TIME) {
+				::wxMilliSleep(CYCLE_TIME - ms);
+				clock(CYCLE_TIME);
+			} else {
+				clock(ms);
 			}
 		}
-
-		// Send the network poll if needed and restart the timer
-		if (m_pollTimer.hasExpired()) {
-			m_protocolHandler->writePoll(pollText);
-			m_pollTimer.reset();
-		}
-
-		if (m_networkQueue[m_readNum]->dataReady())
-			transmitNetworkData();
-		else if (m_networkQueue[m_readNum]->headerReady())
-			transmitNetworkHeader();
-
-		unsigned long ms = stopWatch.Time();
-		if (ms < CYCLE_TIME) {
-			::wxMilliSleep(CYCLE_TIME - ms);
-			clock(CYCLE_TIME);
-		} else {
-			clock(ms);
-		}
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
 	}
 
 	wxLogMessage(wxT("Stopping the D-Star transmitter thread"));
