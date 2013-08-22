@@ -53,7 +53,7 @@ wxArrayString CDStarRepeaterDVRPTRV2Controller::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
+CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_USB),
 m_usbPort(port),
@@ -64,6 +64,7 @@ m_txInvert(txInvert),
 m_modLevel(modLevel),
 m_duplex(duplex),
 m_callsign(callsign),
+m_txDelay(txDelay),
 m_usb(NULL),
 m_network(NULL),
 m_buffer(NULL),
@@ -86,7 +87,7 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign) :
+CDStarRepeaterDVRPTRV2Controller::CDStarRepeaterDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_NETWORK),
 m_usbPort(),
@@ -97,6 +98,7 @@ m_txInvert(txInvert),
 m_modLevel(modLevel),
 m_duplex(duplex),
 m_callsign(callsign),
+m_txDelay(txDelay),
 m_usb(NULL),
 m_network(NULL),
 m_buffer(NULL),
@@ -535,6 +537,13 @@ bool CDStarRepeaterDVRPTRV2Controller::setConfig()
 	buffer[73U] = (m_modLevel * 256U) / 100U;
 
 	buffer[87U] = 0x01U;
+
+	if (m_txDelay < 100U)
+		m_txDelay = 100U;
+	if (m_txDelay > 850U)
+		m_txDelay = 850U;
+
+	buffer[89U] = m_txDelay / 10U;
 
 	// CUtils::dump(wxT("Written"), buffer, 105U);
 

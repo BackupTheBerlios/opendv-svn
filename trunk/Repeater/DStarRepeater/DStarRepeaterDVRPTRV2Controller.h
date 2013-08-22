@@ -41,8 +41,8 @@ enum RESP_TYPE_V2 {
 
 class CDStarRepeaterDVRPTRV2Controller : public wxThread, public IDStarRepeaterModem {
 public:
-	CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign);
-	CDStarRepeaterDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign);
+	CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
+	CDStarRepeaterDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
 	virtual ~CDStarRepeaterDVRPTRV2Controller();
 
 	virtual void* Entry();
@@ -75,6 +75,7 @@ private:
 	unsigned int               m_modLevel;
 	bool                       m_duplex;
 	wxString                   m_callsign;
+	unsigned int               m_txDelay;
 	CSerialDataController*     m_usb;
 	CTCPReaderWriter*          m_network;
 	unsigned char*             m_buffer;

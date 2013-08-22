@@ -98,6 +98,7 @@ const wxString  KEY_DVRPTR2_ADDRESS    = wxT("dvrptr2Address");
 const wxString  KEY_DVRPTR2_PORT       = wxT("dvrptr2Port");
 const wxString  KEY_DVRPTR2_TXINVERT   = wxT("dvrptr2TXInvert");
 const wxString  KEY_DVRPTR2_MODLEVEL   = wxT("dvrptr2ModLevel");
+const wxString  KEY_DVRPTR2_TXDELAY    = wxT("dvrptr2TXDelay");
 
 const wxString  KEY_SOUNDCARD_RXDEVICE = wxT("soundCardRXDevice");
 const wxString  KEY_SOUNDCARD_TXDEVICE = wxT("soundCardTXDevice");
@@ -192,6 +193,7 @@ const wxString        DEFAULT_DVRPTR2_ADDRESS    = wxT("127.0.0.1");
 const unsigned int    DEFAULT_DVRPTR2_PORT       = 0U;
 const bool            DEFAULT_DVRPTR2_TXINVERT   = false;
 const unsigned int    DEFAULT_DVRPTR2_MODLEVEL   = 20U;
+const unsigned int    DEFAULT_DVRPTR2_TXDELAY    = 150U;
 
 const wxString        DEFAULT_SOUNDCARD_RXDEVICE = wxEmptyString;
 const wxString        DEFAULT_SOUNDCARD_TXDEVICE = wxEmptyString;
@@ -283,6 +285,7 @@ m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
 m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
 m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
 m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
+m_dvrptr2TXDelay(DEFAULT_DVRPTR2_TXDELAY),
 m_soundCardRXDevice(DEFAULT_SOUNDCARD_RXDEVICE),
 m_soundCardTXDevice(DEFAULT_SOUNDCARD_TXDEVICE),
 m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
@@ -474,6 +477,9 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 	m_config->Read(m_name + KEY_DVRPTR2_MODLEVEL, &temp, long(DEFAULT_DVRPTR2_MODLEVEL));
 	m_dvrptr2ModLevel = (unsigned int)temp;
 
+	m_config->Read(m_name + KEY_DVRPTR2_TXDELAY, &temp, long(DEFAULT_DVRPTR2_TXDELAY));
+	m_dvrptr2TXDelay = (unsigned int)temp;
+
 	m_config->Read(m_name + KEY_SOUNDCARD_RXDEVICE, &m_soundCardRXDevice, DEFAULT_SOUNDCARD_RXDEVICE);
 
 	m_config->Read(m_name + KEY_SOUNDCARD_TXDEVICE, &m_soundCardTXDevice, DEFAULT_SOUNDCARD_TXDEVICE);
@@ -577,6 +583,7 @@ m_dvrptr2Address(DEFAULT_DVRPTR2_ADDRESS),
 m_dvrptr2Port(DEFAULT_DVRPTR2_PORT),
 m_dvrptr2TXInvert(DEFAULT_DVRPTR2_TXINVERT),
 m_dvrptr2ModLevel(DEFAULT_DVRPTR2_MODLEVEL),
+m_dvrptr2TXDelay(DEFAULT_DVRPTR2_TXDELAY),
 m_soundCardRXDevice(DEFAULT_SOUNDCARD_RXDEVICE),
 m_soundCardTXDevice(DEFAULT_SOUNDCARD_TXDEVICE),
 m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
@@ -815,6 +822,9 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 		} else if (key.IsSameAs(KEY_DVRPTR2_MODLEVEL)) {
 			val.ToULong(&temp2);
 			m_dvrptr2ModLevel = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVRPTR2_TXDELAY)) {
+			val.ToULong(&temp2);
+			m_dvrptr2TXDelay = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_SOUNDCARD_RXDEVICE)) {
 			m_soundCardRXDevice = val;
 		} else if (key.IsSameAs(KEY_SOUNDCARD_TXDEVICE)) {
@@ -1100,7 +1110,7 @@ void CDStarRepeaterConfig::setDVRPTR1(const wxString& port, bool delay, bool rxI
 	m_dvrptr1TXDelay  = txDelay;
 }
 
-void CDStarRepeaterConfig::getDVRPTR2(CONNECTION_TYPE& connection, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel) const
+void CDStarRepeaterConfig::getDVRPTR2(CONNECTION_TYPE& connection, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel, unsigned int& txDelay) const
 {
 	connection = m_dvrptr2Connection;
 	usbPort    = m_dvrptr2USBPort;
@@ -1108,9 +1118,10 @@ void CDStarRepeaterConfig::getDVRPTR2(CONNECTION_TYPE& connection, wxString& usb
 	port       = m_dvrptr2Port;
 	txInvert   = m_dvrptr2TXInvert;
 	modLevel   = m_dvrptr2ModLevel;
+	txDelay    = m_dvrptr2TXDelay;
 }
 
-void CDStarRepeaterConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel)
+void CDStarRepeaterConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay)
 {
 	m_dvrptr2Connection = connection;
 	m_dvrptr2USBPort    = usbPort;
@@ -1118,6 +1129,7 @@ void CDStarRepeaterConfig::setDVRPTR2(CONNECTION_TYPE connection, const wxString
 	m_dvrptr2Port       = port;
 	m_dvrptr2TXInvert   = txInvert;
 	m_dvrptr2ModLevel   = modLevel;
+	m_dvrptr2TXDelay    = txDelay;
 }
 
 void CDStarRepeaterConfig::getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& rxLevel, wxFloat32& txLevel, unsigned int& txDelay) const
@@ -1226,6 +1238,7 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_DVRPTR2_PORT, long(m_dvrptr2Port));
 	m_config->Write(m_name + KEY_DVRPTR2_TXINVERT, m_dvrptr2TXInvert);
 	m_config->Write(m_name + KEY_DVRPTR2_MODLEVEL, long(m_dvrptr2ModLevel));
+	m_config->Write(m_name + KEY_DVRPTR2_TXDELAY, long(m_dvrptr2TXDelay));
 
 	m_config->Write(m_name + KEY_SOUNDCARD_RXDEVICE, m_soundCardRXDevice);
 	m_config->Write(m_name + KEY_SOUNDCARD_TXDEVICE, m_soundCardTXDevice);
@@ -1344,6 +1357,7 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_PORT.c_str(), m_dvrptr2Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_TXINVERT.c_str(), m_dvrptr2TXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_MODLEVEL.c_str(), m_dvrptr2ModLevel); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_TXDELAY.c_str(), m_dvrptr2TXDelay); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_RXDEVICE.c_str(), m_soundCardRXDevice.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_TXDEVICE.c_str(), m_soundCardTXDevice.c_str()); file.AddLine(buffer);

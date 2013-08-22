@@ -29,18 +29,19 @@ const unsigned int PORT_LENGTH     = 5U;
 const int CHOICE_TYPE = 8750;
 
 BEGIN_EVENT_TABLE(CDStarRepeaterConfigDVRPTR2Set, wxDialog)
-	EVT_CHOICE(CHOICE_TYPE,    CDStarRepeaterConfigDVRPTR2Set::onConnectionType)
+	EVT_CHOICE(CHOICE_TYPE, CDStarRepeaterConfigDVRPTR2Set::onConnectionType)
 END_EVENT_TABLE()
 
 
-CDStarRepeaterConfigDVRPTR2Set::CDStarRepeaterConfigDVRPTR2Set(wxWindow* parent, int id, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel) :
+CDStarRepeaterConfigDVRPTR2Set::CDStarRepeaterConfigDVRPTR2Set(wxWindow* parent, int id, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay) :
 wxDialog(parent, id, wxString(_("DV-RPTR V2 Settings"))),
 m_connectionType(NULL),
 m_usbPort(NULL),
 m_address(NULL),
 m_port(NULL),
 m_txInvert(NULL),
-m_modLevel(NULL)
+m_modLevel(NULL),
+m_txDelay(NULL)
 {
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
@@ -98,6 +99,12 @@ m_modLevel(NULL)
 
 	m_modLevel = new wxSlider(this, -1, modLevel, 0, 100, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
 	sizer->Add(m_modLevel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxStaticText* txDelayLabel = new wxStaticText(this, -1, _("TX Delay (ms)"));
+	sizer->Add(txDelayLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	m_txDelay = new wxSlider(this, -1, txDelay, 100, 850, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
+	sizer->Add(m_txDelay, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	switch (connectionType) {
 		case CT_NETWORK:
@@ -195,6 +202,11 @@ bool CDStarRepeaterConfigDVRPTR2Set::getTXInvert() const
 unsigned int CDStarRepeaterConfigDVRPTR2Set::getModLevel() const
 {
 	return (unsigned int)m_modLevel->GetValue();
+}
+
+unsigned int CDStarRepeaterConfigDVRPTR2Set::getTXDelay() const
+{
+	return (unsigned int)m_txDelay->GetValue();
 }
 
 void CDStarRepeaterConfigDVRPTR2Set::onConnectionType(wxCommandEvent &event)

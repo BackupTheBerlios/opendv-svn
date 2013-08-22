@@ -28,7 +28,7 @@
 
 class CDStarRepeaterConfigDVRPTR2Set : public wxDialog {
 public:
-	CDStarRepeaterConfigDVRPTR2Set(wxWindow* parent, int id, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel);
+	CDStarRepeaterConfigDVRPTR2Set(wxWindow* parent, int id, CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDStarRepeaterConfigDVRPTR2Set();
 
 	virtual bool Validate();
@@ -39,6 +39,7 @@ public:
 	virtual unsigned int    getPort() const;
 	virtual bool            getTXInvert() const;
 	virtual unsigned int    getModLevel() const;
+	virtual unsigned int    getTXDelay() const;
 
 	virtual void onConnectionType(wxCommandEvent& event);
 
@@ -49,6 +50,7 @@ private:
 	CPortTextCtrl*    m_port;
 	wxChoice*         m_txInvert;
 	wxSlider*         m_modLevel;
+	wxSlider*         m_txDelay;
 
 	DECLARE_EVENT_TABLE()
 };

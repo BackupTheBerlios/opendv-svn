@@ -153,9 +153,9 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 		CONNECTION_TYPE connType;
 		wxString usbPort, address;
 		bool txInvert;
-		unsigned int port, modLevel;
-		m_config->getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
-		CDStarRepeaterConfigDVRPTR2Set modem(this, -1, connType, usbPort, address, port, txInvert, modLevel);
+		unsigned int port, modLevel, txDelay;
+		m_config->getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel, txDelay);
+		CDStarRepeaterConfigDVRPTR2Set modem(this, -1, connType, usbPort, address, port, txInvert, modLevel, txDelay);
 		if (modem.ShowModal() == wxID_OK) {
 			if (modem.Validate()) {
 				connType = modem.getConnectionType();
@@ -164,7 +164,8 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				port     = modem.getPort();
 				txInvert = modem.getTXInvert();
 				modLevel = modem.getModLevel();
-				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel);
+				txDelay  = modem.getTXDelay();
+				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel, txDelay);
 			}
 		}
 	} else if (type.IsSameAs(wxT("Sound Card"))) {
