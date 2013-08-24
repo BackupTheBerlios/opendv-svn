@@ -179,12 +179,12 @@ bool CIcomRepeaterProtocolHandler::writeDD(CDDData& data)
 	return true;
 }
 
-bool CIcomRepeaterProtocolHandler::writeText(CTextData& text)
+bool CIcomRepeaterProtocolHandler::writeText(CTextData&)
 {
 	return true;
 }
 
-bool CIcomRepeaterProtocolHandler::writeStatus(CStatusData& status)
+bool CIcomRepeaterProtocolHandler::writeStatus(CStatusData&)
 {
 	return true;
 }

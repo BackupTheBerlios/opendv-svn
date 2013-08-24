@@ -174,12 +174,12 @@ wxMenuBar* CIRCDDBGatewayFrame::createMenuBar()
 	return menuBar;
 }
 
-void CIRCDDBGatewayFrame::onQuit(wxCommandEvent& event)
+void CIRCDDBGatewayFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CIRCDDBGatewayFrame::onClose(wxCloseEvent& event)
+void CIRCDDBGatewayFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -194,7 +194,7 @@ void CIRCDDBGatewayFrame::onUpdates(wxCommandEvent& event)
 	m_updates = event.IsChecked();
 }
 
-void CIRCDDBGatewayFrame::onAbout(wxCommandEvent& event)
+void CIRCDDBGatewayFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -245,7 +245,7 @@ void CIRCDDBGatewayFrame::showLog(const wxString& text)
 	AddPendingEvent(event);
 }
 
-void CIRCDDBGatewayFrame::onTimer(wxTimerEvent& event)
+void CIRCDDBGatewayFrame::onTimer(wxTimerEvent&)
 {
 	if (!m_updates)
 		return;

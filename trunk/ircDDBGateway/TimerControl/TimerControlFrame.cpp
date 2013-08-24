@@ -112,12 +112,12 @@ wxMenuBar* CTimerControlFrame::createMenuBar()
 	return menuBar;
 }
 
-void CTimerControlFrame::onQuit(wxCommandEvent& event)
+void CTimerControlFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CTimerControlFrame::onClose(wxCloseEvent& event)
+void CTimerControlFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -137,7 +137,7 @@ void CTimerControlFrame::onClose(wxCloseEvent& event)
 	Destroy();
 }
 
-void CTimerControlFrame::onPreferences(wxCommandEvent& event)
+void CTimerControlFrame::onPreferences(wxCommandEvent&)
 {
 	wxString address, password;
 	unsigned int port;
@@ -164,7 +164,7 @@ void CTimerControlFrame::onPreferences(wxCommandEvent& event)
 	dialog2.ShowModal();
 }
 
-void CTimerControlFrame::onAbout(wxCommandEvent& event)
+void CTimerControlFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -176,12 +176,12 @@ void CTimerControlFrame::onAbout(wxCommandEvent& event)
 	::wxAboutBox(info);
 }
 
-void CTimerControlFrame::onTimer1(wxTimerEvent& event)
+void CTimerControlFrame::onTimer1(wxTimerEvent&)
 {
 	startup();
 }
 
-void CTimerControlFrame::onTimer2(wxTimerEvent& event)
+void CTimerControlFrame::onTimer2(wxTimerEvent&)
 {
 	TC_TYPE type = m_handler->readType();
 

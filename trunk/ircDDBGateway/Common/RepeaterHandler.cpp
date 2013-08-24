@@ -1043,7 +1043,7 @@ bool CRepeaterHandler::process(CDDData& data)
 	return true;
 }
 
-bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_SOURCE source)
+bool CRepeaterHandler::process(CHeaderData& header, DIRECTION, AUDIO_SOURCE source)
 {
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
@@ -1088,7 +1088,7 @@ bool CRepeaterHandler::process(CHeaderData& header, DIRECTION direction, AUDIO_S
 	return true;
 }
 
-bool CRepeaterHandler::process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source)
+bool CRepeaterHandler::process(CAMBEData& data, DIRECTION, AUDIO_SOURCE source)
 {
 	// If data is coming from the repeater then don't send
 	if (m_repeaterId != 0x00U)
@@ -2619,7 +2619,7 @@ void CRepeaterHandler::ccsLinkMade(const wxString& callsign, DIRECTION direction
 	}
 }
 
-void CRepeaterHandler::ccsLinkEnded(const wxString& callsign, DIRECTION direction)
+void CRepeaterHandler::ccsLinkEnded(const wxString&, DIRECTION direction)
 {
 	wxString tempText;
 	wxString text;

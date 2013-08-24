@@ -103,6 +103,8 @@ public:
 	static void finalise();
 	static unsigned int createId();
 
+	CHeaderData& operator=(const CHeaderData& header);
+
 private:
 	unsigned int   m_rptSeq;
 	unsigned int   m_id;

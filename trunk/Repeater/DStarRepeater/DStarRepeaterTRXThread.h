@@ -42,7 +42,7 @@
 
 class CDStarRepeaterTRXThread : public IDStarRepeaterThread, public IBeaconCallback, public IAnnouncementCallback {
 public:
-	CDStarRepeaterTRXThread(const wxString& type);
+	explicit CDStarRepeaterTRXThread(const wxString& type);
 	virtual ~CDStarRepeaterTRXThread();
 
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply);

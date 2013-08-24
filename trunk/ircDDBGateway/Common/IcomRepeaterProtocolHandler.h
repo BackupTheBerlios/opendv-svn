@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 
 class CDataQueue {
 public:
-	CDataQueue(CHeaderData* header) :
+	explicit CDataQueue(CHeaderData* header) :
 	m_type(RT_HEADER),
 	m_header(header),
 	m_heard(NULL),
@@ -51,7 +51,7 @@ public:
 	{
 	}
 
-	CDataQueue(CHeardData* heard) :
+	explicit CDataQueue(CHeardData* heard) :
 	m_type(RT_HEARD),
 	m_header(NULL),
 	m_heard(heard),
@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	CDataQueue(CAMBEData* data) :
+	explicit CDataQueue(CAMBEData* data) :
 	m_type(RT_AMBE),
 	m_header(NULL),
 	m_heard(NULL),
@@ -69,7 +69,7 @@ public:
 	{
 	}
 
-	CDataQueue(CDDData* data) :
+	explicit CDataQueue(CDDData* data) :
 	m_type(RT_DD),
 	m_header(NULL),
 	m_heard(NULL),

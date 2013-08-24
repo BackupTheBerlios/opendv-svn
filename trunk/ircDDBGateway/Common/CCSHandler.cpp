@@ -332,7 +332,7 @@ void CCCSHandler::process(CCCSData& data)
 	}
 }
 
-void CCCSHandler::process(CPollData& poll)
+void CCCSHandler::process(CPollData&)
 {
 	m_pollInactivityTimer.reset();
 }

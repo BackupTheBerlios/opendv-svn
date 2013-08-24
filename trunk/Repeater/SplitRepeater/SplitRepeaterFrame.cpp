@@ -306,12 +306,12 @@ wxMenuBar* CSplitRepeaterFrame::createMenuBar()
 	return menuBar;
 }
 
-void CSplitRepeaterFrame::onQuit(wxCommandEvent& event)
+void CSplitRepeaterFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CSplitRepeaterFrame::onClose(wxCloseEvent& event)
+void CSplitRepeaterFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -354,7 +354,7 @@ void CSplitRepeaterFrame::onUpdates(wxCommandEvent& event)
 	m_updates = event.IsChecked();
 }
 
-void CSplitRepeaterFrame::onAbout(wxCommandEvent& event)
+void CSplitRepeaterFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -366,7 +366,7 @@ void CSplitRepeaterFrame::onAbout(wxCommandEvent& event)
 	::wxAboutBox(info);
 }
 
-void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
+void CSplitRepeaterFrame::onPreferences(wxCommandEvent&)
 {
 	wxString callsign, gateway;
 	DSTAR_MODE mode;
@@ -503,7 +503,7 @@ void CSplitRepeaterFrame::onPreferences(wxCommandEvent& event)
 	dialog2.ShowModal();
 }
 
-void CSplitRepeaterFrame::onTimer(wxTimerEvent& event)
+void CSplitRepeaterFrame::onTimer(wxTimerEvent&)
 {
 	if (!m_updates)
 		return;

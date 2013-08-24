@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -117,12 +117,12 @@ wxMenuBar* CStarNetServerFrame::createMenuBar()
 	return menuBar;
 }
 
-void CStarNetServerFrame::onQuit(wxCommandEvent& event)
+void CStarNetServerFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CStarNetServerFrame::onClose(wxCloseEvent& event)
+void CStarNetServerFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -134,7 +134,7 @@ void CStarNetServerFrame::onClose(wxCloseEvent& event)
 	Destroy();
 }
 
-void CStarNetServerFrame::onPreferences(wxCommandEvent& event)
+void CStarNetServerFrame::onPreferences(wxCommandEvent&)
 {
 	wxString callsign, address;
 	::wxGetApp().getGateway(callsign, address);
@@ -628,7 +628,7 @@ void CStarNetServerFrame::onUpdates(wxCommandEvent& event)
 	m_updates = event.IsChecked();
 }
 
-void CStarNetServerFrame::onAbout(wxCommandEvent& event)
+void CStarNetServerFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));

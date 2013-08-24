@@ -605,3 +605,25 @@ unsigned int CAMBEData::getData(unsigned char *data, unsigned int length) const
 
 	return DV_FRAME_LENGTH_BYTES;
 }
+
+CAMBEData& CAMBEData::operator=(const CAMBEData& data)
+{
+	if (&data != this) {
+		m_rptSeq      = data.m_rptSeq;
+		m_outSeq      = data.m_outSeq;
+		m_id          = data.m_id;
+		m_band1       = data.m_band1;
+		m_band2       = data.m_band2;
+		m_band3       = data.m_band3;
+		m_yourAddress = data.m_yourAddress;
+		m_yourPort    = data.m_yourPort;
+		m_myPort      = data.m_myPort;
+		m_errors      = data.m_errors;
+		m_text        = data.m_text;
+		m_header      = data.m_header;
+
+		::memcpy(m_data, data.m_data, DV_FRAME_LENGTH_BYTES);
+	}
+
+	return *this;
+}

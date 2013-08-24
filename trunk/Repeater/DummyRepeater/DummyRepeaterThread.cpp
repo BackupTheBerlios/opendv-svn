@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -528,7 +528,7 @@ bool CDummyRepeaterThread::processFrame(const unsigned char* buffer, unsigned ch
 	return false;
 }
 
-void CDummyRepeaterThread::callback(const wxFloat32* input, wxFloat32* output, unsigned int nSamples, int id)
+void CDummyRepeaterThread::callback(const wxFloat32* input, wxFloat32* output, unsigned int nSamples, int)
 {
 	::memset(output, 0x00, nSamples * sizeof(wxFloat32));
 

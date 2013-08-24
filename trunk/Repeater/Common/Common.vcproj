@@ -636,10 +636,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Modulator.h"
-				>
-			</File>
-			<File
 				RelativePath=".\NetworkController.h"
 				>
 			</File>

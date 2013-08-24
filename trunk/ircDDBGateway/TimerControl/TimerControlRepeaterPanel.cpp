@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -422,7 +422,7 @@ void CTimerControlRepeaterPanel::onSelect(wxListEvent& event)
 	m_reconnect->SetSelection(int(m_item->m_reconnect));
 }
 
-void CTimerControlRepeaterPanel::onAdd(wxCommandEvent& event)
+void CTimerControlRepeaterPanel::onAdd(wxCommandEvent&)
 {
 	int day       = m_day->GetSelection();
 	int hour      = m_hour->GetSelection();
@@ -463,7 +463,7 @@ void CTimerControlRepeaterPanel::onAdd(wxCommandEvent& event)
 	::wxGetApp().writeItems();
 }
 
-void CTimerControlRepeaterPanel::onModify(wxCommandEvent& event)
+void CTimerControlRepeaterPanel::onModify(wxCommandEvent&)
 {
 	if (m_item == NULL)
 		return;
@@ -512,7 +512,7 @@ void CTimerControlRepeaterPanel::onModify(wxCommandEvent& event)
 	::wxGetApp().writeItems();
 }
 
-void CTimerControlRepeaterPanel::onDelete(wxCommandEvent& event)
+void CTimerControlRepeaterPanel::onDelete(wxCommandEvent&)
 {
 	if (m_item == NULL)
 		return;

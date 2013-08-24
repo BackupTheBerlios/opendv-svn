@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ enum RESP_TYPE {
 
 class CDVDongleController {
 public:
-	CDVDongleController(CSerialDataController* controller);
+	explicit CDVDongleController(CSerialDataController* controller);
 	~CDVDongleController();
 
 	bool open();

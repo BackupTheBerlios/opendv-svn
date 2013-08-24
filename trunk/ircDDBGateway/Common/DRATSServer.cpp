@@ -73,7 +73,7 @@ bool CDRATSServer::open()
 	return true;
 }
 
-void CDRATSServer::writeHeader(const CHeaderData& header)
+void CDRATSServer::writeHeader(const CHeaderData&)
 {
 	m_writeState = SS_FIRST;
 

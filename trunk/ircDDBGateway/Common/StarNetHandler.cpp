@@ -784,7 +784,7 @@ bool CStarNetHandler::logoff(const wxString &callsign)
 }
 
 #if defined(DEXTRA_LINK) || defined(DCS_LINK)
-bool CStarNetHandler::process(CHeaderData &header, DIRECTION direction, AUDIO_SOURCE source)
+bool CStarNetHandler::process(CHeaderData &header, DIRECTION, AUDIO_SOURCE)
 {
 	if (m_id != 0x00U)
 		return false;
@@ -851,7 +851,7 @@ bool CStarNetHandler::process(CHeaderData &header, DIRECTION direction, AUDIO_SO
 	return true;
 }
 
-bool CStarNetHandler::process(CAMBEData &data, DIRECTION direction, AUDIO_SOURCE source)
+bool CStarNetHandler::process(CAMBEData &data, DIRECTION, AUDIO_SOURCE)
 {
 	unsigned int id = data.getId();
 	if (id != m_id)
@@ -1203,14 +1203,14 @@ void CStarNetHandler::sendAck(const CUserData& user, const wxString& text) const
 }
 
 #if defined(DEXTRA_LINK)
-void CStarNetHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
+void CStarNetHandler::linkUp(DSTAR_PROTOCOL, const wxString& callsign)
 {
 	wxLogMessage(wxT("DExtra link to %s established"), callsign.c_str());
 
 	m_linkStatus = LS_LINKED_DEXTRA;
 }
 
-bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
+bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL, const wxString& callsign, bool isRecoverable)
 {
 	if (!isRecoverable) {
 		if (m_linkStatus != LS_NONE) {
@@ -1230,7 +1230,7 @@ bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsi
 	return false;
 }
 
-void CStarNetHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign)
+void CStarNetHandler::linkRefused(DSTAR_PROTOCOL, const wxString& callsign)
 {
 	if (m_linkStatus != LS_NONE) {
 		wxLogMessage(wxT("DExtra link to %s was refused"), callsign.c_str());
@@ -1245,14 +1245,14 @@ bool CStarNetHandler::singleHeader()
 #endif
 
 #if defined(DCS_LINK)
-void CStarNetHandler::linkUp(DSTAR_PROTOCOL protocol, const wxString& callsign)
+void CStarNetHandler::linkUp(DSTAR_PROTOCOL, const wxString& callsign)
 {
 	wxLogMessage(wxT("DCS link to %s established"), callsign.c_str());
 
 	m_linkStatus = LS_LINKED_DCS;
 }
 
-void CStarNetHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& callsign)
+void CStarNetHandler::linkRefused(DSTAR_PROTOCOL, const wxString& callsign)
 {
 	if (m_linkStatus != LS_NONE) {
 		wxLogMessage(wxT("DCS link to %s was refused"), callsign.c_str());
@@ -1260,7 +1260,7 @@ void CStarNetHandler::linkRefused(DSTAR_PROTOCOL protocol, const wxString& calls
 	}
 }
 
-bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL protocol, const wxString& callsign, bool isRecoverable)
+bool CStarNetHandler::linkFailed(DSTAR_PROTOCOL, const wxString& callsign, bool isRecoverable)
 {
 	if (!isRecoverable) {
 		if (m_linkStatus != LS_NONE) {

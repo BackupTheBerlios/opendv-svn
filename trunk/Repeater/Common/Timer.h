@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2010,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 class CTimer {
 public:
-	CTimer(unsigned int ticksPerSec, unsigned int secs = 0U, unsigned int msecs = 0U);
+	explicit CTimer(unsigned int ticksPerSec, unsigned int secs = 0U, unsigned int msecs = 0U);
 	~CTimer();
 
 	void setTimeout(unsigned int secs, unsigned int msecs = 0U);

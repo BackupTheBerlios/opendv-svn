@@ -87,6 +87,8 @@ public:
 
 	CHeaderData& getHeader();
 
+	CAMBEData& operator=(const CAMBEData& data);
+
 private:
 	unsigned int   m_rptSeq;
 	unsigned char  m_outSeq;

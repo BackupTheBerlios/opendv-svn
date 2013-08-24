@@ -181,17 +181,17 @@ wxMenuBar* CDStarRepeaterConfigFrame::createMenuBar()
 	return menuBar;
 }
 
-void CDStarRepeaterConfigFrame::onQuit(wxCommandEvent& event)
+void CDStarRepeaterConfigFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CDStarRepeaterConfigFrame::onClose(wxCloseEvent& event)
+void CDStarRepeaterConfigFrame::onClose(wxCloseEvent&)
 {
 	Destroy();
 }
 
-void CDStarRepeaterConfigFrame::onAbout(wxCommandEvent& event)
+void CDStarRepeaterConfigFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -203,7 +203,7 @@ void CDStarRepeaterConfigFrame::onAbout(wxCommandEvent& event)
 	::wxAboutBox(info);
 }
 
-void CDStarRepeaterConfigFrame::onSave(wxCommandEvent& event)
+void CDStarRepeaterConfigFrame::onSave(wxCommandEvent&)
 {
 	if (!m_callsign->Validate() || !m_network->Validate() || !m_times->Validate() || !m_beacon->Validate() ||
 		!m_announcement->Validate() || !m_modem->Validate() || !m_control1->Validate() || !m_control2->Validate() ||

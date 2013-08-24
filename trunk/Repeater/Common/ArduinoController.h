@@ -22,7 +22,7 @@
 
 class CArduinoController : public IHardwareController {
 public:
-	CArduinoController(const wxString& port);
+	explicit CArduinoController(const wxString& port);
 	virtual ~CArduinoController();
 
 	virtual bool open();

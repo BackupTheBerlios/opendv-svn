@@ -133,12 +133,12 @@ wxMenuBar* CRemoteControlFrame::createMenuBar()
 	return menuBar;
 }
 
-void CRemoteControlFrame::onQuit(wxCommandEvent& event)
+void CRemoteControlFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CRemoteControlFrame::onClose(wxCloseEvent& event)
+void CRemoteControlFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -155,7 +155,7 @@ void CRemoteControlFrame::onClose(wxCloseEvent& event)
 	Destroy();
 }
 
-void CRemoteControlFrame::onPreferences(wxCommandEvent& event)
+void CRemoteControlFrame::onPreferences(wxCommandEvent&)
 {
 	wxString address, password;
 	unsigned int port;
@@ -175,7 +175,7 @@ void CRemoteControlFrame::onPreferences(wxCommandEvent& event)
 	dialog2.ShowModal();
 }
 
-void CRemoteControlFrame::onAbout(wxCommandEvent& event)
+void CRemoteControlFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -187,7 +187,7 @@ void CRemoteControlFrame::onAbout(wxCommandEvent& event)
 	::wxAboutBox(info);
 }
 
-void CRemoteControlFrame::onTimer(wxTimerEvent& event)
+void CRemoteControlFrame::onTimer(wxTimerEvent&)
 {
 	RC_TYPE type = m_handler->readType();
 

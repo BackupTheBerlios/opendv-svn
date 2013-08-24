@@ -332,17 +332,17 @@ wxMenuBar* CIRCDDBGatewayConfigFrame::createMenuBar()
 	return menuBar;
 }
 
-void CIRCDDBGatewayConfigFrame::onQuit(wxCommandEvent& event)
+void CIRCDDBGatewayConfigFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CIRCDDBGatewayConfigFrame::onClose(wxCloseEvent& event)
+void CIRCDDBGatewayConfigFrame::onClose(wxCloseEvent&)
 {
 	Destroy();
 }
 
-void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent& event)
+void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent&)
 {
 	if (!m_gateway->Validate() || !m_repeaterData1->Validate() || !m_repeaterInfo1->Validate() || !m_repeaterData2->Validate() ||
 		!m_repeaterInfo2->Validate() || !m_repeaterData3->Validate() || !m_repeaterInfo3->Validate() || !m_repeaterData4->Validate() ||
@@ -573,7 +573,7 @@ void CIRCDDBGatewayConfigFrame::onSave(wxCommandEvent& event)
 	dialog.ShowModal();
 }
 
-void CIRCDDBGatewayConfigFrame::onAbout(wxCommandEvent& event)
+void CIRCDDBGatewayConfigFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));

@@ -116,12 +116,12 @@ wxMenuBar* CTimeServerFrame::createMenuBar()
 	return menuBar;
 }
 
-void CTimeServerFrame::onQuit(wxCommandEvent& event)
+void CTimeServerFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CTimeServerFrame::onClose(wxCloseEvent& event)
+void CTimeServerFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -133,7 +133,7 @@ void CTimeServerFrame::onClose(wxCloseEvent& event)
 	Destroy();
 }
 
-void CTimeServerFrame::onPreferences(wxCommandEvent& event)
+void CTimeServerFrame::onPreferences(wxCommandEvent&)
 {
 	wxString callsign, address;
 	bool sendA, sendB, sendC, sendD, sendE;
@@ -172,7 +172,7 @@ void CTimeServerFrame::onUpdates(wxCommandEvent& event)
 	m_updates = event.IsChecked();
 }
 
-void CTimeServerFrame::onAbout(wxCommandEvent& event)
+void CTimeServerFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));

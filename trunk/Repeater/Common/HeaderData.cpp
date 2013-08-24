@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2011 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -329,4 +329,22 @@ void CHeaderData::reset()
 	m_flag1 = 0x00;
 	m_flag2 = 0x00;
 	m_flag3 = 0x00;
+}
+
+CHeaderData& CHeaderData::operator =(const CHeaderData& header)
+{
+	if (&header != this) {
+		m_time     = header.m_time;
+		m_myCall1  = header.m_myCall1;
+		m_myCall2  = header.m_myCall2;
+		m_yourCall = header.m_yourCall;
+		m_rptCall1 = header.m_rptCall1;
+		m_rptCall2 = header.m_rptCall2;
+		m_flag1    = header.m_flag1;
+		m_flag2    = header.m_flag2;
+		m_flag3    = header.m_flag3;
+		m_valid    = header.m_valid;
+	}
+
+	return *this;
 }

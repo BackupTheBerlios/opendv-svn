@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ enum DEXTRA_TYPE {
 
 class CDExtraProtocolHandler {
 public:
-	CDExtraProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	explicit CDExtraProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
 	~CDExtraProtocolHandler();
 
 	bool open();

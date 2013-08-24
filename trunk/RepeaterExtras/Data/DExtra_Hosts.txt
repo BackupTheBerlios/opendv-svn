@@ -48,4 +48,4 @@ XRF777	62.167.15.53
 XRF851	xrf851.rsdt.de
 XRF858	xrf858.no-ip.org
 XRF901	n1dot.no-ip.org
-XRFWDX	173.60.73.189
+XRFWDX	xrfwdx.ham-radio-op.net

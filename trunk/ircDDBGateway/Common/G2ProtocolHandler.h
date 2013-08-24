@@ -40,7 +40,7 @@ enum G2_TYPE {
 
 class CG2ProtocolHandler {
 public:
-	CG2ProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	explicit CG2ProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
 	~CG2ProtocolHandler();
 
 	bool open();

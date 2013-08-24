@@ -892,3 +892,29 @@ unsigned int CHeaderData::getMyPort() const
 {
 	return m_myPort;
 }
+
+CHeaderData& CHeaderData::operator =(const CHeaderData& header)
+{
+	if (&header != this) {
+		m_rptSeq      = header.m_rptSeq;
+		m_id          = header.m_id;
+		m_band1       = header.m_band1;
+		m_band2       = header.m_band2;
+		m_band3       = header.m_band3;
+		m_flag1       = header.m_flag1;
+		m_flag2       = header.m_flag2;
+		m_flag3       = header.m_flag3;
+		m_yourAddress = header.m_yourAddress;
+		m_yourPort    = header.m_yourPort;
+		m_myPort      = header.m_myPort;
+		m_errors      = header.m_errors;
+
+		::memcpy(m_myCall1,  header.m_myCall1,  LONG_CALLSIGN_LENGTH);
+		::memcpy(m_myCall2,  header.m_myCall2,  SHORT_CALLSIGN_LENGTH);
+		::memcpy(m_yourCall, header.m_yourCall, LONG_CALLSIGN_LENGTH);
+		::memcpy(m_rptCall1, header.m_rptCall1, LONG_CALLSIGN_LENGTH);
+		::memcpy(m_rptCall2, header.m_rptCall2, LONG_CALLSIGN_LENGTH);
+	}
+
+	return *this;
+}
