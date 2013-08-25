@@ -1357,7 +1357,8 @@ Updated XRF901s IP address.
 --------
 
 Updated XRF012, XRF119, and XRFWDXs IP addresses.
-Added DCS024 and DCS025.
+Added CCS001(GER), CCS007(NLD), CCS013(NOR), CCS020(USA), CCS022(JPN) and CCS024(USA)
+Added DCS024(USA) and DCS025(GER).
 Added new Quadnet ircDDB server.
 Add homebrew DD data support.
 Catch exceptions in the ircDDB Gateway and STARnet Digital Server.
