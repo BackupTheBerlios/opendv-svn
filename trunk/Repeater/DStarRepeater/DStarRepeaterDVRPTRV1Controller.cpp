@@ -472,7 +472,7 @@ bool CDStarRepeaterDVRPTRV1Controller::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterDVRPTRV1Controller::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CDStarRepeaterDVRPTRV1Controller::writeData(const unsigned char* data, unsigned int, bool end)
 {
 	if (!m_txEnabled)
 		return false;

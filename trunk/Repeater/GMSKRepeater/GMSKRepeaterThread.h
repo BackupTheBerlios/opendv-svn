@@ -36,6 +36,8 @@ enum FRAME_TYPE {
 
 class IGMSKRepeaterThread {
 public:
+	virtual ~IGMSKRepeaterThread() {}
+
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) = 0;
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler) = 0;
 	virtual void setModem(IGMSKModem* modem) = 0;

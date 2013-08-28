@@ -1896,5 +1896,5 @@ Allow for the error reply to be disabled.
 --------
 
 Make DV-RPTR V2 handling better.
-Catch exceptions in the D-Star Repeater.
+Catch exceptions and other C++ changes in the D-Star Repeater.
 Add TX Delay to the DV-RPTR V2 modem in the D-Star Repeater.

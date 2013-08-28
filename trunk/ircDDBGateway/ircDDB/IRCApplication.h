@@ -3,6 +3,7 @@
 CIRCDDB - ircDDB client library in C++
 
 Copyright (C) 2010   Michael Dirska, DL1BFF (dl1bff@mdx.de)
+Copyright (C) 2013   Jonathan Naylor, G4KLX
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class IRCApplication
 {
   public:
+  virtual ~IRCApplication() {}
 
   virtual void userJoin (const wxString& nick, const wxString& name, const wxString& host) = 0;
   virtual void userLeave (const wxString& nick) = 0;

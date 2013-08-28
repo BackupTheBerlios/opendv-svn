@@ -393,7 +393,7 @@ bool CDStarRepeaterDVRPTRV2Controller::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterDVRPTRV2Controller::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CDStarRepeaterDVRPTRV2Controller::writeData(const unsigned char* data, unsigned int, bool end)
 {
 	unsigned char buffer[17U];
 

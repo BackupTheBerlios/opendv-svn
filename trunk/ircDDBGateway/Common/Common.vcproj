@@ -523,10 +523,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Checksum.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ConnectData.h"
 				>
 			</File>

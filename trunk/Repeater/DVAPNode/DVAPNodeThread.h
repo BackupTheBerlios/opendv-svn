@@ -35,6 +35,8 @@ enum FRAME_TYPE {
 
 class IDVAPNodeThread {
 public:
+	virtual ~IDVAPNodeThread() {}
+
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation) = 0;
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler) = 0;
 	virtual void setDVAP(CDVAPController* dvap) = 0;

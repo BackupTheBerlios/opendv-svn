@@ -51,7 +51,7 @@ CallsignServer.o:	CallsignServer.cpp CallsignServer.h TCPReaderWriterClient.h Ti
 CallsignTextCtrl.o:	CallsignTextCtrl.cpp CallsignTextCtrl.h RestrictedTextCtrl.h
 				$(CC) $(CFLAGS) -c CallsignTextCtrl.cpp
 
-CCITTChecksum.o:	CCITTChecksum.cpp CCITTChecksum.h Checksum.h Utils.h
+CCITTChecksum.o:	CCITTChecksum.cpp CCITTChecksum.h Utils.h
 				$(CC) $(CFLAGS) -c CCITTChecksum.cpp
 
 CCSData.o:		CCSData.cpp CCSData.h DStarDefines.h Utils.h

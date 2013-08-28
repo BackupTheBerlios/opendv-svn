@@ -28,6 +28,8 @@
 
 class IReflectorCallback {
 public:
+	virtual ~IReflectorCallback() {}
+
 	virtual bool process(CHeaderData& header, DIRECTION direction, AUDIO_SOURCE source) = 0;
 
 	virtual bool process(CAMBEData& data, DIRECTION direction, AUDIO_SOURCE source) = 0;

@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -14,25 +14,23 @@
 #ifndef	CCITTChecksum_H
 #define	CCITTChecksum_H
 
-#include "Checksum.h"
-
 #include <wx/wx.h>
 
-class CCCITTChecksum : public IChecksum {
+class CCCITTChecksum {
 public:
 	CCCITTChecksum();
-	virtual ~CCCITTChecksum();
+	~CCCITTChecksum();
 
-	virtual void update(const unsigned char* data, unsigned int length);
-	virtual void update(const bool* data);
+	void update(const unsigned char* data, unsigned int length);
+	void update(const bool* data);
 
-	virtual void result(unsigned char* data);
-	virtual void result(bool* data);
+	void result(unsigned char* data);
+	void result(bool* data);
 
-	virtual bool check(const unsigned char* data);
-	virtual bool check(const bool* data);
+	bool check(const unsigned char* data);
+	bool check(const bool* data);
 
-	virtual void reset();
+	void reset();
 
 private:
 	wxUint16 m_crc;

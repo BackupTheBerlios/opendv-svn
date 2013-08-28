@@ -33,6 +33,8 @@ enum DSMT_TYPE {
 
 class IDStarRepeaterModem {
 public:
+	virtual ~IDStarRepeaterModem() {}
+
 	virtual bool start() = 0;
 
 	virtual bool writeHeader(const CHeaderData& header) = 0;
