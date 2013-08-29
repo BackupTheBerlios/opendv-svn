@@ -622,11 +622,11 @@ ircddbHostname:Waehle die ircDDB-Server-Gruppe um eine beste Anbindung zu ermoeg
 ircddbHostname: 
 ircddbHostname: 1   fuer Gateways in Europa, Asien, Afrika, Australien 
 ircddbHostname: 2   fuer Gateways in Nord-/Sued-Amerika 
-ircddbHostname: 3   Italienischer Testserver ohne Anbindunn ans Routing-Netz 
+ircddbHostname: 3   Italienischer Testserver ohne Anbindung ans Routing-Netz 
 ircddbHostname: 
 
 ircddbUsername: 
-ircddbUsername:Gib den Benutzernamen ein, der Dir bei der Registration mitgeteilt wurde.  
+ircddbUsername:Gib den Benutzernamen ein, der Dir bei der Registrierung mitgeteilt wurde.  
 ircddbUsername:(normalerweise das Rufzeichen des Gateways in Kleinschrift) 
 ircddbUsername:Die Registrierung erfolgt hier: http://regsrv.ircddb.net/index.htm
 ircddbUsername: 

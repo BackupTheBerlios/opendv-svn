@@ -65,12 +65,13 @@
 # 2013-04-07 dl5di    removing repeater modules added
 # 2013-04-08 dl5di	  cleanups
 # 2013-06-24 dl5di	  bugfixes
+# 2013-08-29 dl5di    read more parameters from ircddb-addon configuration
 #
 # Todo / known issues:
 # - implement sanity check for config file 
 #   (find/eliminate dupes, convert ',' to '.' in decimals)
 #
-rev="CentOS-20130624"
+rev="CentOS-20130829"
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -1648,8 +1649,15 @@ function repeater_setup(){
 	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
 	read_default $var
+
 	read_value ${IRCDDBGWCONFIG} $var
-	if [ "$?" = 0 ]; then
+	FOUND=$?
+	if [ "$FOUND" = 0 ]; then
+		read_value $CONFIGFILE "IRCDDBPROPPATH"
+		read_value $VALUE/ircDDB.properties rptr_freq_$rptr
+		FOUND=$?
+	fi
+	if [ "$FOUND" = 0 ]; then
 		VALUE=$DEFAULT
 	fi
 	VALID=1
@@ -1674,7 +1682,13 @@ function repeater_setup(){
 	echo "$Dat: $var" >> $LOG
 	read_default $var
 	read_value ${IRCDDBGWCONFIG} $var
-	if [ "$?" = 0 ]; then
+	FOUND=$?
+	if [ "$FOUND" = 0 ]; then
+		read_value $CONFIGFILE "IRCDDBPROPPATH"
+		read_value $VALUE/ircDDB.properties rptr_duplex_shift_$rptr
+		FOUND=$?
+	fi
+	if [ "$FOUND" = 0 ]; then
 		VALUE=$DEFAULT
 	fi
 	VALID=1
@@ -1699,7 +1713,13 @@ function repeater_setup(){
 	echo "$Dat: $var" >> $LOG
 	read_default $var
 	read_value ${IRCDDBGWCONFIG} $var
-	if [ "$?" = 0 ]; then
+	FOUND=$?
+	if [ "$FOUND" = 0 ]; then
+		read_value $CONFIGFILE "IRCDDBPROPPATH"
+		read_value $VALUE/ircDDB.properties rptr_range_$rptr
+		FOUND=$?
+	fi
+	if [ "$FOUND" = 0 ]; then
 		VALUE=$DEFAULT
 	fi
 	print_text "rangeKms" 
@@ -1712,13 +1732,20 @@ function repeater_setup(){
 	fi
 #
 # agl#=15.000
+# /etc/ircddbd/ircDDB.properties:rptr_agl_<B>
 #
 	var="agl$rptr"
 	Dat=`date +%Y%m%d%H%M`
 	echo "$Dat: $var" >> $LOG
 	read_default $var
 	read_value ${IRCDDBGWCONFIG} $var
-	if [ "$?" = 0 ]; then
+	FOUND=$?
+	if [ "$FOUND" = 0 ]; then
+		read_value $CONFIGFILE "IRCDDBPROPPATH"
+		read_value $VALUE/ircDDB.properties rptr_agl_$rptr
+		FOUND=$?
+	fi
+	if [ "$FOUND" = 0 ]; then
 		VALUE=$DEFAULT
 	fi
 	print_text "agl" 
@@ -1878,7 +1905,13 @@ function ircddb_setup(){
 	echo "$Dat: $var" >> $LOG
 	read_default $var
 	read_value ${IRCDDBGWCONFIG} $var
-	if [ "$?" = 0 ]; then
+	FOUND=$?
+	if [ "$FOUND" = 0 ]; then
+		read_value $CONFIGFILE "IRCDDBPROPPATH"
+		read_value $VALUE/ircDDB.properties irc_server_name
+		FOUND=$?
+	fi
+	if [ "$FOUND" = 0 ]; then
 		VALUE=$DEFAULT
 	fi
 	if [ "$VALUE" = "group1-irc.ircddb.net" ]; then
@@ -3184,7 +3217,6 @@ while [ "$SELECT" -ne 99 ]; do
 		stn_setup
 		misc_setup
 		timeserver_setup
-		misc_setup
 		print_text "final"
 		;;
 	3)
