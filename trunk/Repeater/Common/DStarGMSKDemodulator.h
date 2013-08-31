@@ -14,7 +14,6 @@
 #ifndef	DStarGMSKDemodulator_H
 #define	DStarGMSKDemodulator_H
 
-#include "FirstOrderIIR.h"
 #include "DStarDefines.h"
 #include "FIRFilter.h"
 #include "Utils.h"
@@ -33,7 +32,6 @@ public:
 	void lock(bool on);
 
 private:
-	CFirstOrderIIR m_dcBlock;
 	CFIRFilter     m_filter;
 	bool           m_invert;
 	unsigned int   m_pll;

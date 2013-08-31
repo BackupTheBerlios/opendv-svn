@@ -44,18 +44,12 @@ const wxFloat32 FILTER_COEFFS_TABLE[] = {
 
 const unsigned int FILTER_COEFFS_LENGTH = 103U;
 
-const wxFloat32 DCBLOCK_A1   = -0.995F;
-const wxFloat32 DCBLOCK_B0   = 1.0F;
-const wxFloat32 DCBLOCK_B1   = -1.0F;
-const wxFloat32 DCBLOCK_GAIN = 1.0F;
-
 const unsigned int PLLMAX     = 0x10000U;
 const unsigned int PLLINC     = PLLMAX / DSTAR_RADIO_BIT_LENGTH;
 const unsigned int INC_LOCK   = PLLINC / 64U;
 const unsigned int INC_UNLOCK = PLLINC / 32U;
 
 CDStarGMSKDemodulator::CDStarGMSKDemodulator() :
-m_dcBlock(DCBLOCK_A1, DCBLOCK_B0, DCBLOCK_B1, DCBLOCK_GAIN),
 m_filter(FILTER_COEFFS_TABLE, FILTER_COEFFS_LENGTH),
 m_invert(false),
 m_pll(0U),
@@ -72,9 +66,7 @@ TRISTATE CDStarGMSKDemodulator::decode(wxFloat32 val)
 {
 	TRISTATE state = STATE_UNKNOWN;
 
-	wxFloat32 val1 = m_dcBlock.process(val);
-
-	wxFloat32 out = m_filter.process(val1);
+	wxFloat32 out = m_filter.process(val);
 
 	bool bit = out > 0.0F;
 

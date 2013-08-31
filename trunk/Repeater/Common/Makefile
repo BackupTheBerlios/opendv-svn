@@ -3,7 +3,7 @@ all:		Common.a
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o ArduinoController.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o \
 		CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
 		DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o \
-		DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FirstOrderIIR.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o \
+		DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o \
 		K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o \
 		PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o \
 		SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o \
@@ -66,7 +66,7 @@ DStarFECDecoder.o:	DStarFECDecoder.cpp DStarFECDecoder.h
 DStarFECEncoder.o:	DStarFECEncoder.cpp DStarFECEncoder.h
 		$(CC) $(CFLAGS) -c DStarFECEncoder.cpp
 
-DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h FIRFilter.h FirstOrderIIR.h DStarDefines.h Utils.h
+DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h FIRFilter.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c DStarGMSKDemodulator.cpp
 
 DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h FIRFilter.h
@@ -106,9 +106,6 @@ DVTOOLFileWriter.o:	DVTOOLFileWriter.cpp DVTOOLFileWriter.h HeaderData.h CCITTCh
 
 ExternalController.o:	ExternalController.cpp ExternalController.h DStarDefines.h HardwareController.h
 		$(CC) $(CFLAGS) -c ExternalController.cpp
-
-FirstOrderIIR.o:	FirstOrderIIR.cpp FirstOrderIIR.h
-		$(CC) $(CFLAGS) -c FirstOrderIIR.cpp
 
 FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp

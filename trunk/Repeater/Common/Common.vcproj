@@ -282,10 +282,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FirstOrderIIR.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GMSKModemLibUsb.cpp"
 				>
 			</File>
@@ -573,10 +569,6 @@
 			</File>
 			<File
 				RelativePath=".\FIRFilter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FirstOrderIIR.h"
 				>
 			</File>
 			<File
