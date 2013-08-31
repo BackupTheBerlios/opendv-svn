@@ -1,4 +1,4 @@
-Repeater - 20130726
+Repeater - 20130831
 ===================
 
 20090530
@@ -1892,7 +1892,7 @@ Implement GMSK PLL locking.
 Restore D-Star Repeater window position on startup.
 Allow for the error reply to be disabled.
 
-201308xx
+20130831
 --------
 
 Make DV-RPTR V2 handling better.
