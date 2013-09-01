@@ -46,30 +46,32 @@ value by the repeater in GUI-mode you won't need ALSA.
 
 Files:
 
-/etc/dstarrepeater_*					configfile for dstarrepeater module * (1-4)
+/home/opendv/repeater/dstarrepeater_*			configfile for dstarrepeater module * (1-4)
 
-/etc/default/dstarrepeater_conf			default values for all settings
+/home/opendv/repeater/dstarrepeater_conf		default values for all settings
 
-/etc/init.d/dstarrepeater_*				startscripts for dstarrepeater module * (1-4)
+/etc/init.d/dstarrepeater_*					startscripts for repeater module * (1-4)
 
-/usr/share/dstarrepeater_conf/*.hlp		helpfiles in different languages
-/usr/share/dstarrepeater_conf/*.mnu		menufiles in different languages
+/home/opendv/dstarrepeater/data/*.hlp		helpfiles in different languages
+/home/opendv/dstarrepeater/data/*.mnu		menufiles in different languages
+
+/home/opendv/data							AMBE-files shared with ircDDBGateway
     
-/etc/sysconfig/dstarrepeater_*			binary-path and commandline options for 
-										dstarrepeater module * (1-4)
+/etc/default/dstarrepeater_*				binarypath and commandline options for 
+											repeater module * (1-4)
 
-PLEASE DO NOT EDIT the files manually unless you know exactly what you are doing!
+PLEASE DO NOT EDIT any other files manually unless you know what you are doing!
 Manual entries may cause issues and double entries.
 
-dstarrepeater_conf will create the basic configfile for the dstarrepeater modules and 
-also the options file in /etc/sysconfig.
-Special menu options allow to activate the automatic startup script or manually start
-the repeater.
+dstarrepeater_conf will create the basic configfile for the repeater module and also 
+the startup script and options file in /etc/sysconfig.
+Special menu options allow to activate the automatic startup script or manually 
+start the dstarrepeaters.
 
 Please address ideas, bug reports and experiences in the Yahoo Group 
-"PCRepeaterController".
+"PCRepeaterController.
 
 
-august 31th 2013
+september 1st 2013
 
 Hans, DL5DI

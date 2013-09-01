@@ -1,0 +1,10 @@
+BACKUPPATH=/etc
+LOGPATH=/var/log/dstar
+CFGPATH=/etc
+DATAPATH=/usr/share/dstarrepeater_conf
+DEFVALUES=/etc/default/dstarrepeater_conf
+#
+REPEATERCONFIG_1=/etc/dstarrepeater
+REPEATERCONFIG_2=/etc/dstarrepeater
+REPEATERCONFIG_3=/etc/dstarrepeater
+REPEATERCONFIG_4=/etc/dstarrepeater

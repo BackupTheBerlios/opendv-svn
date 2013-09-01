@@ -2,6 +2,27 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: dstarrepeater package added
+FOUND: 2013-08-31
+REPORTED: DL5DI
+SOLVED: 2013-09-01
+COMMIT: 2013-09-01
+
+- packaging scripts changed, dstarrepeater moved to own package.
+ToDo: - web-based configuration tool
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+TITLE: Fix repeater_conf
+FOUND: 2013-08-17
+REPORTED: DM8BS
+SOLVED: 2013-09-01
+COMMIT: 2013-09-01
+
+- loop on repeater_conf, several fields have to be entered twice
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: Update of Documentation
 FOUND: 2013-07-21
 REPORTED: DL5DI
