@@ -36,8 +36,6 @@ enum FRAME_TYPE {
 
 class IDStarRepeaterThread {
 public:
-	virtual ~IDStarRepeaterThread() {}
-
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply) = 0;
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler) = 0;
 	virtual void setModem(IDStarRepeaterModem* modem) = 0;

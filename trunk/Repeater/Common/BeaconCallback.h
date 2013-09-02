@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2012,2013 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2012 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@
 
 class IBeaconCallback {
 public:
-	virtual ~IBeaconCallback() {}
-
 	virtual void transmitBeaconHeader() = 0;
 
 	virtual void transmitBeaconData(const unsigned char* data, unsigned int length, bool end) = 0;

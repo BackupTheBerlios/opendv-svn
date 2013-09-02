@@ -18,8 +18,6 @@
 
 class IAnnouncementCallback {
 public:
-	virtual ~IAnnouncementCallback() {}
-
 	virtual void transmitAnnouncementHeader(CHeaderData* header) = 0;
 
 	virtual void transmitAnnouncementData(const unsigned char* data, unsigned int length, bool end) = 0;

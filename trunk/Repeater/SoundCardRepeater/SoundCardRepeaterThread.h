@@ -38,8 +38,6 @@ enum FRAME_TYPE {
 
 class ISoundCardRepeaterThread : public IAudioCallback {
 public:
-	virtual ~ISoundCardRepeaterThread() {}
-
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking) = 0;
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler) = 0;
 	virtual void setSoundCard(CSoundCardReaderWriter* soundcard, wxFloat32 rxLevel, wxFloat32 txLevel, SQUELCH_MODE squelchMode, wxFloat32 squelchLevel, bool rxInvert, bool txInvert) = 0;

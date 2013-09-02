@@ -1903,3 +1903,4 @@ Add TX Delay to the DV-RPTR V2 modem in the D-Star Repeater.
 --------
 
 Removed the DC blocker from the sound card based repeaters.
+Remove some of the C++ changes.

@@ -26,8 +26,6 @@
 
 class IGMSKModem {
 public:
-	virtual ~IGMSKModem() {}
-
 	virtual bool open() = 0;
 
 	virtual CHeaderData* readHeader(bool& error) = 0;							// Old
