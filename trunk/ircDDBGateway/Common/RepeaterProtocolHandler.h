@@ -42,8 +42,6 @@ enum REPEATER_TYPE {
 
 class IRepeaterProtocolHandler {
 public:
-	virtual ~IRepeaterProtocolHandler() {}
-
 	virtual bool open() = 0;
 
 	virtual bool writeHeader(CHeaderData& header) = 0;
