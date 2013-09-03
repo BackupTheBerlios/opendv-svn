@@ -1,4 +1,4 @@
-Repeater - 20130831
+Repeater - 20130903
 ===================
 
 20090530
@@ -1899,7 +1899,7 @@ Make DV-RPTR V2 handling better.
 Catch exceptions and other C++ changes in the D-Star Repeater.
 Add TX Delay to the DV-RPTR V2 modem in the D-Star Repeater.
 
-201309xx
+20130903
 --------
 
 Removed the DC blocker from the sound card based repeaters.
