@@ -29,7 +29,7 @@
 
 class CDStarRepeaterRXThread : public IDStarRepeaterThread {
 public:
-	explicit CDStarRepeaterRXThread(const wxString& type);
+	CDStarRepeaterRXThread(const wxString& type);
 	virtual ~CDStarRepeaterRXThread();
 
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply);

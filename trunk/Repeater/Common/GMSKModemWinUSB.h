@@ -29,7 +29,7 @@
 
 class CGMSKModemWinUSB : public IGMSKModem {
 public:
-	explicit CGMSKModemWinUSB(unsigned int address);
+	CGMSKModemWinUSB(unsigned int address);
 	virtual ~CGMSKModemWinUSB();
 
 	virtual bool open();

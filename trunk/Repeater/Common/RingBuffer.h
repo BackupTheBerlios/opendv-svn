@@ -23,7 +23,7 @@
 
 template<class T> class CRingBuffer {
 public:
-	explicit CRingBuffer(unsigned int length) :
+	CRingBuffer(unsigned int length) :
 	m_length(length),
 	m_buffer(NULL),
 	m_iPtr(0U),

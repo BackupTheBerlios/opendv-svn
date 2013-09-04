@@ -387,7 +387,7 @@ bool CDVRPTRControllerV2::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int, bool end)
+bool CDVRPTRControllerV2::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	unsigned char buffer[17U];
 

@@ -33,7 +33,7 @@
 
 class CGMSKModemLibUsb : public IGMSKModem {
 public:
-	explicit CGMSKModemLibUsb(unsigned int address);
+	CGMSKModemLibUsb(unsigned int address);
 	virtual ~CGMSKModemLibUsb();
 
 	virtual bool open();

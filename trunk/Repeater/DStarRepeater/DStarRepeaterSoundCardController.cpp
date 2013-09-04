@@ -616,7 +616,7 @@ void CDStarRepeaterSoundCardController::stop()
 	Wait();
 }
 
-void CDStarRepeaterSoundCardController::callback(const wxFloat32* input, wxFloat32* output, unsigned int n, int)
+void CDStarRepeaterSoundCardController::callback(const wxFloat32* input, wxFloat32* output, unsigned int n, int id)
 {
 	::memset(output, 0x00, n * sizeof(wxFloat32));
 

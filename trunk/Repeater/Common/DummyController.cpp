@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ void CDummyController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool
 	inp5 = false;
 }
 
-void CDummyController::setDigitalOutputs(bool, bool, bool, bool, bool, bool, bool, bool)
+void CDummyController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
 {
 }
 

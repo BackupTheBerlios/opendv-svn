@@ -464,7 +464,7 @@ bool CDVAPController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDVAPController::writeData(const unsigned char* data, unsigned int, bool end)
+bool CDVAPController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	unsigned char buffer[20U];
 

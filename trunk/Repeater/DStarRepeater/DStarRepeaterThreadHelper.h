@@ -27,7 +27,7 @@
 class CDStarRepeaterThreadHelper : public wxThread {
 
 public:
-	explicit CDStarRepeaterThreadHelper(IDStarRepeaterThread* thread);
+	CDStarRepeaterThreadHelper(IDStarRepeaterThread* thread);
 	virtual ~CDStarRepeaterThreadHelper();
 
 	virtual void start();

@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2013 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 class CK8055Controller : public IHardwareController {
 public:
-	explicit CK8055Controller(unsigned int address);
+	CK8055Controller(unsigned int address);
 	virtual ~CK8055Controller();
 
 	virtual bool open();

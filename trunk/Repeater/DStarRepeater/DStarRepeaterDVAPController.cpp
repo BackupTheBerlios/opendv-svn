@@ -450,7 +450,7 @@ bool CDStarRepeaterDVAPController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterDVAPController::writeData(const unsigned char* data, unsigned int, bool end)
+bool CDStarRepeaterDVAPController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	unsigned char buffer[20U];
 

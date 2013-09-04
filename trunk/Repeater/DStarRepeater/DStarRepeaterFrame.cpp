@@ -362,12 +362,12 @@ void CDStarRepeaterFrame::onLogging(wxCommandEvent& event)
 	::wxGetApp().setLogging(event.IsChecked());
 }
 
-void CDStarRepeaterFrame::onQuit(wxCommandEvent&)
+void CDStarRepeaterFrame::onQuit(wxCommandEvent& event)
 {
 	Close(false);
 }
 
-void CDStarRepeaterFrame::onClose(wxCloseEvent&)
+void CDStarRepeaterFrame::onClose(wxCloseEvent& event)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -403,7 +403,7 @@ void CDStarRepeaterFrame::onActions(wxCommandEvent& event)
 	}
 }
 
-void CDStarRepeaterFrame::onOutputs(wxCommandEvent&)
+void CDStarRepeaterFrame::onOutputs(wxCommandEvent& event)
 {
 	bool out1 = m_outputMenu->IsChecked(Menu_Output_1);
 	bool out2 = m_outputMenu->IsChecked(Menu_Output_2);
@@ -418,7 +418,7 @@ void CDStarRepeaterFrame::onUpdates(wxCommandEvent& event)
 	m_updates = event.IsChecked();
 }
 
-void CDStarRepeaterFrame::onAbout(wxCommandEvent&)
+void CDStarRepeaterFrame::onAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -430,7 +430,7 @@ void CDStarRepeaterFrame::onAbout(wxCommandEvent&)
 	::wxAboutBox(info);
 }
 
-void CDStarRepeaterFrame::onTimer(wxTimerEvent&)
+void CDStarRepeaterFrame::onTimer(wxTimerEvent& event)
 {
 	if (!m_updates)
 		return;

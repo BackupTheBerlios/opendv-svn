@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002,2003,2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003,2009-2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ void CDStarRepeaterLogger::DoLog(wxLogLevel level, const wxChar* msg, time_t tim
 		::abort();
 }
 
-void CDStarRepeaterLogger::DoLogString(const wxChar* msg, time_t)
+void CDStarRepeaterLogger::DoLogString(const wxChar* msg, time_t timestamp)
 {
 	wxASSERT(msg != NULL);
 

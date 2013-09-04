@@ -36,11 +36,11 @@ bool CRaspberryController::open()
 	return false;
 }
 
-void CRaspberryController::getDigitalInputs(bool&, bool&, bool&, bool&, bool&)
+void CRaspberryController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, bool& inp4, bool& inp5)
 {
 }
 
-void CRaspberryController::setDigitalOutputs(bool, bool, bool, bool, bool, bool, bool, bool)
+void CRaspberryController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
 {
 }
 

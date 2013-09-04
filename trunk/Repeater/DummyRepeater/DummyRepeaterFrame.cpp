@@ -361,7 +361,7 @@ void CDummyRepeaterFrame::error(const wxString& error)
 	AddPendingEvent(event);
 }
 
-void CDummyRepeaterFrame::onQuit(wxCommandEvent&)
+void CDummyRepeaterFrame::onQuit(wxCommandEvent& event)
 {
 	Close(false);
 }
@@ -387,7 +387,7 @@ void CDummyRepeaterFrame::onClose(wxCloseEvent& event)
 	}
 }
 
-void CDummyRepeaterFrame::onPreferences(wxCommandEvent&)
+void CDummyRepeaterFrame::onPreferences(wxCommandEvent& event)
 {
 	wxString callsign1, callsign2;
 	::wxGetApp().getCallsign(callsign1, callsign2);
@@ -459,7 +459,7 @@ void CDummyRepeaterFrame::onPreferences(wxCommandEvent&)
 	dialog2.ShowModal();
 }
 
-void CDummyRepeaterFrame::onAbout(wxCommandEvent&)
+void CDummyRepeaterFrame::onAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -471,7 +471,7 @@ void CDummyRepeaterFrame::onAbout(wxCommandEvent&)
 	::wxAboutBox(info);
 }
 
-void CDummyRepeaterFrame::onYour(wxCommandEvent&)
+void CDummyRepeaterFrame::onYour(wxCommandEvent& event)
 {
 	wxString your = m_your->GetValue();
 
@@ -511,7 +511,7 @@ bool CDummyRepeaterFrame::processYour(wxString& your)
 	return true;
 }
 
-void CDummyRepeaterFrame::onRpt1(wxCommandEvent&)
+void CDummyRepeaterFrame::onRpt1(wxCommandEvent& event)
 {
 	wxString rpt1 = m_rpt1->GetValue();
 
@@ -551,7 +551,7 @@ bool CDummyRepeaterFrame::processRpt1(wxString& rpt1)
 	return true;
 }
 
-void CDummyRepeaterFrame::onRpt2(wxCommandEvent&)
+void CDummyRepeaterFrame::onRpt2(wxCommandEvent& event)
 {
 	wxString rpt2 = m_rpt2->GetValue();
 
@@ -638,7 +638,7 @@ void CDummyRepeaterFrame::onTransmit(wxCommandEvent& event)
 	}
 }
 
-void CDummyRepeaterFrame::onOneTouchReply(wxCommandEvent&)
+void CDummyRepeaterFrame::onOneTouchReply(wxCommandEvent& event)
 {
 	wxString my12 = m_hrdMy->GetLabel();
 
@@ -676,7 +676,7 @@ void CDummyRepeaterFrame::onOneTouchReply(wxCommandEvent&)
 	m_rpt2->SetValue(rpt2);
 }
 
-void CDummyRepeaterFrame::onTimeout(wxTimerEvent&)
+void CDummyRepeaterFrame::onTimeout(wxTimerEvent& event)
 {
 	m_status->SetBackgroundColour(*wxLIGHT_GREY);
 	m_status->SetLabel(wxEmptyString);

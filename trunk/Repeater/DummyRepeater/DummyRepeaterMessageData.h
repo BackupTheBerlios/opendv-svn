@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010,2011,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009,2010,2011 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class CDummyRepeaterMessageData {
 public:
 	CDummyRepeaterMessageData(const CDummyRepeaterMessageData& message);
 	CDummyRepeaterMessageData(const unsigned char* text, unsigned int length);
-	explicit CDummyRepeaterMessageData(const wxString& text);
+	CDummyRepeaterMessageData(const wxString& text);
 	~CDummyRepeaterMessageData();
 
 	wxString getText() const;

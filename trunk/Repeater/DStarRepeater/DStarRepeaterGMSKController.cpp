@@ -325,7 +325,7 @@ bool CDStarRepeaterGMSKController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterGMSKController::writeData(const unsigned char* data, unsigned int, bool end)
+bool CDStarRepeaterGMSKController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	wxMutexLocker locker(m_mutex);
 

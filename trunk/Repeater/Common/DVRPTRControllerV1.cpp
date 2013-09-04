@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -480,7 +480,7 @@ bool CDVRPTRControllerV1::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int, bool end)
+bool CDVRPTRControllerV1::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	if (!m_txEnabled)
 		return false;

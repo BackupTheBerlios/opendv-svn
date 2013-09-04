@@ -331,7 +331,7 @@ void CHeaderData::reset()
 	m_flag3 = 0x00;
 }
 
-CHeaderData& CHeaderData::operator =(const CHeaderData& header)
+CHeaderData& CHeaderData::operator=(const CHeaderData& header)
 {
 	if (&header != this) {
 		m_time     = header.m_time;
