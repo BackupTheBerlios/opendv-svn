@@ -1356,7 +1356,7 @@ Updated XRF901s IP address.
 201308xx
 --------
 
-Updated XRF012, XRF119, and XRFWDXs IP addresses.
+Updated XRF012, XRF119, XRF333, and XRFWDXs IP addresses.
 Added CCS001(GER), CCS007(NLD), CCS013(NOR), CCS020(USA), CCS022(JPN) and CCS024(USA)
 Added DCS024(USA) and DCS025(GER).
 Added new Quadnet ircDDB server.
