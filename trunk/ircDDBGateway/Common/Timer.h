@@ -21,7 +21,7 @@
 
 class CTimer {
 public:
-	explicit CTimer(unsigned int ticksPerSec, unsigned int secs = 0U, unsigned int msecs = 0U);
+	CTimer(unsigned int ticksPerSec, unsigned int secs = 0U, unsigned int msecs = 0U);
 	~CTimer();
 
 	void setTimeout(unsigned int secs, unsigned int msecs = 0U);

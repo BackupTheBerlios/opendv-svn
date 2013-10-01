@@ -1,4 +1,4 @@
-ircDDB Gateway - 20130725
+ircDDB Gateway - 20131001
 =========================
 
 20101010
@@ -1353,7 +1353,7 @@ Added DCS023 and DCS044.
 Added XRF121, XRF444, XRF858, and XRFWDX.
 Updated XRF901s IP address.
 
-201308xx
+20131001
 --------
 
 Updated XRF012, XRF119, XRF333, and XRFWDXs IP addresses.

@@ -23,8 +23,8 @@
 
 class CCallsignList {
 public:
-	explicit CCallsignList(const wxString& filename);
-	virtual ~CCallsignList();
+	CCallsignList(const wxString& filename);
+	~CCallsignList();
 
 	bool load();
 

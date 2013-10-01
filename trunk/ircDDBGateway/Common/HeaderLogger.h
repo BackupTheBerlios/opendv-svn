@@ -27,7 +27,7 @@
 
 class CHeaderLogger {
 public:
-	explicit CHeaderLogger(const wxString& dir, const wxString& name = wxEmptyString);
+	CHeaderLogger(const wxString& dir, const wxString& name = wxEmptyString);
 	~CHeaderLogger();
 
 	bool open();

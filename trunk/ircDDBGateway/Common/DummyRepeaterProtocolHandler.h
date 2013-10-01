@@ -40,7 +40,7 @@
 class CDummyRepeaterProtocolHandler : public IRepeaterProtocolHandler {
 public:
 	CDummyRepeaterProtocolHandler();
-	~CDummyRepeaterProtocolHandler();
+	virtual ~CDummyRepeaterProtocolHandler();
 
 	virtual bool open();
 

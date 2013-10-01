@@ -36,7 +36,7 @@
 class CTCPReaderWriterClient {
 public:
 	CTCPReaderWriterClient(const wxString& address, unsigned int port, const wxString& localAddress = wxEmptyString);
-	explicit CTCPReaderWriterClient(int fd);
+	CTCPReaderWriterClient(int fd);
 	CTCPReaderWriterClient();
 	~CTCPReaderWriterClient();
 

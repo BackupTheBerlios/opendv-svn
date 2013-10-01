@@ -131,7 +131,7 @@ public:
 
 protected:
 	CRepeaterHandler(const wxString& callsign, const wxString& band, const wxString& address, unsigned int port, HW_TYPE hwType, const wxString& reflector, bool atStartup, RECONNECT reconnect, bool dratsEnabled, double frequency, double offset, double range, double latitude, double longitude, double agl, const wxString& description1, const wxString& description2, const wxString& url, IRepeaterProtocolHandler* handler, unsigned char band1, unsigned char band2, unsigned char band3);
-	~CRepeaterHandler();
+	virtual ~CRepeaterHandler();
 
 	void resolveUserInt(const wxString& user, const wxString& repeater, const wxString& gateway, const wxString& address);
 	void resolveRepeaterInt(const wxString& repeater, const wxString& gateway, const wxString& address, DSTAR_PROTOCOL protocol);

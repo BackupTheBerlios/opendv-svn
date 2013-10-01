@@ -44,7 +44,7 @@ enum DPLUS_TYPE {
 
 class CDPlusProtocolHandler {
 public:
-	explicit CDPlusProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	CDPlusProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
 	~CDPlusProtocolHandler();
 
 	bool open();

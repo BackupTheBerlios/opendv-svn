@@ -26,7 +26,7 @@
 class CTimerControlThreadHelper : public wxThread {
 
 public:
-	explicit CTimerControlThreadHelper(CTimerControlThread* thread);
+	CTimerControlThreadHelper(CTimerControlThread* thread);
 	virtual ~CTimerControlThreadHelper();
 
 	virtual void start();

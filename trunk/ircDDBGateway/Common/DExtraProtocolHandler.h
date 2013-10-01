@@ -44,7 +44,7 @@ enum DEXTRA_TYPE {
 
 class CDExtraProtocolHandler {
 public:
-	explicit CDExtraProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	CDExtraProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
 	~CDExtraProtocolHandler();
 
 	bool open();

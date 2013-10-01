@@ -25,7 +25,7 @@
 
 class CTimerControlItemFile {
 public:
-	explicit CTimerControlItemFile(const wxString& fileName);
+	CTimerControlItemFile(const wxString& fileName);
 	~CTimerControlItemFile();
 
 	bool writeItems(CTimerControlItem** items, unsigned int count);

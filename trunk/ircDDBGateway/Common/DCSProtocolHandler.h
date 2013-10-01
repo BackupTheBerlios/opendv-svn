@@ -42,7 +42,7 @@ enum DCS_TYPE {
 
 class CDCSProtocolHandler {
 public:
-	explicit CDCSProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	CDCSProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
 	~CDCSProtocolHandler();
 
 	bool open();

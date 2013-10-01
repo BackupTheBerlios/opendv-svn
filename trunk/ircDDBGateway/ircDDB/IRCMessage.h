@@ -3,7 +3,6 @@
 CIRCDDB - ircDDB client library in C++
 
 Copyright (C) 2010   Michael Dirska, DL1BFF (dl1bff@mdx.de)
-Copyright (C) 2013   Jonathan Naylor, G4KLX
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +33,7 @@ class IRCMessage
 
     IRCMessage( const wxString& toNick, const wxString& msg );
 
-    explicit IRCMessage( const wxString& command );
+    IRCMessage( const wxString& command );
 
     ~IRCMessage();
 

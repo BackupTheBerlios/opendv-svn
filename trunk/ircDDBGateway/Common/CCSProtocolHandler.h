@@ -45,7 +45,7 @@ enum CCS_TYPE {
 
 class CCCSProtocolHandler {
 public:
-	explicit CCCSProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
+	CCCSProtocolHandler(unsigned int port, const wxString& addr = wxEmptyString);
 	~CCCSProtocolHandler();
 
 	bool open();

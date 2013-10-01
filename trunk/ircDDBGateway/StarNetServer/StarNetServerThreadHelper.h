@@ -26,7 +26,7 @@
 class CStarNetServerThreadHelper : public wxThread {
 
 public:
-	explicit CStarNetServerThreadHelper(CStarNetServerThread* thread);
+	CStarNetServerThreadHelper(CStarNetServerThread* thread);
 	virtual ~CStarNetServerThreadHelper();
 
 	virtual void start();

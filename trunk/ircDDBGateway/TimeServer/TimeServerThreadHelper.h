@@ -26,7 +26,7 @@
 class CTimeServerThreadHelper : public wxThread {
 
 public:
-	explicit CTimeServerThreadHelper(CTimeServerThread* thread);
+	CTimeServerThreadHelper(CTimeServerThread* thread);
 	virtual ~CTimeServerThreadHelper();
 
 	virtual void start();

@@ -42,7 +42,7 @@
 
 class CDataQueue {
 public:
-	explicit CDataQueue(CHeaderData* header) :
+	CDataQueue(CHeaderData* header) :
 	m_type(RT_HEADER),
 	m_header(header),
 	m_heard(NULL),
@@ -51,7 +51,7 @@ public:
 	{
 	}
 
-	explicit CDataQueue(CHeardData* heard) :
+	CDataQueue(CHeardData* heard) :
 	m_type(RT_HEARD),
 	m_header(NULL),
 	m_heard(heard),
@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	explicit CDataQueue(CAMBEData* data) :
+	CDataQueue(CAMBEData* data) :
 	m_type(RT_AMBE),
 	m_header(NULL),
 	m_heard(NULL),
@@ -69,7 +69,7 @@ public:
 	{
 	}
 
-	explicit CDataQueue(CDDData* data) :
+	CDataQueue(CDDData* data) :
 	m_type(RT_DD),
 	m_header(NULL),
 	m_heard(NULL),
