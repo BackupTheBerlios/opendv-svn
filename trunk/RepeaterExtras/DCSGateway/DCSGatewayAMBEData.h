@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class CDCSGatewayAMBEData {
 public:
 	CDCSGatewayAMBEData();
 	CDCSGatewayAMBEData(const CDCSGatewayAMBEData& data);
-	virtual ~CDCSGatewayAMBEData();
+	~CDCSGatewayAMBEData();
 
 	bool setRepeaterData(const unsigned char* data, unsigned int length);
 	bool setDCSData(const unsigned char* data, unsigned int length);

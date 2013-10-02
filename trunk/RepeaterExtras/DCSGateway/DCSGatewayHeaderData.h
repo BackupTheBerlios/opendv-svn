@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class CDCSGatewayHeaderData {
 public:
 	CDCSGatewayHeaderData();
 	CDCSGatewayHeaderData(const CDCSGatewayHeaderData& header);
-	virtual ~CDCSGatewayHeaderData();
+	~CDCSGatewayHeaderData();
 
 	bool setRepeaterData(const unsigned char* data, unsigned int length, bool check);
 	bool setDCSData(const unsigned char* data, unsigned int length);

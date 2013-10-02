@@ -66,80 +66,89 @@ void CParrotControllerThread::run()
 
 	wxStopWatch timer;
 
-	while (!m_killed) {
-		timer.Start();
+	try {
+		while (!m_killed) {
+			timer.Start();
 
-		NETWORK_TYPE type;
-		bool res;
+			NETWORK_TYPE type;
+			bool res;
 
-		switch (m_mode) {
-			case PM_PARROT:
-				switch (m_state) {
-					case PS_WAITING:
-						type = m_protocolHandler->read();
-						switch (type) {
-							case NETWORK_NONE:
-								if (m_turnaroundTimer.hasExpired()) {
-									m_turnaroundTimer.stop();
-									transmit(m_fileName);
-								}
-								break;
-							case NETWORK_HEADER:
-								receive(type);
-								break;
-							default:
-								break;
-						}
-						break;
-					case PS_RECEIVING:
-						type = m_protocolHandler->read();
-						receive(type);
-						break;
-					case PS_TRANSMITTING:
-						res = transmit();
-						if (!res) {
-							if (!m_keepFile) {
-								wxLogMessage(wxT("Deleting file %s"), m_fileName.c_str());
-								::wxRemoveFile(m_fileName);
-								m_fileName.Clear();
+			switch (m_mode) {
+				case PM_PARROT:
+					switch (m_state) {
+						case PS_WAITING:
+							type = m_protocolHandler->read();
+							switch (type) {
+								case NETWORK_NONE:
+									if (m_turnaroundTimer.hasExpired()) {
+										m_turnaroundTimer.stop();
+										transmit(m_fileName);
+									}
+									break;
+								case NETWORK_HEADER:
+									receive(type);
+									break;
+								default:
+									break;
 							}
-						}
-						break;
-				}
-				break;
+							break;
+						case PS_RECEIVING:
+							type = m_protocolHandler->read();
+							receive(type);
+							break;
+						case PS_TRANSMITTING:
+							res = transmit();
+							if (!res) {
+								if (!m_keepFile) {
+									wxLogMessage(wxT("Deleting file %s"), m_fileName.c_str());
+									::wxRemoveFile(m_fileName);
+									m_fileName.Clear();
+								}
+							}
+							break;
+					}
+					break;
 
-			case PM_BEACON:
-				switch (m_state) {
-					case PS_WAITING:
-						if (m_beaconTimer.hasExpired()) {
-							res = transmit(m_beaconFileName);
-							if (res)
-								m_beaconTimer.stop();
-							else
+				case PM_BEACON:
+					switch (m_state) {
+						case PS_WAITING:
+							if (m_beaconTimer.hasExpired()) {
+								res = transmit(m_beaconFileName);
+								if (res)
+									m_beaconTimer.stop();
+								else
+									m_beaconTimer.start();
+							}
+							break;
+						case PS_RECEIVING:
+							break;
+						case PS_TRANSMITTING:
+							res = transmit();
+							if (!res)
 								m_beaconTimer.start();
-						}
-						break;
-					case PS_RECEIVING:
-						break;
-					case PS_TRANSMITTING:
-						res = transmit();
-						if (!res)
-							m_beaconTimer.start();
-						break;
-				}
-				break;
+							break;
+					}
+					break;
+			}
+
+			unsigned int ms = timer.Time();
+
+			if (ms < DSTAR_FRAME_TIME_MS) {
+				::wxMilliSleep(DSTAR_FRAME_TIME_MS - ms);
+				ms = timer.Time();
+			}
+
+			m_turnaroundTimer.clock(ms);
+			m_watchdogTimer.clock(ms);
+			m_beaconTimer.clock(ms);
 		}
-
-		unsigned int ms = timer.Time();
-
-		if (ms < DSTAR_FRAME_TIME_MS) {
-			::wxMilliSleep(DSTAR_FRAME_TIME_MS - ms);
-			ms = timer.Time();
-		}
-
-		m_turnaroundTimer.clock(ms);
-		m_watchdogTimer.clock(ms);
-		m_beaconTimer.clock(ms);
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
+	}
+	catch (...) {
+		wxLogError(wxT("Unknown exception raised"));
 	}
 
 	wxLogMessage(wxT("Stopping the Parrot Controller thread"));
