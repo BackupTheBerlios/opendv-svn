@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009-2012 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009-2013 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ void CURIUSBController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, boo
 	inp1 = (buffer[1] & HID_IR0_VD) == HID_IR0_VD;	// Squelch 1
 }
 
-void CURIUSBController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
+void CURIUSBController::setDigitalOutputs(bool outp1, bool, bool outp3, bool outp4, bool outp5, bool outp6, bool, bool)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 
@@ -358,7 +358,7 @@ void CURIUSBController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3, boo
 	inp1 = (buffer[0] & HID_IR0_VD) == HID_IR0_VD;	// Squelch 1
 }
 
-void CURIUSBController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
+void CURIUSBController::setDigitalOutputs(bool outp1, bool, bool outp3, bool outp4, bool outp5, bool outp6, bool, bool)
 {
 	wxASSERT(m_handle != NULL);
 

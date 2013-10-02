@@ -217,6 +217,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterThread.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterThreadHelper.cpp"
 				>
 			</File>

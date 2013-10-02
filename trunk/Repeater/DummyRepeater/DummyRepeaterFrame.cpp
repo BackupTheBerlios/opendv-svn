@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -361,7 +361,7 @@ void CDummyRepeaterFrame::error(const wxString& error)
 	AddPendingEvent(event);
 }
 
-void CDummyRepeaterFrame::onQuit(wxCommandEvent& event)
+void CDummyRepeaterFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
@@ -387,7 +387,7 @@ void CDummyRepeaterFrame::onClose(wxCloseEvent& event)
 	}
 }
 
-void CDummyRepeaterFrame::onPreferences(wxCommandEvent& event)
+void CDummyRepeaterFrame::onPreferences(wxCommandEvent&)
 {
 	wxString callsign1, callsign2;
 	::wxGetApp().getCallsign(callsign1, callsign2);
@@ -459,7 +459,7 @@ void CDummyRepeaterFrame::onPreferences(wxCommandEvent& event)
 	dialog2.ShowModal();
 }
 
-void CDummyRepeaterFrame::onAbout(wxCommandEvent& event)
+void CDummyRepeaterFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -471,7 +471,7 @@ void CDummyRepeaterFrame::onAbout(wxCommandEvent& event)
 	::wxAboutBox(info);
 }
 
-void CDummyRepeaterFrame::onYour(wxCommandEvent& event)
+void CDummyRepeaterFrame::onYour(wxCommandEvent&)
 {
 	wxString your = m_your->GetValue();
 
@@ -511,7 +511,7 @@ bool CDummyRepeaterFrame::processYour(wxString& your)
 	return true;
 }
 
-void CDummyRepeaterFrame::onRpt1(wxCommandEvent& event)
+void CDummyRepeaterFrame::onRpt1(wxCommandEvent&)
 {
 	wxString rpt1 = m_rpt1->GetValue();
 
@@ -551,7 +551,7 @@ bool CDummyRepeaterFrame::processRpt1(wxString& rpt1)
 	return true;
 }
 
-void CDummyRepeaterFrame::onRpt2(wxCommandEvent& event)
+void CDummyRepeaterFrame::onRpt2(wxCommandEvent&)
 {
 	wxString rpt2 = m_rpt2->GetValue();
 
@@ -638,7 +638,7 @@ void CDummyRepeaterFrame::onTransmit(wxCommandEvent& event)
 	}
 }
 
-void CDummyRepeaterFrame::onOneTouchReply(wxCommandEvent& event)
+void CDummyRepeaterFrame::onOneTouchReply(wxCommandEvent&)
 {
 	wxString my12 = m_hrdMy->GetLabel();
 
@@ -676,7 +676,7 @@ void CDummyRepeaterFrame::onOneTouchReply(wxCommandEvent& event)
 	m_rpt2->SetValue(rpt2);
 }
 
-void CDummyRepeaterFrame::onTimeout(wxTimerEvent& event)
+void CDummyRepeaterFrame::onTimeout(wxTimerEvent&)
 {
 	m_status->SetBackgroundColour(*wxLIGHT_GREY);
 	m_status->SetLabel(wxEmptyString);

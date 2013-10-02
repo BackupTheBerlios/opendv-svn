@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002-2004,2006-2009 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002-2004,2006-2009,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@
 class CWAVFileWriter {
 public:
 	CWAVFileWriter(const wxString& fileName, unsigned int sampleRate, unsigned int channels, unsigned int sampleWidth, unsigned int blockSize);
-	virtual ~CWAVFileWriter();
+	~CWAVFileWriter();
 
-	virtual bool open();
-	virtual bool write(const wxFloat32* buffer, unsigned int length);
-	virtual void close();
+	bool open();
+	bool write(const wxFloat32* buffer, unsigned int length);
+	void close();
 
-	virtual unsigned int getSampleRate() const;
-	virtual unsigned int getChannels() const;
+	unsigned int getSampleRate() const;
+	unsigned int getChannels() const;
 
 private:
 	wxString     m_fileName;

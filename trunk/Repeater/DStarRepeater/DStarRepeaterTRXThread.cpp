@@ -647,7 +647,7 @@ void CDStarRepeaterTRXThread::receiveHeader(CHeaderData* header)
 	}
 }
 
-void CDStarRepeaterTRXThread::receiveSlowData(unsigned char* data, unsigned int length)
+void CDStarRepeaterTRXThread::receiveSlowData(unsigned char* data, unsigned int)
 {
 	unsigned int errs;
 	errs  = countBits(data[VOICE_FRAME_LENGTH_BYTES + 0U] ^ DATA_SYNC_BYTES[0U]);
@@ -686,7 +686,7 @@ void CDStarRepeaterTRXThread::receiveSlowData(unsigned char* data, unsigned int 
 	}
 }
 
-void CDStarRepeaterTRXThread::receiveRadioData(unsigned char* data, unsigned int length)
+void CDStarRepeaterTRXThread::receiveRadioData(unsigned char* data, unsigned int)
 {
 	unsigned int errs;
 	errs  = countBits(data[VOICE_FRAME_LENGTH_BYTES + 0U] ^ DATA_SYNC_BYTES[0U]);

@@ -172,7 +172,7 @@ void CDStarRepeaterTXThread::kill()
 	m_killed = true;
 }
 
-void CDStarRepeaterTXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply)
+void CDStarRepeaterTXThread::setCallsign(const wxString& callsign, const wxString&, DSTAR_MODE, ACK_TYPE, bool, bool, bool, bool)
 {
 	// Pad the callsign up to eight characters
 	m_rptCallsign = callsign;
@@ -193,43 +193,43 @@ void CDStarRepeaterTXThread::setModem(IDStarRepeaterModem* modem)
 	m_modem = modem;
 }
 
-void CDStarRepeaterTXThread::setTimes(unsigned int timeout, unsigned int ackTime)
+void CDStarRepeaterTXThread::setTimes(unsigned int, unsigned int)
 {
 }
 
-void CDStarRepeaterTXThread::setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language)
+void CDStarRepeaterTXThread::setBeacon(unsigned int, const wxString&, bool, TEXT_LANG)
 {
 }
 
-void CDStarRepeaterTXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+void CDStarRepeaterTXThread::setAnnouncement(bool, unsigned int, const wxString&, const wxString&, const wxString&, const wxString&)
 {
 }
 
-void CDStarRepeaterTXThread::setController(CExternalController* controller, unsigned int activeHangTime)
+void CDStarRepeaterTXThread::setController(CExternalController*, unsigned int)
 {
 }
 
-void CDStarRepeaterTXThread::setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4)
+void CDStarRepeaterTXThread::setControl(bool, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&)
 {
 }
 
-void CDStarRepeaterTXThread::setOutputs(bool out1, bool out2, bool out3, bool out4)
+void CDStarRepeaterTXThread::setOutputs(bool, bool, bool, bool)
 {
 }
 
-void CDStarRepeaterTXThread::setLogging(bool logging, const wxString& dir)
+void CDStarRepeaterTXThread::setLogging(bool, const wxString&)
 {
 }
 
-void CDStarRepeaterTXThread::setWhiteList(CCallsignList* list)
+void CDStarRepeaterTXThread::setWhiteList(CCallsignList*)
 {
 }
 
-void CDStarRepeaterTXThread::setBlackList(CCallsignList* list)
+void CDStarRepeaterTXThread::setBlackList(CCallsignList*)
 {
 }
 
-void CDStarRepeaterTXThread::setGreyList(CCallsignList* list)
+void CDStarRepeaterTXThread::setGreyList(CCallsignList*)
 {
 }
 

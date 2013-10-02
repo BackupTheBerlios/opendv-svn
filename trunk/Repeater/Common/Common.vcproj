@@ -282,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GMSKModem.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GMSKModemLibUsb.cpp"
 				>
 			</File>
@@ -295,6 +299,10 @@
 			</File>
 			<File
 				RelativePath=".\Golay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HardwareController.cpp"
 				>
 			</File>
 			<File

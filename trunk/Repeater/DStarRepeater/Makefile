@@ -2,19 +2,19 @@ all:			dstarrepeater dstarrepeaterd
 
 CFLAGS :=		-I../Common $(CFLAGS)
 
-dstarrepeater:	DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o \
-					DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o \
-					DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterTRXThread.o \
+dstarrepeater:	DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterThread.o DStarRepeaterTRXThread.o \
 					DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o DStarRepeaterDVAPController.o \
-					DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o \
-					../Common/Common.a $(LIBS)
-
-dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterStatusData.o \
+					DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o ../Common/Common.a
+				$(CC) $(LDFLAGS) -o dstarrepeater DStarRepeaterApp.o DStarRepeaterFrame.o DStarRepeaterLogger.o DStarRepeaterStatusData.o DStarRepeaterThread.o \
+					DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o DStarRepeaterThreadHelper.o \
 					DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o \
+					DStarRepeaterSoundCardController.o ../Common/Common.a $(LIBS)
+
+dstarrepeaterd:	DStarRepeaterD.o DStarRepeaterThread.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
+					DStarRepeaterStatusData.o DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o DStarRepeaterGMSKController.o \
 					DStarRepeaterSoundCardController.o ../Common/Common.a
-				$(CC) $(LDFLAGS) -o dstarrepeaterd DStarRepeaterD.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o DStarRepeaterRXThread.o \
-					DStarRepeaterStatusData.o DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o \
+				$(CC) $(LDFLAGS) -o dstarrepeaterd DStarRepeaterD.o DStarRepeaterThread.o DStarRepeaterTRXThread.o DStarRepeaterTXRXThread.o DStarRepeaterTXThread.o \
+					DStarRepeaterRXThread.o DStarRepeaterStatusData.o DStarRepeaterDVAPController.o DStarRepeaterDVRPTRV1Controller.o DStarRepeaterDVRPTRV2Controller.o \
 					DStarRepeaterGMSKController.o DStarRepeaterSoundCardController.o ../Common/Common.a $(LIBS)
 
 DStarRepeaterApp.o:	DStarRepeaterApp.cpp DStarRepeaterApp.h DStarRepeaterThread.h DStarRepeaterTRXThread.h DStarRepeaterTXRXThread.h DStarRepeaterTXThread.h \
@@ -64,6 +64,9 @@ DStarRepeaterSoundCardController.o:	DStarRepeaterSoundCardController.cpp DStarRe
 
 DStarRepeaterStatusData.o:	DStarRepeaterStatusData.cpp DStarRepeaterStatusData.h DStarRepeaterDefs.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterStatusData.cpp
+
+DStarRepeaterThread.o:	DStarRepeaterThread.cpp DStarRepeaterThread.h
+				$(CC) $(CFLAGS) -c DStarRepeaterThread.cpp
 
 DStarRepeaterTRXThread.o:	DStarRepeaterTRXThread.cpp DStarRepeaterTRXThread.h DStarRepeaterThread.h DStarRepeaterDefs.h DStarRepeaterApp.h \
 					DStarRepeaterStatusData.h DStarRepeaterModem.h DStarRepeaterDVAPController.h ../Common/AMBEFEC.h ../Common/DStarDefines.h ../Common/HeaderData.h \

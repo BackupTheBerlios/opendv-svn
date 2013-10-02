@@ -3,11 +3,11 @@ all:		Common.a
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o ArduinoController.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o \
 		CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
 		DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o \
-		DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FIRFilter.o GMSKModemLibUsb.o Goertzel.o Golay.o HeaderData.o \
-		K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o \
-		PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o \
-		SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o \
-		WAVFileReader.o WAVFileWriter.o
+		DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FIRFilter.o GMSKModem.o GMSKModemLibUsb.o Goertzel.o Golay.o \
+		HardwareController.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o MessageTextCtrl.o NetworkController.o \
+		NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o \
+		RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o \
+		UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -110,6 +110,9 @@ ExternalController.o:	ExternalController.cpp ExternalController.h DStarDefines.h
 FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
 
+GMSKModem.o:	GMSKModem.cpp GMSKModem.h
+		$(CC) $(CFLAGS) -c GMSKModem.cpp
+
 GMSKModemLibUsb.o:	GMSKModemLibUsb.cpp GMSKModemLibUsb.h GMSKModem.h HeaderData.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c GMSKModemLibUsb.cpp
 
@@ -118,6 +121,9 @@ Goertzel.o:	Goertzel.cpp Goertzel.h Utils.h
 
 Golay.o:	Golay.cpp Golay.h
 		$(CC) $(CFLAGS) -c Golay.cpp
+
+HardwareController.o:	HardwareController.cpp HardwareController.h
+		$(CC) $(CFLAGS) -c HardwareController.cpp
 
 HeaderData.o:	HeaderData.cpp HeaderData.h DStarDefines.h CCITTChecksumReverse.h
 		$(CC) $(CFLAGS) -c HeaderData.cpp

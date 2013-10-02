@@ -135,7 +135,7 @@ void CDStarRepeaterRXThread::kill()
 	m_killed = true;
 }
 
-void CDStarRepeaterRXThread::setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply)
+void CDStarRepeaterRXThread::setCallsign(const wxString&, const wxString&, DSTAR_MODE, ACK_TYPE, bool, bool, bool, bool)
 {
 }
 
@@ -153,43 +153,43 @@ void CDStarRepeaterRXThread::setModem(IDStarRepeaterModem* modem)
 	m_modem = modem;
 }
 
-void CDStarRepeaterRXThread::setTimes(unsigned int timeout, unsigned int ackTime)
+void CDStarRepeaterRXThread::setTimes(unsigned int, unsigned int)
 {
 }
 
-void CDStarRepeaterRXThread::setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language)
+void CDStarRepeaterRXThread::setBeacon(unsigned int, const wxString&, bool, TEXT_LANG)
 {
 }
 
-void CDStarRepeaterRXThread::setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2)
+void CDStarRepeaterRXThread::setAnnouncement(bool, unsigned int, const wxString&, const wxString&, const wxString&, const wxString&)
 {
 }
 
-void CDStarRepeaterRXThread::setController(CExternalController* controller, unsigned int activeHangTime)
+void CDStarRepeaterRXThread::setController(CExternalController*, unsigned int)
 {
 }
 
-void CDStarRepeaterRXThread::setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4)
+void CDStarRepeaterRXThread::setControl(bool, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&, const wxString&)
 {
 }
 
-void CDStarRepeaterRXThread::setOutputs(bool out1, bool out2, bool out3, bool out4)
+void CDStarRepeaterRXThread::setOutputs(bool, bool, bool, bool)
 {
 }
 
-void CDStarRepeaterRXThread::setLogging(bool logging, const wxString& dir)
+void CDStarRepeaterRXThread::setLogging(bool, const wxString&)
 {
 }
 
-void CDStarRepeaterRXThread::setWhiteList(CCallsignList* list)
+void CDStarRepeaterRXThread::setWhiteList(CCallsignList*)
 {
 }
 
-void CDStarRepeaterRXThread::setBlackList(CCallsignList* list)
+void CDStarRepeaterRXThread::setBlackList(CCallsignList*)
 {
 }
 
-void CDStarRepeaterRXThread::setGreyList(CCallsignList* list)
+void CDStarRepeaterRXThread::setGreyList(CCallsignList*)
 {
 }
 
@@ -257,7 +257,7 @@ void CDStarRepeaterRXThread::receiveHeader(CHeaderData* header)
 	}
 }
 
-void CDStarRepeaterRXThread::receiveSlowData(unsigned char* data, unsigned int length)
+void CDStarRepeaterRXThread::receiveSlowData(unsigned char* data, unsigned int)
 {
 	unsigned int errs;
 	errs  = countBits(data[VOICE_FRAME_LENGTH_BYTES + 0U] ^ DATA_SYNC_BYTES[0U]);
@@ -296,7 +296,7 @@ void CDStarRepeaterRXThread::receiveSlowData(unsigned char* data, unsigned int l
 	}
 }
 
-void CDStarRepeaterRXThread::receiveRadioData(unsigned char* data, unsigned int length)
+void CDStarRepeaterRXThread::receiveRadioData(unsigned char* data, unsigned int)
 {
 	unsigned int errs;
 	errs  = countBits(data[VOICE_FRAME_LENGTH_BYTES + 0U] ^ DATA_SYNC_BYTES[0U]);
