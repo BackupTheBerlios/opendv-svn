@@ -54,6 +54,7 @@ m_password(NULL)
 	m_hostname->Append(wxT("itsns3.no-ip.org"));
 	m_hostname->Append(wxT("itsn-s4.no-ip.org"));
 	m_hostname->Append(wxT("k0atm.dyndns.org"));
+	m_hostname->Append(wxT("ozquadnet.sytes.net"));
 	m_hostname->Append(wxT("server1-ik2xyp.free-dstar.org"));
 	m_hostname->Append(wxT("ircddb.dstar.su"));
 	sizer->Add(m_hostname, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
