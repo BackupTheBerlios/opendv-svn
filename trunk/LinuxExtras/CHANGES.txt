@@ -2,6 +2,18 @@
 CHANGES / RESOLVED ISSUES:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+TITLE: bugfix in dashboard script fixed
+FOUND: 2013-10-07
+REPORTED: N1JMM
+SOLVED: 2013-10-11
+COMMIT: 2013-10-11
+
+- fixes in HTML code of the dashboard's php-script
+- cleanups
+- all platforms moved to the same code
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 TITLE: dstarrepeater package added
 FOUND: 2013-08-31
 REPORTED: DL5DI
