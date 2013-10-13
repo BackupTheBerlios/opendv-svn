@@ -1368,3 +1368,4 @@ Catch exceptions and other C++ changes in the ircDDB Gateway and STARnet Digital
 
 Updated REF020s IP address.
 Added new QuadNet ircDDB server.
+Ignore new CCS message type.

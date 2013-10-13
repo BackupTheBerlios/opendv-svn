@@ -152,6 +152,8 @@ bool CCCSProtocolHandler::readPackets()
 			case 17U:
 				m_type = CT_MISC;
 				return false;
+			case 39U:
+				return true;
 			default:
 				break;
 		}
