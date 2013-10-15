@@ -18,6 +18,7 @@ DESC=dstarrepeater             # Introduce a short description here
 NAME=dstarrepeater_1           # Introduce the short server's name here
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
+MOD=1
 
 if [ $UID -ne 0 ]; then
 	echo
@@ -73,14 +74,14 @@ do_start()
 #	sleep 2
 
 	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH -- \
-		$DAEMON_ARGS \
+		$DAEMON_ARGS $MOD \
 		|| return 2
 
 	# create PID-file, option "--make-pidfile" wont work in this case
-	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS" | grep -v grep | awk '{print $2}' > $PIDFILE
+	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS $MOD" | grep -v grep | awk '{print $2}' > $PIDFILE
 
 	# create a watchdog entry to the crontab
-	echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_ARGS' | grep -vq grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
+	echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_ARGS $MOD' | grep -vq grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
 }
 
 #
@@ -95,7 +96,7 @@ do_stop()
 	#   other if a failure occurred
 
 	# create pidfile, daemon might have been started without using this script
-	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS" | grep -v grep | awk '{print $2}' > $PIDFILE
+	ps -ef | grep "$DAEMON_PATH $DAEMON_ARGS $MOD" | grep -v grep | awk '{print $2}' > $PIDFILE
 
 	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
 	RETVAL="$?"

@@ -17,6 +17,7 @@ if [ $UID -ne 0 ]; then
 fi
 
 me=dstarrepeater_2
+MOD=2
 
 # Source function library.
 if [ -f /etc/init.d/functions ] ; then
@@ -41,17 +42,17 @@ RETVAL=0
 dostart() {
 
     echo -n "Starting $me:"
-    daemon --pidfile /var/run/$me.pid $DAEMON_PATH $DAEMON_OPTIONS &
+    daemon --pidfile /var/run/$me.pid $DAEMON_PATH $DAEMON_OPTIONS $MOD &
     RETVAL=$?
     [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$me
     sleep 3
-    line=$(ps x | grep -v "grep" | grep "$DAEMON_PATH $DAEMON_OPTIONS")
+    line=$(ps x | grep -v "grep" | grep "$DAEMON_PATH $DAEMON_OPTIONS $MOD")
     set -- $line
     echo ""
     echo "PID: $1"
     echo "$1" > /var/run/$me.pid
 # create a watchdog entry to the crontab
-    echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_OPTIONS' | grep -vq grep || /etc/init.d/$me start" > /etc/cron.d/$me
+    echo "*/10 * * * * root ps aux | grep '$DAEMON_PATH $DAEMON_OPTIONS $MOD' | grep -vq grep || /etc/init.d/$me start" > /etc/cron.d/$me
     return $RETVAL
 }
 

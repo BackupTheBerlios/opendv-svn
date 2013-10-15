@@ -24,6 +24,7 @@ DAEMON_USER=opendv
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
+# Exit if not started as root
 if [ $UID -ne 0 ]; then
 	echo
 	echo "ERROR:  This script must be run as the root user!"
@@ -55,18 +56,28 @@ do_start()
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
-	start-stop-daemon --status --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH -- \
-		$DAEMON_ARGS \
-	RETVAL="$?"
-	[ "$RETVAL" = 0 ] && return 1
+
+	# Check if the PID file exists and the actual status of the process
+	if [ -e $PIDFILE ]; then
+		status_of_proc -p $PIDFILE $DAEMON_PATH "$NAME process" && status="0" || status="$?"
+		# If the status is SUCCESS then don't need to start again.
+		if [ $status = "0" ]; then
+			return 1 # Exit
+		fi
+	fi
+
+	#	setting the time might be necessary on systems without realtime clock
     ps aux | grep ntpd | grep -vq grep && /etc/init.d/ntp stop
     ntpdate pool.ntp.org
     [ -x /etc/init.d/ntp ] && /etc/init.d/ntp start
     sleep 2
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH -- \
-		$DAEMON_ARGS \
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $DAEMON_USER --exec $DAEMON_PATH -- $DAEMON_ARGS \
 		|| return 2
 	sleep 2
+
+	# create PID-file, option "--make-pidfile" wont work in this case
+	ps -ef | grep "$DAEMON_PATH" | grep -v grep | awk '{print $2}' > $PIDFILE 
+	
 	# create a watchdog entry to the crontab
 	echo "*/10 * * * * root ps aux | grep $DAEMON_NAME | grep -vq grep || /etc/init.d/$NAME start" > /etc/cron.d/$NAME
 }
@@ -81,9 +92,14 @@ do_stop()
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
+
+	# create pidfile, daemon might have been started without using this script
+	ps -ef | grep "$DAEMON_PATH" | grep -v grep | awk '{print $2}' > $PIDFILE
+
 	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
 	RETVAL="$?"
 	[ "$RETVAL" = 2 ] && return 2
+	
 	# Wait for children to finish too if this is a daemon that forks
 	# and if the daemon is only ever run from this initscript.
 	# If the above conditions are not satisfied then add some other code
@@ -92,6 +108,7 @@ do_stop()
 	# sleep for some time.
 	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON_PATH
 	[ "$?" = 2 ] && return 2
+	
 	# Many daemons don't delete their pidfiles when they exit.
 	rm -f $PIDFILE
 	# remove watchdog entry from crontab
