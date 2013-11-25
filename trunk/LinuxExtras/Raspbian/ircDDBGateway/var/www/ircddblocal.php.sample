@@ -8,7 +8,7 @@ $hdrLogPath = $logPath . '/Headers.log';
 $ddmode_log = $logPath . '/DDMode.log';
 $configPath='/etc';
 $gatewayConfigPath = '/home/opendv/ircddbgateway/ircddbgateway';
-$systemConfigPath = '/etc/default';
+$sysConfigPath = '/etc/default';
 $defaultConfPath = '/home/opendv/default';
 $sharedFilesPath = '/home/opendv/data';
 //

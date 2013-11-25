@@ -43,14 +43,16 @@ dostart() {
     # create a watchdog entry to the crontab
     echo "*/10 * * * * root ps aux | grep $DAEMON_PATH | grep -vq grep || /etc/init.d/$me start" > /etc/cron.d/$me
     if [ "${IRCDDBGATEWAY_DDENABLED}" = "yes" ]; then
-	echo " - configure dd-mode network device $IRCDDBGATEWAY_DDDEV "
+		echo " - configure dd-mode network device $IRCDDBGATEWAY_DDDEV "
         sleep 15
-	/sbin/ifconfig $IRCDDBGATEWAY_DDDEV $IRCDDBGATEWAY_DDIP netmask $IRCDDBGATEWAY_DDMASK
+		/sbin/ifconfig $IRCDDBGATEWAY_DDDEV $IRCDDBGATEWAY_DDIP netmask $IRCDDBGATEWAY_DDMASK
         echo 1 > /proc/sys/net/ipv4/ip_forward
-	if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
-	    echo " - start dhcpd "
-            /sbin/service dhcpd start
-	fi
+		if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
+			echo " - start dhcpd "
+			/sbin/service dhcpd start
+			sleep 3
+			[ -x /usr/local/bin/dd-services.sh ] && /usr/local/bin/dd-services.sh
+		fi
     fi
 }
 

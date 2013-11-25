@@ -44,6 +44,7 @@
 # 2013-03-15 dl5di    allow new OZ callsign format
 # 2013-04-07 dl5di    removing repeater modules added
 # 2013-04-08 dl5di	  cleanups
+# 2013-11-25 dl5di	  bugfix update-rc
 #
 # Todo / known issues:
 # - implement sanity check for config file 
@@ -3082,7 +3083,7 @@ while [ "$SELECT" -ne 99 ]; do
 		20)
 			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_act" 
-				/usr/sbin/update-rc.d ircddbgateway defaults
+				/usr/sbin/update-rc.d ircddbgateway start
 			else
 				print_text "scr_err" 
 			fi
@@ -3091,7 +3092,7 @@ while [ "$SELECT" -ne 99 ]; do
 		21)
 			if [ -f /etc/init.d/ircddbgateway ]; then
 				print_text "scr_deact" 
-				/usr/sbin/update-rc.d ircddbgateway remove
+				/usr/sbin/update-rc.d ircddbgateway stop
 			else
 				print_text "scr_err" 
 			fi
@@ -3100,7 +3101,7 @@ while [ "$SELECT" -ne 99 ]; do
 		22)
 			if [ -f  /etc/init.d/timeserver ]; then
 				print_text "timer_act" 
-				/usr/sbin/update-rc.d timeserver defaults
+				/usr/sbin/update-rc.d timeserver start
 			else
 				print_text "timer_err" 
 			fi
@@ -3109,7 +3110,7 @@ while [ "$SELECT" -ne 99 ]; do
 		23)
 			if [ -f  /etc/init.d/timeserver ]; then
 				print_text "timer_deact" 
-				/usr/sbin/update-rc.d timeserver remove
+				/usr/sbin/update-rc.d timeserver stop
 			else
 				print_text "timer_err" 
 			fi

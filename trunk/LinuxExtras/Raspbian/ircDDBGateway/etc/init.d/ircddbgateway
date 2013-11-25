@@ -88,8 +88,10 @@ do_start()
 	    /sbin/ifconfig $IRCDDBGATEWAY_DDDEV $IRCDDBGATEWAY_DDIP netmask $IRCDDBGATEWAY_DDMASK
     	    echo 1 > /proc/sys/net/ipv4/ip_forward
 	    if [ "${IRCDDBGATEWAY_DDDHCP}" = "yes" ]; then
-		echo " - start dhcpd "
-        	[ -x "/etc/init.d/dhcpd" ] && /etc/init.d/dhcpd start
+			echo " - start dhcpd "
+			[ -x "/etc/init.d/dhcpd" ] && /etc/init.d/dhcpd start
+			sleep 3
+			[ -x /home/opendv/ircddbgateway/dd-services.sh ] && /home/opendv/ircddbgateway/dd-services.sh
 	    fi
 	fi
 }

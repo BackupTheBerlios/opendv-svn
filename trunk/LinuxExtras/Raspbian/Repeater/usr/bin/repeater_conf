@@ -46,6 +46,7 @@
 # 2013-03-03 dl5di    fix upgrade
 # 2013-03-06 dl5di    bugfix request_selection/request_value
 # 2013-03-15 dl5di    allow new OZ callsign format
+# 2013-11-25 dl5di	  bugfix update-rc
 #
 # Todo / known issues:
 # - full implementation of soundmodem configuration and Vellemann board
@@ -2520,7 +2521,7 @@ setup_main(){
 	    20)
 		if [ -f /etc/init.d/repeater_$MODULE ]; then
 		    print_text "scr_act"
-		    /usr/sbin/update-rc.d repeater_$MODULE defaults
+		    /usr/sbin/update-rc.d repeater_$MODULE start
 		else
 		    print_text "scr_err" 
 		fi
@@ -2529,7 +2530,7 @@ setup_main(){
 	    21)
 		if [ -f /etc/init.d/repeater_$MODULE ]; then
 		    print_text "scr_deact" 
-		    /usr/sbin/update-rc.d -f repeater_$MODULE remove
+		    /usr/sbin/update-rc.d -f repeater_$MODULE stop
 		else
 		    print_text "scr_err" 
 		fi
