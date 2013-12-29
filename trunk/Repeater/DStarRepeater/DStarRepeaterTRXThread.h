@@ -55,7 +55,6 @@ public:
 	virtual void setControl(bool enabled, const wxString& rpt1Callsign, const wxString& rpt2Callsign, const wxString& shutdown, const wxString& startup, const wxString& status1, const wxString& status2, const wxString& status3, const wxString& status4, const wxString& status5, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& command3, const wxString& command3Line, const wxString& command4, const wxString& command4Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4);
 	virtual void setOutputs(bool out1, bool out2, bool out3, bool out4);
 	virtual void setLogging(bool logging, const wxString& dir);
-	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
 	virtual void setGreyList(CCallsignList* list);
 
@@ -184,7 +183,6 @@ private:
 	wxStopWatch                m_packetTime;
 	unsigned int               m_packetCount;
 	unsigned int               m_packetSilence;
-	CCallsignList*             m_whiteList;
 	CCallsignList*             m_blackList;
 	CCallsignList*             m_greyList;
 	bool                       m_blocked;

@@ -40,7 +40,6 @@ public:
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
 	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
 	virtual void setLogging(bool logging, const wxString& dir);
-	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
 	virtual void setGreyList(CCallsignList* list);
 

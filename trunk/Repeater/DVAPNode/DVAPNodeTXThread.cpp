@@ -184,10 +184,6 @@ void CDVAPNodeTXThread::setLogging(bool logging, const wxString& dir)
 {
 }
 
-void CDVAPNodeTXThread::setWhiteList(CCallsignList* list)
-{
-}
-
 void CDVAPNodeTXThread::setBlackList(CCallsignList* list)
 {
 }

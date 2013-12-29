@@ -50,7 +50,6 @@ public:
 	virtual void setOutputs(bool out1, bool out2, bool out3, bool out4) = 0;
 	virtual void setLogging(bool logging, const wxString& dir) = 0;
 	virtual void setReader(CWAVFileReader* reader) = 0;
-	virtual void setWhiteList(CCallsignList* list) = 0;
 	virtual void setBlackList(CCallsignList* list) = 0;
 	virtual void setGreyList(CCallsignList* list) = 0;
 

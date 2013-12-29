@@ -47,7 +47,6 @@ public:
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
 	virtual void setAnnouncement(bool enabled, unsigned int time, const wxString& recordRPT1, const wxString& recordRPT2, const wxString& deleteRPT1, const wxString& deleteRPT2);
 	virtual void setLogging(bool logging, const wxString& dir);
-	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
 	virtual void setGreyList(CCallsignList* list);
 
@@ -117,7 +116,6 @@ private:
 	wxStopWatch                m_packetTime;
 	unsigned int               m_packetCount;
 	unsigned int               m_packetSilence;
-	CCallsignList*             m_whiteList;
 	CCallsignList*             m_blackList;
 	CCallsignList*             m_greyList;
 	bool                       m_blocked;

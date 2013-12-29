@@ -30,7 +30,6 @@ const wxString LOG_DIR  = wxT("/var/log");
 const wxString CONF_DIR = wxT("/etc");
 #endif
 
-const wxString WHITELIST_FILE_NAME = wxT("whitelist.dat");
 const wxString BLACKLIST_FILE_NAME = wxT("blacklist.dat");
 const wxString GREYLIST_FILE_NAME  = wxT("greylist.dat");
 

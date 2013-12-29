@@ -125,7 +125,6 @@ m_status3Text(),
 m_status4Text(),
 m_status5Text(),
 m_regEx(wxT("^[A-Z0-9]{1}[A-Z0-9]{0,1}[0-9]{1,2}[A-Z]{1,4} {0,4}[ A-Z]{1}$")),
-m_whiteList(NULL),
 m_blackList(NULL),
 m_greyList(NULL),
 m_blocked(false),
@@ -299,7 +298,6 @@ void CSplitRepeaterThread::run()
 	delete m_beacon;
 	delete m_announcement;
 
-	delete m_whiteList;
 	delete m_blackList;
 	delete m_greyList;
 
@@ -484,13 +482,6 @@ void CSplitRepeaterThread::setControl(bool enabled, const wxString& rpt1Callsign
 	m_controlCommand2.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
 	m_controlCommand3.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
 	m_controlCommand4.resize(LONG_CALLSIGN_LENGTH, wxT(' '));
-}
-
-void CSplitRepeaterThread::setWhiteList(CCallsignList* list)
-{
-	wxASSERT(list != NULL);
-
-	m_whiteList = list;
 }
 
 void CSplitRepeaterThread::setBlackList(CCallsignList* list)
@@ -1177,14 +1168,6 @@ bool CSplitRepeaterThread::processRadioHeader(CSplitRepeaterHeaderData* header)
 	// If shutdown we ignore incoming headers
 	if (m_state == DSRS_SHUTDOWN)
 		return true;
-
-	if (m_whiteList != NULL) {
-		bool res = m_whiteList->isInList(header->getMyCall1());
-		if (!res) {
-			wxLogMessage(wxT("%s rejected due to not being in the white list"), header->getMyCall1().c_str());
-			return true;
-		}
-	}
 
 	if (m_blackList != NULL) {
 		bool res = m_blackList->isInList(header->getMyCall1());

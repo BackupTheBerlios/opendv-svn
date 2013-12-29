@@ -159,10 +159,6 @@ void CDVRPTRRepeaterRXThread::setLogging(bool logging, const wxString& dir)
 {
 }
 
-void CDVRPTRRepeaterRXThread::setWhiteList(CCallsignList* list)
-{
-}
-
 void CDVRPTRRepeaterRXThread::setBlackList(CCallsignList* list)
 {
 }

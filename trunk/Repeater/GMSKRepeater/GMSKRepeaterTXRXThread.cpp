@@ -293,10 +293,6 @@ void CGMSKRepeaterTXRXThread::setLogging(bool logging, const wxString& dir)
 {
 }
 
-void CGMSKRepeaterTXRXThread::setWhiteList(CCallsignList* list)
-{
-}
-
 void CGMSKRepeaterTXRXThread::setBlackList(CCallsignList* list)
 {
 }

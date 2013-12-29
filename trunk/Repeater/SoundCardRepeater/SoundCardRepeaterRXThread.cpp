@@ -234,10 +234,6 @@ void CSoundCardRepeaterRXThread::setLogging(bool logging, const wxString& dir)
 {
 }
 
-void CSoundCardRepeaterRXThread::setWhiteList(CCallsignList* list)
-{
-}
-
 void CSoundCardRepeaterRXThread::setBlackList(CCallsignList* list)
 {
 }

@@ -221,10 +221,6 @@ void CDStarRepeaterTXThread::setLogging(bool, const wxString&)
 {
 }
 
-void CDStarRepeaterTXThread::setWhiteList(CCallsignList*)
-{
-}
-
 void CDStarRepeaterTXThread::setBlackList(CCallsignList*)
 {
 }

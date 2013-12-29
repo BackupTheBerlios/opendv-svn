@@ -86,7 +86,6 @@ m_headerTime(),
 m_packetTime(),
 m_packetCount(0U),
 m_packetSilence(0U),
-m_whiteList(NULL),
 m_blackList(NULL),
 m_greyList(NULL),
 m_blocked(false),
@@ -217,7 +216,6 @@ void CDVAPNodeTRXThread::run()
 	delete m_beacon;
 	delete m_announcement;
 
-	delete m_whiteList;
 	delete m_blackList;
 	delete m_greyList;
 
@@ -318,13 +316,6 @@ void CDVAPNodeTRXThread::setLogging(bool logging, const wxString& dir)
 		m_logging = NULL;
 		return;
 	}
-}
-
-void CDVAPNodeTRXThread::setWhiteList(CCallsignList* list)
-{
-	wxASSERT(list != NULL);
-
-	m_whiteList = list;
 }
 
 void CDVAPNodeTRXThread::setBlackList(CCallsignList* list)
@@ -827,15 +818,6 @@ bool CDVAPNodeTRXThread::processRadioHeader(CHeaderData* header)
 		wxLogMessage(wxT("Received a DD packet, ignoring"));
 		delete header;
 		return false;
-	}
-
-	if (m_whiteList != NULL) {
-		bool res = m_whiteList->isInList(header->getMyCall1());
-		if (!res) {
-			wxLogMessage(wxT("%s rejected due to not being in the white list"), header->getMyCall1().c_str());
-			delete header;
-			return true;
-		}
 	}
 
 	if (m_blackList != NULL) {

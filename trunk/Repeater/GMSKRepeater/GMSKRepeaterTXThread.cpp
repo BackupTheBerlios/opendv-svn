@@ -204,10 +204,6 @@ void CGMSKRepeaterTXThread::setLogging(bool logging, const wxString& dir)
 {
 }
 
-void CGMSKRepeaterTXThread::setWhiteList(CCallsignList* list)
-{
-}
-
 void CGMSKRepeaterTXThread::setBlackList(CCallsignList* list)
 {
 }

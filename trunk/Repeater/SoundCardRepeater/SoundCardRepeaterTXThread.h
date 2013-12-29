@@ -52,7 +52,6 @@ public:
 	virtual void setOutputs(bool out1, bool out2, bool out3, bool out4);
 	virtual void setLogging(bool logging, const wxString& dir);
 	virtual void setReader(CWAVFileReader* reader);
-	virtual void setWhiteList(CCallsignList* list);
 	virtual void setBlackList(CCallsignList* list);
 	virtual void setGreyList(CCallsignList* list);
 

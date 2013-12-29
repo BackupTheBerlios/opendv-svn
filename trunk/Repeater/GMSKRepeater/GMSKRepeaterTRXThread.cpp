@@ -136,7 +136,6 @@ m_modemBuffer(NULL),
 m_modemLength(0U),
 m_modemEnd(false),
 m_packetSilence(0U),
-m_whiteList(NULL),
 m_blackList(NULL),
 m_greyList(NULL),
 m_blocked(false),
@@ -415,7 +414,6 @@ void CGMSKRepeaterTRXThread::run()
 	delete m_beacon;
 	delete m_announcement;
 
-	delete m_whiteList;
 	delete m_blackList;
 	delete m_greyList;
 
@@ -608,13 +606,6 @@ void CGMSKRepeaterTRXThread::setLogging(bool logging, const wxString& dir)
 		m_logging = NULL;
 		return;
 	}
-}
-
-void CGMSKRepeaterTRXThread::setWhiteList(CCallsignList* list)
-{
-	wxASSERT(list != NULL);
-
-	m_whiteList = list;
 }
 
 void CGMSKRepeaterTRXThread::setBlackList(CCallsignList* list)
@@ -1427,15 +1418,6 @@ bool CGMSKRepeaterTRXThread::processRadioHeader(CHeaderData* header)
 	if (m_state == DSRS_SHUTDOWN) {
 		delete header;
 		return true;
-	}
-
-	if (m_whiteList != NULL) {
-		bool res = m_whiteList->isInList(header->getMyCall1());
-		if (!res) {
-			wxLogMessage(wxT("%s rejected due to not being in the white list"), header->getMyCall1().c_str());
-			delete header;
-			return true;
-		}
 	}
 
 	if (m_blackList != NULL) {
