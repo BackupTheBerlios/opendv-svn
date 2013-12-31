@@ -266,6 +266,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DVRPTRControllerV3.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DVTOOLFileReader.cpp"
 				>
 			</File>
@@ -561,6 +565,10 @@
 			</File>
 			<File
 				RelativePath=".\DVRPTRControllerV2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRControllerV3.h"
 				>
 			</File>
 			<File

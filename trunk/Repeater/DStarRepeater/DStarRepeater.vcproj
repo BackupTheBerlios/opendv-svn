@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterDVRPTRV3Controller.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterFrame.cpp"
 				>
 			</File>
@@ -260,6 +264,10 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterDVRPTRV2Controller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterDVRPTRV3Controller.h"
 				>
 			</File>
 			<File

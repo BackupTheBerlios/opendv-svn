@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterConfigDVRPTR3Set.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterConfigFrame.cpp"
 				>
 			</File>
@@ -252,6 +256,10 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterConfigDVRPTR2Set.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigDVRPTR3Set.h"
 				>
 			</File>
 			<File

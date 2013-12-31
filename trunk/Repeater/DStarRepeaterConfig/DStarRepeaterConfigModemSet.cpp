@@ -19,6 +19,7 @@
 #include "DStarRepeaterConfigSoundCardSet.h"
 #include "DStarRepeaterConfigDVRPTR1Set.h"
 #include "DStarRepeaterConfigDVRPTR2Set.h"
+#include "DStarRepeaterConfigDVRPTR3Set.h"
 #include "DStarRepeaterConfigModemSet.h"
 #include "DStarRepeaterConfigGMSKSet.h"
 #include "DStarRepeaterConfigDVAPSet.h"
@@ -52,6 +53,7 @@ m_type(NULL)
 	m_type->Append(wxT("GMSK Modem"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
+	m_type->Append(wxT("DV-RPTR V3"));
 	m_type->Append(wxT("Sound Card"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -166,6 +168,25 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				modLevel = modem.getModLevel();
 				txDelay  = modem.getTXDelay();
 				m_config->setDVRPTR2(connType, usbPort, address, port, txInvert, modLevel, txDelay);
+			}
+		}
+	} else if (type.IsSameAs(wxT("DV-RPTR V3"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel, txDelay;
+		m_config->getDVRPTR3(connType, usbPort, address, port, txInvert, modLevel, txDelay);
+		CDStarRepeaterConfigDVRPTR3Set modem(this, -1, connType, usbPort, address, port, txInvert, modLevel, txDelay);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				connType = modem.getConnectionType();
+				usbPort  = modem.getUSBPort();
+				address  = modem.getAddress();
+				port     = modem.getPort();
+				txInvert = modem.getTXInvert();
+				modLevel = modem.getModLevel();
+				txDelay  = modem.getTXDelay();
+				m_config->setDVRPTR3(connType, usbPort, address, port, txInvert, modLevel, txDelay);
 			}
 		}
 	} else if (type.IsSameAs(wxT("Sound Card"))) {

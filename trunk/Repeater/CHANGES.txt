@@ -1915,4 +1915,4 @@ Remove even more of the C++ changes.
 
 More cleanups.
 Removed the white list functionality.
-
+Added explicit support for the DV-RPTR V3 modem.

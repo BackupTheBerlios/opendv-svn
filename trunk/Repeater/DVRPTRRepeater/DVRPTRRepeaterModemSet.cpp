@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "DVRPTRRepeaterModemSet.h"
 #include "DVRPTRControllerV1.h"
 #include "DVRPTRControllerV2.h"
+#include "DVRPTRControllerV3.h"
 
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 150U;
@@ -58,8 +59,9 @@ m_txDelay(NULL)
 	m_version = new wxChoice(this, CHOICE_VERSION, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_version->Append(wxT("1"));
 	m_version->Append(wxT("2"));
+	m_version->Append(wxT("3"));
 	sizer->Add(m_version, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-	m_version->SetSelection(version == DVRPTR_V2 ? 1 : 0);
+	m_version->SetSelection(int(version) - 1);
 
 	wxStaticText* connectionLabel = new wxStaticText(this, -1, _("Connection"));
 	sizer->Add(connectionLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -81,6 +83,9 @@ m_txDelay(NULL)
 	switch (version) {
 		case DVRPTR_V2:
 			ports = CDVRPTRControllerV2::getDevices();
+			break;
+		case DVRPTR_V3:
+			ports = CDVRPTRControllerV3::getDevices();
 			break;
 		default:
 			ports = CDVRPTRControllerV1::getDevices();
@@ -152,6 +157,7 @@ m_txDelay(NULL)
 
 	switch (version) {
 		case DVRPTR_V2:
+		case DVRPTR_V3:
 			switch (connectionType) {
 				case CT_NETWORK:
 					m_usbPort->Disable();
@@ -229,10 +235,14 @@ DVRPTR_VERSION CDVRPTRRepeaterModemSet::getVersion() const
 {
 	int n = m_version->GetCurrentSelection();
 
-	if (n == wxNOT_FOUND)
-		return DVRPTR_V1;
-
-	return n == 1 ? DVRPTR_V2 : DVRPTR_V1;
+	switch (n) {
+		case 1:
+			return DVRPTR_V2;
+		case 2:
+			return DVRPTR_V3;
+		default:
+			return DVRPTR_V1;
+	}
 }
 
 CONNECTION_TYPE CDVRPTRRepeaterModemSet::getConnectionType() const
@@ -319,6 +329,7 @@ void CDVRPTRRepeaterModemSet::onVersion(wxCommandEvent &event)
 
 	switch (n) {
 		case 1:
+		case 2:
 			ports = CDVRPTRControllerV2::getDevices();
 			m_connectionType->SetSelection(0);		// USB
 			m_connectionType->Enable();

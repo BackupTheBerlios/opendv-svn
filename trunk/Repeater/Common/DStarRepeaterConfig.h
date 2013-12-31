@@ -79,6 +79,9 @@ public:
 	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel, unsigned int& txDelay) const;
 	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay);
 
+	void getDVRPTR3(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel, unsigned int& txDelay) const;
+	void setDVRPTR3(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay);
+
 	void getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& rxLevel, wxFloat32& txLevel, unsigned int& txDelay) const;
 	void setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
 
@@ -176,6 +179,15 @@ private:
 	bool          m_dvrptr2TXInvert;
 	unsigned int  m_dvrptr2ModLevel;
 	unsigned int  m_dvrptr2TXDelay;
+
+	// DV-RPTR 3
+	CONNECTION_TYPE m_dvrptr3Connection;
+	wxString      m_dvrptr3USBPort;
+	wxString      m_dvrptr3Address;
+	unsigned int  m_dvrptr3Port;
+	bool          m_dvrptr3TXInvert;
+	unsigned int  m_dvrptr3ModLevel;
+	unsigned int  m_dvrptr3TXDelay;
 
 	// Sound Card
 	wxString      m_soundCardRXDevice;

@@ -41,7 +41,8 @@ enum DSTAR_RX_STATE {
 
 enum DVRPTR_VERSION {
 	DVRPTR_V1 = 1,
-	DVRPTR_V2
+	DVRPTR_V2,
+	DVRPTR_V3
 };
 
 #endif

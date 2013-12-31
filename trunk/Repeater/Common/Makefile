@@ -3,8 +3,8 @@ all:		Common.a
 OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o AnnouncementUnit.o ArduinoController.o AudioDelay.o BeaconSet.o BeaconUnit.o CallsignList.o \
 		CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o Control1Set.o Control2Set.o Correlator.o DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o \
 		DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DummyController.o DVAPController.o DVDongleController.o DVRPTRControllerV1.o \
-		DVRPTRControllerV2.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FIRFilter.o GMSKModem.o GMSKModemLibUsb.o Goertzel.o Golay.o \
-		HardwareController.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o MessageTextCtrl.o NetworkController.o \
+		DVRPTRControllerV2.o DVRPTRControllerV3.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FIRFilter.o GMSKModem.o GMSKModemLibUsb.o Goertzel.o \
+		Golay.o HardwareController.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o Logger.o MessageTextCtrl.o NetworkController.o \
 		NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o \
 		RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o \
 		UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
@@ -97,6 +97,10 @@ DVRPTRControllerV1.o:	DVRPTRControllerV1.cpp DVRPTRControllerV1.h DVRPTRControll
 DVRPTRControllerV2.o:	DVRPTRControllerV2.cpp DVRPTRControllerV2.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h \
 						DStarDefines.h TCPReaderWriter.h
 		$(CC) $(CFLAGS) -c DVRPTRControllerV2.cpp
+
+DVRPTRControllerV3.o:	DVRPTRControllerV3.cpp DVRPTRControllerV3.h DVRPTRController.h HeaderData.h Utils.h RingBuffer.h SerialDataController.h Timer.h \
+						DStarDefines.h TCPReaderWriter.h
+		$(CC) $(CFLAGS) -c DVRPTRControllerV3.cpp
 
 DVTOOLFileReader.o:	DVTOOLFileReader.cpp DVTOOLFileReader.h HeaderData.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c DVTOOLFileReader.cpp

@@ -26,6 +26,7 @@
 #if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
 #endif
+#include "DVRPTRControllerV3.h"
 #include "DVRPTRControllerV2.h"
 #include "DVRPTRControllerV1.h"
 #include "ArduinoController.h"
@@ -460,6 +461,9 @@ void CDVRPTRRepeaterApp::createThread()
 					break;
 				case DVRPTR_V2:
 					controller = new CDVRPTRControllerV2(modemUSBPort, modemUSBPath, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
+					break;
+				case DVRPTR_V3:
+					controller = new CDVRPTRControllerV3(modemUSBPort, modemUSBPath, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign);
 					break;
 				default:
 					wxLogError(wxT("Unknown DV-RPTR modem version - %d"), int(modemVersion));
