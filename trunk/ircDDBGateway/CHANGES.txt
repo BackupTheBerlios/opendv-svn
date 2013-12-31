@@ -1,4 +1,4 @@
-ircDDB Gateway - 20131001
+ircDDB Gateway - 20131231
 =========================
 
 20101010
@@ -1363,9 +1363,9 @@ Added new Quadnet ircDDB server.
 Add homebrew DD data support.
 Catch exceptions and other C++ changes in the ircDDB Gateway and STARnet Digital Server.
 
-2013xxxx
+20131231
 --------
 
-Updated REF020s IP address.
+Use latest DExtra and D-Plus host files based on Adrian VK4TUX's.
 Added new QuadNet ircDDB server.
 Ignore new CCS message type.
