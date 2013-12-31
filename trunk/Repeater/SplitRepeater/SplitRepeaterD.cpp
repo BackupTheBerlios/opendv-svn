@@ -278,22 +278,8 @@ bool CSplitRepeaterD::createThread()
 	m_thread->setControl(enabled, rpt1Callsign, rpt2Callsign, shutdown, startup, status1, status2, status3, status4, status5, command1, command1Line, command2, command2Line, command3, command3Line, command4, command4Line);
 	wxLogInfo(wxT("Control: enabled: %d, RPT1: %s, RPT2: %s, shutdown: %s, startup: %s, status1: %s, status2: %s, status3: %s, status4: %s, status5: %s, command1: %s = %s, command2: %s = %s, command3: %s = %s, command4: %s = %s"), enabled, rpt1Callsign.c_str(), rpt2Callsign.c_str(), shutdown.c_str(), startup.c_str(), status1.c_str(), status2.c_str(), status3.c_str(), status4.c_str(), status5.c_str(), command1.c_str(), command1Line.c_str(), command2.c_str(), command2Line.c_str(), command3.c_str(), command3Line.c_str(), command4.c_str(), command4Line.c_str());
 
-	wxFileName wlFilename(wxFileName::GetHomeDir(), WHITELIST_FILE_NAME);
-	bool exists = wlFilename.FileExists();
-	if (exists) {
-		CCallsignList* list = new CCallsignList(wlFilename.GetFullPath());
-		bool res = list->load();
-		if (!res) {
-			wxLogError(wxT("Unable to open white list file - %s"), wlFilename.GetFullPath().c_str());
-			delete list;
-		} else {
-			wxLogInfo(wxT("%u callsigns loaded into the white list"), list->getCount());
-			m_thread->setWhiteList(list);
-		}
-	}
-
 	wxFileName blFilename(wxFileName::GetHomeDir(), BLACKLIST_FILE_NAME);
-	exists = blFilename.FileExists();
+	bool exists = blFilename.FileExists();
 	if (exists) {
 		CCallsignList* list = new CCallsignList(blFilename.GetFullPath());
 		bool res = list->load();
