@@ -19,6 +19,7 @@
 #include "DStarRepeaterSoundCardController.h"
 #include "DStarRepeaterDVRPTRV1Controller.h"
 #include "DStarRepeaterDVRPTRV2Controller.h"
+#include "DStarRepeaterDVRPTRV3Controller.h"
 #include "DStarRepeaterDVAPController.h"
 #include "DStarRepeaterGMSKController.h"
 #include "DStarRepeaterTXRXThread.h"
@@ -348,6 +349,21 @@ bool CDStarRepeaterD::createThread()
 				modem = new CDStarRepeaterDVRPTRV2Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
 				break;
 		}
+	} else if (modemType.IsSameAs(wxT("DV-RPTR V3"))) {
+		CONNECTION_TYPE connType;
+		wxString usbPort, address;
+		bool txInvert;
+		unsigned int port, modLevel, txDelay;
+		config.getDVRPTR2(connType, usbPort, address, port, txInvert, modLevel, txDelay);
+		wxLogInfo(wxT("DV-RPTR V3, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%, TX delay: %u ms"), int(connType), address.c_str(), port, int(txInvert), modLevel, txDelay);
+		switch (connType) {
+			case CT_USB:
+				modem = new CDStarRepeaterDVRPTRV3Controller(usbPort, wxEmptyString, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				break;
+			case CT_NETWORK:
+				modem = new CDStarRepeaterDVRPTRV3Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				break;
+		}
 	} else if (modemType.IsSameAs(wxT("GMSK Modem"))) {
 		USB_INTERFACE iface;
 		unsigned int address;
@@ -425,22 +441,8 @@ bool CDStarRepeaterD::createThread()
 	m_thread->setLogging(logging, m_audioDir);
 	wxLogInfo(wxT("Frame logging set to %d, in %s"), int(logging), m_audioDir.c_str());
 
-	wxFileName wlFilename(wxFileName::GetHomeDir(), WHITELIST_FILE_NAME);
-	bool exists = wlFilename.FileExists();
-	if (exists) {
-		CCallsignList* list = new CCallsignList(wlFilename.GetFullPath());
-		bool res = list->load();
-		if (!res) {
-			wxLogError(wxT("Unable to open white list file - %s"), wlFilename.GetFullPath().c_str());
-			delete list;
-		} else {
-			wxLogInfo(wxT("%u callsigns loaded into the white list"), list->getCount());
-			m_thread->setWhiteList(list);
-		}
-	}
-
 	wxFileName blFilename(wxFileName::GetHomeDir(), BLACKLIST_FILE_NAME);
-	exists = blFilename.FileExists();
+	bool exists = blFilename.FileExists();
 	if (exists) {
 		CCallsignList* list = new CCallsignList(blFilename.GetFullPath());
 		bool res = list->load();

@@ -1,4 +1,4 @@
-Repeater - 20130904
+Repeater - 20131231
 ===================
 
 20090530
@@ -1910,7 +1910,7 @@ Remove some of the C++ changes.
 
 Remove even more of the C++ changes.
 
-201310xx
+20131231
 --------
 
 More cleanups.
