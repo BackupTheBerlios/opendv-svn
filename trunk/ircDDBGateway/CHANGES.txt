@@ -1369,3 +1369,8 @@ Catch exceptions and other C++ changes in the ircDDB Gateway and STARnet Digital
 Use latest DExtra and D-Plus host files based on Adrian VK4TUX's.
 Added new QuadNet ircDDB server.
 Ignore new CCS message type.
+
+2014xxxx
+--------
+
+Fix DEXTRA_LINK compile issues in the StarNET Server.
