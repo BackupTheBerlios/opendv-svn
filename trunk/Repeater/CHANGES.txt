@@ -1916,3 +1916,8 @@ Remove even more of the C++ changes.
 More cleanups.
 Removed the white list functionality.
 Added explicit support for the DV-RPTR V3 modem.
+
+201401xx
+--------
+
+Removed the DVAP Node and DV-RPTR Repeater.

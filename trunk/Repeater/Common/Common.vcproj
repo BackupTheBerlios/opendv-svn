@@ -250,23 +250,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DVAPController.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DVDongleController.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRControllerV1.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRControllerV2.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRControllerV3.cpp"
 				>
 			</File>
 			<File
@@ -548,27 +532,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DVAPController.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DVDongleController.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRController.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRControllerV1.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRControllerV2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRControllerV3.h"
 				>
 			</File>
 			<File
