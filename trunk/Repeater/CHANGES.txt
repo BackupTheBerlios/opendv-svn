@@ -1921,3 +1921,4 @@ Added explicit support for the DV-RPTR V3 modem.
 --------
 
 Removed the DVAP Node and DV-RPTR Repeater.
+Block Australian foundation class and French novice callsigns from using the repeaters.

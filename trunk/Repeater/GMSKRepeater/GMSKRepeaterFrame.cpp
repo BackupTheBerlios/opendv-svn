@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -403,7 +403,7 @@ void CGMSKRepeaterFrame::onAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
-	info.SetCopyright(wxT("(C) 2010-2013 using GPL v2 or later"));
+	info.SetCopyright(wxT("(C) 2010-2014 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
 	info.SetDescription(_("This program allows a computer with a GMSK modem\nand 9600Bd capable radios to act as a D-Star repeater."));

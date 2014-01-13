@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -165,6 +165,12 @@ bool CSoundCardRepeaterCallsignSet::Validate()
 	bool res = getCallsign().IsEmpty();
 	if (res) {
 		wxMessageDialog dialog(this, _("The Callsign may not be empty"), m_title + _(" Error"), wxICON_ERROR);
+		dialog.ShowModal();
+		return false;
+	}
+
+	if (getCallsign().Left(2U).IsSameAs(wxT("F0"))) {
+		wxMessageDialog dialog(this, _("The Callsign may not be for a French novice"), m_title + _(" Error"), wxICON_ERROR);
 		dialog.ShowModal();
 		return false;
 	}

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -1920,6 +1920,20 @@ TRISTATE CSplitRepeaterThread::checkHeader(CSplitRepeaterHeaderData& header)
 			wxLogMessage(wxT("Invalid MYCALL value of %s, ignoring"), my.c_str());
 			return STATE_UNKNOWN;
 		}
+	}
+
+	// Check for a French class 3 novice callsign, and reject
+	// Of the form F0xxx
+	if (my.Left(2U).IsSameAs(wxT("F0"))) {
+		wxLogMessage(wxT("French novice class licence callsign found, %s, ignoring"), my.c_str());
+		return STATE_UNKNOWN;
+	}
+
+	// Check for an Australian foundation class licence callsign, and reject
+	// Of the form VKnFxxx
+	if (my.Left(2U).IsSameAs(wxT("VK")) && my.GetChar(3U) == wxT('F') && my.GetChar(6U) != wxT(' ')) {
+		wxLogMessage(wxT("Australian foundation class licence callsign found, %s, ignoring"), my.c_str());
+		return STATE_UNKNOWN;
 	}
 
 	// Check the MyCall value against the regular expression
