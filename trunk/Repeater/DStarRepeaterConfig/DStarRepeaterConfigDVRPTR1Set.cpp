@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 #include "DStarRepeaterConfigDVRPTR1Set.h"
-#include "DVRPTRControllerV1.h"
+#include "DVRPTRV1Controller.h"
 
 const unsigned int BORDER_SIZE    = 5U;
 const unsigned int CONTROL_WIDTH1 = 150U;
@@ -27,10 +27,9 @@ const unsigned int ADDRESS_LENGTH  = 15U;
 const unsigned int PORT_LENGTH     = 5U;
 
 
-CDStarRepeaterConfigDVRPTR1Set::CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
+CDStarRepeaterConfigDVRPTR1Set::CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxDialog(parent, id, wxString(_("DV-RPTR V1 Settings"))),
 m_port(NULL),
-m_delay(NULL),
 m_txInvert(NULL),
 m_rxInvert(NULL),
 m_channel(NULL),
@@ -45,22 +44,13 @@ m_txDelay(NULL)
 	m_port = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	sizer->Add(m_port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	wxArrayString ports = CDVRPTRControllerV1::getDevices();
+	wxArrayString ports = CDVRPTRV1Controller::getDevices();
 	for (unsigned int i = 0U; i < ports.GetCount(); i++)
 		m_port->Append(ports.Item(i));
 
 	bool found = m_port->SetStringSelection(port);
 	if (!found)
 		m_port->SetSelection(0);
-
-	wxStaticText* delayLabel = new wxStaticText(this, -1, _("Start Delay"));
-	sizer->Add(delayLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-
-	m_delay = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
-	m_delay->Append(_("Off"));
-	m_delay->Append(_("On"));
-	sizer->Add(m_delay, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
-	m_delay->SetSelection(delay ? 1 : 0);
 
 	wxStaticText* txInvertLabel = new wxStaticText(this, -1, _("TX Inversion"));
 	sizer->Add(txInvertLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -120,9 +110,6 @@ bool CDStarRepeaterConfigDVRPTR1Set::Validate()
 	if (m_port->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
-	if (m_delay->GetCurrentSelection() == wxNOT_FOUND)
-		return false;
-
 	if (m_txInvert->GetCurrentSelection() == wxNOT_FOUND)
 		return false;
 
@@ -140,16 +127,6 @@ wxString CDStarRepeaterConfigDVRPTR1Set::getPort() const
 		return wxEmptyString;
 
 	return m_port->GetStringSelection();
-}
-
-bool CDStarRepeaterConfigDVRPTR1Set::getDelay() const
-{
-	int n = m_delay->GetCurrentSelection();
-
-	if (n == wxNOT_FOUND)
-		return false;
-
-	return n == 1;
 }
 
 bool CDStarRepeaterConfigDVRPTR1Set::getRXInvert() const

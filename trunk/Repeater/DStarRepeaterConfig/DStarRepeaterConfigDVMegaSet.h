@@ -16,35 +16,40 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterConfigDVRPTR1Set_H
-#define	DStarRepeaterConfigDVRPTR1Set_H
+#ifndef	DStarRepeaterConfigDVMegaSet_H
+#define	DStarRepeaterConfigDVMegaSet_H
 
 #include "DStarRepeaterConfigDefs.h"
 #include "DStarDefines.h"
 
 #include <wx/wx.h>
 
-class CDStarRepeaterConfigDVRPTR1Set : public wxDialog {
+class CDStarRepeaterConfigDVMegaSet : public wxDialog {
 public:
-	CDStarRepeaterConfigDVRPTR1Set(wxWindow* parent, int id, const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
-	virtual ~CDStarRepeaterConfigDVRPTR1Set();
+	CDStarRepeaterConfigDVMegaSet(wxWindow* parent, int id, const wxString& port, DVMEGA_VARIANT variant, bool rxInvert, bool txInvert, unsigned int txDelay, unsigned int frequency);
+	virtual ~CDStarRepeaterConfigDVMegaSet();
 
 	virtual bool Validate();
 
 	virtual wxString     getPort() const;
+	virtual DVMEGA_VARIANT getVariant() const;
 	virtual bool         getRXInvert() const;
 	virtual bool         getTXInvert() const;
-	virtual bool         getChannel() const;
-	virtual unsigned int getModLevel() const;
 	virtual unsigned int getTXDelay() const;
+	virtual unsigned int getFrequency() const;
+
+	virtual void onVariant(wxCommandEvent& event);
 
 private:
-	wxChoice* m_port;
-	wxChoice* m_txInvert;
-	wxChoice* m_rxInvert;
-	wxChoice* m_channel;
-	wxSlider* m_modLevel;
-	wxSlider* m_txDelay;
+	wxChoice*   m_port;
+	wxChoice*   m_variant;
+	wxChoice*   m_txInvert;
+	wxChoice*   m_rxInvert;
+	wxSlider*   m_txDelay;
+	wxChoice*   m_band;
+	wxTextCtrl* m_frequency;
+
+	DECLARE_EVENT_TABLE()
 };
 
 #endif

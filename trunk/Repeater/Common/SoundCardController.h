@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterSoundCardController_H
-#define	DStarRepeaterSoundCardController_H
+#ifndef	SoundCardController_H
+#define	SoundCardController_H
 
 #include "SoundCardReaderWriter.h"
 #include "DStarGMSKDemodulator.h"
-#include "DStarRepeaterModem.h"
 #include "DStarGMSKModulator.h"
 #include "AudioCallback.h"
 #include "RingBuffer.h"
+#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
@@ -35,10 +35,10 @@ enum DSRSCC_STATE {
 	DSRSCCS_DATA
 };
 
-class CDStarRepeaterSoundCardController : public wxThread, public IDStarRepeaterModem, public IAudioCallback {
+class CSoundCardController : public wxThread, public IModem, public IAudioCallback {
 public:
-	CDStarRepeaterSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
-	virtual ~CDStarRepeaterSoundCardController();
+	CSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
+	virtual ~CSoundCardController();
 
 	virtual void* Entry();
 

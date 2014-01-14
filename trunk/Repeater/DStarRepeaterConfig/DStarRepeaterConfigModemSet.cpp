@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "DStarRepeaterConfigDVRPTR1Set.h"
 #include "DStarRepeaterConfigDVRPTR2Set.h"
 #include "DStarRepeaterConfigDVRPTR3Set.h"
+#include "DStarRepeaterConfigDVMEGASet.h"
 #include "DStarRepeaterConfigModemSet.h"
 #include "DStarRepeaterConfigGMSKSet.h"
 #include "DStarRepeaterConfigDVAPSet.h"
@@ -54,6 +55,7 @@ m_type(NULL)
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
 	m_type->Append(wxT("DV-RPTR V3"));
+	m_type->Append(wxT("DVMEGA"));
 	m_type->Append(wxT("Sound Card"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -135,20 +137,19 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 		}
 	} else if (type.IsSameAs(wxT("DV-RPTR V1"))) {
 		wxString port;
-		bool delay, txInvert, rxInvert, channel;
+		bool txInvert, rxInvert, channel;
 		unsigned int modLevel, txDelay;
-		m_config->getDVRPTR1(port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
-		CDStarRepeaterConfigDVRPTR1Set modem(this, -1, port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
+		m_config->getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		CDStarRepeaterConfigDVRPTR1Set modem(this, -1, port, rxInvert, txInvert, channel, modLevel, txDelay);
 		if (modem.ShowModal() == wxID_OK) {
 			if (modem.Validate()) {
 				port     = modem.getPort();
-				delay    = modem.getDelay();
 				rxInvert = modem.getRXInvert();
 				txInvert = modem.getTXInvert();
 				channel  = modem.getChannel();
 				modLevel = modem.getModLevel();
 				txDelay  = modem.getTXDelay();
-				m_config->setDVRPTR1(port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
+				m_config->setDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
 			}
 		}
 	} else if (type.IsSameAs(wxT("DV-RPTR V2"))) {
@@ -187,6 +188,24 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				modLevel = modem.getModLevel();
 				txDelay  = modem.getTXDelay();
 				m_config->setDVRPTR3(connType, usbPort, address, port, txInvert, modLevel, txDelay);
+			}
+		}
+	} else if (type.IsSameAs(wxT("DVMEGA"))) {
+		wxString port;
+		DVMEGA_VARIANT variant;
+		bool txInvert, rxInvert;
+		unsigned int txDelay, frequency;
+		m_config->getDVMEGA(port, variant, rxInvert, txInvert, txDelay, frequency);
+		CDStarRepeaterConfigDVMegaSet modem(this, -1, port, variant, rxInvert, txInvert, txDelay, frequency);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				port      = modem.getPort();
+				variant   = modem.getVariant();
+				rxInvert  = modem.getRXInvert();
+				txInvert  = modem.getTXInvert();
+				txDelay   = modem.getTXDelay();
+				frequency = modem.getFrequency();
+				m_config->setDVMEGA(port, variant, rxInvert, txInvert, txDelay, frequency);
 			}
 		}
 	} else if (type.IsSameAs(wxT("Sound Card"))) {

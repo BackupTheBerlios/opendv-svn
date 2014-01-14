@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,40 +16,40 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterDVRPTRV1Controller_H
-#define	DStarRepeaterDVRPTRV1Controller_H
+#ifndef	DVMegaController_H
+#define	DVMegaController_H
 
 #include "SerialDataController.h"
-#include "DStarRepeaterModem.h"
 #include "RingBuffer.h"
+#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
 
-enum RESP_TYPE_V1 {
-	RT1_TIMEOUT,
-	RT1_ERROR,
-	RT1_UNKNOWN,
-	RT1_GET_STATUS,
-	RT1_GET_VERSION,
-	RT1_GET_SERIAL,
-	RT1_GET_CONFIG,
-	RT1_SET_CONFIG,
-	RT1_RXPREAMBLE,
-	RT1_START,
-	RT1_HEADER,
-	RT1_RXSYNC,
-	RT1_DATA,
-	RT1_EOT,
-	RT1_RXLOST,
-	RT1_SET_TESTMDE,
-	RT1_DEBUG
+enum RESP_TYPE_MEGA {
+	RTM_TIMEOUT,
+	RTM_ERROR,
+	RTM_UNKNOWN,
+	RTM_GET_STATUS,
+	RTM_GET_VERSION,
+	RTM_GET_SERIAL,
+	RTM_GET_CONFIG,
+	RTM_SET_CONFIG,
+	RTM_RXPREAMBLE,
+	RTM_START,
+	RTM_HEADER,
+	RTM_RXSYNC,
+	RTM_DATA,
+	RTM_EOT,
+	RTM_RXLOST,
+	RTM_SET_TESTMDE,
+	RTM_DEBUG
 };
 
-class CDStarRepeaterDVRPTRV1Controller : public wxThread, public IDStarRepeaterModem {
+class CDVMegaController : public wxThread, public IModem {
 public:
-	CDStarRepeaterDVRPTRV1Controller(const wxString& port, const wxString& path, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
-	virtual ~CDStarRepeaterDVRPTRV1Controller();
+	CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay, unsigned int frequency);
+	virtual ~CDVMegaController();
 
 	virtual void* Entry();
 
@@ -74,12 +74,10 @@ public:
 private:
 	wxString                   m_port;
 	wxString                   m_path;
-	bool                       m_delay;
 	bool                       m_rxInvert;
 	bool                       m_txInvert;
-	bool                       m_channel;
-	unsigned int               m_modLevel;
 	unsigned int               m_txDelay;
+	unsigned int               m_frequency;
 	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
@@ -101,9 +99,10 @@ private:
 	bool readVersion();
 	bool readStatus();
 	bool setConfig();
+	bool setFrequency();
 	bool setEnabled(bool enable);
 
-	RESP_TYPE_V1 getResponse(unsigned char* buffer, unsigned int& length);
+	RESP_TYPE_MEGA getResponse(unsigned char* buffer, unsigned int& length);
 
 	bool findPort();
 	bool findPath();

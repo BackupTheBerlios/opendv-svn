@@ -250,7 +250,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DVAPController.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DVDongleController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DVMegaController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRV1Controller.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRV2Controller.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRV3Controller.cpp"
 				>
 			</File>
 			<File
@@ -267,6 +287,10 @@
 			</File>
 			<File
 				RelativePath=".\FIRFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GMSKController.cpp"
 				>
 			</File>
 			<File
@@ -379,6 +403,10 @@
 			</File>
 			<File
 				RelativePath=".\SlowDataEncoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundCardController.cpp"
 				>
 			</File>
 			<File
@@ -532,7 +560,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DVAPController.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DVDongleController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVMegaController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRV1Controller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRV2Controller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DVRPTRV3Controller.h"
 				>
 			</File>
 			<File
@@ -549,6 +597,10 @@
 			</File>
 			<File
 				RelativePath=".\FIRFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GMSKController.h"
 				>
 			</File>
 			<File
@@ -605,6 +657,10 @@
 			</File>
 			<File
 				RelativePath=".\MessageTextCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Modem.h"
 				>
 			</File>
 			<File
@@ -669,6 +725,10 @@
 			</File>
 			<File
 				RelativePath=".\SlowDataEncoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundCardController.h"
 				>
 			</File>
 			<File

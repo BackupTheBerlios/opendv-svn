@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterGMSKController.h"
+#include "GMSKController.h"
 #if defined(__WINDOWS__)
 #include "GMSKModemWinUSB.h"
 #endif
@@ -27,7 +27,7 @@ const unsigned char DVRPTR_HEADER_LENGTH = 5U;
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDStarRepeaterGMSKController::CDStarRepeaterGMSKController(USB_INTERFACE iface, unsigned int address) :
+CGMSKController::CGMSKController(USB_INTERFACE iface, unsigned int address) :
 wxThread(wxTHREAD_JOINABLE),
 m_modem(NULL),
 m_buffer(NULL),
@@ -63,7 +63,7 @@ m_readBuffer(NULL)
 #endif
 }
 
-CDStarRepeaterGMSKController::~CDStarRepeaterGMSKController()
+CGMSKController::~CGMSKController()
 {
 	delete[] m_buffer;
 	delete[] m_readBuffer;
@@ -71,7 +71,7 @@ CDStarRepeaterGMSKController::~CDStarRepeaterGMSKController()
 	delete m_modem;
 }
 
-bool CDStarRepeaterGMSKController::start()
+bool CGMSKController::start()
 {
 	if (m_modem == NULL)
 		return false;
@@ -87,7 +87,7 @@ bool CDStarRepeaterGMSKController::start()
 	return true;
 }
 
-void* CDStarRepeaterGMSKController::Entry()
+void* CGMSKController::Entry()
 {
 	wxLogMessage(wxT("Starting GMSK Modem Controller thread"));
 
@@ -238,7 +238,7 @@ void* CDStarRepeaterGMSKController::Entry()
 	return NULL;
 }
 
-DSMT_TYPE CDStarRepeaterGMSKController::read()
+DSMT_TYPE CGMSKController::read()
 {
 	m_readLength = 0U;
 
@@ -257,7 +257,7 @@ DSMT_TYPE CDStarRepeaterGMSKController::read()
 	return m_readType;
 }
 
-CHeaderData* CDStarRepeaterGMSKController::readHeader()
+CHeaderData* CGMSKController::readHeader()
 {
 	if (m_readType != DSMTT_HEADER)
 		return NULL;
@@ -265,7 +265,7 @@ CHeaderData* CDStarRepeaterGMSKController::readHeader()
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterGMSKController::readData(unsigned char* data, unsigned int length)
+unsigned int CGMSKController::readData(unsigned char* data, unsigned int length)
 {
 	if (m_readType != DSMTT_DATA)
 		return 0U;
@@ -279,7 +279,7 @@ unsigned int CDStarRepeaterGMSKController::readData(unsigned char* data, unsigne
 	}
 }
 
-bool CDStarRepeaterGMSKController::writeHeader(const CHeaderData& header)
+bool CGMSKController::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer[50U];
 
@@ -325,7 +325,7 @@ bool CDStarRepeaterGMSKController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterGMSKController::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CGMSKController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	wxMutexLocker locker(m_mutex);
 
@@ -343,17 +343,17 @@ bool CDStarRepeaterGMSKController::writeData(const unsigned char* data, unsigned
 	return true;
 }
 
-unsigned int CDStarRepeaterGMSKController::getSpace()
+unsigned int CGMSKController::getSpace()
 {
 	return m_space;
 }
 
-bool CDStarRepeaterGMSKController::getTX()
+bool CGMSKController::getTX()
 {
 	return m_tx;
 }
 
-void CDStarRepeaterGMSKController::stop()
+void CGMSKController::stop()
 {
 	m_stopped = true;
 

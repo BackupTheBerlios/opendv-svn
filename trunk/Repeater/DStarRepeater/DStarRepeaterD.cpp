@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,12 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterSoundCardController.h"
-#include "DStarRepeaterDVRPTRV1Controller.h"
-#include "DStarRepeaterDVRPTRV2Controller.h"
-#include "DStarRepeaterDVRPTRV3Controller.h"
-#include "DStarRepeaterDVAPController.h"
-#include "DStarRepeaterGMSKController.h"
 #include "DStarRepeaterTXRXThread.h"
 #include "RepeaterProtocolHandler.h"
 #include "DStarRepeaterTRXThread.h"
@@ -32,10 +26,17 @@
 #if defined(RASPBERRY_PI)
 #include "RaspberryController.h"
 #endif
+#include "SoundCardController.h"
+#include "DVRPTRV1Controller.h"
+#include "DVRPTRV2Controller.h"
+#include "DVRPTRV3Controller.h"
 #include "ArduinoController.h"
+#include "DVMegaController.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
 #include "DStarRepeaterD.h"
+#include "DVAPController.h"
+#include "GMSKController.h"
 #include "CallsignList.h"
 #include "DStarDefines.h"
 #include "Version.h"
@@ -319,21 +320,21 @@ bool CDStarRepeaterD::createThread()
 
 	wxLogInfo(wxT("Modem type set to \"%s\""), modemType.c_str());
 
-	IDStarRepeaterModem* modem = NULL;
+	IModem* modem = NULL;
 	if (modemType.IsSameAs(wxT("DVAP"))) {
 		wxString port;
 		unsigned int frequency;
 		int power, squelch;
 		config.getDVAP(port, frequency, power, squelch);
 		wxLogInfo(wxT("DVAP: port: %s, frequency: %u Hz, power: %d dBm, squelch: %d dBm"), port.c_str(), frequency, power, squelch);
-		modem = new CDStarRepeaterDVAPController(port, frequency, power, squelch);
+		modem = new CDVAPController(port, frequency, power, squelch);
 	} else if (modemType.IsSameAs(wxT("DV-RPTR V1"))) {
 		wxString port;
-		bool delay, rxInvert, txInvert, channel;
+		bool rxInvert, txInvert, channel;
 		unsigned int modLevel, txDelay;
-		config.getDVRPTR1(port, delay, rxInvert, txInvert, channel, modLevel, txDelay);
-		wxLogInfo(wxT("DV-RPTR V1, port: %s, delay: %d, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(delay), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
-		modem = new CDStarRepeaterDVRPTRV1Controller(port, wxEmptyString, delay, rxInvert, txInvert, channel, modLevel, txDelay);
+		config.getDVRPTR1(port, rxInvert, txInvert, channel, modLevel, txDelay);
+		wxLogInfo(wxT("DV-RPTR V1, port: %s, RX invert: %d, TX invert: %d, channel: %s, mod level: %u%%, TX delay: %u ms"), port.c_str(), int(rxInvert), int(txInvert), channel ? wxT("B") : wxT("A"), modLevel, txDelay);
+		modem = new CDVRPTRV1Controller(port, wxEmptyString, rxInvert, txInvert, channel, modLevel, txDelay);
 	} else if (modemType.IsSameAs(wxT("DV-RPTR V2"))) {
 		CONNECTION_TYPE connType;
 		wxString usbPort, address;
@@ -343,10 +344,10 @@ bool CDStarRepeaterD::createThread()
 		wxLogInfo(wxT("DV-RPTR V2, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%, TX delay: %u ms"), int(connType), address.c_str(), port, int(txInvert), modLevel, txDelay);
 		switch (connType) {
 			case CT_USB:
-				modem = new CDStarRepeaterDVRPTRV2Controller(usbPort, wxEmptyString, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				modem = new CDVRPTRV2Controller(usbPort, wxEmptyString, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
 				break;
 			case CT_NETWORK:
-				modem = new CDStarRepeaterDVRPTRV2Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				modem = new CDVRPTRV2Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
 				break;
 		}
 	} else if (modemType.IsSameAs(wxT("DV-RPTR V3"))) {
@@ -358,10 +359,28 @@ bool CDStarRepeaterD::createThread()
 		wxLogInfo(wxT("DV-RPTR V3, type: %d, address: %s:%u, TX invert: %d, mod level: %u%%, TX delay: %u ms"), int(connType), address.c_str(), port, int(txInvert), modLevel, txDelay);
 		switch (connType) {
 			case CT_USB:
-				modem = new CDStarRepeaterDVRPTRV3Controller(usbPort, wxEmptyString, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				modem = new CDVRPTRV3Controller(usbPort, wxEmptyString, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
 				break;
 			case CT_NETWORK:
-				modem = new CDStarRepeaterDVRPTRV3Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				modem = new CDVRPTRV3Controller(address, port, txInvert, modLevel, mode == MODE_DUPLEX || mode == MODE_TXANDRX, callsign, txDelay);
+				break;
+		}
+	} else if (modemType.IsSameAs(wxT("DVMEGA"))) {
+		wxString port;
+		DVMEGA_VARIANT variant;
+		bool rxInvert, txInvert;
+		unsigned int txDelay, frequency;
+		config.getDVMEGA(port, variant, rxInvert, txInvert, txDelay, frequency);
+		wxLogInfo(wxT("DVMEGA, port: %s, variant: %d, RX invert: %d, TX invert: %d, TX delay: %u ms, frequency: %u Hz"), port.c_str(), int(variant), int(rxInvert), int(txInvert), txDelay, frequency);
+		switch (variant) {
+			case DVMV_NODE:
+				modem = new CDVMegaController(port, wxEmptyString, rxInvert, txInvert, txDelay, 0U);
+				break;
+			case DVMV_RADIO:
+				modem = new CDVMegaController(port, wxEmptyString, false, false, txDelay, frequency);
+				break;
+			default:
+				wxLogError(wxT("Unknown DVMEGA variant - %d"), int(variant));
 				break;
 		}
 	} else if (modemType.IsSameAs(wxT("GMSK Modem"))) {
@@ -369,7 +388,7 @@ bool CDStarRepeaterD::createThread()
 		unsigned int address;
 		config.getGMSK(iface, address);
 		wxLogInfo(wxT("GMSK, interface: %d, address: %04X"), int(iface), address);
-		modem = new CDStarRepeaterGMSKController(iface, address);
+		modem = new CGMSKController(iface, address);
 	} else if (modemType.IsSameAs(wxT("Sound Card"))) {
 		wxString rxDevice, txDevice;
 		bool rxInvert, txInvert;
@@ -377,7 +396,7 @@ bool CDStarRepeaterD::createThread()
 		unsigned int txDelay;
 		config.getSoundCard(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
 		wxLogInfo(wxT("Sound Card, devices: %s:%s, invert: %d:%d, levels: %.2f:%.2f, tx delay: %u ms"), rxDevice.c_str(), txDevice.c_str(), int(rxInvert), int(txInvert), rxLevel, txLevel, txDelay);
-		modem = new CDStarRepeaterSoundCardController(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
+		modem = new CSoundCardController(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());
 	}

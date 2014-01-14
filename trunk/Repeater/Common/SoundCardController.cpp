@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterSoundCardController.h"
 #include "CCITTChecksumReverse.h"
+#include "SoundCardController.h"
 #include "DStarDefines.h"
 
 // #define	AUDIO_LOOPBACK
@@ -359,7 +359,7 @@ const unsigned char SCRAMBLE_TABLE_RX[] = {
   0x7BU, 0x9AU, 0x04U, 0x22U, 0xA3U, 0x6BU, 0x83U, 0x59U, 0x39U, 0x6FU,
   0x00U};
 
-CDStarRepeaterSoundCardController::CDStarRepeaterSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay) :
+CSoundCardController::CSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_sound(rxDevice, txDevice, DSTAR_RADIO_SAMPLE_RATE, DSTAR_RADIO_BLOCK_SIZE),
 m_rxLevel(rxLevel),
@@ -409,7 +409,7 @@ m_fecOutput(NULL)
 	m_fecOutput   = new unsigned char[42U];
 }
 
-CDStarRepeaterSoundCardController::~CDStarRepeaterSoundCardController()
+CSoundCardController::~CSoundCardController()
 {
 	delete[] m_readBuffer;
 	delete[] m_rxBuffer;
@@ -421,7 +421,7 @@ CDStarRepeaterSoundCardController::~CDStarRepeaterSoundCardController()
 	delete[] m_fecOutput;
 }
 
-bool CDStarRepeaterSoundCardController::start()
+bool CSoundCardController::start()
 {
 	bool ret = m_sound.open();
 	if (!ret)
@@ -434,7 +434,7 @@ bool CDStarRepeaterSoundCardController::start()
 	return true;
 }
 
-void* CDStarRepeaterSoundCardController::Entry()
+void* CSoundCardController::Entry()
 {
 	wxLogMessage(wxT("Starting Sound Card Controller thread"));
 
@@ -488,7 +488,7 @@ void* CDStarRepeaterSoundCardController::Entry()
 	return NULL;
 }
 
-DSMT_TYPE CDStarRepeaterSoundCardController::read()
+DSMT_TYPE CSoundCardController::read()
 {
 	m_readLength = 0U;
 
@@ -507,7 +507,7 @@ DSMT_TYPE CDStarRepeaterSoundCardController::read()
 	return m_readType;
 }
 
-CHeaderData* CDStarRepeaterSoundCardController::readHeader()
+CHeaderData* CSoundCardController::readHeader()
 {
 	if (m_readType != DSMTT_HEADER)
 		return NULL;
@@ -515,7 +515,7 @@ CHeaderData* CDStarRepeaterSoundCardController::readHeader()
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterSoundCardController::readData(unsigned char* data, unsigned int length)
+unsigned int CSoundCardController::readData(unsigned char* data, unsigned int length)
 {
 	if (m_readType != DSMTT_DATA)
 		return 0U;
@@ -529,7 +529,7 @@ unsigned int CDStarRepeaterSoundCardController::readData(unsigned char* data, un
 	}
 }
 
-bool CDStarRepeaterSoundCardController::writeHeader(const CHeaderData& header)
+bool CSoundCardController::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer1[RADIO_HEADER_LENGTH_BYTES];
 
@@ -580,7 +580,7 @@ bool CDStarRepeaterSoundCardController::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterSoundCardController::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CSoundCardController::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	if (end) {
 		for (unsigned int j = 0U; j < 3U; j++) {
@@ -595,7 +595,7 @@ bool CDStarRepeaterSoundCardController::writeData(const unsigned char* data, uns
 	return true;
 }
 
-unsigned int CDStarRepeaterSoundCardController::getSpace()
+unsigned int CSoundCardController::getSpace()
 {
 	unsigned int space = m_txAudio.freeSpace() / DV_FRAME_LENGTH_BYTES;
 	if (space > 10U)
@@ -604,19 +604,19 @@ unsigned int CDStarRepeaterSoundCardController::getSpace()
 	return space;
 }
 
-bool CDStarRepeaterSoundCardController::getTX()
+bool CSoundCardController::getTX()
 {
 	return m_txAudio.hasData();
 }
 
-void CDStarRepeaterSoundCardController::stop()
+void CSoundCardController::stop()
 {
 	m_stopped = true;
 
 	Wait();
 }
 
-void CDStarRepeaterSoundCardController::callback(const wxFloat32* input, wxFloat32* output, unsigned int n, int id)
+void CSoundCardController::callback(const wxFloat32* input, wxFloat32* output, unsigned int n, int id)
 {
 	::memset(output, 0x00, n * sizeof(wxFloat32));
 
@@ -630,7 +630,7 @@ void CDStarRepeaterSoundCardController::callback(const wxFloat32* input, wxFloat
 	}
 }
 
-void CDStarRepeaterSoundCardController::txHeader(const unsigned char* in, unsigned char* out)
+void CSoundCardController::txHeader(const unsigned char* in, unsigned char* out)
 {
 	unsigned char intermediate[84U];
 	unsigned int i;
@@ -713,7 +713,7 @@ void CDStarRepeaterSoundCardController::txHeader(const unsigned char* in, unsign
 		out[i] ^= SCRAMBLE_TABLE_TX[i];
 }
 
-void CDStarRepeaterSoundCardController::writeBits(unsigned char c)
+void CSoundCardController::writeBits(unsigned char c)
 {
 	wxFloat32 buffer[DSTAR_RADIO_BIT_LENGTH];
 
@@ -732,7 +732,7 @@ void CDStarRepeaterSoundCardController::writeBits(unsigned char c)
 	}
 }
 
-void CDStarRepeaterSoundCardController::processNone(bool bit)
+void CSoundCardController::processNone(bool bit)
 {
 	m_patternBuffer <<= 1;
     if (bit)
@@ -789,7 +789,7 @@ void CDStarRepeaterSoundCardController::processNone(bool bit)
 	}
 }
 
-void CDStarRepeaterSoundCardController::processHeader(bool bit)
+void CSoundCardController::processHeader(bool bit)
 {
 	m_patternBuffer <<= 1;
 	if (bit)
@@ -831,7 +831,7 @@ void CDStarRepeaterSoundCardController::processHeader(bool bit)
 	}
 }
 
-void CDStarRepeaterSoundCardController::processData(bool bit)
+void CSoundCardController::processData(bool bit)
 {
 	m_patternBuffer <<= 1;
 	if (bit)
@@ -905,7 +905,7 @@ void CDStarRepeaterSoundCardController::processData(bool bit)
 	}
 }
 
-unsigned int CDStarRepeaterSoundCardController::countBits(wxUint32 num)
+unsigned int CSoundCardController::countBits(wxUint32 num)
 {
     unsigned int count = 0U;
 
@@ -915,7 +915,7 @@ unsigned int CDStarRepeaterSoundCardController::countBits(wxUint32 num)
     return count;
 }
 
-bool CDStarRepeaterSoundCardController::rxHeader(unsigned char* in, unsigned char* out)
+bool CSoundCardController::rxHeader(unsigned char* in, unsigned char* out)
 {
 	int i;
 
@@ -1006,7 +1006,7 @@ bool CDStarRepeaterSoundCardController::rxHeader(unsigned char* in, unsigned cha
 	return cksum.check(out + RADIO_HEADER_LENGTH_BYTES - 2U);
 }
 
-void CDStarRepeaterSoundCardController::acs(int* metric)
+void CSoundCardController::acs(int* metric)
 {
 	int tempMetric[4U];
 
@@ -1055,7 +1055,7 @@ void CDStarRepeaterSoundCardController::acs(int* metric)
 	m_mar++;
 }
  
-void CDStarRepeaterSoundCardController::viterbiDecode(int* data)
+void CSoundCardController::viterbiDecode(int* data)
 {
 	int metric[8U];
 
@@ -1071,7 +1071,7 @@ void CDStarRepeaterSoundCardController::viterbiDecode(int* data)
 	acs(metric);
 }
 
-void CDStarRepeaterSoundCardController::traceBack()
+void CSoundCardController::traceBack()
 {
 	// Start from the S0, t=31
 	unsigned int j = 0U;

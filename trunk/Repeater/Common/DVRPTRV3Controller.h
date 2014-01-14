@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterDVRPTRV3Controller_H
-#define	DStarRepeaterDVRPTRV3Controller_H
+#ifndef	DVRPTRV3Controller_H
+#define	DVRPTRV3Controller_H
 
 #include "SerialDataController.h"
-#include "DStarRepeaterModem.h"
 #include "TCPReaderWriter.h"
 #include "DStarDefines.h"
 #include "RingBuffer.h"
+#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
@@ -39,11 +39,11 @@ enum RESP_TYPE_V3 {
 	RT3_DATA
 };
 
-class CDStarRepeaterDVRPTRV3Controller : public wxThread, public IDStarRepeaterModem {
+class CDVRPTRV3Controller : public wxThread, public IModem {
 public:
-	CDStarRepeaterDVRPTRV3Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
-	CDStarRepeaterDVRPTRV3Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
-	virtual ~CDStarRepeaterDVRPTRV3Controller();
+	CDVRPTRV3Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
+	CDVRPTRV3Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
+	virtual ~CDVRPTRV3Controller();
 
 	virtual void* Entry();
 

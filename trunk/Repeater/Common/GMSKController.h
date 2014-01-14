@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,21 +16,21 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterGMSKController_H
-#define	DStarRepeaterGMSKController_H
+#ifndef	GMSKController_H
+#define	GMSKController_H
 
-#include "DStarRepeaterModem.h"
 #include "DStarDefines.h"
 #include "RingBuffer.h"
 #include "GMSKModem.h"
+#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
 
-class CDStarRepeaterGMSKController : public wxThread, public IDStarRepeaterModem {
+class CGMSKController : public wxThread, public IModem {
 public:
-	CDStarRepeaterGMSKController(USB_INTERFACE iface, unsigned int address);
-	virtual ~CDStarRepeaterGMSKController();
+	CGMSKController(USB_INTERFACE iface, unsigned int address);
+	virtual ~CGMSKController();
 
 	virtual void* Entry();
 

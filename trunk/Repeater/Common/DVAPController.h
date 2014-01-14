@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterDVAPController_H
-#define	DStarRepeaterDVAPController_H
+#ifndef	DVAPController_H
+#define	DVAPController_H
 
 #include "SerialDataController.h"
-#include "DStarRepeaterModem.h"
 #include "RingBuffer.h"
 #include "HeaderData.h"
+#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
@@ -51,10 +51,10 @@ enum RESP_TYPE {
 	RT_FM_DATA
 };
 
-class CDStarRepeaterDVAPController : public wxThread, public IDStarRepeaterModem {
+class CDVAPController : public wxThread, public IModem {
 public:
-	CDStarRepeaterDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
-	virtual ~CDStarRepeaterDVAPController();
+	CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
+	virtual ~CDVAPController();
 
 	virtual void* Entry();
 

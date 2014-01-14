@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public:
 
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
-	virtual void setModem(IDStarRepeaterModem* modem);
+	virtual void setModem(IModem* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
@@ -79,7 +79,7 @@ public:
 
 private:
 	wxString                   m_type;
-	IDStarRepeaterModem*       m_modem;
+	IModem*                    m_modem;
 	CRepeaterProtocolHandler*  m_protocolHandler;
 	CExternalController*       m_controller;
 	bool                       m_stopped;

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterDVAPController.h"
 #include "DStarRepeaterStatusData.h"
 #include "DStarRepeaterTXRXThread.h"
 #include "DStarRepeaterApp.h"
+#include "DVAPController.h"
 #include "DStarDefines.h"
 #include "HeaderData.h"
 #include "Version.h"
@@ -242,7 +242,7 @@ void CDStarRepeaterTXRXThread::setProtocolHandler(CRepeaterProtocolHandler* hand
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTXRXThread::setModem(IDStarRepeaterModem* modem)
+void CDStarRepeaterTXRXThread::setModem(IModem* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -831,7 +831,7 @@ CDStarRepeaterStatusData* CDStarRepeaterTXRXThread::getStatus()
 					wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString);
 
 	if (m_type.IsSameAs(wxT("DVAP")) && m_modem != NULL) {
-		CDStarRepeaterDVAPController* dvap = static_cast<CDStarRepeaterDVAPController*>(m_modem);
+		CDVAPController* dvap = static_cast<CDVAPController*>(m_modem);
 		bool squelch = dvap->getSquelch();
 		int signal   = dvap->getSignal();
 		status->setDVAP(squelch, signal);

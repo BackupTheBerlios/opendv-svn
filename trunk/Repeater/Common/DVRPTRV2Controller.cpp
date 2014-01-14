@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterDVRPTRV3Controller.h"
+#include "DVRPTRV2Controller.h"
 #include "DStarDefines.h"
 #include "Timer.h"
 
@@ -28,7 +28,7 @@
 
 const unsigned int MAX_RESPONSES = 30U;
 
-wxArrayString CDStarRepeaterDVRPTRV3Controller::getDevices()
+wxArrayString CDVRPTRV2Controller::getDevices()
 {
 #if defined(__WINDOWS__)
 	return CSerialDataController::getDevices();
@@ -53,7 +53,7 @@ wxArrayString CDStarRepeaterDVRPTRV3Controller::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDStarRepeaterDVRPTRV3Controller::CDStarRepeaterDVRPTRV3Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
+CDVRPTRV2Controller::CDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_USB),
 m_usbPort(port),
@@ -87,7 +87,7 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterDVRPTRV3Controller::CDStarRepeaterDVRPTRV3Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
+CDVRPTRV2Controller::CDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_connection(CT_NETWORK),
 m_usbPort(),
@@ -122,7 +122,7 @@ m_readBuffer(NULL)
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
-CDStarRepeaterDVRPTRV3Controller::~CDStarRepeaterDVRPTRV3Controller()
+CDVRPTRV2Controller::~CDVRPTRV2Controller()
 {
 	delete m_usb;
 	delete m_network;
@@ -131,7 +131,7 @@ CDStarRepeaterDVRPTRV3Controller::~CDStarRepeaterDVRPTRV3Controller()
 	delete[] m_readBuffer;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::start()
+bool CDVRPTRV2Controller::start()
 {
 	findPort();
 
@@ -148,9 +148,9 @@ bool CDStarRepeaterDVRPTRV3Controller::start()
 	return true;
 }
 
-void* CDStarRepeaterDVRPTRV3Controller::Entry()
+void* CDVRPTRV2Controller::Entry()
 {
-	wxLogMessage(wxT("Starting DV-RPTR3 Modem Controller thread"));
+	wxLogMessage(wxT("Starting DV-RPTR2 Modem Controller thread"));
 
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 0U, 250U);
@@ -164,7 +164,7 @@ void* CDStarRepeaterDVRPTRV3Controller::Entry()
 			if (!ret) {
 				ret = findModem();
 				if (!ret) {
-					wxLogMessage(wxT("Stopping DV-RPTR3 Modem Controller thread"));
+					wxLogMessage(wxT("Stopping DV-RPTR2 Modem Controller thread"));
 					return NULL;
 				}
 			}
@@ -173,23 +173,23 @@ void* CDStarRepeaterDVRPTRV3Controller::Entry()
 		}
 
 		unsigned int length;
-		RESP_TYPE_V3 type = getResponse(m_buffer, length);
+		RESP_TYPE_V2 type = getResponse(m_buffer, length);
 
 		switch (type) {
-			case RT3_TIMEOUT:
+			case RT2_TIMEOUT:
 				break;
 
-			case RT3_ERROR: {
+			case RT2_ERROR: {
 					bool ret = findModem();
 					if (!ret) {
-						wxLogMessage(wxT("Stopping DV-RPTR3 Modem Controller thread"));
+						wxLogMessage(wxT("Stopping DV-RPTR2 Modem Controller thread"));
 						return NULL;
 					}
 				}
 				break;
 
-			case RT3_HEADER: {
-					// CUtils::dump(wxT("RT3_HEADER"), m_buffer, length);
+			case RT2_HEADER: {
+					// CUtils::dump(wxT("RT2_HEADER"), m_buffer, length);
 					wxMutexLocker locker(m_mutex);
 
 					unsigned char data[2U];
@@ -214,8 +214,8 @@ void* CDStarRepeaterDVRPTRV3Controller::Entry()
 				}
 				break;
 
-			case RT3_DATA: {
-					// CUtils::dump(wxT("RT3_DATA"), m_buffer, length);
+			case RT2_DATA: {
+					// CUtils::dump(wxT("RT2_DATA"), m_buffer, length);
 					wxMutexLocker locker(m_mutex);
 
 					unsigned char data[2U];
@@ -239,18 +239,18 @@ void* CDStarRepeaterDVRPTRV3Controller::Entry()
 				}
 				break;
 
-			case RT3_SPACE:
+			case RT2_SPACE:
 				m_space = m_buffer[9U];
-				// CUtils::dump(wxT("RT3_SPACE"), m_buffer, length);
+				// CUtils::dump(wxT("RT2_SPACE"), m_buffer, length);
 				break;
 
 			// These should not be received in this loop, but don't complain if we do
-			case RT3_QUERY:
-			case RT3_CONFIG:
+			case RT2_QUERY:
+			case RT2_CONFIG:
 				break;
 
 			default:
-				wxLogMessage(wxT("Unknown DV-RPTR3 message, type"));
+				wxLogMessage(wxT("Unknown DV-RPTR2 message, type"));
 				CUtils::dump(wxT("Buffer dump"), m_buffer, length);
 				break;
 		}
@@ -273,7 +273,7 @@ void* CDStarRepeaterDVRPTRV3Controller::Entry()
 				if (!ret) {
 					bool ret = findModem();
 					if (!ret) {
-						wxLogMessage(wxT("Stopping DV-RPTR3 Modem Controller thread"));
+						wxLogMessage(wxT("Stopping DV-RPTR2 Modem Controller thread"));
 						return NULL;
 					}
 				} else {
@@ -287,14 +287,14 @@ void* CDStarRepeaterDVRPTRV3Controller::Entry()
 		pollTimer.clock();
 	}
 
-	wxLogMessage(wxT("Stopping DV-RPTR3 Modem Controller thread"));
+	wxLogMessage(wxT("Stopping DV-RPTR2 Modem Controller thread"));
 
 	closeModem();
 
 	return NULL;
 }
 
-DSMT_TYPE CDStarRepeaterDVRPTRV3Controller::read()
+DSMT_TYPE CDVRPTRV2Controller::read()
 {
 	m_readLength = 0U;
 
@@ -313,7 +313,7 @@ DSMT_TYPE CDStarRepeaterDVRPTRV3Controller::read()
 	return m_readType;
 }
 
-CHeaderData* CDStarRepeaterDVRPTRV3Controller::readHeader()
+CHeaderData* CDVRPTRV2Controller::readHeader()
 {
 	if (m_readType != DSMTT_HEADER)
 		return NULL;
@@ -321,7 +321,7 @@ CHeaderData* CDStarRepeaterDVRPTRV3Controller::readHeader()
 	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
 }
 
-unsigned int CDStarRepeaterDVRPTRV3Controller::readData(unsigned char* data, unsigned int length)
+unsigned int CDVRPTRV2Controller::readData(unsigned char* data, unsigned int length)
 {
 	if (m_readType != DSMTT_DATA)
 		return 0U;
@@ -335,7 +335,7 @@ unsigned int CDStarRepeaterDVRPTRV3Controller::readData(unsigned char* data, uns
 	}
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::writeHeader(const CHeaderData& header)
+bool CDVRPTRV2Controller::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer[105U];
 
@@ -393,7 +393,7 @@ bool CDStarRepeaterDVRPTRV3Controller::writeHeader(const CHeaderData& header)
 	return true;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::writeData(const unsigned char* data, unsigned int length, bool end)
+bool CDVRPTRV2Controller::writeData(const unsigned char* data, unsigned int length, bool end)
 {
 	unsigned char buffer[17U];
 
@@ -429,24 +429,24 @@ bool CDStarRepeaterDVRPTRV3Controller::writeData(const unsigned char* data, unsi
 	return true;
 }
 
-unsigned int CDStarRepeaterDVRPTRV3Controller::getSpace()
+unsigned int CDVRPTRV2Controller::getSpace()
 {
 	return m_space;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::getTX()
+bool CDVRPTRV2Controller::getTX()
 {
 	return m_tx;
 }
 
-void CDStarRepeaterDVRPTRV3Controller::stop()
+void CDVRPTRV2Controller::stop()
 {
 	m_stopped = true;
 
 	Wait();
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::readSerial()
+bool CDVRPTRV2Controller::readSerial()
 {
 	unsigned char buffer[105U];
 
@@ -470,27 +470,27 @@ bool CDStarRepeaterDVRPTRV3Controller::readSerial()
 
 	unsigned int count = 0U;
 	unsigned int length;
-	RESP_TYPE_V3 resp;
+	RESP_TYPE_V2 resp;
 	do {
 		::wxMilliSleep(10UL);
 
 		resp = getResponse(m_buffer, length);
 
-		if (resp != RT3_QUERY) {
+		if (resp != RT2_QUERY) {
 			count++;
 			if (count >= MAX_RESPONSES) {
 				wxLogError(wxT("The DV-RPTR modem is not responding to the query command"));
 				return false;
 			}
 		}
-	} while (resp != RT3_QUERY);
+	} while (resp != RT2_QUERY);
 
 	wxLogInfo(wxT("DV-RPTR Modem Hardware serial: 0x%02X%02X%02x%02X"), m_buffer[9U], m_buffer[10U], m_buffer[11U], m_buffer[12U]);
 
 	return true;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::readSpace()
+bool CDVRPTRV2Controller::readSpace()
 {
 	unsigned char buffer[10U];
 
@@ -510,7 +510,7 @@ bool CDStarRepeaterDVRPTRV3Controller::readSpace()
 	return writeModem(buffer, 10U);
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::setConfig()
+bool CDVRPTRV2Controller::setConfig()
 {
 	unsigned char buffer[105U];
 
@@ -553,20 +553,20 @@ bool CDStarRepeaterDVRPTRV3Controller::setConfig()
 
 	unsigned int count = 0U;
 	unsigned int length;
-	RESP_TYPE_V3 resp;
+	RESP_TYPE_V2 resp;
 	do {
 		::wxMilliSleep(10UL);
 
 		resp = getResponse(m_buffer, length);
 
-		if (resp != RT3_CONFIG) {
+		if (resp != RT2_CONFIG) {
 			count++;
 			if (count >= MAX_RESPONSES) {
 				wxLogError(wxT("The DV-RPTR modem is not responding to the configure command"));
 				return false;
 			}
 		}
-	} while (resp != RT3_CONFIG);
+	} while (resp != RT2_CONFIG);
 
 	// CUtils::dump(wxT("Response"), m_buffer, length);
 
@@ -577,17 +577,17 @@ bool CDStarRepeaterDVRPTRV3Controller::setConfig()
 	return true;
 }
 
-RESP_TYPE_V3 CDStarRepeaterDVRPTRV3Controller::getResponse(unsigned char *buffer, unsigned int& length)
+RESP_TYPE_V2 CDVRPTRV2Controller::getResponse(unsigned char *buffer, unsigned int& length)
 {
 	// Get the start of the frame or nothing at all
 	int ret = readModem(buffer + 0U, 5U);
 	if (ret < 0) {
 		wxLogError(wxT("Error when reading from the DV-RPTR"));
-		return RT3_ERROR;
+		return RT2_ERROR;
 	}
 
 	if (ret == 0)
-		return RT3_TIMEOUT;
+		return RT2_TIMEOUT;
 
 	while (::memcmp(buffer + 0U, "HEAD", 4U) != 0) {
 		buffer[0U] = buffer[1U];
@@ -598,11 +598,11 @@ RESP_TYPE_V3 CDStarRepeaterDVRPTRV3Controller::getResponse(unsigned char *buffer
 		ret = readModem(buffer + 4U, 1U);
 		if (ret < 0) {
 			wxLogError(wxT("Error when reading from the DV-RPTR"));
-			return RT3_ERROR;
+			return RT2_ERROR;
 		}
 
 		if (ret == 0)
-			return RT3_TIMEOUT;
+			return RT2_TIMEOUT;
 	}
 
 	switch (buffer[4U]) {
@@ -617,7 +617,7 @@ RESP_TYPE_V3 CDStarRepeaterDVRPTRV3Controller::getResponse(unsigned char *buffer
 			break;
 		default:
 			wxLogError(wxT("DV-RPTR frame type is incorrect - 0x%02X"), buffer[4U]);
-			return RT3_UNKNOWN;
+			return RT2_UNKNOWN;
 	}
 
 	unsigned int offset = 5U;
@@ -626,7 +626,7 @@ RESP_TYPE_V3 CDStarRepeaterDVRPTRV3Controller::getResponse(unsigned char *buffer
 		int ret = readModem(buffer + offset, length - offset);
 		if (ret < 0) {
 			wxLogError(wxT("Error when reading from the DV-RPTR"));
-			return RT3_ERROR;
+			return RT2_ERROR;
 		}
 
 		if (ret > 0)
@@ -639,31 +639,31 @@ RESP_TYPE_V3 CDStarRepeaterDVRPTRV3Controller::getResponse(unsigned char *buffer
 	// CUtils::dump(wxT("Received"), buffer, length);
 
 	if (::memcmp(buffer + 0U, "HEADZ", 5U) == 0) {
-		return RT3_DATA;
+		return RT2_DATA;
 	} else if (::memcmp(buffer + 5U, "0001", 4U) == 0) {
 		if (buffer[104U] == 0x01U)
-			return RT3_HEADER;
+			return RT2_HEADER;
 	} else if (::memcmp(buffer + 5U, "9900", 4U) == 0) {
-		return RT3_QUERY;
+		return RT2_QUERY;
 	} else if (::memcmp(buffer + 5U, "9001", 4U) == 0) {
-		return RT3_CONFIG;
+		return RT2_CONFIG;
 	} else if (::memcmp(buffer + 5U, "9011", 4U) == 0) {
-		return RT3_SPACE;
+		return RT2_SPACE;
 	} else if (::memcmp(buffer + 5U, "9021", 4U) == 0) {
-		return RT3_TIMEOUT;
+		return RT2_TIMEOUT;
 	}
 
 	wxLogError(wxT("DV-RPTR frame type number is incorrect - 0x%02X 0x%02X 0x%02X 0x%02X"), buffer[5U], buffer[6U], buffer[7U], buffer[8U]);
 
-	return RT3_UNKNOWN;
+	return RT2_UNKNOWN;
 }
 
-wxString CDStarRepeaterDVRPTRV3Controller::getPath() const
+wxString CDVRPTRV2Controller::getPath() const
 {
 	return m_usbPath;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::findPort()
+bool CDVRPTRV2Controller::findPort()
 {
 	if (m_connection != CT_USB)
 		return true;
@@ -724,7 +724,7 @@ bool CDStarRepeaterDVRPTRV3Controller::findPort()
 	return false;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::findPath()
+bool CDVRPTRV2Controller::findPath()
 {
 	if (m_connection != CT_USB)
 		return true;
@@ -811,7 +811,7 @@ bool CDStarRepeaterDVRPTRV3Controller::findPath()
 	return true;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::findModem()
+bool CDVRPTRV2Controller::findModem()
 {
 	closeModem();
 
@@ -851,7 +851,7 @@ bool CDStarRepeaterDVRPTRV3Controller::findModem()
 	return false;
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::openModem()
+bool CDVRPTRV2Controller::openModem()
 {
 	bool ret = false;
 
@@ -885,7 +885,7 @@ bool CDStarRepeaterDVRPTRV3Controller::openModem()
 	return true;
 }
 
-int CDStarRepeaterDVRPTRV3Controller::readModem(unsigned char* buffer, unsigned int length)
+int CDVRPTRV2Controller::readModem(unsigned char* buffer, unsigned int length)
 {
 	switch (m_connection) {
 		case CT_USB:
@@ -897,7 +897,7 @@ int CDStarRepeaterDVRPTRV3Controller::readModem(unsigned char* buffer, unsigned 
 	}
 }
 
-bool CDStarRepeaterDVRPTRV3Controller::writeModem(const unsigned char* buffer, unsigned int length)
+bool CDVRPTRV2Controller::writeModem(const unsigned char* buffer, unsigned int length)
 {
 	switch (m_connection) {
 		case CT_USB:
@@ -909,7 +909,7 @@ bool CDStarRepeaterDVRPTRV3Controller::writeModem(const unsigned char* buffer, u
 	}
 }
 
-void CDStarRepeaterDVRPTRV3Controller::closeModem()
+void CDVRPTRV2Controller::closeModem()
 {
 	switch (m_connection) {
 		case CT_USB:

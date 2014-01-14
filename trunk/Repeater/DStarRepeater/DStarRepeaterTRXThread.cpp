@@ -16,10 +16,10 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "DStarRepeaterDVAPController.h"
 #include "DStarRepeaterStatusData.h"
 #include "DStarRepeaterTRXThread.h"
 #include "DStarRepeaterApp.h"
+#include "DVAPController.h"
 #include "DStarDefines.h"
 #include "HeaderData.h"
 #include "Version.h"
@@ -414,7 +414,7 @@ void CDStarRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* handl
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTRXThread::setModem(IDStarRepeaterModem* modem)
+void CDStarRepeaterTRXThread::setModem(IModem* modem)
 {
 	wxASSERT(modem != NULL);
 
@@ -1766,7 +1766,7 @@ CDStarRepeaterStatusData* CDStarRepeaterTRXThread::getStatus()
 	}
 
 	if (m_type.IsSameAs(wxT("DVAP")) && m_modem != NULL) {
-		CDStarRepeaterDVAPController* dvap = static_cast<CDStarRepeaterDVAPController*>(m_modem);
+		CDVAPController* dvap = static_cast<CDVAPController*>(m_modem);
 		bool squelch = dvap->getSquelch();
 		int signal   = dvap->getSignal();
 		status->setDVAP(squelch, signal);

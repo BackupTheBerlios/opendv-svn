@@ -181,27 +181,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterDVAPController.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterDVRPTRV1Controller.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterDVRPTRV2Controller.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterDVRPTRV3Controller.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterFrame.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterGMSKController.cpp"
 				>
 			</File>
 			<File
@@ -210,10 +190,6 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterRXThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterSoundCardController.cpp"
 				>
 			</File>
 			<File
@@ -255,27 +231,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterDVAPController.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterDVRPTRV1Controller.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterDVRPTRV2Controller.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterDVRPTRV3Controller.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterFrame.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterGMSKController.h"
 				>
 			</File>
 			<File
@@ -283,15 +239,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterModem.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterRXThread.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarRepeaterSoundCardController.h"
 				>
 			</File>
 			<File

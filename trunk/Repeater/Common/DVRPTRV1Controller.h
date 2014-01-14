@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,34 +16,40 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	DStarRepeaterDVRPTRV2Controller_H
-#define	DStarRepeaterDVRPTRV2Controller_H
+#ifndef	DVRPTRV1Controller_H
+#define	DVRPTRV1Controller_H
 
 #include "SerialDataController.h"
-#include "DStarRepeaterModem.h"
-#include "TCPReaderWriter.h"
-#include "DStarDefines.h"
 #include "RingBuffer.h"
+#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
 
-enum RESP_TYPE_V2 {
-	RT2_TIMEOUT,
-	RT2_ERROR,
-	RT2_UNKNOWN,
-	RT2_SPACE,
-	RT2_QUERY,
-	RT2_CONFIG,
-	RT2_HEADER,
-	RT2_DATA
+enum RESP_TYPE_V1 {
+	RT1_TIMEOUT,
+	RT1_ERROR,
+	RT1_UNKNOWN,
+	RT1_GET_STATUS,
+	RT1_GET_VERSION,
+	RT1_GET_SERIAL,
+	RT1_GET_CONFIG,
+	RT1_SET_CONFIG,
+	RT1_RXPREAMBLE,
+	RT1_START,
+	RT1_HEADER,
+	RT1_RXSYNC,
+	RT1_DATA,
+	RT1_EOT,
+	RT1_RXLOST,
+	RT1_SET_TESTMDE,
+	RT1_DEBUG
 };
 
-class CDStarRepeaterDVRPTRV2Controller : public wxThread, public IDStarRepeaterModem {
+class CDVRPTRV1Controller : public wxThread, public IModem {
 public:
-	CDStarRepeaterDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
-	CDStarRepeaterDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
-	virtual ~CDStarRepeaterDVRPTRV2Controller();
+	CDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	virtual ~CDVRPTRV1Controller();
 
 	virtual void* Entry();
 
@@ -66,23 +72,24 @@ public:
 	static wxArrayString getDevices();
 
 private:
-	CONNECTION_TYPE            m_connection;
-	wxString                   m_usbPort;
-	wxString                   m_usbPath;
-	wxString                   m_address;
-	unsigned int               m_port;
+	wxString                   m_port;
+	wxString                   m_path;
+	bool                       m_rxInvert;
 	bool                       m_txInvert;
+	bool                       m_channel;
 	unsigned int               m_modLevel;
-	bool                       m_duplex;
-	wxString                   m_callsign;
 	unsigned int               m_txDelay;
-	CSerialDataController*     m_usb;
-	CTCPReaderWriter*          m_network;
+	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
+	unsigned char              m_txCounter;
+	unsigned char              m_pktCounter;
 	bool                       m_tx;
 	bool                       m_rx;
+	unsigned int               m_txSpace;
+	bool                       m_txEnabled;
+	bool                       m_checksum;
 	unsigned int               m_space;
 	bool                       m_stopped;
 	wxMutex                    m_mutex;
@@ -90,21 +97,19 @@ private:
 	unsigned int               m_readLength;
 	unsigned char*             m_readBuffer;
 
-	bool readSerial();
+	bool readVersion();
+	bool readStatus();
 	bool setConfig();
-	bool readSpace();
+	bool setEnabled(bool enable);
 
-	RESP_TYPE_V2 getResponse(unsigned char* buffer, unsigned int& length);
+	RESP_TYPE_V1 getResponse(unsigned char* buffer, unsigned int& length);
 
 	bool findPort();
 	bool findPath();
 
 	bool findModem();
 	bool openModem();
-
-	int readModem(unsigned char* buffer, unsigned int length);
-	bool writeModem(const unsigned char* buffer, unsigned int length);
-	void closeModem();
 };
 
 #endif
+

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -186,7 +186,7 @@ void CDStarRepeaterTXThread::setProtocolHandler(CRepeaterProtocolHandler* handle
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTXThread::setModem(IDStarRepeaterModem* modem)
+void CDStarRepeaterTXThread::setModem(IModem* modem)
 {
 	wxASSERT(modem != NULL);
 

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -85,7 +85,6 @@ const wxString  KEY_GMSK_INTERFACE     = wxT("gmskInterfaceType");
 const wxString  KEY_GMSK_ADDRESS       = wxT("gmskAddress");
 
 const wxString  KEY_DVRPTR1_PORT       = wxT("dvrptr1Port");
-const wxString  KEY_DVRPTR1_DELAY      = wxT("dvrptr1Delay");
 const wxString  KEY_DVRPTR1_RXINVERT   = wxT("dvrptr1RXInvert");
 const wxString  KEY_DVRPTR1_TXINVERT   = wxT("dvrptr1TXInvert");
 const wxString  KEY_DVRPTR1_CHANNEL    = wxT("dvrptr1Channel");
@@ -107,6 +106,13 @@ const wxString  KEY_DVRPTR3_PORT       = wxT("dvrptr3Port");
 const wxString  KEY_DVRPTR3_TXINVERT   = wxT("dvrptr3TXInvert");
 const wxString  KEY_DVRPTR3_MODLEVEL   = wxT("dvrptr3ModLevel");
 const wxString  KEY_DVRPTR3_TXDELAY    = wxT("dvrptr3TXDelay");
+
+const wxString  KEY_DVMEGA_PORT        = wxT("dvmegaPort");
+const wxString  KEY_DVMEGA_VARIANT     = wxT("dvmegaVariant");
+const wxString  KEY_DVMEGA_RXINVERT    = wxT("dvmegaRXInvert");
+const wxString  KEY_DVMEGA_TXINVERT    = wxT("dvmegaTXInvert");
+const wxString  KEY_DVMEGA_TXDELAY     = wxT("dvmegaTXDelay");
+const wxString  KEY_DVMEGA_FREQUENCY   = wxT("dvmegaFrequency");
 
 const wxString  KEY_SOUNDCARD_RXDEVICE = wxT("soundCardRXDevice");
 const wxString  KEY_SOUNDCARD_TXDEVICE = wxT("soundCardTXDevice");
@@ -188,7 +194,6 @@ const USB_INTERFACE   DEFAULT_GMSK_INTERFACE     = UI_LIBUSB;
 const unsigned int    DEFAULT_GMSK_ADDRESS       = 0x0300U;
 
 const wxString        DEFAULT_DVRPTR1_PORT       = wxEmptyString;
-const bool            DEFAULT_DVRPTR1_DELAY      = false;
 const bool            DEFAULT_DVRPTR1_RXINVERT   = false;
 const bool            DEFAULT_DVRPTR1_TXINVERT   = false;
 const bool            DEFAULT_DVRPTR1_CHANNEL    = false;
@@ -210,6 +215,13 @@ const unsigned int    DEFAULT_DVRPTR3_PORT       = 0U;
 const bool            DEFAULT_DVRPTR3_TXINVERT   = false;
 const unsigned int    DEFAULT_DVRPTR3_MODLEVEL   = 20U;
 const unsigned int    DEFAULT_DVRPTR3_TXDELAY    = 150U;
+
+const wxString        DEFAULT_DVMEGA_PORT        = wxEmptyString;
+const DVMEGA_VARIANT  DEFAULT_DVMEGA_VARIANT     = DVMV_NODE;
+const bool            DEFAULT_DVMEGA_RXINVERT    = false;
+const bool            DEFAULT_DVMEGA_TXINVERT    = false;
+const unsigned int    DEFAULT_DVMEGA_TXDELAY     = 150U;
+const unsigned int    DEFAULT_DVMEGA_FREQUENCY   = 145500000U;
 
 const wxString        DEFAULT_SOUNDCARD_RXDEVICE = wxEmptyString;
 const wxString        DEFAULT_SOUNDCARD_TXDEVICE = wxEmptyString;
@@ -289,7 +301,6 @@ m_dvapSquelch(DEFAULT_DVAP_SQUELCH),
 m_gmskInterface(DEFAULT_GMSK_INTERFACE),
 m_gmskAddress(DEFAULT_GMSK_ADDRESS),
 m_dvrptr1Port(DEFAULT_DVRPTR1_PORT),
-m_dvrptr1Delay(DEFAULT_DVRPTR1_DELAY),
 m_dvrptr1RXInvert(DEFAULT_DVRPTR1_RXINVERT),
 m_dvrptr1TXInvert(DEFAULT_DVRPTR1_TXINVERT),
 m_dvrptr1Channel(DEFAULT_DVRPTR1_CHANNEL),
@@ -309,6 +320,12 @@ m_dvrptr3Port(DEFAULT_DVRPTR3_PORT),
 m_dvrptr3TXInvert(DEFAULT_DVRPTR3_TXINVERT),
 m_dvrptr3ModLevel(DEFAULT_DVRPTR3_MODLEVEL),
 m_dvrptr3TXDelay(DEFAULT_DVRPTR3_TXDELAY),
+m_dvmegaPort(DEFAULT_DVMEGA_PORT),
+m_dvmegaVariant(DEFAULT_DVMEGA_VARIANT),
+m_dvmegaRXInvert(DEFAULT_DVMEGA_RXINVERT),
+m_dvmegaTXInvert(DEFAULT_DVMEGA_TXINVERT),
+m_dvmegaTXDelay(DEFAULT_DVMEGA_TXDELAY),
+m_dvmegaFrequency(DEFAULT_DVMEGA_FREQUENCY),
 m_soundCardRXDevice(DEFAULT_SOUNDCARD_RXDEVICE),
 m_soundCardTXDevice(DEFAULT_SOUNDCARD_TXDEVICE),
 m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
@@ -471,8 +488,6 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 
 	m_config->Read(m_name + KEY_DVRPTR1_PORT, &m_dvrptr1Port, DEFAULT_DVRPTR1_PORT);
 
-	m_config->Read(m_name + KEY_DVRPTR1_DELAY, &m_dvrptr1Delay, DEFAULT_DVRPTR1_DELAY);
-
 	m_config->Read(m_name + KEY_DVRPTR1_RXINVERT, &m_dvrptr1RXInvert, DEFAULT_DVRPTR1_RXINVERT);
 
 	m_config->Read(m_name + KEY_DVRPTR1_TXINVERT, &m_dvrptr1TXInvert, DEFAULT_DVRPTR1_TXINVERT);
@@ -520,6 +535,21 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 
 	m_config->Read(m_name + KEY_DVRPTR3_TXDELAY, &temp, long(DEFAULT_DVRPTR3_TXDELAY));
 	m_dvrptr3TXDelay = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVMEGA_PORT, &m_dvmegaPort, DEFAULT_DVMEGA_PORT);
+
+	m_config->Read(m_name + KEY_DVMEGA_VARIANT, &temp, long(DEFAULT_DVMEGA_VARIANT));
+	m_dvmegaVariant = DVMEGA_VARIANT(temp);
+
+	m_config->Read(m_name + KEY_DVMEGA_RXINVERT, &m_dvmegaRXInvert, DEFAULT_DVMEGA_RXINVERT);
+
+	m_config->Read(m_name + KEY_DVMEGA_TXINVERT, &m_dvmegaTXInvert, DEFAULT_DVMEGA_TXINVERT);
+
+	m_config->Read(m_name + KEY_DVMEGA_TXDELAY, &temp, long(DEFAULT_DVMEGA_TXDELAY));
+	m_dvmegaTXDelay = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_DVMEGA_FREQUENCY, &temp, long(DEFAULT_DVMEGA_FREQUENCY));
+	m_dvmegaFrequency = (unsigned int)temp;
 
 	m_config->Read(m_name + KEY_SOUNDCARD_RXDEVICE, &m_soundCardRXDevice, DEFAULT_SOUNDCARD_RXDEVICE);
 
@@ -612,7 +642,6 @@ m_dvapSquelch(DEFAULT_DVAP_SQUELCH),
 m_gmskInterface(DEFAULT_GMSK_INTERFACE),
 m_gmskAddress(DEFAULT_GMSK_ADDRESS),
 m_dvrptr1Port(DEFAULT_DVRPTR1_PORT),
-m_dvrptr1Delay(DEFAULT_DVRPTR1_DELAY),
 m_dvrptr1RXInvert(DEFAULT_DVRPTR1_RXINVERT),
 m_dvrptr1TXInvert(DEFAULT_DVRPTR1_TXINVERT),
 m_dvrptr1Channel(DEFAULT_DVRPTR1_CHANNEL),
@@ -632,6 +661,12 @@ m_dvrptr3Port(DEFAULT_DVRPTR3_PORT),
 m_dvrptr3TXInvert(DEFAULT_DVRPTR3_TXINVERT),
 m_dvrptr3ModLevel(DEFAULT_DVRPTR3_MODLEVEL),
 m_dvrptr3TXDelay(DEFAULT_DVRPTR3_TXDELAY),
+m_dvmegaPort(DEFAULT_DVMEGA_PORT),
+m_dvmegaVariant(DEFAULT_DVMEGA_VARIANT),
+m_dvmegaRXInvert(DEFAULT_DVMEGA_RXINVERT),
+m_dvmegaTXInvert(DEFAULT_DVMEGA_TXINVERT),
+m_dvmegaTXDelay(DEFAULT_DVMEGA_TXDELAY),
+m_dvmegaFrequency(DEFAULT_DVMEGA_FREQUENCY),
 m_soundCardRXDevice(DEFAULT_SOUNDCARD_RXDEVICE),
 m_soundCardTXDevice(DEFAULT_SOUNDCARD_TXDEVICE),
 m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
@@ -836,9 +871,6 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 			m_gmskAddress = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_DVRPTR1_PORT)) {
 			m_dvrptr1Port = val;
-		} else if (key.IsSameAs(KEY_DVRPTR1_DELAY)) {
-			val.ToLong(&temp1);
-			m_dvrptr1Delay = temp1 == 1L;
 		} else if (key.IsSameAs(KEY_DVRPTR1_RXINVERT)) {
 			val.ToLong(&temp1);
 			m_dvrptr1RXInvert = temp1 == 1L;
@@ -892,6 +924,23 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 		} else if (key.IsSameAs(KEY_DVRPTR3_TXDELAY)) {
 			val.ToULong(&temp2);
 			m_dvrptr3TXDelay = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVMEGA_PORT)) {
+			m_dvmegaPort = val;
+		} else if (key.IsSameAs(KEY_DVMEGA_VARIANT)) {
+			val.ToLong(&temp1);
+			m_dvmegaVariant = DVMEGA_VARIANT(temp1);
+		} else if (key.IsSameAs(KEY_DVMEGA_RXINVERT)) {
+			val.ToLong(&temp1);
+			m_dvmegaRXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DVMEGA_TXINVERT)) {
+			val.ToLong(&temp1);
+			m_dvmegaTXInvert = temp1 == 1L;
+		} else if (key.IsSameAs(KEY_DVMEGA_TXDELAY)) {
+			val.ToULong(&temp2);
+			m_dvmegaTXDelay = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_DVMEGA_FREQUENCY)) {
+			val.ToULong(&temp2);
+			m_dvmegaFrequency = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_SOUNDCARD_RXDEVICE)) {
 			m_soundCardRXDevice = val;
 		} else if (key.IsSameAs(KEY_SOUNDCARD_TXDEVICE)) {
@@ -1155,10 +1204,9 @@ void CDStarRepeaterConfig::setGMSK(USB_INTERFACE type, unsigned int address)
 	m_gmskAddress   = address;
 }
 
-void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& delay, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
+void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const
 {
 	port     = m_dvrptr1Port;
-	delay    = m_dvrptr1Delay;
 	rxInvert = m_dvrptr1RXInvert;
 	txInvert = m_dvrptr1TXInvert;
 	channel  = m_dvrptr1Channel;
@@ -1166,10 +1214,9 @@ void CDStarRepeaterConfig::getDVRPTR1(wxString& port, bool& delay, bool& rxInver
 	txDelay  = m_dvrptr1TXDelay;
 }
 
-void CDStarRepeaterConfig::setDVRPTR1(const wxString& port, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
+void CDStarRepeaterConfig::setDVRPTR1(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay)
 {
 	m_dvrptr1Port     = port;
-	m_dvrptr1Delay    = delay;
 	m_dvrptr1RXInvert = rxInvert;
 	m_dvrptr1TXInvert = txInvert;
 	m_dvrptr1Channel  = channel;
@@ -1219,6 +1266,26 @@ void CDStarRepeaterConfig::setDVRPTR3(CONNECTION_TYPE connection, const wxString
 	m_dvrptr3TXInvert   = txInvert;
 	m_dvrptr3ModLevel   = modLevel;
 	m_dvrptr3TXDelay    = txDelay;
+}
+
+void CDStarRepeaterConfig::getDVMEGA(wxString& port, DVMEGA_VARIANT& variant, bool& rxInvert, bool& txInvert, unsigned int& txDelay, unsigned int& frequency) const
+{
+	port      = m_dvmegaPort;
+	variant   = m_dvmegaVariant;
+	rxInvert  = m_dvmegaRXInvert;
+	txInvert  = m_dvmegaTXInvert;
+	txDelay   = m_dvmegaTXDelay;
+	frequency = m_dvmegaFrequency;
+}
+
+void CDStarRepeaterConfig::setDVMEGA(const wxString& port, DVMEGA_VARIANT variant, bool rxInvert, bool txInvert, unsigned int txDelay, unsigned int frequency)
+{
+	m_dvmegaPort      = port;
+	m_dvmegaVariant   = variant;
+	m_dvmegaRXInvert  = rxInvert;
+	m_dvmegaTXInvert  = txInvert;
+	m_dvmegaTXDelay   = txDelay;
+	m_dvmegaFrequency = frequency;
 }
 
 void CDStarRepeaterConfig::getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& rxLevel, wxFloat32& txLevel, unsigned int& txDelay) const
@@ -1314,7 +1381,6 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_GMSK_ADDRESS, long(m_gmskAddress));
 
 	m_config->Write(m_name + KEY_DVRPTR1_PORT, m_dvrptr1Port);
-	m_config->Write(m_name + KEY_DVRPTR1_DELAY, m_dvrptr1Delay);
 	m_config->Write(m_name + KEY_DVRPTR1_RXINVERT, m_dvrptr1RXInvert);
 	m_config->Write(m_name + KEY_DVRPTR1_TXINVERT, m_dvrptr1TXInvert);
 	m_config->Write(m_name + KEY_DVRPTR1_CHANNEL, m_dvrptr1Channel);
@@ -1336,6 +1402,13 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_DVRPTR3_TXINVERT, m_dvrptr3TXInvert);
 	m_config->Write(m_name + KEY_DVRPTR3_MODLEVEL, long(m_dvrptr3ModLevel));
 	m_config->Write(m_name + KEY_DVRPTR3_TXDELAY, long(m_dvrptr3TXDelay));
+
+	m_config->Write(m_name + KEY_DVMEGA_PORT, m_dvmegaPort);
+	m_config->Write(m_name + KEY_DVMEGA_VARIANT, long(m_dvmegaVariant));
+	m_config->Write(m_name + KEY_DVMEGA_RXINVERT, m_dvmegaRXInvert);
+	m_config->Write(m_name + KEY_DVMEGA_TXINVERT, m_dvmegaTXInvert);
+	m_config->Write(m_name + KEY_DVMEGA_TXDELAY, long(m_dvmegaTXDelay));
+	m_config->Write(m_name + KEY_DVMEGA_FREQUENCY, long(m_dvmegaFrequency));
 
 	m_config->Write(m_name + KEY_SOUNDCARD_RXDEVICE, m_soundCardRXDevice);
 	m_config->Write(m_name + KEY_SOUNDCARD_TXDEVICE, m_soundCardTXDevice);
@@ -1441,7 +1514,6 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%u"), KEY_GMSK_ADDRESS.c_str(), m_gmskAddress); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR1_PORT.c_str(), m_dvrptr1Port.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_DELAY.c_str(), m_dvrptr1Delay ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_RXINVERT.c_str(), m_dvrptr1RXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_TXINVERT.c_str(), m_dvrptr1TXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_CHANNEL.c_str(), m_dvrptr1Channel ? 1 : 0); file.AddLine(buffer);
@@ -1463,6 +1535,13 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR3_TXINVERT.c_str(), m_dvrptr3TXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_MODLEVEL.c_str(), m_dvrptr3ModLevel); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_TXDELAY.c_str(), m_dvrptr3TXDelay); file.AddLine(buffer);
+
+	buffer.Printf(wxT("%s=%s"), KEY_DVMEGA_PORT.c_str(), m_dvmegaPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_VARIANT.c_str(), int(m_dvmegaVariant)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_RXINVERT.c_str(), m_dvmegaRXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_TXINVERT.c_str(), m_dvmegaTXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVMEGA_TXDELAY.c_str(), m_dvmegaTXDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVMEGA_FREQUENCY.c_str(), m_dvmegaFrequency); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_RXDEVICE.c_str(), m_soundCardRXDevice.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_TXDEVICE.c_str(), m_soundCardTXDevice.c_str()); file.AddLine(buffer);

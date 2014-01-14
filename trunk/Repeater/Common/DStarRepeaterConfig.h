@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -73,14 +73,17 @@ public:
 	void getGMSK(USB_INTERFACE& type, unsigned int& address) const;
 	void setGMSK(USB_INTERFACE type, unsigned int address);
 
-	void getDVRPTR1(wxString& port, bool& delay, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
-	void setDVRPTR1(const wxString& port, bool delay, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
+	void getDVRPTR1(wxString& port, bool& rxInvert, bool& txInvert, bool& channel, unsigned int& modLevel, unsigned int& txDelay) const;
+	void setDVRPTR1(const wxString& port, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 
 	void getDVRPTR2(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel, unsigned int& txDelay) const;
 	void setDVRPTR2(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay);
 
 	void getDVRPTR3(CONNECTION_TYPE& connectionType, wxString& usbPort, wxString& address, unsigned int& port, bool& txInvert, unsigned int& modLevel, unsigned int& txDelay) const;
 	void setDVRPTR3(CONNECTION_TYPE connectionType, const wxString& usbPort, const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, unsigned int txDelay);
+
+	void getDVMEGA(wxString& port, DVMEGA_VARIANT& variant, bool& rxInvert, bool& txInvert, unsigned int& txDelay, unsigned int& frequency) const;
+	void setDVMEGA(const wxString& port, DVMEGA_VARIANT variant, bool rxInvert, bool txInvert, unsigned int txDelay, unsigned int frequency);
 
 	void getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& rxLevel, wxFloat32& txLevel, unsigned int& txDelay) const;
 	void setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
@@ -164,7 +167,6 @@ private:
 
 	// DV-RPTR 1
 	wxString      m_dvrptr1Port;
-	bool          m_dvrptr1Delay;
 	bool          m_dvrptr1RXInvert;
 	bool          m_dvrptr1TXInvert;
 	bool          m_dvrptr1Channel;
@@ -188,6 +190,14 @@ private:
 	bool          m_dvrptr3TXInvert;
 	unsigned int  m_dvrptr3ModLevel;
 	unsigned int  m_dvrptr3TXDelay;
+
+	// DVMEGA
+	wxString       m_dvmegaPort;
+	DVMEGA_VARIANT m_dvmegaVariant;
+	bool           m_dvmegaRXInvert;
+	bool           m_dvmegaTXInvert;
+	unsigned int   m_dvmegaTXDelay;
+	unsigned int   m_dvmegaFrequency;
 
 	// Sound Card
 	wxString      m_soundCardRXDevice;
