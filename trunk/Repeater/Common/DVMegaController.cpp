@@ -68,22 +68,12 @@ wxArrayString CDVMegaController::getDevices()
 	devices.Add(wxT("/dev/ttyACM2"));
 	devices.Add(wxT("/dev/ttyACM3"));
 	devices.Add(wxT("/dev/ttyACM4"));
-	devices.Add(wxT("/dev/ttyACM5"));
-	devices.Add(wxT("/dev/ttyACM6"));
-	devices.Add(wxT("/dev/ttyACM7"));
-	devices.Add(wxT("/dev/ttyACM8"));
-	devices.Add(wxT("/dev/ttyACM9"));
 
 	devices.Add(wxT("/dev/ttyS0"));
 	devices.Add(wxT("/dev/ttyS1"));
 	devices.Add(wxT("/dev/ttyS2"));
 	devices.Add(wxT("/dev/ttyS3"));
 	devices.Add(wxT("/dev/ttyS4"));
-	devices.Add(wxT("/dev/ttyS5"));
-	devices.Add(wxT("/dev/ttyS6"));
-	devices.Add(wxT("/dev/ttyS7"));
-	devices.Add(wxT("/dev/ttyS8"));
-	devices.Add(wxT("/dev/ttyS9"));
 
 	devices.Add(wxT("/dev/ttyAMA0"));
 
@@ -751,12 +741,10 @@ bool CDVMegaController::setFrequency()
 	buffer[5U] = 0x0CU;		// Block length
 
 	wxUint32 freq = wxUINT32_SWAP_ON_BE(wxUint32(m_frequency));
-	unsigned char* pFreq = (unsigned char*)&freq;
 
-	buffer[7U]  = buffer[11U] = pFreq[0U];
-	buffer[8U]  = buffer[12U] = pFreq[1U];
-	buffer[9U]  = buffer[13U] = pFreq[2U];
-	buffer[10U] = buffer[14U] = pFreq[3U];
+	::memcpy(buffer + 7U, &freq, sizeof(wxUint32));
+
+	::memcpy(buffer + 11U, &freq, sizeof(wxUint32));
 
 	if (m_checksum) {
 		CCCITTChecksum cksum;

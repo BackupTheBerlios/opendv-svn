@@ -20,7 +20,7 @@
 #include "DStarRepeaterConfigDVRPTR1Set.h"
 #include "DStarRepeaterConfigDVRPTR2Set.h"
 #include "DStarRepeaterConfigDVRPTR3Set.h"
-#include "DStarRepeaterConfigDVMEGASet.h"
+#include "DStarRepeaterConfigDVMegaSet.h"
 #include "DStarRepeaterConfigModemSet.h"
 #include "DStarRepeaterConfigGMSKSet.h"
 #include "DStarRepeaterConfigDVAPSet.h"

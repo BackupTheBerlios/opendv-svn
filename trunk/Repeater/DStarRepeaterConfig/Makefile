@@ -47,7 +47,7 @@ DStarRepeaterConfigGMSKSet.o:	DStarRepeaterConfigGMSKSet.cpp DStarRepeaterConfig
 
 DStarRepeaterConfigModemSet.o:	DStarRepeaterConfigModemSet.cpp DStarRepeaterConfigModemSet.h DStarRepeaterConfigDefs.h DStarRepeaterConfigSoundCardSet.h \
 					DStarRepeaterConfigDVRPTR1Set.h DStarRepeaterConfigDVRPTR2Set.h DStarRepeaterConfigDVRPTR3Set.h DStarRepeaterConfigModemSet.h \
-					DStarRepeaterConfigGMSKSet.h DStarRepeaterConfigDVAPSet.h DStarRepeaterDVMegaSet.h ../Common/DStarDefines.h
+					DStarRepeaterConfigGMSKSet.h DStarRepeaterConfigDVAPSet.h DStarRepeaterConfigDVMegaSet.h ../Common/DStarDefines.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigModemSet.cpp
 
 DStarRepeaterConfigRaspberrySet.o:	DStarRepeaterConfigRaspberrySet.cpp DStarRepeaterConfigRaspberrySet.h ../Common/DStarDefines.h
