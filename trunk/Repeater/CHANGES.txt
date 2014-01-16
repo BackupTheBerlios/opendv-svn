@@ -1,4 +1,4 @@
-Repeater - 20131231
+Repeater - 20140116
 ===================
 
 20090530
@@ -1917,7 +1917,7 @@ More cleanups.
 Removed the white list functionality.
 Added explicit support for the DV-RPTR V3 modem.
 
-201401xx
+20140116
 --------
 
 Removed the DVAP Node and DV-RPTR Repeater.

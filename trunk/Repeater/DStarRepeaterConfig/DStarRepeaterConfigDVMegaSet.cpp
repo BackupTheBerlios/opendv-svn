@@ -87,7 +87,7 @@ m_frequency(NULL)
 	wxStaticText* txDelayLabel = new wxStaticText(this, -1, _("TX Delay (ms)"));
 	sizer->Add(txDelayLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	m_txDelay = new wxSlider(this, -1, txDelay, 0, 500, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
+	m_txDelay = new wxSlider(this, -1, txDelay, 0, 350, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
 	sizer->Add(m_txDelay, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* bandLabel = new wxStaticText(this, -1, _("Band"));
