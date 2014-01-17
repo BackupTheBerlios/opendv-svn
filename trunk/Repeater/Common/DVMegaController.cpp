@@ -727,7 +727,7 @@ bool CDVMegaController::setFrequency()
 {
 	unsigned char buffer[25U];
 
-	::memset(buffer, 0x00U, 20U);
+	::memset(buffer, 0x00U, 21U);
 
 	buffer[0U] = DVRPTR_FRAME_START;
 
@@ -740,7 +740,7 @@ bool CDVMegaController::setFrequency()
 
 	buffer[5U] = 0x0CU;		// Block length
 
-	wxUint32 freq = wxUINT32_SWAP_ON_BE(wxUint32(m_frequency));
+	wxUint32 freq = wxUINT32_SWAP_ON_LE(wxUint32(m_frequency));
 
 	::memcpy(buffer + 7U, &freq, sizeof(wxUint32));
 
@@ -748,17 +748,17 @@ bool CDVMegaController::setFrequency()
 
 	if (m_checksum) {
 		CCCITTChecksum cksum;
-		cksum.update(buffer + 0U, 18U);
-		cksum.result(buffer + 18U);
+		cksum.update(buffer + 0U, 19U);
+		cksum.result(buffer + 19U);
 	} else {
-		buffer[18U] = 0x00U;
-		buffer[19U] = 0x0BU;
+		buffer[19U] = 0x00U;
+		buffer[20U] = 0x0BU;
 	}
 
-	// CUtils::dump(wxT("Written"), buffer, 20U);
+	// CUtils::dump(wxT("Written"), buffer, 21U);
 
-	int ret = m_serial.write(buffer, 20U);
-	if (ret != 20)
+	int ret = m_serial.write(buffer, 21U);
+	if (ret != 21)
 		return false;
 
 	unsigned int count = 0U;
