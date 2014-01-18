@@ -1,4 +1,4 @@
-Repeater - 20140117
+Repeater - 20140118
 ===================
 
 20090530
@@ -1924,3 +1924,8 @@ Removed the DVAP Node and DV-RPTR Repeater.
 Block Australian foundation class and French novice callsigns from using the repeaters.
 Removed the optional delay on the DV-RPTR V1 modem.
 Added the DVMEGA hardware.
+
+20140118
+--------
+
+Fix endian-ness of the DVMEGA frequency command.

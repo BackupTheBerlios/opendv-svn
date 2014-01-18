@@ -740,7 +740,7 @@ bool CDVMegaController::setFrequency()
 
 	buffer[5U] = 0x0CU;		// Block length
 
-	wxUint32 freq = wxUINT32_SWAP_ON_LE(wxUint32(m_frequency));
+	wxUint32 freq = wxUINT32_SWAP_ON_BE(wxUint32(m_frequency));
 
 	::memcpy(buffer + 7U, &freq, sizeof(wxUint32));
 
