@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002,2003 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003,2004 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "CWTextCtrl.h"
 
 CCWTextCtrl::CCWTextCtrl(wxWindow* parent, int id, const wxString& value, const wxPoint& pos, const wxSize& size, long style) :
-CRestrictedTextCtrl(parent, id, value, pos, size, style, CALLSIGN_CHARS)
+CRestrictedTextCtrl(parent, id, value, pos, size, style, CWTEXT_CHARS)
 {
 }
 

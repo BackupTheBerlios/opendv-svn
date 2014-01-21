@@ -297,7 +297,7 @@ void CSerialLineController::getDigitalInputs(bool& inp1, bool& inp2, bool& inp3,
 	}
 }
 
-void CSerialLineController::setDigitalOutputs(bool outp1, bool outp2, bool outp3, bool outp4, bool outp5, bool outp6, bool outp7, bool outp8)
+void CSerialLineController::setDigitalOutputs(bool outp1, bool, bool outp3, bool, bool, bool, bool, bool)
 {
 	wxASSERT(m_handle != INVALID_HANDLE_VALUE);
 

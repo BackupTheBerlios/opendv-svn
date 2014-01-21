@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002,2003 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003,2004 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include "RestrictedTextCtrl.h"
 
-const wxString CALLSIGN_CHARS  = wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/?=, ");
+const wxString CWTEXT_CHARS  = wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/?=, ");
 
 class CCWTextCtrl : public CRestrictedTextCtrl {
 

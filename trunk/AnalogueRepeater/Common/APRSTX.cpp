@@ -22,7 +22,7 @@
 #include "APRSTX.h"
 #include "Utils.h"
 
-CAPRSTX::CAPRSTX(const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, unsigned int altitude, const wxString& text) :
+CAPRSTX::CAPRSTX(const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, int altitude, const wxString& text) :
 m_audio(NULL),
 m_length(0U),
 m_offset(0U)
@@ -114,14 +114,12 @@ m_offset(0U)
 
 	unsigned int len = 26U;
 
-	if (altitude != 0U) {
-		altitude += 10000U;
-		packet[len++] = altitude / 8281U + 33U;
-		altitude %= 8281U;
-		packet[len++] = altitude / 91U + 33U;
-		packet[len++] = altitude % 91U + 33U;
-		packet[len++] = '}';
-	}
+	altitude += 10000;
+	packet[len++] = altitude / 8281 + 33U;
+	altitude %= 8281U;
+	packet[len++] = altitude / 91 + 33U;
+	packet[len++] = altitude % 91 + 33U;
+	packet[len++] = '}';
 
 	if (text.Len() > 0U) {
 		packet[len++] = ' ';

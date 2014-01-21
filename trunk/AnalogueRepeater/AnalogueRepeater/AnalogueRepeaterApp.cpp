@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 #include "CWKeyer.h"
 #include "Version.h"
 #include "Logger.h"
-#include "APRSRX.h"
 #include "APRSTX.h"
 
 #include <wx/cmdline.h>
@@ -326,6 +325,16 @@ void CAnalogueRepeaterApp::getDTMF(bool& radio, bool& external, wxString& shutdo
 void CAnalogueRepeaterApp::setDTMF(bool radio, bool external, const wxString& shutdown, const wxString& startup, const wxString& timeout, const wxString& timeReset, const wxString& command1, const wxString& command1Line, const wxString& command2, const wxString& command2Line, const wxString& output1, const wxString& output2, const wxString& output3, const wxString& output4, wxFloat32 threshold)
 {
 	m_config->setDTMF(radio, external, shutdown, startup, timeout, timeReset, command1, command1Line, command2, command2Line, output1, output2, output3, output4, threshold);
+}
+
+void CAnalogueRepeaterApp::getAPRS(bool& txEnabled, wxString& callsign, wxFloat32& latitude, wxFloat32& longitude, int& height, wxString& description) const
+{
+	m_config->getAPRS(txEnabled, callsign, latitude, longitude, height, description);
+}
+
+void CAnalogueRepeaterApp::setAPRS(bool txEnabled, const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, int height, const wxString& description)
+{
+	m_config->setAPRS(txEnabled, callsign, latitude, longitude, height, description);
 }
 
 void CAnalogueRepeaterApp::getActiveHang(unsigned int& time) const
@@ -650,11 +659,16 @@ void CAnalogueRepeaterApp::createThread()
 	thread->setDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
 	wxLogInfo(wxT("DTMF: Radio: %d, External: %d, Shutdown: %s, Startup: %s, Timeout: %s, Time Reset: %s, Command1: %s = %s, Command2: %s = %s, Output1: %s, Output2: %s, Output3: %s, Output4: %s, Threshold: %f"), dtmfRadio, dtmfExternal, dtmfShutdown.c_str(), dtmfStartup.c_str(), dtmfTimeout.c_str(), dtmfTimeReset.c_str(), dtmfCommand1.c_str(), dtmfCommand1Line.c_str(), dtmfCommand2.c_str(), dtmfCommand2Line.c_str(), dtmfOutput1.c_str(), dtmfOutput2.c_str(), dtmfOutput3.c_str(), dtmfOutput4.c_str(), dtmfThreshold);
 
-	CAPRSTX* aprsTx = new CAPRSTX(wxT("G4KLX"), 53.169F, -1.194F, 100U, wxT("144.6500 MHz Mansfield Woodhouse"));
-	thread->setAPRSTX(aprsTx);
-
-	CAPRSRX* aprsRx = new CAPRSRX;
-	thread->setAPRSRX(aprsRx);
+	bool txEnabled;
+	wxString aprsCallsign, description;
+	wxFloat32 latitude, longitude;
+	int height;
+	getAPRS(txEnabled, aprsCallsign, latitude, longitude, height, description);
+	wxLogInfo(wxT("APRS: TX Enabled: %d, Callsign: %s, Latitude: %.4f, Longitude: %.4f, Height: %d m, Description: %s"), int(txEnabled), aprsCallsign, latitude, longitude, height, description);
+	if (txEnabled) {
+		CAPRSTX* aprsTx = new CAPRSTX(aprsCallsign, latitude, longitude, height, description);
+		thread->setAPRSTX(aprsTx);
+	}
 
 	unsigned int activeHangTime;
 	getActiveHang(activeHangTime);

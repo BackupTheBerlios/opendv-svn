@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2010,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -348,7 +348,7 @@ wxMenuBar* CAnalogueRepeaterFrame::createMenuBar()
 }
 
 #if defined(__WXDEBUG__)
-void CAnalogueRepeaterFrame::onOpen(wxCommandEvent& event)
+void CAnalogueRepeaterFrame::onOpen(wxCommandEvent&)
 {
 	wxFileDialog dialog(this, _("Select a WAV File"), wxEmptyString, wxEmptyString, _("WAV file (*.wav)|*.wav|All files (*.*)|*.*"));
 	if (dialog.ShowModal() != wxID_OK)
@@ -387,12 +387,12 @@ void CAnalogueRepeaterFrame::onOpen(wxCommandEvent& event)
 }
 #endif
 
-void CAnalogueRepeaterFrame::onQuit(wxCommandEvent& event)
+void CAnalogueRepeaterFrame::onQuit(wxCommandEvent&)
 {
 	Close(false);
 }
 
-void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
+void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent&)
 {
 	wxString openId, closeId, beacon1, beacon2;
 	unsigned int idSpeed, idFreq;
@@ -445,6 +445,12 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 	wxFloat32 dtmfThreshold;
 	::wxGetApp().getDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
 
+	bool aprsTxEnabled;
+	wxString aprsCallsign, aprsDescription;
+	wxFloat32 aprsLatitude, aprsLongitude;
+	int aprsHeight;
+	::wxGetApp().getAPRS(aprsTxEnabled, aprsCallsign, aprsLatitude, aprsLongitude, aprsHeight, aprsDescription);
+
 	unsigned int activeHangTime;
 	::wxGetApp().getActiveHang(activeHangTime);
 
@@ -459,7 +465,8 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 		externalRXPin, externalBackground, interfaceType, interfaceConfig, pttDelay, squelchDelay, pttInvert,
 		squelchInvert, dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset,
 		dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfCommand1, dtmfCommand1Line, dtmfCommand2,
-		dtmfCommand2Line, dtmfThreshold, activeHangTime);
+		dtmfCommand2Line, dtmfThreshold, aprsTxEnabled, aprsCallsign, aprsLatitude, aprsLongitude, aprsHeight,
+		aprsDescription, activeHangTime);
 	if (dialog1.ShowModal() != wxID_OK)
 		return;
 
@@ -560,6 +567,14 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 	dtmfThreshold    = dialog1.getDTMFThreshold();
 	::wxGetApp().setDTMF(dtmfRadio, dtmfExternal, dtmfShutdown, dtmfStartup, dtmfTimeout, dtmfTimeReset, dtmfCommand1, dtmfCommand1Line, dtmfCommand2, dtmfCommand2Line, dtmfOutput1, dtmfOutput2, dtmfOutput3, dtmfOutput4, dtmfThreshold);
 
+	aprsTxEnabled   = dialog1.getAPRSTXEnabled();
+	aprsCallsign    = dialog1.getAPRSCallsign();
+	aprsLatitude    = dialog1.getAPRSLatitude();
+	aprsLongitude   = dialog1.getAPRSLongitude();
+	aprsHeight      = dialog1.getAPRSHeight();
+	aprsDescription = dialog1.getAPRSDescription();
+	::wxGetApp().setAPRS(aprsTxEnabled, aprsCallsign, aprsLatitude, aprsLongitude, aprsHeight, aprsDescription);
+
 	activeHangTime = dialog1.getActiveHangTime();
 	::wxGetApp().setActiveHang(activeHangTime);
 
@@ -569,7 +584,7 @@ void CAnalogueRepeaterFrame::onPreferences(wxCommandEvent& event)
 	dialog2.ShowModal();
 }
 
-void CAnalogueRepeaterFrame::onClose(wxCloseEvent& event)
+void CAnalogueRepeaterFrame::onClose(wxCloseEvent&)
 {
 	int x, y;
 	GetPosition(&x, &y);
@@ -586,7 +601,7 @@ void CAnalogueRepeaterFrame::onUpdates(wxCommandEvent& event)
 	m_updates = event.IsChecked();
 }
 
-void CAnalogueRepeaterFrame::onAbout(wxCommandEvent& event)
+void CAnalogueRepeaterFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
@@ -624,7 +639,7 @@ void CAnalogueRepeaterFrame::onActions(wxCommandEvent& event)
 	}
 }
 
-void CAnalogueRepeaterFrame::onOutputs(wxCommandEvent& event)
+void CAnalogueRepeaterFrame::onOutputs(wxCommandEvent&)
 {
 	bool out1 = m_outputMenu->IsChecked(Menu_Output_1);
 	bool out2 = m_outputMenu->IsChecked(Menu_Output_2);
@@ -634,7 +649,7 @@ void CAnalogueRepeaterFrame::onOutputs(wxCommandEvent& event)
 	::wxGetApp().setOutputs(out1, out2, out3, out4);
 }
 
-void CAnalogueRepeaterFrame::onTimer(wxTimerEvent& event)
+void CAnalogueRepeaterFrame::onTimer(wxTimerEvent&)
 {
 	if (!m_updates)
 		return;

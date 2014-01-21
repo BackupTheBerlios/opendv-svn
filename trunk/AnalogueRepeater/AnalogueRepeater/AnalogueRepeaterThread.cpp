@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -192,7 +192,6 @@ m_relayCount(0U),
 m_transmitCount(0U),
 m_timeCount(0U),
 m_lastHour(0U),
-m_aprsRx(NULL),
 m_aprsTx(NULL)
 {
 }
@@ -235,161 +234,170 @@ void CAnalogueRepeaterThread::run()
 	unsigned int nRadio = 0U;
 	unsigned int nExternal = 0U;
 
-	while (!m_killed) {
-		timer.Start();
+	try {
+		while (!m_killed) {
+			timer.Start();
 
-		wxFloat32 radioAudio[ANALOGUE_RADIO_BLOCK_SIZE];
-		wxFloat32 extAudio[ANALOGUE_RADIO_BLOCK_SIZE];
+			wxFloat32 radioAudio[ANALOGUE_RADIO_BLOCK_SIZE];
+			wxFloat32 extAudio[ANALOGUE_RADIO_BLOCK_SIZE];
 
-		getAudio(radioAudio, extAudio, nRadio, nExternal);
+			getAudio(radioAudio, extAudio, nRadio, nExternal);
 
-		m_battery = m_controller->getBattery();
+			m_battery = m_controller->getBattery();
 
-		// Perform de-emphasis if required
-		if (m_radioDeEmphasis != NULL && nRadio > 0U)
-			m_radioDeEmphasis->process(radioAudio, nRadio);
-		if (m_extDeEmphasis != NULL && nExternal > 0U)
-			m_extDeEmphasis->process(extAudio, nExternal);
+			// Perform de-emphasis if required
+			if (m_radioDeEmphasis != NULL && nRadio > 0U)
+				m_radioDeEmphasis->process(radioAudio, nRadio);
+			if (m_extDeEmphasis != NULL && nExternal > 0U)
+				m_extDeEmphasis->process(extAudio, nExternal);
 
-		// Handle DTMF commands
-		processDTMF(radioAudio, extAudio, nRadio, nExternal);
+			// Handle DTMF commands
+			processDTMF(radioAudio, extAudio, nRadio, nExternal);
 
-		// Set the watchdog port every one second
-		counter++;
-		if (counter == 50U) {
-			m_controller->setHeartbeat();
-			counter = 0U;
-		}
-
-		// Check the shutdown state
-		bool disable = m_controller->getDisable();
-		if (disable || m_shutdown) {
-			if (m_state != ARS_SHUTDOWN)
-				setState(ARS_SHUTDOWN);
-		} else {
-			if (m_state == ARS_SHUTDOWN)
-				setState(ARS_LISTENING);
-		}
-
-		// If we're shutdown then don't go any further
-		if (m_state == ARS_SHUTDOWN)
-			continue;
-
-		// Set the output state
-		if (m_state != ARS_LISTENING || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_sendBeacon1 || m_callsignStartTimer.isRunning() || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
-			m_controller->setActive(true);
-		} else {
-			m_controller->setActive(false);
-			m_activeHangTimer.stop();
-		}
-
-		// Detect a suitable access signal, 1750Hz, CTCSS, or carrier
-		if (nRadio > 0U)
-			radioSquelch = checkRadioSquelch(radioAudio, nRadio, radioSquelch);
-
-		// Detect an incoming external transmission
-		extSquelch = checkExternalSquelch();
-
-		// Choose the correct squelch value
-		if (m_state == ARS_RELAYING_EXTERNAL) {
-			// If already receiving from the external source, give it priority
-			if (extSquelch != AS_CLOSED)
-				m_squelch = extSquelch;
-			else
-				m_squelch = radioSquelch;
-		} else {
-			// If already receiving from the radio, or none, give radio the priority
-			if (radioSquelch != AS_CLOSED)
-				m_squelch = radioSquelch;
-			else
-				m_squelch = extSquelch;
-		}
-
-		stateMachine();
-
-		m_radioTransmit = m_state == ARS_RELAYING_RADIO  || m_state == ARS_RELAYING_EXTERNAL ||
-						  m_state == ARS_WAITING_RADIO   || m_state == ARS_WAITING_EXTERNAL  ||
-						  m_state == ARS_TIMEOUT_RADIO   || m_state == ARS_TIMEOUT_EXTERNAL  ||
-						  m_sendBeacon1 || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_callsignStartTimer.isRunning();
-
-		// The audio is chosen depending on the squelch and state
-		unsigned int nAudio;
-		wxFloat32 audio[ANALOGUE_RADIO_BLOCK_SIZE];
-		if (m_state == ARS_RELAYING_RADIO && m_squelch != AS_CLOSED) {
-			// if (m_aprsRx != NULL)						XXX
-			//	m_aprsRx->process(radioAudio, nRadio);		XXX
-
-			nAudio = nRadio;
-			m_radioAudioVOGAD.process(radioAudio, audio, nAudio);
-		} else if (m_state == ARS_RELAYING_EXTERNAL && m_squelch != AS_CLOSED) {
-			nAudio = nExternal;
-			m_extAudioVOGAD.process(extAudio, audio, nAudio);
-		} else {
-			// No open squelch, silence
-			nAudio = ANALOGUE_RADIO_BLOCK_SIZE;
-			::memset(audio, 0x00, ANALOGUE_RADIO_BLOCK_SIZE * sizeof(wxFloat32));
-		}
-
-		calculateAudioLevel(audio, nAudio);
-
-		// XXX Pre-Emphasis
-
-		if (m_state == ARS_RELAYING_RADIO) {
-			// Key the external transmitter and send audio to the external program before tones are added
-			if (m_extPreEmphasis != NULL) {
-				wxFloat32 out[ANALOGUE_RADIO_BLOCK_SIZE];
-				m_extPreEmphasis->process(audio, out, nAudio);
-				feedExternal(out, nAudio, true);
-				m_extTransmit = true;
-			} else {
-				feedExternal(audio, nAudio, true);
-				m_extTransmit = true;
+			// Set the watchdog port every one second
+			counter++;
+			if (counter == 50U) {
+				m_controller->setHeartbeat();
+				counter = 0U;
 			}
-		} else if (m_extBackground && m_state == ARS_RELAYING_EXTERNAL) {
-			if (nRadio > 0U) {
-				if (radioSquelch != AS_CLOSED) {
-					// Special case, relay radio audio to the external port when relaying from the external port
-					wxFloat32 audio[ANALOGUE_RADIO_BLOCK_SIZE];
-					m_radioAudioVOGAD.process(radioAudio, audio, nRadio);
-					if (m_extPreEmphasis != NULL)
-						m_extPreEmphasis->process(audio, nRadio);
-					feedExternal(audio, nRadio, true);
+
+			// Check the shutdown state
+			bool disable = m_controller->getDisable();
+			if (disable || m_shutdown) {
+				if (m_state != ARS_SHUTDOWN)
+					setState(ARS_SHUTDOWN);
+			} else {
+				if (m_state == ARS_SHUTDOWN)
+					setState(ARS_LISTENING);
+			}
+
+			// If we're shutdown then don't go any further
+			if (m_state == ARS_SHUTDOWN)
+				continue;
+
+			// Set the output state
+			if (m_state != ARS_LISTENING || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_sendBeacon1 || m_callsignStartTimer.isRunning() || (m_activeHangTimer.isRunning() && !m_activeHangTimer.hasExpired())) {
+				m_controller->setActive(true);
+			} else {
+				m_controller->setActive(false);
+				m_activeHangTimer.stop();
+			}
+
+			// Detect a suitable access signal, 1750Hz, CTCSS, or carrier
+			if (nRadio > 0U)
+				radioSquelch = checkRadioSquelch(radioAudio, nRadio, radioSquelch);
+
+			// Detect an incoming external transmission
+			extSquelch = checkExternalSquelch();
+
+			// Choose the correct squelch value
+			if (m_state == ARS_RELAYING_EXTERNAL) {
+				// If already receiving from the external source, give it priority
+				if (extSquelch != AS_CLOSED)
+					m_squelch = extSquelch;
+				else
+					m_squelch = radioSquelch;
+			} else {
+				// If already receiving from the radio, or none, give radio the priority
+				if (radioSquelch != AS_CLOSED)
+					m_squelch = radioSquelch;
+				else
+					m_squelch = extSquelch;
+			}
+
+			stateMachine();
+
+			m_radioTransmit = m_state == ARS_RELAYING_RADIO  || m_state == ARS_RELAYING_EXTERNAL ||
+							  m_state == ARS_WAITING_RADIO   || m_state == ARS_WAITING_EXTERNAL  ||
+							  m_state == ARS_TIMEOUT_RADIO   || m_state == ARS_TIMEOUT_EXTERNAL  ||
+							  m_sendBeacon1 || m_sendBeacon2 != SB2S_NONE || m_sendOpen || m_sendClose || m_callsignStartTimer.isRunning();
+
+			// The audio is chosen depending on the squelch and state
+			unsigned int nAudio;
+			wxFloat32 audio[ANALOGUE_RADIO_BLOCK_SIZE];
+			if (m_state == ARS_RELAYING_RADIO && m_squelch != AS_CLOSED) {
+				// if (m_aprsRx != NULL)						XXX
+				//	m_aprsRx->process(radioAudio, nRadio);		XXX
+
+				nAudio = nRadio;
+				m_radioAudioVOGAD.process(radioAudio, audio, nAudio);
+			} else if (m_state == ARS_RELAYING_EXTERNAL && m_squelch != AS_CLOSED) {
+				nAudio = nExternal;
+				m_extAudioVOGAD.process(extAudio, audio, nAudio);
+			} else {
+				// No open squelch, silence
+				nAudio = ANALOGUE_RADIO_BLOCK_SIZE;
+				::memset(audio, 0x00, ANALOGUE_RADIO_BLOCK_SIZE * sizeof(wxFloat32));
+			}
+
+			calculateAudioLevel(audio, nAudio);
+
+			// XXX Pre-Emphasis
+
+			if (m_state == ARS_RELAYING_RADIO) {
+				// Key the external transmitter and send audio to the external program before tones are added
+				if (m_extPreEmphasis != NULL) {
+					wxFloat32 out[ANALOGUE_RADIO_BLOCK_SIZE];
+					m_extPreEmphasis->process(audio, out, nAudio);
+					feedExternal(out, nAudio, true);
 					m_extTransmit = true;
 				} else {
-					feedExternal(audio, nAudio, false);
-					m_extTransmit = false;
+					feedExternal(audio, nAudio, true);
+					m_extTransmit = true;
 				}
+			} else if (m_extBackground && m_state == ARS_RELAYING_EXTERNAL) {
+				if (nRadio > 0U) {
+					if (radioSquelch != AS_CLOSED) {
+						// Special case, relay radio audio to the external port when relaying from the external port
+						wxFloat32 audio[ANALOGUE_RADIO_BLOCK_SIZE];
+						m_radioAudioVOGAD.process(radioAudio, audio, nRadio);
+						if (m_extPreEmphasis != NULL)
+							m_extPreEmphasis->process(audio, nRadio);
+						feedExternal(audio, nRadio, true);
+						m_extTransmit = true;
+					} else {
+						feedExternal(audio, nAudio, false);
+						m_extTransmit = false;
+					}
+				}
+			} else {
+				feedExternal(audio, nAudio, false);
+				m_extTransmit = false;
 			}
-		} else {
-			feedExternal(audio, nAudio, false);
-			m_extTransmit = false;
+
+			// From here onwards, the audio is destined for the radio only
+
+			// Add tones
+			sendTones(audio, nAudio);
+
+			// if (m_aprsRx != NULL)
+			//	m_aprsRx->process(audio, nAudio);
+
+			// Filter the audio
+			filterAudio(audio, nAudio);
+
+			// Perform pre-emphasis if required
+			if (m_radioPreEmphasis != NULL && m_radioTransmit && nAudio > 0U)
+				m_radioPreEmphasis->process(audio, nAudio);
+
+			// Insert CTCSS here because of the role off in the pre-emphasis filter
+			insertCTCSS(audio, nAudio);
+
+			// Set the transmitter, and provide some audio
+			feedRadio(audio, nAudio);
+
+			getStatistics();
+
+			unsigned int ms = timer.Time();
+			clock(ms);
 		}
-
-		// From here onwards, the audio is destined for the radio only
-
-		// Add tones
-		sendTones(audio, nAudio);
-
-		if (m_aprsRx != NULL)						// XXX
-			m_aprsRx->process(audio, nAudio);		// XXX
-
-		// Filter the audio
-		filterAudio(audio, nAudio);
-
-		// Perform pre-emphasis if required
-		if (m_radioPreEmphasis != NULL && m_radioTransmit && nAudio > 0U)
-			m_radioPreEmphasis->process(audio, nAudio);
-
-		// Insert CTCSS here because of the role off in the pre-emphasis filter
-		insertCTCSS(audio, nAudio);
-
-		// Set the transmitter, and provide some audio
-		feedRadio(audio, nAudio);
-
-		getStatistics();
-
-		unsigned int ms = timer.Time();
-		clock(ms);
+	}
+	catch (std::exception& e) {
+		wxString message(e.what(), wxConvLocal);
+		wxLogError(wxT("Exception raised - \"%s\""), message.c_str());
+	}
+	catch (...) {
+		wxLogError(wxT("Unknown exception raised"));
 	}
 
 	writeStatistics();
@@ -442,7 +450,6 @@ void CAnalogueRepeaterThread::run()
 	delete m_radioAck;
 	delete m_extAck;
 	delete m_batteryAck;
-	delete m_aprsRx;
 	delete m_aprsTx;
 }
 
@@ -617,13 +624,6 @@ void CAnalogueRepeaterThread::setDTMF(bool radio, bool external, const wxString&
 void CAnalogueRepeaterThread::setActiveHang(unsigned int time)
 {
 	m_activeHangTimer.setTimeout(time);
-}
-
-void CAnalogueRepeaterThread::setAPRSRX(CAPRSRX* aprsRx)
-{
-	wxASSERT(aprsRx != NULL);
-
-	m_aprsRx = aprsRx;
 }
 
 void CAnalogueRepeaterThread::setAPRSTX(CAPRSTX* aprsTx)

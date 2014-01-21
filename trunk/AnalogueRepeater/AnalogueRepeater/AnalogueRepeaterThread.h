@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@
 #include "FIRFilter.h"
 #include "Goertzel.h"
 #include "PTTDelay.h"
-#include "APRSRX.h"
 #include "APRSTX.h"
 #include "Timer.h"
 #include "VOGAD.h"
@@ -75,7 +74,6 @@ public:
 		const wxString& command2Line, const wxString& output1, const wxString& output2, const wxString& output3,
 		const wxString& output4, wxFloat32 threshold);
 	virtual void setActiveHang(unsigned int time);
-	virtual void setAPRSRX(CAPRSRX* aprsRx);
 	virtual void setAPRSTX(CAPRSTX* aprsTx);
 #if defined(__WXDEBUG__)
 	virtual void setReader(CWAVFileReader* reader);
@@ -185,7 +183,6 @@ private:
 	unsigned int              m_transmitCount;
 	unsigned int              m_timeCount;
 	unsigned int              m_lastHour;
-	CAPRSRX*                  m_aprsRx;
 	CAPRSTX*                  m_aprsTx;
 
 	void getAudio(wxFloat32* radioAudio, wxFloat32* extAudio, unsigned int& nRadio, unsigned int& nExt);

@@ -1,4 +1,4 @@
-Analogue Repeater - 20130704
+Analogue Repeater - 2014xxxx
 ============================
 
 20130702
@@ -13,7 +13,9 @@ Removed the URI USB support.
 
 Added basic AX.25 receiving.
 
-201307xx
+2014xxxx
 --------
 
 Added optional delay before sending the opening callsign.
+Add exception catching.
+Added APRS transmission with the beacon.

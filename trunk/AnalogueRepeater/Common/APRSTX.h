@@ -18,7 +18,7 @@
 
 class CAPRSTX {
 public:
-	CAPRSTX(const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, unsigned int altitude, const wxString& text);
+	CAPRSTX(const wxString& callsign, wxFloat32 latitude, wxFloat32 longitude, int altitude, const wxString& text);
 	~CAPRSTX();
 
 	unsigned int getAudio(wxFloat32* audio, unsigned int length, wxFloat32 amplitude);

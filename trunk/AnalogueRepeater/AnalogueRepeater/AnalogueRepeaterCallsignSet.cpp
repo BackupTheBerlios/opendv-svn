@@ -451,7 +451,7 @@ void CAnalogueRepeaterCallsignSet::onLevel2(wxScrollEvent &event)
 	::wxGetApp().setId2Level(level);
 }
 
-void CAnalogueRepeaterCallsignSet::onOpenIdChoice(wxCommandEvent &event)
+void CAnalogueRepeaterCallsignSet::onOpenIdChoice(wxCommandEvent&)
 {
 	int n = m_openId->GetSelection();
 
@@ -471,7 +471,7 @@ void CAnalogueRepeaterCallsignSet::onOpenIdChoice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterCallsignSet::onCloseIdChoice(wxCommandEvent &event)
+void CAnalogueRepeaterCallsignSet::onCloseIdChoice(wxCommandEvent&)
 {
 	int n = m_closeId->GetSelection();
 
@@ -491,7 +491,7 @@ void CAnalogueRepeaterCallsignSet::onCloseIdChoice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterCallsignSet::onOpenIdButton(wxCommandEvent& event)
+void CAnalogueRepeaterCallsignSet::onOpenIdButton(wxCommandEvent&)
 {
 	wxString file = m_wavOpenId->GetValue();
 
@@ -513,7 +513,7 @@ void CAnalogueRepeaterCallsignSet::onOpenIdButton(wxCommandEvent& event)
 	m_wavOpenId->SetValue(fileName);
 }
 
-void CAnalogueRepeaterCallsignSet::onCloseIdButton(wxCommandEvent& event)
+void CAnalogueRepeaterCallsignSet::onCloseIdButton(wxCommandEvent&)
 {
 	wxString file = m_wavCloseId->GetValue();
 
@@ -535,7 +535,7 @@ void CAnalogueRepeaterCallsignSet::onCloseIdButton(wxCommandEvent& event)
 	m_wavCloseId->SetValue(fileName);
 }
 
-void CAnalogueRepeaterCallsignSet::onBeacon1Choice(wxCommandEvent &event)
+void CAnalogueRepeaterCallsignSet::onBeacon1Choice(wxCommandEvent&)
 {
 	int n = m_beacon1->GetSelection();
 
@@ -555,7 +555,7 @@ void CAnalogueRepeaterCallsignSet::onBeacon1Choice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterCallsignSet::onBeacon1Button(wxCommandEvent& event)
+void CAnalogueRepeaterCallsignSet::onBeacon1Button(wxCommandEvent&)
 {
 	wxString file = m_wavBeacon1->GetValue();
 
@@ -577,7 +577,7 @@ void CAnalogueRepeaterCallsignSet::onBeacon1Button(wxCommandEvent& event)
 	m_wavBeacon1->SetValue(fileName);
 }
 
-void CAnalogueRepeaterCallsignSet::onBeacon2Choice(wxCommandEvent &event)
+void CAnalogueRepeaterCallsignSet::onBeacon2Choice(wxCommandEvent&)
 {
 	int n = m_beacon2->GetSelection();
 
@@ -597,7 +597,7 @@ void CAnalogueRepeaterCallsignSet::onBeacon2Choice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterCallsignSet::onBeacon2Button(wxCommandEvent& event)
+void CAnalogueRepeaterCallsignSet::onBeacon2Button(wxCommandEvent&)
 {
 	wxString file = m_wavBeacon2->GetValue();
 

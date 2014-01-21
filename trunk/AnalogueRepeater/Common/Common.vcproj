@@ -158,7 +158,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\APRSRX.cpp"
+				RelativePath=".\AddressTextCtrl.cpp"
 				>
 			</File>
 			<File
@@ -179,6 +179,10 @@
 			</File>
 			<File
 				RelativePath=".\AX25TX.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CallsignTextCtrl.cpp"
 				>
 			</File>
 			<File
@@ -218,7 +222,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FixedAudioSource.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Goertzel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HardwareController.cpp"
 				>
 			</File>
 			<File
@@ -296,11 +308,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\AnalogueDefines.h"
+				RelativePath=".\AddressTextCtrl.h"
 				>
 			</File>
 			<File
-				RelativePath=".\APRSRX.h"
+				RelativePath=".\AnalogueDefines.h"
 				>
 			</File>
 			<File
@@ -325,6 +337,10 @@
 			</File>
 			<File
 				RelativePath=".\AX25TX.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CallsignTextCtrl.h"
 				>
 			</File>
 			<File

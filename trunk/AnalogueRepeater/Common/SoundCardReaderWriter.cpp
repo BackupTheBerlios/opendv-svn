@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2006-2010 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2006-2010,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "SoundCardReaderWriter.h"
 
-static int scrwCallback(const void* input, void* output, unsigned long nSamples, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData)
+static int scrwCallback(const void* input, void* output, unsigned long nSamples, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void* userData)
 {
 	wxASSERT(userData != NULL);
 

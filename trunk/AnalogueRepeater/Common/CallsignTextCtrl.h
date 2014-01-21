@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,23 +16,22 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	PTTDelay_H
-#define	PTTDelay_H
+#ifndef CallsignTextCtrl_H
+#define	CallsignTextCtrl_H
 
 #include <wx/wx.h>
 
-class CPTTDelay {
+#include "RestrictedTextCtrl.h"
+
+const wxString CALLSIGN_CHARS  = wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/ ");
+
+class CCallsignTextCtrl : public CRestrictedTextCtrl {
+
 public:
-	CPTTDelay(unsigned int delay);
-	~CPTTDelay();
+	CCallsignTextCtrl(wxWindow* parent, int id, const wxString& value, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0L);
+	virtual ~CCallsignTextCtrl();
 
-	bool delay(bool in);
-
-private:
-	unsigned int m_delay;
-	unsigned int m_in;
-	unsigned int m_out;
-	bool*        m_buffer;
+    private:
 };
 
 #endif

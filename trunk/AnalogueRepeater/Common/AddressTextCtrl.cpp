@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002,2003,2009 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,23 +16,14 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	PTTDelay_H
-#define	PTTDelay_H
+#include "AddressTextCtrl.h"
 
-#include <wx/wx.h>
+CAddressTextCtrl::CAddressTextCtrl(wxWindow* parent, int id, const wxString& value, const wxPoint& pos, const wxSize& size, long style) :
+CRestrictedTextCtrl(parent, id, value, pos, size, style, ADDRESS_CHARS)
+{
+}
 
-class CPTTDelay {
-public:
-	CPTTDelay(unsigned int delay);
-	~CPTTDelay();
+CAddressTextCtrl::~CAddressTextCtrl()
+{
+}
 
-	bool delay(bool in);
-
-private:
-	unsigned int m_delay;
-	unsigned int m_in;
-	unsigned int m_out;
-	bool*        m_buffer;
-};
-
-#endif

@@ -1,9 +1,9 @@
 all:		Common.a
 
-OBJS :=	ActiveHangSet.o APRSRX.o APRSTX.o ArduinoController.o AudioDelay.o AX25Checksum.o AX25TX.o CWKeyer.o CWTextCtrl.o DTMFController.o DTMFDecoder.o \
-		DTMFTextCtrl.o DummyController.o ExternalController.o FirstOrderIIR.o FIRFilter.o Goertzel.o K8055Controller.o LogEvent.o Logger.o NCO.o NetworkController.o \
-		PTTDelay.o RaspberryController.o RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SoundCardReaderWriter.o TimeoutTones.o Timer.o Utils.o \
-		VOGAD.o WAVFileReader.o WAVFileStore.o
+OBJS :=	ActiveHangSet.o AddressTextCtrl.o APRSTX.o ArduinoController.o AudioDelay.o AX25Checksum.o AX25TX.o CallsignTextCtrl.o CWKeyer.o CWTextCtrl.o \
+		DTMFController.o DTMFDecoder.o DTMFTextCtrl.o DummyController.o ExternalController.o FirstOrderIIR.o FIRFilter.o FixedAudioSource.o Goertzel.o \
+		HardwareController.o K8055Controller.o LogEvent.o Logger.o NCO.o NetworkController.o PTTDelay.o RaspberryController.o RestrictedTextCtrl.o \
+		SerialDataController.o SerialLineController.o SoundCardReaderWriter.o TimeoutTones.o Timer.o Utils.o VOGAD.o WAVFileReader.o WAVFileStore.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -11,8 +11,8 @@ Common.a:	$(OBJS)
 ActiveHangSet.o:	ActiveHangSet.cpp ActiveHangSet.h
 		$(CC) $(CFLAGS) -c ActiveHangSet.cpp
 
-APRSRX.o:	APRSRX.cpp APRSRX.h AnalogueDefines.h AX25Checksum.h Utils.h
-		$(CC) $(CFLAGS) -c APRSRX.cpp
+AddressTextCtrl.o:	AddressTextCtrl.cpp AddressTextCtrl.h RestrictedTextCtrl.h
+		$(CC) $(CFLAGS) -c AddressTextCtrl.cpp
 
 APRSTX.o:	APRSTX.cpp APRSTX.h AnalogueDefines.h AX25Checksum.h AX25TX.h Utils.h
 		$(CC) $(CFLAGS) -c APRSTX.cpp
@@ -28,6 +28,9 @@ AX25Checksum.o:	AX25Checksum.cpp AX25Checksum.h
 
 AX25TX.o:	AX25TX.cpp AX25TX.h AnalogueDefines.h
 		$(CC) $(CFLAGS) -c AX25TX.cpp
+
+CallsignTextCtrl.o:	CallsignTextCtrl.cpp CallsignTextCtrl.h RestrictedTextCtrl.h
+		$(CC) $(CFLAGS) -c CallsignTextCtrl.cpp
 
 CWKeyer.o:	CWKeyer.cpp CWKeyer.h FixedAudioSource.h
 		$(CC) $(CFLAGS) -c CWKeyer.cpp
@@ -56,8 +59,14 @@ FirstOrderIIR.o:	FirstOrderIIR.cpp FirstOrderIIR.h
 FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
 
+FixedAudioSource.o:	FixedAudioSource.cpp FixedAudioSource.h
+		$(CC) $(CFLAGS) -c FixedAudioSource.cpp
+
 Goertzel.o:	Goertzel.cpp Goertzel.h Utils.h
 		$(CC) $(CFLAGS) -c Goertzel.cpp
+
+HardwareController.o:	HardwareController.cpp HardwareController.h
+		$(CC) $(CFLAGS) -c HardwareController.cpp
 
 K8055Controller.o:	K8055Controller.cpp K8055Controller.h HardwareController.h
 		$(CC) $(CFLAGS) -c K8055Controller.cpp

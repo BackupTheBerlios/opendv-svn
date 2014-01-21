@@ -316,8 +316,8 @@ void CAPRSRX::decodeMicE(const unsigned char* packet, unsigned int length)
 	ptr += 9U;
 
 	if (ptr[3U] == '}') {
-		unsigned int altitude = (ptr[0U] - 33U) * 8281U + (ptr[1U] - 33U) * 91U + (ptr[2U] - 33U) - 10000U;
-		wxLogMessage(wxT("Altitude: %u m"), altitude);
+		int altitude = (ptr[0U] - 33) * 8281 + (ptr[1U] - 33) * 91 + (ptr[2U] - 33) - 10000;
+		wxLogMessage(wxT("Altitude: %d m"), altitude);
 		ptr += 4U;
 	}
 

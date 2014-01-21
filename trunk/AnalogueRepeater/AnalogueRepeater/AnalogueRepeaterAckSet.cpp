@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -539,7 +539,7 @@ unsigned int CAnalogueRepeaterAckSet::getMinimum() const
 	}
 }
 
-void CAnalogueRepeaterAckSet::onLevel(wxScrollEvent &event)
+void CAnalogueRepeaterAckSet::onLevel(wxScrollEvent& event)
 {
 	int n = event.GetPosition();
 
@@ -548,7 +548,7 @@ void CAnalogueRepeaterAckSet::onLevel(wxScrollEvent &event)
 	::wxGetApp().setAckLevel(level);
 }
 
-void CAnalogueRepeaterAckSet::onRadioAckChoice(wxCommandEvent &event)
+void CAnalogueRepeaterAckSet::onRadioAckChoice(wxCommandEvent&)
 {
 	int n = m_radioAck->GetSelection();
 
@@ -568,7 +568,7 @@ void CAnalogueRepeaterAckSet::onRadioAckChoice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterAckSet::onRadioAckButton(wxCommandEvent& event)
+void CAnalogueRepeaterAckSet::onRadioAckButton(wxCommandEvent&)
 {
 	wxString file = m_wavRadioAck->GetValue();
 
@@ -590,7 +590,7 @@ void CAnalogueRepeaterAckSet::onRadioAckButton(wxCommandEvent& event)
 	m_wavRadioAck->SetValue(fileName);
 }
 
-void CAnalogueRepeaterAckSet::onExternalAckChoice(wxCommandEvent &event)
+void CAnalogueRepeaterAckSet::onExternalAckChoice(wxCommandEvent&)
 {
 	int n = m_externalAck->GetSelection();
 
@@ -610,7 +610,7 @@ void CAnalogueRepeaterAckSet::onExternalAckChoice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterAckSet::onExternalAckButton(wxCommandEvent& event)
+void CAnalogueRepeaterAckSet::onExternalAckButton(wxCommandEvent&)
 {
 	wxString file = m_wavExternalAck->GetValue();
 
@@ -632,7 +632,7 @@ void CAnalogueRepeaterAckSet::onExternalAckButton(wxCommandEvent& event)
 	m_wavExternalAck->SetValue(fileName);
 }
 
-void CAnalogueRepeaterAckSet::onBatteryAckChoice(wxCommandEvent &event)
+void CAnalogueRepeaterAckSet::onBatteryAckChoice(wxCommandEvent&)
 {
 	int n = m_batteryAck->GetSelection();
 
@@ -652,7 +652,7 @@ void CAnalogueRepeaterAckSet::onBatteryAckChoice(wxCommandEvent &event)
 	}
 }
 
-void CAnalogueRepeaterAckSet::onBatteryAckButton(wxCommandEvent& event)
+void CAnalogueRepeaterAckSet::onBatteryAckButton(wxCommandEvent&)
 {
 	wxString file = m_wavBatteryAck->GetValue();
 

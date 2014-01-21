@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,23 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	PTTDelay_H
-#define	PTTDelay_H
+#include "HardwareController.h"
 
-#include <wx/wx.h>
-
-class CPTTDelay {
-public:
-	CPTTDelay(unsigned int delay);
-	~CPTTDelay();
-
-	bool delay(bool in);
-
-private:
-	unsigned int m_delay;
-	unsigned int m_in;
-	unsigned int m_out;
-	bool*        m_buffer;
-};
-
-#endif
+IHardwareController::~IHardwareController()
+{
+}

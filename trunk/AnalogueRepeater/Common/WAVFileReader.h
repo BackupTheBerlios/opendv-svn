@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2002-2004,2006-2009 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2002-2004,2006-2009,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,17 +37,17 @@ enum WAVFORMAT {
 class CWAVFileReader {
 public:
 	CWAVFileReader(const wxString& fileName, unsigned int blockSize);
-	virtual ~CWAVFileReader();
+	~CWAVFileReader();
 
-	virtual wxString     getFilename() const;
+	wxString     getFilename() const;
 
-	virtual bool         open();
-	virtual unsigned int read(wxFloat32* data, unsigned int length);
-	virtual void         rewind();
-	virtual void         close();
+	bool         open();
+	unsigned int read(wxFloat32* data, unsigned int length);
+	void         rewind();
+	void         close();
 
-	virtual unsigned int getSampleRate() const;
-	virtual unsigned int getChannels() const;
+	unsigned int getSampleRate() const;
+	unsigned int getChannels() const;
 
 private:
 	wxString       m_fileName;

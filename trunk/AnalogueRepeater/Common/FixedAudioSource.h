@@ -18,6 +18,8 @@
 
 class IFixedAudioSource {
 public:
+	virtual ~IFixedAudioSource() = 0;
+
 	virtual unsigned int getAudio(wxFloat32* audio, unsigned int length, wxFloat32 amplitude) = 0;
 
 	virtual bool isEmpty() const = 0;
