@@ -605,7 +605,7 @@ void CAnalogueRepeaterFrame::onAbout(wxCommandEvent&)
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper(wxT("Jonathan Naylor, G4KLX"));
-	info.SetCopyright(wxT("(C) 2009-2013 using GPL v2 or later"));
+	info.SetCopyright(wxT("(C) 2009-2014 using GPL v2 or later"));
 	info.SetName(APPLICATION_NAME);
 	info.SetVersion(VERSION);
 	info.SetDescription(_("This program allows a computer with a soundcard to act as a repeater."));

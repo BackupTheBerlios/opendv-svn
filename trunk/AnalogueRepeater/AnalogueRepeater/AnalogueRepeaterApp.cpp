@@ -664,7 +664,7 @@ void CAnalogueRepeaterApp::createThread()
 	wxFloat32 latitude, longitude;
 	int height;
 	getAPRS(txEnabled, aprsCallsign, latitude, longitude, height, description);
-	wxLogInfo(wxT("APRS: TX Enabled: %d, Callsign: %s, Latitude: %.4f, Longitude: %.4f, Height: %d m, Description: %s"), int(txEnabled), aprsCallsign, latitude, longitude, height, description);
+	wxLogInfo(wxT("APRS: TX Enabled: %d, Callsign: %s, Latitude: %.4f, Longitude: %.4f, Height: %d m, Description: %s"), int(txEnabled), aprsCallsign.c_str(), latitude, longitude, height, description.c_str());
 	if (txEnabled) {
 		CAPRSTX* aprsTx = new CAPRSTX(aprsCallsign, latitude, longitude, height, description);
 		thread->setAPRSTX(aprsTx);

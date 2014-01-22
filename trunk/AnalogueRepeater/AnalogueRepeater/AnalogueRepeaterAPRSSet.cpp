@@ -79,7 +79,7 @@ m_description(NULL)
 	m_height = new wxTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	sizer->Add(m_height, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("QTH"));
+	wxStaticText* descriptionLabel = new wxStaticText(this, -1, _("Description"));
 	sizer->Add(descriptionLabel, 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	m_description = new wxTextCtrl(this, -1, description, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1));
