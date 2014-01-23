@@ -1929,3 +1929,8 @@ Added the DVMEGA hardware.
 --------
 
 Fix endian-ness of the DVMEGA frequency command.
+
+201xxxxx
+--------
+
+Tweaks to the GMSK Modem controller in the D-Star Repeater.

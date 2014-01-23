@@ -430,10 +430,10 @@ void CDStarRepeaterApp::createThread()
 		wxLogInfo(wxT("DVMEGA, port: %s, variant: %d, RX invert: %d, TX invert: %d, TX delay: %u ms, frequency: %u Hz"), port.c_str(), int(variant), int(rxInvert), int(txInvert), txDelay, frequency);
 		switch (variant) {
 			case DVMV_NODE:
-				modem = new CDVMegaController(port, wxEmptyString, rxInvert, txInvert, txDelay, 0U);
+				modem = new CDVMegaController(port, wxEmptyString, rxInvert, txInvert, txDelay);
 				break;
 			case DVMV_RADIO:
-				modem = new CDVMegaController(port, wxEmptyString, false, false, txDelay, frequency);
+				modem = new CDVMegaController(port, wxEmptyString, txDelay, frequency);
 				break;
 			default:
 				wxLogError(wxT("Unknown DVMEGA variant - %d"), int(variant));
@@ -444,7 +444,7 @@ void CDStarRepeaterApp::createThread()
 		unsigned int address;
 		m_config->getGMSK(iface, address);
 		wxLogInfo(wxT("GMSK, interface: %d, address: %04X"), int(iface), address);
-		modem = new CGMSKController(iface, address);
+		modem = new CGMSKController(iface, address, mode == MODE_DUPLEX || mode == MODE_TXANDRX);
 	} else if (modemType.IsSameAs(wxT("Sound Card"))) {
 		wxString rxDevice, txDevice;
 		bool rxInvert, txInvert;

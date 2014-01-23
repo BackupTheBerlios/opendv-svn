@@ -29,7 +29,7 @@
 
 class CGMSKController : public wxThread, public IModem {
 public:
-	CGMSKController(USB_INTERFACE iface, unsigned int address);
+	CGMSKController(USB_INTERFACE iface, unsigned int address, bool duplex);
 	virtual ~CGMSKController();
 
 	virtual void* Entry();
@@ -50,6 +50,7 @@ public:
 
 private:
 	IGMSKModem*                m_modem;
+	bool                       m_duplex;
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;

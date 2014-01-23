@@ -83,12 +83,44 @@ wxArrayString CDVMegaController::getDevices()
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay, unsigned int frequency) :
+CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
 m_port(port),
 m_path(path),
 m_rxInvert(rxInvert),
 m_txInvert(txInvert),
+m_txDelay(txDelay),
+m_frequency(0U),
+m_serial(port, SERIAL_115200),
+m_buffer(NULL),
+m_rxData(1000U),
+m_txData(1000U),
+m_txCounter(0U),
+m_pktCounter(0U),
+m_tx(false),
+m_rx(false),
+m_txSpace(0U),
+m_txEnabled(false),
+m_checksum(false),
+m_space(0U),
+m_stopped(false),
+m_mutex(),
+m_readType(DSMTT_NONE),
+m_readLength(0U),
+m_readBuffer(NULL)
+{
+	wxASSERT(!port.IsEmpty());
+
+	m_buffer = new unsigned char[BUFFER_LENGTH];
+	m_readBuffer = new unsigned char[BUFFER_LENGTH];
+}
+
+CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, unsigned int txDelay, unsigned int frequency) :
+wxThread(wxTHREAD_JOINABLE),
+m_port(port),
+m_path(path),
+m_rxInvert(false),
+m_txInvert(false),
 m_txDelay(txDelay),
 m_frequency(frequency),
 m_serial(port, SERIAL_115200),

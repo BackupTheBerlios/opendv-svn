@@ -48,7 +48,8 @@ enum RESP_TYPE_MEGA {
 
 class CDVMegaController : public wxThread, public IModem {
 public:
-	CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay, unsigned int frequency);
+	CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay);
+	CDVMegaController(const wxString& port, const wxString& path, unsigned int txDelay, unsigned int frequency);
 	virtual ~CDVMegaController();
 
 	virtual void* Entry();

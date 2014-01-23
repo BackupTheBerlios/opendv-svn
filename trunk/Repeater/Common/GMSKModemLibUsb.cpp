@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 const unsigned int VENDOR_ID = 0x04D8U;
 
-const int USB_TIMEOUT     = 100;
+const int USB_TIMEOUT     = 1000;
 
 const int SET_AD_INIT     = 0x00;
 const int SET_PTT         = 0x05;
