@@ -122,6 +122,16 @@ const wxString  KEY_SOUNDCARD_RXLEVEL  = wxT("soundCardRXLevel");
 const wxString  KEY_SOUNDCARD_TXLEVEL  = wxT("soundCardTXLevel");
 const wxString  KEY_SOUNDCARD_TXDELAY  = wxT("soundCardTXDelay");
 
+const wxString  KEY_SPLIT_TX1ADDRESS   = wxT("splitTX1Address");
+const wxString  KEY_SPLIT_TX1PORT      = wxT("splitTX1Port");
+const wxString  KEY_SPLIT_TX2ADDRESS   = wxT("splitTX2Address");
+const wxString  KEY_SPLIT_TX2PORT      = wxT("splitTX2Port");
+const wxString  KEY_SPLIT_RX1ADDRESS   = wxT("splitRX1Address");
+const wxString  KEY_SPLIT_RX1PORT      = wxT("splitRX1Port");
+const wxString  KEY_SPLIT_RX2ADDRESS   = wxT("splitRX2Address");
+const wxString  KEY_SPLIT_RX2PORT      = wxT("splitRX2Port");
+const wxString  KEY_SPLIT_TIMEOUT      = wxT("splitTimeout");
+
 
 const wxString        DEFAULT_CALLSIGN           = wxT("GB3IN  C");
 const wxString        DEFAULT_GATEWAY            = wxEmptyString;
@@ -231,6 +241,15 @@ const wxFloat32       DEFAULT_SOUNDCARD_RXLEVEL  = 1.0F;
 const wxFloat32       DEFAULT_SOUNDCARD_TXLEVEL  = 1.0F;
 const unsigned int    DEFAULT_SOUNDCARD_TXDELAY  = 150U;
 
+const wxString        DEFAULT_SPLIT_TX1ADDRESS   = wxEmptyString;
+const unsigned int    DEFAULT_SPLIT_TX1PORT      = 0U;
+const wxString        DEFAULT_SPLIT_TX2ADDRESS   = wxEmptyString;
+const unsigned int    DEFAULT_SPLIT_TX2PORT      = 0U;
+const wxString        DEFAULT_SPLIT_RX1ADDRESS   = wxEmptyString;
+const unsigned int    DEFAULT_SPLIT_RX1PORT      = 0U;
+const wxString        DEFAULT_SPLIT_RX2ADDRESS   = wxEmptyString;
+const unsigned int    DEFAULT_SPLIT_RX2PORT      = 0U;
+const unsigned int    DEFAULT_SPLIT_TIMEOUT      = 0U;
 
 #if defined(__WINDOWS__)
 
@@ -332,7 +351,16 @@ m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
 m_soundCardTXInvert(DEFAULT_SOUNDCARD_TXINVERT),
 m_soundCardRXLevel(DEFAULT_SOUNDCARD_RXLEVEL),
 m_soundCardTXLevel(DEFAULT_SOUNDCARD_TXLEVEL),
-m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
+m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY),
+m_splitTX1Address(DEFAULT_SPLIT_TX1ADDRESS),
+m_splitTX1Port(DEFAULT_SPLIT_TX1PORT),
+m_splitTX2Address(DEFAULT_SPLIT_TX2ADDRESS),
+m_splitTX2Port(DEFAULT_SPLIT_TX2PORT),
+m_splitRX1Address(DEFAULT_SPLIT_RX1ADDRESS),
+m_splitRX1Port(DEFAULT_SPLIT_RX1PORT),
+m_splitRX2Address(DEFAULT_SPLIT_RX2ADDRESS),
+m_splitRX2Port(DEFAULT_SPLIT_RX2PORT),
+m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 {
 	wxASSERT(config != NULL);
 
@@ -567,6 +595,29 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 
 	m_config->Read(m_name + KEY_SOUNDCARD_TXDELAY, &temp, long(DEFAULT_SOUNDCARD_TXDELAY));
 	m_soundCardTXDelay = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_SPLIT_TX1ADDRESS, &m_splitTX1Address, DEFAULT_SPLIT_TX1ADDRESS);
+
+	m_config->Read(m_name + KEY_SPLIT_TX1PORT, &temp, long(DEFAULT_SPLIT_TX1PORT));
+	m_splitTX1Port = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_SPLIT_TX2ADDRESS, &m_splitTX2Address, DEFAULT_SPLIT_TX2ADDRESS);
+
+	m_config->Read(m_name + KEY_SPLIT_TX2PORT, &temp, long(DEFAULT_SPLIT_TX2PORT));
+	m_splitTX2Port = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_SPLIT_RX1ADDRESS, &m_splitRX1Address, DEFAULT_SPLIT_RX1ADDRESS);
+
+	m_config->Read(m_name + KEY_SPLIT_RX1PORT, &temp, long(DEFAULT_SPLIT_RX1PORT));
+	m_splitRX1Port = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_SPLIT_RX2ADDRESS, &m_splitRX2Address, DEFAULT_SPLIT_RX2ADDRESS);
+
+	m_config->Read(m_name + KEY_SPLIT_RX2PORT, &temp, long(DEFAULT_SPLIT_RX2PORT));
+	m_splitRX2Port = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_SPLIT_TIMEOUT, &temp, long(DEFAULT_SPLIT_TIMEOUT));
+	m_splitTimeout = (unsigned int)temp;
 }
 
 CDStarRepeaterConfig::~CDStarRepeaterConfig()
@@ -673,7 +724,16 @@ m_soundCardRXInvert(DEFAULT_SOUNDCARD_RXINVERT),
 m_soundCardTXInvert(DEFAULT_SOUNDCARD_TXINVERT),
 m_soundCardRXLevel(DEFAULT_SOUNDCARD_RXLEVEL),
 m_soundCardTXLevel(DEFAULT_SOUNDCARD_TXLEVEL),
-m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
+m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY),
+m_splitTX1Address(DEFAULT_SPLIT_TX1ADDRESS),
+m_splitTX1Port(DEFAULT_SPLIT_TX1PORT),
+m_splitTX2Address(DEFAULT_SPLIT_TX2ADDRESS),
+m_splitTX2Port(DEFAULT_SPLIT_TX2PORT),
+m_splitRX1Address(DEFAULT_SPLIT_RX1ADDRESS),
+m_splitRX1Port(DEFAULT_SPLIT_RX1PORT),
+m_splitRX2Address(DEFAULT_SPLIT_RX2ADDRESS),
+m_splitRX2Port(DEFAULT_SPLIT_RX2PORT),
+m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 {
 	wxASSERT(!dir.IsEmpty());
 
@@ -960,6 +1020,29 @@ m_soundCardTXDelay(DEFAULT_SOUNDCARD_TXDELAY)
 		} else if (key.IsSameAs(KEY_SOUNDCARD_TXDELAY)) {
 			val.ToULong(&temp2);
 			m_soundCardTXDelay = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_TX1ADDRESS)) {
+			m_splitTX1Address = val;
+		} else if (key.IsSameAs(KEY_SPLIT_TX1PORT)) {
+			val.ToULong(&temp2);
+			m_splitTX1Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_TX2ADDRESS)) {
+			m_splitTX2Address = val;
+		} else if (key.IsSameAs(KEY_SPLIT_TX2PORT)) {
+			val.ToULong(&temp2);
+			m_splitTX2Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_RX1ADDRESS)) {
+			m_splitRX1Address = val;
+		} else if (key.IsSameAs(KEY_SPLIT_RX1PORT)) {
+			val.ToULong(&temp2);
+			m_splitRX1Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_RX2ADDRESS)) {
+			m_splitRX2Address = val;
+		} else if (key.IsSameAs(KEY_SPLIT_RX2PORT)) {
+			val.ToULong(&temp2);
+			m_splitRX2Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_TIMEOUT)) {
+			val.ToULong(&temp2);
+			m_splitTimeout = (unsigned int)temp2;
 		}
 
 		str = file.GetNextLine();
@@ -1310,6 +1393,32 @@ void CDStarRepeaterConfig::setSoundCard(const wxString& rxDevice, const wxString
 	m_soundCardTXDelay  = txDelay;
 }
 
+void CDStarRepeaterConfig::getSplit(wxString& transmitter1Address, unsigned int& transmitter1Port, wxString& transmitter2Address, unsigned int& transmitter2Port, wxString& receiver1Address, unsigned int& receiver1Port, wxString& receiver2Address, unsigned int& receiver2Port, unsigned int& timeout) const
+{
+	transmitter1Address = m_splitTX1Address;
+	transmitter1Port    = m_splitTX1Port;
+	transmitter2Address = m_splitTX2Address;
+	transmitter2Port    = m_splitTX2Port;
+	receiver1Address    = m_splitRX1Address;
+	receiver1Port       = m_splitRX1Port;
+	receiver2Address    = m_splitRX2Address;
+	receiver2Port       = m_splitRX2Port;
+	timeout             = m_splitTimeout;
+}
+
+void CDStarRepeaterConfig::setSplit(const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, unsigned int timeout)
+{
+	m_splitTX1Address = transmitter1Address;
+	m_splitTX1Port    = transmitter1Port;
+	m_splitTX2Address = transmitter2Address;
+	m_splitTX2Port    = transmitter2Port;
+	m_splitRX1Address = receiver1Address;
+	m_splitRX1Port    = receiver1Port;
+	m_splitRX2Address = receiver2Address;
+	m_splitRX2Port    = receiver2Port;
+	m_splitTimeout    = timeout;
+}
+
 #if defined(__WINDOWS__)
 
 bool CDStarRepeaterConfig::write()
@@ -1417,6 +1526,16 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_SOUNDCARD_RXLEVEL,  double(m_soundCardRXLevel));
 	m_config->Write(m_name + KEY_SOUNDCARD_TXLEVEL,  double(m_soundCardTXLevel));
 	m_config->Write(m_name + KEY_SOUNDCARD_TXDELAY,  long(m_soundCardTXDelay));
+
+	m_config->Write(m_name + KEY_SPLIT_TX1ADDRESS, m_splitTX1Address);
+	m_config->Write(m_name + KEY_SPLIT_TX1PORT,    long(m_splitTX1Port));
+	m_config->Write(m_name + KEY_SPLIT_TX2ADDRESS, m_splitTX2Address);
+	m_config->Write(m_name + KEY_SPLIT_TX2PORT,    long(m_splitTX2Port));
+	m_config->Write(m_name + KEY_SPLIT_RX1ADDRESS, m_splitRX1Address);
+	m_config->Write(m_name + KEY_SPLIT_RX1PORT,    long(m_splitRX1Port));
+	m_config->Write(m_name + KEY_SPLIT_RX2ADDRESS, m_splitRX2Address);
+	m_config->Write(m_name + KEY_SPLIT_RX2PORT,    long(m_splitRX2Port));
+	m_config->Write(m_name + KEY_SPLIT_TIMEOUT,    long(m_splitTimeout));
 
 	m_config->Flush();
 
@@ -1550,6 +1669,16 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_RXLEVEL.c_str(), m_soundCardRXLevel); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_TXLEVEL.c_str(), m_soundCardTXLevel); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SOUNDCARD_TXDELAY.c_str(), m_soundCardTXDelay); file.AddLine(buffer);
+
+	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_TX1ADDRESS.c_str(), m_splitTX1Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TX1PORT.c_str(),    m_splitTX1Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_TX2ADDRESS.c_str(), m_splitTX2Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TX2PORT.c_str(),    m_splitTX2Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_RX1ADDRESS.c_str(), m_splitRX1Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_RX1PORT.c_str(),    m_splitRX1Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_RX2ADDRESS.c_str(), m_splitRX2Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_RX2PORT.c_str(),    m_splitRX2Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TIMEOUT.c_str(),    m_splitTimeout); file.AddLine(buffer);
 
 	bool ret = file.Write();
 	if (!ret) {

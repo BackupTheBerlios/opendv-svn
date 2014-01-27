@@ -88,6 +88,9 @@ public:
 	void getSoundCard(wxString& rxDevice, wxString& txDevice, bool& rxInvert, bool& txInvert, wxFloat32& rxLevel, wxFloat32& txLevel, unsigned int& txDelay) const;
 	void setSoundCard(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
 
+	void getSplit(wxString& transmitter1Address, unsigned int& transmitter1Port, wxString& transmitter2Address, unsigned int& transmitter2Port, wxString& receiver1Address, unsigned int& receiver1Port, wxString& receiver2Address, unsigned int& receiver2Port, unsigned int& timeout) const;
+	void setSplit(const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, unsigned int timeout);
+
 	bool write();
 
 private:
@@ -207,6 +210,17 @@ private:
 	wxFloat32     m_soundCardRXLevel;
 	wxFloat32     m_soundCardTXLevel;
 	unsigned int  m_soundCardTXDelay;
+
+	// Split
+	wxString      m_splitTX1Address;
+	unsigned int  m_splitTX1Port;
+	wxString      m_splitTX2Address;
+	unsigned int  m_splitTX2Port;
+	wxString      m_splitRX1Address;
+	unsigned int  m_splitRX1Port;
+	wxString      m_splitRX2Address;
+	unsigned int  m_splitRX2Port;
+	unsigned int  m_splitTimeout;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include "DStarRepeaterConfigModemSet.h"
 #include "DStarRepeaterConfigGMSKSet.h"
 #include "DStarRepeaterConfigDVAPSet.h"
+#include "DStarRepeaterConfigSplitSet.h"
 
 enum {
 	Button_Configure = 7088
@@ -57,6 +58,7 @@ m_type(NULL)
 	m_type->Append(wxT("DV-RPTR V3"));
 	m_type->Append(wxT("DVMEGA"));
 	m_type->Append(wxT("Sound Card"));
+	m_type->Append(wxT("Split"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	wxStaticText* dummy = new wxStaticText(this, -1, wxEmptyString);
@@ -225,6 +227,25 @@ void CDStarRepeaterConfigModemSet::onConfigure(wxCommandEvent& event)
 				txLevel  = modem.getTXLevel();
 				txDelay  = modem.getTXDelay();
 				m_config->setSoundCard(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
+			}
+		}
+	} else if (type.IsSameAs(wxT("Split"))) {
+		wxString transmitter1Address, transmitter2Address, receiver1Address, receiver2Address;
+		unsigned int transmitter1Port, transmitter2Port, receiver1Port, receiver2Port, timeout;
+		m_config->getSplit(transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, timeout);
+		CDStarRepeaterConfigSplitSet modem(this, -1, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, timeout);
+		if (modem.ShowModal() == wxID_OK) {
+			if (modem.Validate()) {
+				transmitter1Address = modem.getTransmitter1Address();
+				transmitter1Port    = modem.getTransmitter1Port();
+				transmitter2Address = modem.getTransmitter2Address();
+				transmitter2Port    = modem.getTransmitter2Port();
+				receiver1Address    = modem.getReceiver1Address();
+				receiver1Port       = modem.getReceiver1Port();
+				receiver2Address    = modem.getReceiver2Address();
+				receiver2Port       = modem.getReceiver2Port();
+				timeout  = modem.getTimeout();
+				m_config->setSplit(transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, timeout);
 			}
 		}
 	}

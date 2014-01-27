@@ -225,6 +225,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DStarRepeaterConfigSplitSet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DStarRepeaterConfigTimesSet.cpp"
 				>
 			</File>
@@ -284,6 +288,10 @@
 			</File>
 			<File
 				RelativePath=".\DStarRepeaterConfigSoundCardSet.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DStarRepeaterConfigSplitSet.h"
 				>
 			</File>
 			<File
