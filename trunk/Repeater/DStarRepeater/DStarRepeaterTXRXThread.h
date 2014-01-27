@@ -40,7 +40,7 @@ public:
 
 	virtual void setCallsign(const wxString& callsign, const wxString& gateway, DSTAR_MODE mode, ACK_TYPE ack, bool restriction, bool rpt1Validation, bool dtmfBlanking, bool errorReply);
 	virtual void setProtocolHandler(CRepeaterProtocolHandler* handler);
-	virtual void setModem(IModem* modem);
+	virtual void setModem(CModem* modem);
 	virtual void setController(CExternalController* controller, unsigned int activeHangTime);
 	virtual void setTimes(unsigned int timeout, unsigned int ackTime);
 	virtual void setBeacon(unsigned int time, const wxString& text, bool voice, TEXT_LANG language);
@@ -66,7 +66,7 @@ public:
 
 private:
 	wxString                   m_type;
-	IModem*                    m_modem;
+	CModem*                    m_modem;
 	CRepeaterProtocolHandler*  m_protocolHandler;
 	CExternalController*       m_controller;
 	wxString                   m_rptCallsign;

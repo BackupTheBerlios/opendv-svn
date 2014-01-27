@@ -35,7 +35,7 @@ enum DSRSCC_STATE {
 	DSRSCCS_DATA
 };
 
-class CSoundCardController : public wxThread, public IModem, public IAudioCallback {
+class CSoundCardController : public wxThread, public CModem, public IAudioCallback {
 public:
 	CSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
 	virtual ~CSoundCardController();
@@ -46,10 +46,6 @@ public:
 
 	virtual unsigned int getSpace();
 	virtual bool getTX();
-
-	virtual DSMT_TYPE    read();
-	virtual CHeaderData* readHeader();
-	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
@@ -63,16 +59,11 @@ private:
 	wxFloat32                  m_rxLevel;
 	wxFloat32                  m_txLevel;
 	unsigned int               m_txDelay;
-	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<wxFloat32>     m_txAudio;
 	CRingBuffer<wxFloat32>     m_rxAudio;
 	bool                       m_stopped;
 	DSRSCC_STATE               m_rxState;
 	wxUint32                   m_patternBuffer;
-	wxMutex                    m_mutex;
-	DSMT_TYPE                  m_readType;
-	unsigned int               m_readLength;
-	unsigned char*             m_readBuffer;
 	CDStarGMSKDemodulator      m_demodulator;
 	CDStarGMSKModulator        m_modulator;
 	unsigned int               m_preambleCount;

@@ -85,6 +85,7 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_port(port),
 m_path(path),
 m_rxInvert(rxInvert),
@@ -93,30 +94,23 @@ m_txDelay(txDelay),
 m_frequency(0U),
 m_serial(port, SERIAL_115200),
 m_buffer(NULL),
-m_rxData(1000U),
 m_txData(1000U),
 m_txCounter(0U),
 m_pktCounter(0U),
-m_tx(false),
 m_rx(false),
 m_txSpace(0U),
 m_txEnabled(false),
 m_checksum(false),
-m_space(0U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(!port.IsEmpty());
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, unsigned int txDelay, unsigned int frequency) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_port(port),
 m_path(path),
 m_rxInvert(false),
@@ -125,32 +119,25 @@ m_txDelay(txDelay),
 m_frequency(frequency),
 m_serial(port, SERIAL_115200),
 m_buffer(NULL),
-m_rxData(1000U),
 m_txData(1000U),
 m_txCounter(0U),
 m_pktCounter(0U),
-m_tx(false),
 m_rx(false),
 m_txSpace(0U),
 m_txEnabled(false),
 m_checksum(false),
-m_space(0U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(!port.IsEmpty());
+	wxASSERT((frequency >= 144000000U && frequency <= 148000000U) ||
+			 (frequency >= 420000000U && frequency <= 450000000U));
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVMegaController::~CDVMegaController()
 {
 	delete[] m_buffer;
-	delete[] m_readBuffer;
 }
 
 bool CDVMegaController::start()
@@ -172,12 +159,13 @@ bool CDVMegaController::start()
 
 void* CDVMegaController::Entry()
 {
-	wxLogMessage(wxT("Starting DVMEGA Modem Controller thread"));
+	wxLogMessage(wxT("Starting DVMEGA Controller thread"));
 
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 0U, 100U);
-
 	pollTimer.start();
+
+	unsigned int space = 0U;
 
 	while (!m_stopped) {
 		// Poll the modem status every 100ms
@@ -186,7 +174,7 @@ void* CDVMegaController::Entry()
 			if (!ret) {
 				ret = findModem();
 				if (!ret) {
-					wxLogMessage(wxT("Stopping DVMEGA Modem Controller thread"));
+					wxLogMessage(wxT("Stopping DVMEGA Controller thread"));
 					return NULL;
 				}
 			}
@@ -204,7 +192,7 @@ void* CDVMegaController::Entry()
 			case RTM_ERROR: {
 					bool ret = findModem();
 					if (!ret) {
-						wxLogMessage(wxT("Stopping DVMEGA Modem Controller thread"));
+						wxLogMessage(wxT("Stopping DVMEGA Controller thread"));
 						return NULL;
 					}
 				}
@@ -222,7 +210,7 @@ void* CDVMegaController::Entry()
 				// CUtils::dump(wxT("RT_HEADER"), m_buffer, length);
 				if (length == 7U) {
 					if (m_buffer[4U] == DVRPTR_NAK)
-						wxLogWarning(wxT("Received a header NAK from the modem"));
+						wxLogWarning(wxT("Received a header NAK from the DVMEGA"));
 				} else {
 					bool correct = (m_buffer[5U] & 0x80U) == 0x00U;
 					if (correct) {
@@ -248,7 +236,7 @@ void* CDVMegaController::Entry()
 				// CUtils::dump(wxT("RT_DATA"), m_buffer, length);
 				if (length == 7U) {
 					if (m_buffer[4U] == DVRPTR_NAK)
-						wxLogWarning(wxT("Received a data NAK from the modem"));
+						wxLogWarning(wxT("Received a data NAK from the DVMEGA"));
 				} else {
 					wxMutexLocker locker(m_mutex);
 
@@ -294,9 +282,9 @@ void* CDVMegaController::Entry()
 					m_checksum  = (m_buffer[4U] & 0x08U) == 0x08U;
 					m_tx        = (m_buffer[5U] & 0x02U) == 0x02U;
 					m_txSpace   = m_buffer[8U];
-					m_space     = m_txSpace - m_buffer[9U];
+					space       = m_txSpace - m_buffer[9U];
 					// CUtils::dump(wxT("GET_STATUS"), m_buffer, length);
-					// wxLogMessage(wxT("PTT=%d tx=%u space=%u cksum=%d, tx enabled=%d"), int(m_tx), m_txSpace, m_space, int(m_checksum), int(m_txEnabled));
+					// wxLogMessage(wxT("PTT=%d tx=%u space=%u cksum=%d, tx enabled=%d"), int(m_tx), m_txSpace, space, int(m_checksum), int(m_txEnabled));
 				}
 				break;
 
@@ -307,7 +295,7 @@ void* CDVMegaController::Entry()
 				break;
 
 			case RTM_DEBUG:
-				CUtils::dump(wxT("DVMEGA V1 Debug"), m_buffer + 4U, length - DVRPTR_HEADER_LENGTH - 1U);
+				CUtils::dump(wxT("DVMEGA Debug"), m_buffer + 4U, length - DVRPTR_HEADER_LENGTH - 1U);
 				break;
 
 			default:
@@ -316,7 +304,7 @@ void* CDVMegaController::Entry()
 				break;
 		}
 
-		if (m_space > 0U) {
+		if (space > 0U) {
 			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
@@ -334,11 +322,11 @@ void* CDVMegaController::Entry()
 				if (ret == -1) {
 					bool ret = findModem();
 					if (!ret) {
-						wxLogMessage(wxT("Stopping DVMEGA Modem Controller thread"));
+						wxLogMessage(wxT("Stopping DVMEGA Controller thread"));
 						return NULL;
 					}
 				} else {
-					m_space--;
+					space--;
 				}
 			}
 		}
@@ -348,54 +336,13 @@ void* CDVMegaController::Entry()
 		pollTimer.clock();
 	}
 
-	wxLogMessage(wxT("Stopping DVMEGA Modem Controller thread"));
+	wxLogMessage(wxT("Stopping DVMEGA Controller thread"));
 
 	setEnabled(false);
 
 	m_serial.close();
 
 	return NULL;
-}
-
-DSMT_TYPE CDVMegaController::read()
-{
-	m_readLength = 0U;
-
-	if (m_rxData.isEmpty())
-		return DSMTT_NONE;
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned char hdr[2U];
-	m_rxData.getData(hdr, 2U);
-
-	m_readType   = DSMT_TYPE(hdr[0U]);
-	m_readLength = hdr[1U];
-	m_rxData.getData(m_readBuffer, m_readLength);
-
-	return m_readType;
-}
-
-CHeaderData* CDVMegaController::readHeader()
-{
-	if (m_readType != DSMTT_HEADER)
-		return NULL;
-
-	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
-unsigned int CDVMegaController::readData(unsigned char* data, unsigned int length)
-{
-	if (m_readType != DSMTT_DATA)
-		return 0U;
-
-	if (length < m_readLength) {
-		::memcpy(data, m_readBuffer, length);
-		return length;
-	} else {
-		::memcpy(data, m_readBuffer, m_readLength);
-		return m_readLength;
-	}
 }
 
 bool CDVMegaController::writeHeader(const CHeaderData& header)
@@ -593,12 +540,7 @@ bool CDVMegaController::writeData(const unsigned char* data, unsigned int length
 
 unsigned int CDVMegaController::getSpace()
 {
-	return m_space;
-}
-
-bool CDVMegaController::getTX()
-{
-	return m_tx;
+	return m_txData.freeSpace() / 25U;
 }
 
 void CDVMegaController::stop()

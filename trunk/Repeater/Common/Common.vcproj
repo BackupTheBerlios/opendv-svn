@@ -346,6 +346,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Modem.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NetworkController.cpp"
 				>
 			</File>

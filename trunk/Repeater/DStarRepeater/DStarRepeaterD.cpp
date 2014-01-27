@@ -320,7 +320,7 @@ bool CDStarRepeaterD::createThread()
 
 	wxLogInfo(wxT("Modem type set to \"%s\""), modemType.c_str());
 
-	IModem* modem = NULL;
+	CModem* modem = NULL;
 	if (modemType.IsSameAs(wxT("DVAP"))) {
 		wxString port;
 		unsigned int frequency;

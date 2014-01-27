@@ -414,7 +414,7 @@ void CDStarRepeaterTRXThread::setProtocolHandler(CRepeaterProtocolHandler* handl
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTRXThread::setModem(IModem* modem)
+void CDStarRepeaterTRXThread::setModem(CModem* modem)
 {
 	wxASSERT(modem != NULL);
 

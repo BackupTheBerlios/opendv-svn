@@ -29,23 +29,16 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 CGMSKController::CGMSKController(USB_INTERFACE iface, unsigned int address, bool duplex) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_modem(NULL),
 m_duplex(duplex),
 m_buffer(NULL),
-m_rxData(1000U),
 m_txData(1000U),
-m_tx(false),
-m_space(0U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(address > 0U);
 
-	m_buffer     = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
+	m_buffer = new unsigned char[BUFFER_LENGTH];
 
 #if defined(__WINDOWS__)
 	switch (iface) {
@@ -67,7 +60,6 @@ m_readBuffer(NULL)
 CGMSKController::~CGMSKController()
 {
 	delete[] m_buffer;
-	delete[] m_readBuffer;
 
 	delete m_modem;
 }
@@ -105,6 +97,8 @@ void* CGMSKController::Entry()
 
 	unsigned char  readLength = 0U;
 	unsigned char* readBuffer = new unsigned char[DV_FRAME_LENGTH_BYTES];
+
+	unsigned int space = 0U;
 
 	while (!m_stopped) {
 		// Only receive when not transmitting or when in duplex mode
@@ -156,7 +150,7 @@ void* CGMSKController::Entry()
 					unsigned char buffer[90U];
 					bool ret = m_modem->readHeader(buffer, 90U);
 					if (ret) {
-						// CUtils::dump(wxT("Read Header"), buffer, ret);
+						// CUtils::dump(wxT("Read Header"), buffer, RADIO_HEADER_LENGTH_BYTES);
 
 						unsigned char data[2U];
 						data[0U] = DSMTT_HEADER;
@@ -192,24 +186,28 @@ void* CGMSKController::Entry()
 
 			if (writeLength > 0U) {
 				if (writeType == DSMTT_HEADER) {
-					// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
-					m_modem->writeHeader(writeBuffer, writeLength);
-					m_modem->setPTT(true);
-					writeLength = 0U;
-					m_tx = true;
+					// Check that the modem isn't still transmitting before sending the new header
+					TRISTATE tx = m_modem->getPTT();
+					if (tx == STATE_FALSE) {
+						// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
+						m_modem->writeHeader(writeBuffer, writeLength);
+						m_modem->setPTT(true);
+						writeLength = 0U;
+						m_tx = true;
+					}
 				} else {
 					// Check for space if we don't have any
-					if (m_space == 0U) {
+					if (space == 0U) {
 						int ret = m_modem->getSpace();
-						m_space = ret > 0 ? ret : 0U;
+						space = ret > 0 ? ret : 0U;
 					}
 
-					if (m_space > 0U) {
+					if (space > 0U) {
 						// CUtils::dump(wxT("Write Data"), writeBuffer, writeLength);
 						int ret = m_modem->writeData(writeBuffer, writeLength);
 						if (ret > 0) {
 							writeLength -= ret;
-							m_space--;
+							space--;
 
 							if (writeType == DSMTT_EOT) {
 								m_modem->setPTT(false);
@@ -235,47 +233,6 @@ void* CGMSKController::Entry()
 	delete[] readBuffer;
 
 	return NULL;
-}
-
-DSMT_TYPE CGMSKController::read()
-{
-	m_readLength = 0U;
-
-	if (m_rxData.isEmpty())
-		return DSMTT_NONE;
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned char hdr[2U];
-	m_rxData.getData(hdr, 2U);
-
-	m_readType   = DSMT_TYPE(hdr[0U]);
-	m_readLength = hdr[1U];
-	m_rxData.getData(m_readBuffer, m_readLength);
-
-	return m_readType;
-}
-
-CHeaderData* CGMSKController::readHeader()
-{
-	if (m_readType != DSMTT_HEADER)
-		return NULL;
-
-	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
-unsigned int CGMSKController::readData(unsigned char* data, unsigned int length)
-{
-	if (m_readType != DSMTT_DATA)
-		return 0U;
-
-	if (length < m_readLength) {
-		::memcpy(data, m_readBuffer, length);
-		return length;
-	} else {
-		::memcpy(data, m_readBuffer, m_readLength);
-		return m_readLength;
-	}
 }
 
 bool CGMSKController::writeHeader(const CHeaderData& header)
@@ -344,12 +301,7 @@ bool CGMSKController::writeData(const unsigned char* data, unsigned int length, 
 
 unsigned int CGMSKController::getSpace()
 {
-	return m_space;
-}
-
-bool CGMSKController::getTX()
-{
-	return m_tx;
+	return m_txData.freeSpace() / (DV_FRAME_LENGTH_BYTES + 2U);
 }
 
 void CGMSKController::stop()

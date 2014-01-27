@@ -125,39 +125,32 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 CDVAPController::CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_serial(port, SERIAL_230400),
 m_frequency(frequency),
 m_power(power),
 m_squelch(squelch),
-m_space(0U),
-m_tx(false),
 m_squelchOpen(false),
 m_signal(0),
 m_buffer(NULL),
 m_streamId(0U),
 m_framePos(0U),
 m_seq(0U),
-m_rxData(1000U),
 m_txData(1000U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(!port.IsEmpty());
-	wxASSERT(frequency >= 144000000U && frequency <= 148000000U);
+	wxASSERT((frequency >= 144000000U && frequency <= 148000000U) ||
+			 (frequency >= 420000000U && frequency <= 450000000U));
 	wxASSERT(power >= -12 && power <= 10);
 	wxASSERT(squelch >= -128 && squelch <= -45);
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVAPController::~CDVAPController()
 {
 	delete[] m_buffer;
-	delete[] m_readBuffer;
 }
 
 bool CDVAPController::start()
@@ -233,8 +226,9 @@ void* CDVAPController::Entry()
 
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 2U);
-
 	pollTimer.start();
+
+	unsigned int space = 0U;
 
 	while (!m_stopped) {
 		// Poll the modem every 2s
@@ -256,7 +250,7 @@ void* CDVAPController::Entry()
 			case RT_STATE:
 				m_signal      = int(m_buffer[4U]) - 256;
 				m_squelchOpen = m_buffer[5U] == 0x01U;
-				m_space       = m_buffer[6U];
+				space         = m_buffer[6U];
 				break;
 			case RT_PTT:
 				m_tx = m_buffer[4U] == 0x01U;	
@@ -312,7 +306,7 @@ void* CDVAPController::Entry()
 		}
 
 		// Use the status packet every 20ms to trigger the sending of data to the DVAP
-		if (m_space > 0U && type == RT_STATE) {
+		if (space > 0U && type == RT_STATE) {
 			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
@@ -330,7 +324,7 @@ void* CDVAPController::Entry()
 				if (ret != int(len))
 					wxLogWarning(wxT("Error when writing data to the modem"));
 
-				m_space--;
+				space--;
 			}
 		}
 
@@ -346,47 +340,6 @@ void* CDVAPController::Entry()
 	m_serial.close();
 
 	return NULL;
-}
-
-DSMT_TYPE CDVAPController::read()
-{
-	m_readLength = 0U;
-
-	if (m_rxData.isEmpty())
-		return DSMTT_NONE;
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned char hdr[2U];
-	m_rxData.getData(hdr, 2U);
-
-	m_readType   = DSMT_TYPE(hdr[0U]);
-	m_readLength = hdr[1U];
-	m_rxData.getData(m_readBuffer, m_readLength);
-
-	return m_readType;
-}
-
-CHeaderData* CDVAPController::readHeader()
-{
-	if (m_readType != DSMTT_HEADER)
-		return NULL;
-
-	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
-unsigned int CDVAPController::readData(unsigned char* data, unsigned int length)
-{
-	if (m_readType != DSMTT_DATA)
-		return 0U;
-
-	if (length < m_readLength) {
-		::memcpy(data, m_readBuffer, length);
-		return length;
-	} else {
-		::memcpy(data, m_readBuffer, m_readLength);
-		return m_readLength;
-	}
 }
 
 bool CDVAPController::writeHeader(const CHeaderData& header)
@@ -496,12 +449,7 @@ void CDVAPController::stop()
 
 unsigned int CDVAPController::getSpace()
 {
-	return m_space;
-}
-
-bool CDVAPController::getTX()
-{
-	return m_tx;
+	return m_txData.freeSpace() / (DVAP_GMSK_DATA_LEN + 1U);
 }
 
 bool CDVAPController::getSquelch() const

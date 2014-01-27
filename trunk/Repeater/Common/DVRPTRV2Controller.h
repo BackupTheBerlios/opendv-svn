@@ -39,7 +39,7 @@ enum RESP_TYPE_V2 {
 	RT2_DATA
 };
 
-class CDVRPTRV2Controller : public wxThread, public IModem {
+class CDVRPTRV2Controller : public wxThread, public CModem {
 public:
 	CDVRPTRV2Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
 	CDVRPTRV2Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
@@ -50,11 +50,6 @@ public:
 	virtual bool start();
 
 	virtual unsigned int getSpace();
-	virtual bool getTX();
-
-	virtual DSMT_TYPE    read();
-	virtual CHeaderData* readHeader();
-	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
@@ -79,16 +74,9 @@ private:
 	CSerialDataController*     m_usb;
 	CTCPReaderWriter*          m_network;
 	unsigned char*             m_buffer;
-	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
-	bool                       m_tx;
 	bool                       m_rx;
-	unsigned int               m_space;
 	bool                       m_stopped;
-	wxMutex                    m_mutex;
-	DSMT_TYPE                  m_readType;
-	unsigned int               m_readLength;
-	unsigned char*             m_readBuffer;
 
 	bool readSerial();
 	bool setConfig();

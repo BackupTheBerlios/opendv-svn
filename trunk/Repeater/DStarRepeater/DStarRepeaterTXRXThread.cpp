@@ -242,7 +242,7 @@ void CDStarRepeaterTXRXThread::setProtocolHandler(CRepeaterProtocolHandler* hand
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTXRXThread::setModem(IModem* modem)
+void CDStarRepeaterTXRXThread::setModem(CModem* modem)
 {
 	wxASSERT(modem != NULL);
 

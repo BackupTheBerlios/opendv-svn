@@ -146,7 +146,7 @@ void CDStarRepeaterRXThread::setProtocolHandler(CRepeaterProtocolHandler* handle
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterRXThread::setModem(IModem* modem)
+void CDStarRepeaterRXThread::setModem(CModem* modem)
 {
 	wxASSERT(modem != NULL);
 

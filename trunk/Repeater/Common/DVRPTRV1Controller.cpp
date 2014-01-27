@@ -82,6 +82,7 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 CDVRPTRV1Controller::CDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_port(port),
 m_path(path),
 m_rxInvert(rxInvert),
@@ -91,32 +92,23 @@ m_modLevel(modLevel),
 m_txDelay(txDelay),
 m_serial(port, SERIAL_115200),
 m_buffer(NULL),
-m_rxData(1000U),
 m_txData(1000U),
 m_txCounter(0U),
 m_pktCounter(0U),
-m_tx(false),
 m_rx(false),
 m_txSpace(0U),
 m_txEnabled(false),
 m_checksum(false),
-m_space(0U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(!port.IsEmpty());
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVRPTRV1Controller::~CDVRPTRV1Controller()
 {
 	delete[] m_buffer;
-	delete[] m_readBuffer;
 }
 
 bool CDVRPTRV1Controller::start()
@@ -142,8 +134,9 @@ void* CDVRPTRV1Controller::Entry()
 
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 0U, 100U);
-
 	pollTimer.start();
+
+	unsigned int space = 0U;
 
 	while (!m_stopped) {
 		// Poll the modem status every 100ms
@@ -260,9 +253,9 @@ void* CDVRPTRV1Controller::Entry()
 					m_checksum  = (m_buffer[4U] & 0x08U) == 0x08U;
 					m_tx        = (m_buffer[5U] & 0x02U) == 0x02U;
 					m_txSpace   = m_buffer[8U];
-					m_space     = m_txSpace - m_buffer[9U];
+					space       = m_txSpace - m_buffer[9U];
 					// CUtils::dump(wxT("GET_STATUS"), m_buffer, length);
-					// wxLogMessage(wxT("PTT=%d tx=%u space=%u cksum=%d, tx enabled=%d"), int(m_tx), m_txSpace, m_space, int(m_checksum), int(m_txEnabled));
+					// wxLogMessage(wxT("PTT=%d tx=%u space=%u cksum=%d, tx enabled=%d"), int(m_tx), m_txSpace, space, int(m_checksum), int(m_txEnabled));
 				}
 				break;
 
@@ -282,7 +275,7 @@ void* CDVRPTRV1Controller::Entry()
 				break;
 		}
 
-		if (m_space > 0U) {
+		if (space > 0U) {
 			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
@@ -304,7 +297,7 @@ void* CDVRPTRV1Controller::Entry()
 						return NULL;
 					}
 				} else {
-					m_space--;
+					space--;
 				}
 			}
 		}
@@ -321,47 +314,6 @@ void* CDVRPTRV1Controller::Entry()
 	m_serial.close();
 
 	return NULL;
-}
-
-DSMT_TYPE CDVRPTRV1Controller::read()
-{
-	m_readLength = 0U;
-
-	if (m_rxData.isEmpty())
-		return DSMTT_NONE;
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned char hdr[2U];
-	m_rxData.getData(hdr, 2U);
-
-	m_readType   = DSMT_TYPE(hdr[0U]);
-	m_readLength = hdr[1U];
-	m_rxData.getData(m_readBuffer, m_readLength);
-
-	return m_readType;
-}
-
-CHeaderData* CDVRPTRV1Controller::readHeader()
-{
-	if (m_readType != DSMTT_HEADER)
-		return NULL;
-
-	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
-unsigned int CDVRPTRV1Controller::readData(unsigned char* data, unsigned int length)
-{
-	if (m_readType != DSMTT_DATA)
-		return 0U;
-
-	if (length < m_readLength) {
-		::memcpy(data, m_readBuffer, length);
-		return length;
-	} else {
-		::memcpy(data, m_readBuffer, m_readLength);
-		return m_readLength;
-	}
 }
 
 bool CDVRPTRV1Controller::writeHeader(const CHeaderData& header)
@@ -559,12 +511,7 @@ bool CDVRPTRV1Controller::writeData(const unsigned char* data, unsigned int leng
 
 unsigned int CDVRPTRV1Controller::getSpace()
 {
-	return m_space;
-}
-
-bool CDVRPTRV1Controller::getTX()
-{
-	return m_tx;
+	return m_txData.freeSpace() / 25U;
 }
 
 void CDVRPTRV1Controller::stop()

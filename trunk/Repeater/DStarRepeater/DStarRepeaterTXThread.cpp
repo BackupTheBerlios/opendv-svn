@@ -186,7 +186,7 @@ void CDStarRepeaterTXThread::setProtocolHandler(CRepeaterProtocolHandler* handle
 	m_protocolHandler = handler;
 }
 
-void CDStarRepeaterTXThread::setModem(IModem* modem)
+void CDStarRepeaterTXThread::setModem(CModem* modem)
 {
 	wxASSERT(modem != NULL);
 

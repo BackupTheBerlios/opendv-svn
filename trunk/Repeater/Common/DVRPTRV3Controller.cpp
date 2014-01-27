@@ -55,6 +55,7 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 CDVRPTRV3Controller::CDVRPTRV3Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_connection(CT_USB),
 m_usbPort(port),
 m_usbPath(path),
@@ -68,27 +69,20 @@ m_txDelay(txDelay),
 m_usb(NULL),
 m_network(NULL),
 m_buffer(NULL),
-m_rxData(1000U),
 m_txData(1000U),
-m_tx(false),
 m_rx(false),
-m_space(0U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(!port.IsEmpty());
 
 	m_usb = new CSerialDataController(port, SERIAL_115200);
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVRPTRV3Controller::CDVRPTRV3Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_connection(CT_NETWORK),
 m_usbPort(),
 m_usbPath(),
@@ -102,16 +96,9 @@ m_txDelay(txDelay),
 m_usb(NULL),
 m_network(NULL),
 m_buffer(NULL),
-m_rxData(1000U),
 m_txData(1000U),
-m_tx(false),
 m_rx(false),
-m_space(0U),
-m_stopped(false),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL)
+m_stopped(false)
 {
 	wxASSERT(!address.IsEmpty());
 	wxASSERT(port > 0U);
@@ -119,7 +106,6 @@ m_readBuffer(NULL)
 	m_network = new CTCPReaderWriter(address, port);
 
 	m_buffer = new unsigned char[BUFFER_LENGTH];
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
 
 CDVRPTRV3Controller::~CDVRPTRV3Controller()
@@ -128,7 +114,6 @@ CDVRPTRV3Controller::~CDVRPTRV3Controller()
 	delete m_network;
 
 	delete[] m_buffer;
-	delete[] m_readBuffer;
 }
 
 bool CDVRPTRV3Controller::start()
@@ -154,8 +139,9 @@ void* CDVRPTRV3Controller::Entry()
 
 	// Clock every 5ms-ish
 	CTimer pollTimer(200U, 0U, 250U);
-
 	pollTimer.start();
+
+	unsigned int space = 0U;
 
 	while (!m_stopped) {
 		// Poll the modem status every 250ms
@@ -240,7 +226,7 @@ void* CDVRPTRV3Controller::Entry()
 				break;
 
 			case RT3_SPACE:
-				m_space = m_buffer[9U];
+				space = m_buffer[9U];
 				// CUtils::dump(wxT("RT3_SPACE"), m_buffer, length);
 				break;
 
@@ -255,7 +241,7 @@ void* CDVRPTRV3Controller::Entry()
 				break;
 		}
 
-		if (m_space > 0U) {
+		if (space > 0U) {
 			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
@@ -277,7 +263,7 @@ void* CDVRPTRV3Controller::Entry()
 						return NULL;
 					}
 				} else {
-					m_space--;
+					space--;
 				}
 			}
 		}
@@ -292,47 +278,6 @@ void* CDVRPTRV3Controller::Entry()
 	closeModem();
 
 	return NULL;
-}
-
-DSMT_TYPE CDVRPTRV3Controller::read()
-{
-	m_readLength = 0U;
-
-	if (m_rxData.isEmpty())
-		return DSMTT_NONE;
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned char hdr[2U];
-	m_rxData.getData(hdr, 2U);
-
-	m_readType   = DSMT_TYPE(hdr[0U]);
-	m_readLength = hdr[1U];
-	m_rxData.getData(m_readBuffer, m_readLength);
-
-	return m_readType;
-}
-
-CHeaderData* CDVRPTRV3Controller::readHeader()
-{
-	if (m_readType != DSMTT_HEADER)
-		return NULL;
-
-	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
-unsigned int CDVRPTRV3Controller::readData(unsigned char* data, unsigned int length)
-{
-	if (m_readType != DSMTT_DATA)
-		return 0U;
-
-	if (length < m_readLength) {
-		::memcpy(data, m_readBuffer, length);
-		return length;
-	} else {
-		::memcpy(data, m_readBuffer, m_readLength);
-		return m_readLength;
-	}
 }
 
 bool CDVRPTRV3Controller::writeHeader(const CHeaderData& header)
@@ -431,12 +376,7 @@ bool CDVRPTRV3Controller::writeData(const unsigned char* data, unsigned int leng
 
 unsigned int CDVRPTRV3Controller::getSpace()
 {
-	return m_space;
-}
-
-bool CDVRPTRV3Controller::getTX()
-{
-	return m_tx;
+	return m_txData.freeSpace() / 18U;
 }
 
 void CDVRPTRV3Controller::stop()

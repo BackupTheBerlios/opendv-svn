@@ -46,7 +46,7 @@ enum RESP_TYPE_V1 {
 	RT1_DEBUG
 };
 
-class CDVRPTRV1Controller : public wxThread, public IModem {
+class CDVRPTRV1Controller : public wxThread, public CModem {
 public:
 	CDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDVRPTRV1Controller();
@@ -56,11 +56,6 @@ public:
 	virtual bool start();
 
 	virtual unsigned int getSpace();
-	virtual bool getTX();
-
-	virtual DSMT_TYPE    read();
-	virtual CHeaderData* readHeader();
-	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
@@ -81,21 +76,14 @@ private:
 	unsigned int               m_txDelay;
 	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
-	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
 	unsigned char              m_txCounter;
 	unsigned char              m_pktCounter;
-	bool                       m_tx;
 	bool                       m_rx;
 	unsigned int               m_txSpace;
 	bool                       m_txEnabled;
 	bool                       m_checksum;
-	unsigned int               m_space;
 	bool                       m_stopped;
-	wxMutex                    m_mutex;
-	DSMT_TYPE                  m_readType;
-	unsigned int               m_readLength;
-	unsigned char*             m_readBuffer;
 
 	bool readVersion();
 	bool readStatus();

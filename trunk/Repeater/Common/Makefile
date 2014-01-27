@@ -5,9 +5,10 @@ OBJS :=	ActiveHangSet.o AddressTextCtrl.o AMBEFEC.o AnnouncementSet.o Announceme
 		DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DummyController.o DVAPController.o DVDongleController.o DVMegaController.o \
 		DVRPTRV1Controller.o DVRPTRV2Controller.o DVRPTRV3Controller.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o FIRFilter.o GMSKController.o \
 		GMSKModem.o GMSKModemLibUsb.o Goertzel.o Golay.o HardwareController.o HeaderData.o K8055Controller.o LimitedLengthBuffer.o LocatorTextCtrl.o LogEvent.o \
-		Logger.o MessageTextCtrl.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o RadioHeaderEncoder.o \
-		RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o \
-		SoundCardController.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
+		Logger.o MessageTextCtrl.o Modem.o NetworkController.o NetworkSet.o OutputQueue.o PatternMatcher.o PortTextCtrl.o PTTDelay.o RadioHeaderDecoder.o \
+		RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o \
+		SlowDataEncoder.o SoundCardController.o SoundCardReaderWriter.o TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o \
+		WAVFileWriter.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -157,6 +158,9 @@ Logger.o:	Logger.cpp Logger.h
 
 MessageTextCtrl.o:	MessageTextCtrl.cpp MessageTextCtrl.h RestrictedTextCtrl.h
 		$(CC) $(CFLAGS) -c MessageTextCtrl.cpp
+
+Modem.o:	Modem.cpp Modem.h RingBuffer.h HeaderData.h DStarDefines.h
+		$(CC) $(CFLAGS) -c Modem.cpp
 
 NetworkController.o:	NetworkController.cpp NetworkController.h SerialLineController.h
 		$(CC) $(CFLAGS) -c NetworkController.cpp

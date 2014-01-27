@@ -20,6 +20,7 @@
 #define	Modem_H
 
 #include "HeaderData.h"
+#include "RingBuffer.h"
 
 #include <wx/wx.h>
 
@@ -31,23 +32,34 @@ enum DSMT_TYPE {
 	DSMTT_LOST
 };
 
-class IModem {
+class CModem {
 public:
+	CModem();
+	virtual ~CModem();
+
 	virtual bool start() = 0;
 
 	virtual bool writeHeader(const CHeaderData& header) = 0;
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end) = 0;
 
 	virtual unsigned int getSpace() = 0;
-	virtual bool getTX() = 0;
+	virtual bool getTX();
 
-	virtual DSMT_TYPE read() = 0;
-	virtual CHeaderData* readHeader() = 0;
-	virtual unsigned int readData(unsigned char* data, unsigned int length) = 0;
+	virtual DSMT_TYPE read();
+	virtual CHeaderData* readHeader();
+	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
 	virtual void stop() = 0;
 
+protected:
+	CRingBuffer<unsigned char> m_rxData;
+	wxMutex                    m_mutex;
+	bool                       m_tx;
+
 private:
+	DSMT_TYPE                  m_readType;
+	unsigned int               m_readLength;
+	unsigned char*             m_readBuffer;
 };
 
 #endif

@@ -361,20 +361,16 @@ const unsigned char SCRAMBLE_TABLE_RX[] = {
 
 CSoundCardController::CSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay) :
 wxThread(wxTHREAD_JOINABLE),
+CModem(),
 m_sound(rxDevice, txDevice, DSTAR_RADIO_SAMPLE_RATE, DSTAR_RADIO_BLOCK_SIZE),
 m_rxLevel(rxLevel),
 m_txLevel(txLevel),
 m_txDelay(txDelay),
-m_rxData(1000U),
 m_txAudio(48000U),
 m_rxAudio(4800U),
 m_stopped(false),
 m_rxState(DSRSCCS_NONE),
 m_patternBuffer(0x00U),
-m_mutex(),
-m_readType(DSMTT_NONE),
-m_readLength(0U),
-m_readBuffer(NULL),
 m_demodulator(),
 m_modulator(),
 m_preambleCount(0U),
@@ -398,7 +394,6 @@ m_fecOutput(NULL)
 
 	m_sound.setCallback(this, 0U);
 
-	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 	m_rxBuffer   = new unsigned char[FEC_SECTION_LENGTH_BYTES];
 
 	m_pathMetric  = new int[4U];
@@ -411,7 +406,6 @@ m_fecOutput(NULL)
 
 CSoundCardController::~CSoundCardController()
 {
-	delete[] m_readBuffer;
 	delete[] m_rxBuffer;
 	delete[] m_pathMetric;
 	delete[] m_pathMemory0;
@@ -488,47 +482,6 @@ void* CSoundCardController::Entry()
 	return NULL;
 }
 
-DSMT_TYPE CSoundCardController::read()
-{
-	m_readLength = 0U;
-
-	if (m_rxData.isEmpty())
-		return DSMTT_NONE;
-
-	wxMutexLocker locker(m_mutex);
-
-	unsigned char hdr[2U];
-	m_rxData.getData(hdr, 2U);
-
-	m_readType   = DSMT_TYPE(hdr[0U]);
-	m_readLength = hdr[1U];
-	m_rxData.getData(m_readBuffer, m_readLength);
-
-	return m_readType;
-}
-
-CHeaderData* CSoundCardController::readHeader()
-{
-	if (m_readType != DSMTT_HEADER)
-		return NULL;
-
-	return new CHeaderData(m_readBuffer, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
-unsigned int CSoundCardController::readData(unsigned char* data, unsigned int length)
-{
-	if (m_readType != DSMTT_DATA)
-		return 0U;
-
-	if (length < m_readLength) {
-		::memcpy(data, m_readBuffer, length);
-		return length;
-	} else {
-		::memcpy(data, m_readBuffer, m_readLength);
-		return m_readLength;
-	}
-}
-
 bool CSoundCardController::writeHeader(const CHeaderData& header)
 {
 	unsigned char buffer1[RADIO_HEADER_LENGTH_BYTES];
@@ -601,8 +554,7 @@ unsigned int CSoundCardController::getSpace()
 	if (space > 10U)
 		space = 10U;
 
-	return space;
-}
+	return space;}
 
 bool CSoundCardController::getTX()
 {

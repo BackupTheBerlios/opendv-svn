@@ -46,7 +46,7 @@ enum RESP_TYPE_MEGA {
 	RTM_DEBUG
 };
 
-class CDVMegaController : public wxThread, public IModem {
+class CDVMegaController : public wxThread, public CModem {
 public:
 	CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay);
 	CDVMegaController(const wxString& port, const wxString& path, unsigned int txDelay, unsigned int frequency);
@@ -57,11 +57,6 @@ public:
 	virtual bool start();
 
 	virtual unsigned int getSpace();
-	virtual bool getTX();
-
-	virtual DSMT_TYPE    read();
-	virtual CHeaderData* readHeader();
-	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
@@ -81,21 +76,14 @@ private:
 	unsigned int               m_frequency;
 	CSerialDataController      m_serial;
 	unsigned char*             m_buffer;
-	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
 	unsigned char              m_txCounter;
 	unsigned char              m_pktCounter;
-	bool                       m_tx;
 	bool                       m_rx;
 	unsigned int               m_txSpace;
 	bool                       m_txEnabled;
 	bool                       m_checksum;
-	unsigned int               m_space;
 	bool                       m_stopped;
-	wxMutex                    m_mutex;
-	DSMT_TYPE                  m_readType;
-	unsigned int               m_readLength;
-	unsigned char*             m_readBuffer;
 
 	bool readVersion();
 	bool readStatus();
