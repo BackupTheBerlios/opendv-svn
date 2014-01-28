@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2012,2013,2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,12 +49,12 @@ m_password(NULL)
 	m_hostname = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	m_hostname->Append(wxT("group1-irc.ircddb.net"));
 	m_hostname->Append(wxT("group2-irc.ircddb.net"));
-	m_hostname->Append(wxT("itsn-s1.no-ip.org"));
-	m_hostname->Append(wxT("stn570.dyndns.org"));
-	m_hostname->Append(wxT("itsns3.no-ip.org"));
-	m_hostname->Append(wxT("itsn-s4.no-ip.org"));
-	m_hostname->Append(wxT("k0atm.dyndns.org"));
-	m_hostname->Append(wxT("ozquadnet.sytes.net"));
+	m_hostname->Append(wxT("irc1.openquad.net"));
+	m_hostname->Append(wxT("irc2.openquad.net"));
+	m_hostname->Append(wxT("irc3.openquad.net"));
+	m_hostname->Append(wxT("irc4.openquad.net"));
+	m_hostname->Append(wxT("irc5.openquad.net"));
+	m_hostname->Append(wxT("irc6.openquad.net"));
 	m_hostname->Append(wxT("server1-ik2xyp.free-dstar.org"));
 	m_hostname->Append(wxT("ircddb.dstar.su"));
 	sizer->Add(m_hostname, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
