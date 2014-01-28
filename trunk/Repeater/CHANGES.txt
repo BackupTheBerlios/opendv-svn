@@ -1,4 +1,4 @@
-Repeater - 20140118
+Repeater - 20140128
 ===================
 
 20090530
@@ -1930,7 +1930,7 @@ Added the DVMEGA hardware.
 
 Fix endian-ness of the DVMEGA frequency command.
 
-201xxxxx
+20140128
 --------
 
 Tweaks to the GMSK Modem controller in the D-Star Repeater.
