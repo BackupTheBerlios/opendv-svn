@@ -28,16 +28,20 @@ const unsigned int PORT_LENGTH     = 5U;
 
 const unsigned int SLIDER_WIDTH    = 200U;
 
-CDStarRepeaterConfigSplitSet::CDStarRepeaterConfigSplitSet(wxWindow* parent, int id, const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, unsigned int timeout) :
+CDStarRepeaterConfigSplitSet::CDStarRepeaterConfigSplitSet(wxWindow* parent, int id, const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& transmitter3Address, unsigned int transmitter3Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, const wxString& receiver3Address, unsigned int receiver3Port, unsigned int timeout) :
 wxDialog(parent, id, wxString(_("Split Settings"))),
 m_transmitter1Address(NULL),
 m_transmitter1Port(NULL),
 m_transmitter2Address(NULL),
 m_transmitter2Port(NULL),
+m_transmitter3Address(NULL),
+m_transmitter3Port(NULL),
 m_receiver1Address(NULL),
 m_receiver1Port(NULL),
 m_receiver2Address(NULL),
 m_receiver2Port(NULL),
+m_receiver3Address(NULL),
+m_receiver3Port(NULL),
 m_timeout(NULL)
 {
 	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
@@ -79,6 +83,23 @@ m_timeout(NULL)
 
 	sizer->Add(tx2Sizer);
 
+	wxStaticText* transmitter3Label = new wxStaticText(this, -1, _("Transmitter 3"));
+	sizer->Add(transmitter3Label, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxBoxSizer* tx3Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+	m_transmitter3Address = new CAddressTextCtrl(this, -1, transmitter3Address, wxDefaultPosition, wxSize(ADDRESS_WIDTH, -1));
+	m_transmitter3Address->SetMaxLength(ADDRESS_LENGTH);
+	tx3Sizer->Add(m_transmitter3Address, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	buffer.Printf(wxT("%u"), transmitter3Port);
+
+	m_transmitter3Port = new CPortTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(PORT_WIDTH, -1));
+	m_transmitter3Port->SetMaxLength(PORT_LENGTH);
+	tx3Sizer->Add(m_transmitter3Port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	sizer->Add(tx3Sizer);
+
 	wxStaticText* receiver1Label = new wxStaticText(this, -1, _("Receiver 1"));
 	sizer->Add(receiver1Label, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
@@ -112,6 +133,23 @@ m_timeout(NULL)
 	rx2Sizer->Add(m_receiver2Port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
 	sizer->Add(rx2Sizer);
+
+	wxStaticText* receiver3Label = new wxStaticText(this, -1, _("Receiver 3"));
+	sizer->Add(receiver3Label, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	wxBoxSizer* rx3Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+	m_receiver3Address = new CAddressTextCtrl(this, -1, receiver3Address, wxDefaultPosition, wxSize(ADDRESS_WIDTH, -1));
+	m_receiver3Address->SetMaxLength(ADDRESS_LENGTH);
+	rx3Sizer->Add(m_receiver3Address, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	buffer.Printf(wxT("%u"), receiver3Port);
+
+	m_receiver3Port = new CPortTextCtrl(this, -1, buffer, wxDefaultPosition, wxSize(PORT_WIDTH, -1));
+	m_receiver3Port->SetMaxLength(PORT_LENGTH);
+	rx3Sizer->Add(m_receiver3Port, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
+
+	sizer->Add(rx3Sizer);
 
 	wxStaticText* timeoutLabel = new wxStaticText(this, -1, _("Packet timeout (ms)"));
 	sizer->Add(timeoutLabel, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
@@ -168,6 +206,20 @@ unsigned int CDStarRepeaterConfigSplitSet::getTransmitter2Port() const
 	return n;
 }
 
+wxString CDStarRepeaterConfigSplitSet::getTransmitter3Address() const
+{
+	return m_transmitter3Address->GetValue();
+}
+
+unsigned int CDStarRepeaterConfigSplitSet::getTransmitter3Port() const
+{
+	unsigned long n;
+
+	m_transmitter3Port->GetValue().ToULong(&n);
+
+	return n;
+}
+
 wxString CDStarRepeaterConfigSplitSet::getReceiver1Address() const
 {
 	return m_receiver1Address->GetValue();
@@ -192,6 +244,20 @@ unsigned int CDStarRepeaterConfigSplitSet::getReceiver2Port() const
 	unsigned long n;
 
 	m_receiver2Port->GetValue().ToULong(&n);
+
+	return n;
+}
+
+wxString CDStarRepeaterConfigSplitSet::getReceiver3Address() const
+{
+	return m_receiver3Address->GetValue();
+}
+
+unsigned int CDStarRepeaterConfigSplitSet::getReceiver3Port() const
+{
+	unsigned long n;
+
+	m_receiver3Port->GetValue().ToULong(&n);
 
 	return n;
 }

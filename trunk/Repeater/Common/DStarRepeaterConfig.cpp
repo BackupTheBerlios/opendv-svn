@@ -126,10 +126,14 @@ const wxString  KEY_SPLIT_TX1ADDRESS   = wxT("splitTX1Address");
 const wxString  KEY_SPLIT_TX1PORT      = wxT("splitTX1Port");
 const wxString  KEY_SPLIT_TX2ADDRESS   = wxT("splitTX2Address");
 const wxString  KEY_SPLIT_TX2PORT      = wxT("splitTX2Port");
+const wxString  KEY_SPLIT_TX3ADDRESS   = wxT("splitTX3Address");
+const wxString  KEY_SPLIT_TX3PORT      = wxT("splitTX3Port");
 const wxString  KEY_SPLIT_RX1ADDRESS   = wxT("splitRX1Address");
 const wxString  KEY_SPLIT_RX1PORT      = wxT("splitRX1Port");
 const wxString  KEY_SPLIT_RX2ADDRESS   = wxT("splitRX2Address");
 const wxString  KEY_SPLIT_RX2PORT      = wxT("splitRX2Port");
+const wxString  KEY_SPLIT_RX3ADDRESS   = wxT("splitRX3Address");
+const wxString  KEY_SPLIT_RX3PORT      = wxT("splitRX3Port");
 const wxString  KEY_SPLIT_TIMEOUT      = wxT("splitTimeout");
 
 
@@ -245,10 +249,14 @@ const wxString        DEFAULT_SPLIT_TX1ADDRESS   = wxEmptyString;
 const unsigned int    DEFAULT_SPLIT_TX1PORT      = 0U;
 const wxString        DEFAULT_SPLIT_TX2ADDRESS   = wxEmptyString;
 const unsigned int    DEFAULT_SPLIT_TX2PORT      = 0U;
+const wxString        DEFAULT_SPLIT_TX3ADDRESS   = wxEmptyString;
+const unsigned int    DEFAULT_SPLIT_TX3PORT      = 0U;
 const wxString        DEFAULT_SPLIT_RX1ADDRESS   = wxEmptyString;
 const unsigned int    DEFAULT_SPLIT_RX1PORT      = 0U;
 const wxString        DEFAULT_SPLIT_RX2ADDRESS   = wxEmptyString;
 const unsigned int    DEFAULT_SPLIT_RX2PORT      = 0U;
+const wxString        DEFAULT_SPLIT_RX3ADDRESS   = wxEmptyString;
+const unsigned int    DEFAULT_SPLIT_RX3PORT      = 0U;
 const unsigned int    DEFAULT_SPLIT_TIMEOUT      = 0U;
 
 #if defined(__WINDOWS__)
@@ -356,10 +364,14 @@ m_splitTX1Address(DEFAULT_SPLIT_TX1ADDRESS),
 m_splitTX1Port(DEFAULT_SPLIT_TX1PORT),
 m_splitTX2Address(DEFAULT_SPLIT_TX2ADDRESS),
 m_splitTX2Port(DEFAULT_SPLIT_TX2PORT),
+m_splitTX3Address(DEFAULT_SPLIT_TX3ADDRESS),
+m_splitTX3Port(DEFAULT_SPLIT_TX3PORT),
 m_splitRX1Address(DEFAULT_SPLIT_RX1ADDRESS),
 m_splitRX1Port(DEFAULT_SPLIT_RX1PORT),
 m_splitRX2Address(DEFAULT_SPLIT_RX2ADDRESS),
 m_splitRX2Port(DEFAULT_SPLIT_RX2PORT),
+m_splitRX3Address(DEFAULT_SPLIT_RX3ADDRESS),
+m_splitRX3Port(DEFAULT_SPLIT_RX3PORT),
 m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 {
 	wxASSERT(config != NULL);
@@ -606,6 +618,11 @@ m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 	m_config->Read(m_name + KEY_SPLIT_TX2PORT, &temp, long(DEFAULT_SPLIT_TX2PORT));
 	m_splitTX2Port = (unsigned int)temp;
 
+	m_config->Read(m_name + KEY_SPLIT_TX3ADDRESS, &m_splitTX3Address, DEFAULT_SPLIT_TX3ADDRESS);
+
+	m_config->Read(m_name + KEY_SPLIT_TX3PORT, &temp, long(DEFAULT_SPLIT_TX3PORT));
+	m_splitTX3Port = (unsigned int)temp;
+
 	m_config->Read(m_name + KEY_SPLIT_RX1ADDRESS, &m_splitRX1Address, DEFAULT_SPLIT_RX1ADDRESS);
 
 	m_config->Read(m_name + KEY_SPLIT_RX1PORT, &temp, long(DEFAULT_SPLIT_RX1PORT));
@@ -615,6 +632,11 @@ m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 
 	m_config->Read(m_name + KEY_SPLIT_RX2PORT, &temp, long(DEFAULT_SPLIT_RX2PORT));
 	m_splitRX2Port = (unsigned int)temp;
+
+	m_config->Read(m_name + KEY_SPLIT_RX3ADDRESS, &m_splitRX3Address, DEFAULT_SPLIT_RX3ADDRESS);
+
+	m_config->Read(m_name + KEY_SPLIT_RX3PORT, &temp, long(DEFAULT_SPLIT_RX3PORT));
+	m_splitRX3Port = (unsigned int)temp;
 
 	m_config->Read(m_name + KEY_SPLIT_TIMEOUT, &temp, long(DEFAULT_SPLIT_TIMEOUT));
 	m_splitTimeout = (unsigned int)temp;
@@ -729,10 +751,14 @@ m_splitTX1Address(DEFAULT_SPLIT_TX1ADDRESS),
 m_splitTX1Port(DEFAULT_SPLIT_TX1PORT),
 m_splitTX2Address(DEFAULT_SPLIT_TX2ADDRESS),
 m_splitTX2Port(DEFAULT_SPLIT_TX2PORT),
+m_splitTX3Address(DEFAULT_SPLIT_TX3ADDRESS),
+m_splitTX3Port(DEFAULT_SPLIT_TX3PORT),
 m_splitRX1Address(DEFAULT_SPLIT_RX1ADDRESS),
 m_splitRX1Port(DEFAULT_SPLIT_RX1PORT),
 m_splitRX2Address(DEFAULT_SPLIT_RX2ADDRESS),
 m_splitRX2Port(DEFAULT_SPLIT_RX2PORT),
+m_splitRX3Address(DEFAULT_SPLIT_RX3ADDRESS),
+m_splitRX3Port(DEFAULT_SPLIT_RX3PORT),
 m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 {
 	wxASSERT(!dir.IsEmpty());
@@ -1030,6 +1056,11 @@ m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 		} else if (key.IsSameAs(KEY_SPLIT_TX2PORT)) {
 			val.ToULong(&temp2);
 			m_splitTX2Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_TX3ADDRESS)) {
+			m_splitTX3Address = val;
+		} else if (key.IsSameAs(KEY_SPLIT_TX3PORT)) {
+			val.ToULong(&temp2);
+			m_splitTX3Port = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_SPLIT_RX1ADDRESS)) {
 			m_splitRX1Address = val;
 		} else if (key.IsSameAs(KEY_SPLIT_RX1PORT)) {
@@ -1040,6 +1071,11 @@ m_splitTimeout(DEFAULT_SPLIT_TIMEOUT)
 		} else if (key.IsSameAs(KEY_SPLIT_RX2PORT)) {
 			val.ToULong(&temp2);
 			m_splitRX2Port = (unsigned int)temp2;
+		} else if (key.IsSameAs(KEY_SPLIT_RX3ADDRESS)) {
+			m_splitRX3Address = val;
+		} else if (key.IsSameAs(KEY_SPLIT_RX3PORT)) {
+			val.ToULong(&temp2);
+			m_splitRX3Port = (unsigned int)temp2;
 		} else if (key.IsSameAs(KEY_SPLIT_TIMEOUT)) {
 			val.ToULong(&temp2);
 			m_splitTimeout = (unsigned int)temp2;
@@ -1393,29 +1429,37 @@ void CDStarRepeaterConfig::setSoundCard(const wxString& rxDevice, const wxString
 	m_soundCardTXDelay  = txDelay;
 }
 
-void CDStarRepeaterConfig::getSplit(wxString& transmitter1Address, unsigned int& transmitter1Port, wxString& transmitter2Address, unsigned int& transmitter2Port, wxString& receiver1Address, unsigned int& receiver1Port, wxString& receiver2Address, unsigned int& receiver2Port, unsigned int& timeout) const
+void CDStarRepeaterConfig::getSplit(wxString& transmitter1Address, unsigned int& transmitter1Port, wxString& transmitter2Address, unsigned int& transmitter2Port, wxString& transmitter3Address, unsigned int& transmitter3Port, wxString& receiver1Address, unsigned int& receiver1Port, wxString& receiver2Address, unsigned int& receiver2Port, wxString& receiver3Address, unsigned int& receiver3Port, unsigned int& timeout) const
 {
 	transmitter1Address = m_splitTX1Address;
 	transmitter1Port    = m_splitTX1Port;
 	transmitter2Address = m_splitTX2Address;
 	transmitter2Port    = m_splitTX2Port;
+	transmitter3Address = m_splitTX3Address;
+	transmitter3Port    = m_splitTX3Port;
 	receiver1Address    = m_splitRX1Address;
 	receiver1Port       = m_splitRX1Port;
 	receiver2Address    = m_splitRX2Address;
 	receiver2Port       = m_splitRX2Port;
+	receiver3Address    = m_splitRX3Address;
+	receiver3Port       = m_splitRX3Port;
 	timeout             = m_splitTimeout;
 }
 
-void CDStarRepeaterConfig::setSplit(const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, unsigned int timeout)
+void CDStarRepeaterConfig::setSplit(const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& transmitter3Address, unsigned int transmitter3Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, const wxString& receiver3Address, unsigned int receiver3Port, unsigned int timeout)
 {
 	m_splitTX1Address = transmitter1Address;
 	m_splitTX1Port    = transmitter1Port;
 	m_splitTX2Address = transmitter2Address;
 	m_splitTX2Port    = transmitter2Port;
+	m_splitTX3Address = transmitter3Address;
+	m_splitTX3Port    = transmitter3Port;
 	m_splitRX1Address = receiver1Address;
 	m_splitRX1Port    = receiver1Port;
 	m_splitRX2Address = receiver2Address;
 	m_splitRX2Port    = receiver2Port;
+	m_splitRX3Address = receiver3Address;
+	m_splitRX3Port    = receiver3Port;
 	m_splitTimeout    = timeout;
 }
 
@@ -1531,10 +1575,14 @@ bool CDStarRepeaterConfig::write()
 	m_config->Write(m_name + KEY_SPLIT_TX1PORT,    long(m_splitTX1Port));
 	m_config->Write(m_name + KEY_SPLIT_TX2ADDRESS, m_splitTX2Address);
 	m_config->Write(m_name + KEY_SPLIT_TX2PORT,    long(m_splitTX2Port));
+	m_config->Write(m_name + KEY_SPLIT_TX3ADDRESS, m_splitTX3Address);
+	m_config->Write(m_name + KEY_SPLIT_TX3PORT,    long(m_splitTX3Port));
 	m_config->Write(m_name + KEY_SPLIT_RX1ADDRESS, m_splitRX1Address);
 	m_config->Write(m_name + KEY_SPLIT_RX1PORT,    long(m_splitRX1Port));
 	m_config->Write(m_name + KEY_SPLIT_RX2ADDRESS, m_splitRX2Address);
 	m_config->Write(m_name + KEY_SPLIT_RX2PORT,    long(m_splitRX2Port));
+	m_config->Write(m_name + KEY_SPLIT_RX3ADDRESS, m_splitRX3Address);
+	m_config->Write(m_name + KEY_SPLIT_RX3PORT,    long(m_splitRX3Port));
 	m_config->Write(m_name + KEY_SPLIT_TIMEOUT,    long(m_splitTimeout));
 
 	m_config->Flush();
@@ -1625,59 +1673,63 @@ bool CDStarRepeaterConfig::write()
 	buffer.Printf(wxT("%s=%d"), KEY_WINDOW_X.c_str(), m_x); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_WINDOW_Y.c_str(), m_y); file.AddLine(buffer);
 
-	buffer.Printf(wxT("%s=%s"), KEY_DVAP_PORT.c_str(), m_dvapPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVAP_PORT.c_str(),      m_dvapPort.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVAP_FREQUENCY.c_str(), m_dvapFrequency); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVAP_POWER.c_str(), m_dvapPower); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVAP_SQUELCH.c_str(), m_dvapSquelch); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVAP_POWER.c_str(),     m_dvapPower); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVAP_SQUELCH.c_str(),   m_dvapSquelch); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%u"), KEY_GMSK_ADDRESS.c_str(), m_gmskAddress); file.AddLine(buffer);
 
-	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR1_PORT.c_str(), m_dvrptr1Port.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR1_PORT.c_str(),     m_dvrptr1Port.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_RXINVERT.c_str(), m_dvrptr1RXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_TXINVERT.c_str(), m_dvrptr1TXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_CHANNEL.c_str(), m_dvrptr1Channel ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR1_CHANNEL.c_str(),  m_dvrptr1Channel ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR1_MODLEVEL.c_str(), m_dvrptr1ModLevel); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR1_TXDELAY.c_str(), m_dvrptr1TXDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR1_TXDELAY.c_str(),  m_dvrptr1TXDelay); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_CONNECTION.c_str(), int(m_dvrptr2Connection)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR2_USBPORT.c_str(), m_dvrptr2USBPort.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR2_ADDRESS.c_str(), m_dvrptr2Address.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_PORT.c_str(), m_dvrptr2Port); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_TXINVERT.c_str(), m_dvrptr2TXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_MODLEVEL.c_str(), m_dvrptr2ModLevel); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_TXDELAY.c_str(), m_dvrptr2TXDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR2_USBPORT.c_str(),    m_dvrptr2USBPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR2_ADDRESS.c_str(),    m_dvrptr2Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_PORT.c_str(),       m_dvrptr2Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR2_TXINVERT.c_str(),   m_dvrptr2TXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_MODLEVEL.c_str(),   m_dvrptr2ModLevel); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR2_TXDELAY.c_str(),    m_dvrptr2TXDelay); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR3_CONNECTION.c_str(), int(m_dvrptr3Connection)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR3_USBPORT.c_str(), m_dvrptr3USBPort.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR3_ADDRESS.c_str(), m_dvrptr3Address.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_PORT.c_str(), m_dvrptr3Port); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR3_TXINVERT.c_str(), m_dvrptr3TXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_MODLEVEL.c_str(), m_dvrptr3ModLevel); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_TXDELAY.c_str(), m_dvrptr3TXDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR3_USBPORT.c_str(),    m_dvrptr3USBPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVRPTR3_ADDRESS.c_str(),    m_dvrptr3Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_PORT.c_str(),       m_dvrptr3Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVRPTR3_TXINVERT.c_str(),   m_dvrptr3TXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_MODLEVEL.c_str(),   m_dvrptr3ModLevel); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVRPTR3_TXDELAY.c_str(),    m_dvrptr3TXDelay); file.AddLine(buffer);
 
-	buffer.Printf(wxT("%s=%s"), KEY_DVMEGA_PORT.c_str(), m_dvmegaPort.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_VARIANT.c_str(), int(m_dvmegaVariant)); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_RXINVERT.c_str(), m_dvmegaRXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_TXINVERT.c_str(), m_dvmegaTXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_DVMEGA_TXDELAY.c_str(), m_dvmegaTXDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_DVMEGA_PORT.c_str(),      m_dvmegaPort.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_VARIANT.c_str(),   int(m_dvmegaVariant)); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_RXINVERT.c_str(),  m_dvmegaRXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_DVMEGA_TXINVERT.c_str(),  m_dvmegaTXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_DVMEGA_TXDELAY.c_str(),   m_dvmegaTXDelay); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_DVMEGA_FREQUENCY.c_str(), m_dvmegaFrequency); file.AddLine(buffer);
 
-	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_RXDEVICE.c_str(), m_soundCardRXDevice.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_TXDEVICE.c_str(), m_soundCardTXDevice.c_str()); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_SOUNDCARD_RXINVERT.c_str(), m_soundCardRXInvert ? 1 : 0); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%d"), KEY_SOUNDCARD_TXINVERT.c_str(), m_soundCardTXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_RXDEVICE.c_str(),  m_soundCardRXDevice.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SOUNDCARD_TXDEVICE.c_str(),  m_soundCardTXDevice.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_SOUNDCARD_RXINVERT.c_str(),  m_soundCardRXInvert ? 1 : 0); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%d"), KEY_SOUNDCARD_TXINVERT.c_str(),  m_soundCardTXInvert ? 1 : 0); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_RXLEVEL.c_str(), m_soundCardRXLevel); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%.4f"), KEY_SOUNDCARD_TXLEVEL.c_str(), m_soundCardTXLevel); file.AddLine(buffer);
-	buffer.Printf(wxT("%s=%u"), KEY_SOUNDCARD_TXDELAY.c_str(), m_soundCardTXDelay); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SOUNDCARD_TXDELAY.c_str(),   m_soundCardTXDelay); file.AddLine(buffer);
 
 	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_TX1ADDRESS.c_str(), m_splitTX1Address.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TX1PORT.c_str(),    m_splitTX1Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_TX2ADDRESS.c_str(), m_splitTX2Address.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TX2PORT.c_str(),    m_splitTX2Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_TX3ADDRESS.c_str(), m_splitTX3Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TX3PORT.c_str(),    m_splitTX3Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_RX1ADDRESS.c_str(), m_splitRX1Address.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_RX1PORT.c_str(),    m_splitRX1Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_RX2ADDRESS.c_str(), m_splitRX2Address.c_str()); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_RX2PORT.c_str(),    m_splitRX2Port); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%s"), KEY_SPLIT_RX3ADDRESS.c_str(), m_splitRX3Address.c_str()); file.AddLine(buffer);
+	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_RX3PORT.c_str(),    m_splitRX3Port); file.AddLine(buffer);
 	buffer.Printf(wxT("%s=%u"), KEY_SPLIT_TIMEOUT.c_str(),    m_splitTimeout); file.AddLine(buffer);
 
 	bool ret = file.Write();

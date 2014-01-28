@@ -27,7 +27,7 @@
 
 class CDStarRepeaterConfigSplitSet : public wxDialog {
 public:
-	CDStarRepeaterConfigSplitSet(wxWindow* parent, int id, const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, unsigned int timeout);
+	CDStarRepeaterConfigSplitSet(wxWindow* parent, int id, const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& transmitter3Address, unsigned int transmitter3Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, const wxString& receiver3Address, unsigned int receiver3Port, unsigned int timeout);
 	virtual ~CDStarRepeaterConfigSplitSet();
 
 	virtual bool Validate();
@@ -36,11 +36,15 @@ public:
 	virtual unsigned int getTransmitter1Port() const;
 	virtual wxString     getTransmitter2Address() const;
 	virtual unsigned int getTransmitter2Port() const;
+	virtual wxString     getTransmitter3Address() const;
+	virtual unsigned int getTransmitter3Port() const;
 
 	virtual wxString     getReceiver1Address() const;
 	virtual unsigned int getReceiver1Port() const;
 	virtual wxString     getReceiver2Address() const;
 	virtual unsigned int getReceiver2Port() const;
+	virtual wxString     getReceiver3Address() const;
+	virtual unsigned int getReceiver3Port() const;
 
 	virtual unsigned int getTimeout() const;
 
@@ -49,10 +53,14 @@ private:
 	CPortTextCtrl*    m_transmitter1Port;
 	CAddressTextCtrl* m_transmitter2Address;
 	CPortTextCtrl*    m_transmitter2Port;
+	CAddressTextCtrl* m_transmitter3Address;
+	CPortTextCtrl*    m_transmitter3Port;
 	CAddressTextCtrl* m_receiver1Address;
 	CPortTextCtrl*    m_receiver1Port;
 	CAddressTextCtrl* m_receiver2Address;
 	CPortTextCtrl*    m_receiver2Port;
+	CAddressTextCtrl* m_receiver3Address;
+	CPortTextCtrl*    m_receiver3Port;
 	wxSlider*         m_timeout;
 };
 
