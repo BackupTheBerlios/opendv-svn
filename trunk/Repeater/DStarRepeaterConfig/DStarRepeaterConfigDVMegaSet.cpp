@@ -41,6 +41,8 @@ m_rxInvert(NULL),
 m_txDelay(NULL),
 m_frequency(NULL)
 {
+	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
 	wxStaticText* portLabel = new wxStaticText(this, -1, _("Port"));
@@ -111,7 +113,9 @@ m_frequency(NULL)
 	m_frequency = new wxTextCtrl(this, -1, text, wxDefaultPosition, wxSize(CONTROL_WIDTH1, -1));
 	sizer->Add(m_frequency, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	sizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+	topSizer->Add(sizer);
+
+	topSizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	switch (variant) {
 		case DVMV_RADIO:
@@ -126,10 +130,10 @@ m_frequency(NULL)
 
 	SetAutoLayout(true);
 
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
+	topSizer->Fit(this);
+	topSizer->SetSizeHints(this);
 
-	SetSizer(sizer);
+	SetSizer(topSizer);
 }
 
 CDStarRepeaterConfigDVMegaSet::~CDStarRepeaterConfigDVMegaSet()

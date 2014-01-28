@@ -36,6 +36,8 @@ m_channel(NULL),
 m_modLevel(NULL),
 m_txDelay(NULL)
 {
+	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
 	wxStaticText* portLabel = new wxStaticText(this, -1, _("Port"));
@@ -91,14 +93,16 @@ m_txDelay(NULL)
 	m_txDelay = new wxSlider(this, -1, txDelay, 0, 500, wxDefaultPosition, wxSize(CONTROL_WIDTH2, -1), wxSL_HORIZONTAL | wxSL_LABELS);
 	sizer->Add(m_txDelay, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	sizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+	topSizer->Add(sizer);
+
+	topSizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	SetAutoLayout(true);
 
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
+	topSizer->Fit(this);
+	topSizer->SetSizeHints(this);
 
-	SetSizer(sizer);
+	SetSizer(topSizer);
 }
 
 CDStarRepeaterConfigDVRPTR1Set::~CDStarRepeaterConfigDVRPTR1Set()

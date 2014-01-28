@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ m_frequency(NULL),
 m_power(NULL),
 m_squelch(NULL)
 {
+	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
 	wxStaticText* portLabel = new wxStaticText(this, -1, _("Port"));
@@ -77,14 +79,16 @@ m_squelch(NULL)
 	m_squelch = new wxSpinCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1), wxSP_ARROW_KEYS, -128, -45, squelch);
 	sizer->Add(m_squelch, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 
-	sizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+	topSizer->Add(sizer);
+
+	topSizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	SetAutoLayout(true);
 
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
+	topSizer->Fit(this);
+	topSizer->SetSizeHints(this);
 
-	SetSizer(sizer);
+	SetSizer(topSizer);
 }
 
 CDStarRepeaterConfigDVAPSet::~CDStarRepeaterConfigDVAPSet()

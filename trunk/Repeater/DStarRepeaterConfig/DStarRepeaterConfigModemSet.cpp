@@ -52,11 +52,11 @@ m_type(NULL)
 
 	m_type = new wxChoice(this, -1, wxDefaultPosition, wxSize(CONTROL_WIDTH, -1));
 	m_type->Append(wxT("DVAP"));
-	m_type->Append(wxT("GMSK Modem"));
+	m_type->Append(wxT("DVMEGA"));
 	m_type->Append(wxT("DV-RPTR V1"));
 	m_type->Append(wxT("DV-RPTR V2"));
 	m_type->Append(wxT("DV-RPTR V3"));
-	m_type->Append(wxT("DVMEGA"));
+	m_type->Append(wxT("GMSK Modem"));
 	m_type->Append(wxT("Sound Card"));
 	m_type->Append(wxT("Split"));
 	sizer->Add(m_type, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);

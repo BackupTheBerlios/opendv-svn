@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010,2011,2012,2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include "DStarRepeaterConfigGMSKSet.h"
 
 const unsigned int BORDER_SIZE   = 5U;
-const unsigned int CONTROL_WIDTH = 100U;
+const unsigned int CONTROL_WIDTH = 150U;
 
 CDStarRepeaterConfigGMSKSet::CDStarRepeaterConfigGMSKSet(wxWindow* parent, int id, USB_INTERFACE type, unsigned int address) :
 wxDialog(parent, id, wxString(_("GMSK Modem Settings"))),
@@ -28,6 +28,8 @@ m_type(NULL),
 #endif
 m_address(NULL)
 {
+	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+
 	wxFlexGridSizer* sizer = new wxFlexGridSizer(2);
 
 #if defined(WIN32)
@@ -80,14 +82,16 @@ m_address(NULL)
 	sizer->Add(m_address, 0, wxALL | wxALIGN_LEFT, BORDER_SIZE);
 	m_address->SetSelection(address - 0x0300U);
 
-	sizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
+	topSizer->Add(sizer);
+
+	topSizer->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxALL | wxALIGN_RIGHT, BORDER_SIZE);
 
 	SetAutoLayout(true);
 
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
+	topSizer->Fit(this);
+	topSizer->SetSizeHints(this);
 
-	SetSizer(sizer);
+	SetSizer(topSizer);
 }
 
 CDStarRepeaterConfigGMSKSet::~CDStarRepeaterConfigGMSKSet()
