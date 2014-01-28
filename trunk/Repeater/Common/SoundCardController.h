@@ -35,7 +35,7 @@ enum DSRSCC_STATE {
 	DSRSCCS_DATA
 };
 
-class CSoundCardController : public wxThread, public CModem, public IAudioCallback {
+class CSoundCardController : public CModem, public IAudioCallback {
 public:
 	CSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay);
 	virtual ~CSoundCardController();
@@ -50,8 +50,6 @@ public:
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
 
-	virtual void stop();
-
 	virtual void callback(const wxFloat32* input, wxFloat32* output, unsigned int n, int id);
 
 private:
@@ -61,7 +59,6 @@ private:
 	unsigned int               m_txDelay;
 	CRingBuffer<wxFloat32>     m_txAudio;
 	CRingBuffer<wxFloat32>     m_rxAudio;
-	bool                       m_stopped;
 	DSRSCC_STATE               m_rxState;
 	wxUint32                   m_patternBuffer;
 	CDStarGMSKDemodulator      m_demodulator;

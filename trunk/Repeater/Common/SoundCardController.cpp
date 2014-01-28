@@ -360,7 +360,6 @@ const unsigned char SCRAMBLE_TABLE_RX[] = {
   0x00U};
 
 CSoundCardController::CSoundCardController(const wxString& rxDevice, const wxString& txDevice, bool rxInvert, bool txInvert, wxFloat32 rxLevel, wxFloat32 txLevel, unsigned int txDelay) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_sound(rxDevice, txDevice, DSTAR_RADIO_SAMPLE_RATE, DSTAR_RADIO_BLOCK_SIZE),
 m_rxLevel(rxLevel),
@@ -368,7 +367,6 @@ m_txLevel(txLevel),
 m_txDelay(txDelay),
 m_txAudio(48000U),
 m_rxAudio(4800U),
-m_stopped(false),
 m_rxState(DSRSCCS_NONE),
 m_patternBuffer(0x00U),
 m_demodulator(),
@@ -559,13 +557,6 @@ unsigned int CSoundCardController::getSpace()
 bool CSoundCardController::getTX()
 {
 	return m_txAudio.hasData();
-}
-
-void CSoundCardController::stop()
-{
-	m_stopped = true;
-
-	Wait();
 }
 
 void CSoundCardController::callback(const wxFloat32* input, wxFloat32* output, unsigned int n, int id)

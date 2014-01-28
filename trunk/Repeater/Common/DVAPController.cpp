@@ -124,7 +124,6 @@ const unsigned int MAX_RESPONSES = 20U;
 const unsigned int BUFFER_LENGTH = 200U;
 
 CDVAPController::CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_serial(port, SERIAL_230400),
 m_frequency(frequency),
@@ -136,8 +135,7 @@ m_buffer(NULL),
 m_streamId(0U),
 m_framePos(0U),
 m_seq(0U),
-m_txData(1000U),
-m_stopped(false)
+m_txData(1000U)
 {
 	wxASSERT(!port.IsEmpty());
 	wxASSERT((frequency >= 144000000U && frequency <= 148000000U) ||
@@ -438,13 +436,6 @@ bool CDVAPController::writeData(const unsigned char* data, unsigned int length, 
 	m_seq++;
 
 	return true;
-}
-
-void CDVAPController::stop()
-{
-	m_stopped = true;
-
-	Wait();
 }
 
 unsigned int CDVAPController::getSpace()

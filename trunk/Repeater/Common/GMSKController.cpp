@@ -28,13 +28,11 @@ const unsigned char DVRPTR_HEADER_LENGTH = 5U;
 const unsigned int BUFFER_LENGTH = 200U;
 
 CGMSKController::CGMSKController(USB_INTERFACE iface, unsigned int address, bool duplex) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_modem(NULL),
 m_duplex(duplex),
 m_buffer(NULL),
-m_txData(1000U),
-m_stopped(false)
+m_txData(1000U)
 {
 	wxASSERT(address > 0U);
 
@@ -302,11 +300,4 @@ bool CGMSKController::writeData(const unsigned char* data, unsigned int length, 
 unsigned int CGMSKController::getSpace()
 {
 	return m_txData.freeSpace() / (DV_FRAME_LENGTH_BYTES + 2U);
-}
-
-void CGMSKController::stop()
-{
-	m_stopped = true;
-
-	Wait();
 }

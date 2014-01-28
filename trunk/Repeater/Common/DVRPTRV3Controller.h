@@ -39,7 +39,7 @@ enum RESP_TYPE_V3 {
 	RT3_DATA
 };
 
-class CDVRPTRV3Controller : public wxThread, public CModem {
+class CDVRPTRV3Controller : public CModem {
 public:
 	CDVRPTRV3Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
 	CDVRPTRV3Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay);
@@ -53,8 +53,6 @@ public:
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
-
-	virtual void stop();
 
 	virtual wxString getPath() const;
 
@@ -76,7 +74,6 @@ private:
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_txData;
 	bool                       m_rx;
-	bool                       m_stopped;
 
 	bool readSerial();
 	bool setConfig();

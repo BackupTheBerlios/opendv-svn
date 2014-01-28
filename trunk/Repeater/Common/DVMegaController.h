@@ -46,7 +46,7 @@ enum RESP_TYPE_MEGA {
 	RTM_DEBUG
 };
 
-class CDVMegaController : public wxThread, public CModem {
+class CDVMegaController : public CModem {
 public:
 	CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay);
 	CDVMegaController(const wxString& port, const wxString& path, unsigned int txDelay, unsigned int frequency);
@@ -60,8 +60,6 @@ public:
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
-
-	virtual void stop();
 
 	virtual wxString getPath() const;
 
@@ -83,7 +81,6 @@ private:
 	unsigned int               m_txSpace;
 	bool                       m_txEnabled;
 	bool                       m_checksum;
-	bool                       m_stopped;
 
 	bool readVersion();
 	bool readStatus();

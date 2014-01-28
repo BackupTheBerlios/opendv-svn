@@ -32,7 +32,7 @@ enum DSMT_TYPE {
 	DSMTT_LOST
 };
 
-class CModem {
+class CModem : public wxThread {
 public:
 	CModem();
 	virtual ~CModem();
@@ -49,12 +49,13 @@ public:
 	virtual CHeaderData* readHeader();
 	virtual unsigned int readData(unsigned char* data, unsigned int length);
 
-	virtual void stop() = 0;
+	virtual void stop();
 
 protected:
 	CRingBuffer<unsigned char> m_rxData;
 	wxMutex                    m_mutex;
 	bool                       m_tx;
+	bool                       m_stopped;
 
 private:
 	DSMT_TYPE                  m_readType;

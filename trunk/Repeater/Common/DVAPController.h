@@ -51,7 +51,7 @@ enum RESP_TYPE {
 	RT_FM_DATA
 };
 
-class CDVAPController : public wxThread, public CModem {
+class CDVAPController : public CModem {
 public:
 	CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
 	virtual ~CDVAPController();
@@ -68,8 +68,6 @@ public:
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
 
-	virtual void stop();
-
 private:
 	CSerialDataController      m_serial;
 	wxUint32                   m_frequency;
@@ -82,7 +80,6 @@ private:
 	wxUint8                    m_framePos;
 	wxUint8                    m_seq;
 	CRingBuffer<unsigned char> m_txData;
-	bool                       m_stopped;
 
 	bool getName();
 	bool getFirmware();

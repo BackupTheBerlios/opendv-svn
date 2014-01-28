@@ -22,9 +22,11 @@
 const unsigned int BUFFER_LENGTH = 200U;
 
 CModem::CModem() :
+wxThread(wxTHREAD_JOINABLE),
 m_rxData(1000U),
 m_mutex(),
 m_tx(false),
+m_stopped(false),
 m_readType(DSMTT_NONE),
 m_readLength(0U),
 m_readBuffer(NULL)
@@ -82,3 +84,11 @@ unsigned int CModem::readData(unsigned char* data, unsigned int length)
 		return m_readLength;
 	}
 }
+
+void CModem::stop()
+{
+	m_stopped = true;
+
+	Wait();
+}
+

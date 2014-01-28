@@ -46,7 +46,7 @@ enum RESP_TYPE_V1 {
 	RT1_DEBUG
 };
 
-class CDVRPTRV1Controller : public wxThread, public CModem {
+class CDVRPTRV1Controller : public CModem {
 public:
 	CDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay);
 	virtual ~CDVRPTRV1Controller();
@@ -59,8 +59,6 @@ public:
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
-
-	virtual void stop();
 
 	virtual wxString getPath() const;
 
@@ -83,7 +81,6 @@ private:
 	unsigned int               m_txSpace;
 	bool                       m_txEnabled;
 	bool                       m_checksum;
-	bool                       m_stopped;
 
 	bool readVersion();
 	bool readStatus();

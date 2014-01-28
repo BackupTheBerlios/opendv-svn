@@ -54,7 +54,6 @@ wxArrayString CDVRPTRV3Controller::getDevices()
 const unsigned int BUFFER_LENGTH = 200U;
 
 CDVRPTRV3Controller::CDVRPTRV3Controller(const wxString& port, const wxString& path, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_connection(CT_USB),
 m_usbPort(port),
@@ -70,8 +69,7 @@ m_usb(NULL),
 m_network(NULL),
 m_buffer(NULL),
 m_txData(1000U),
-m_rx(false),
-m_stopped(false)
+m_rx(false)
 {
 	wxASSERT(!port.IsEmpty());
 
@@ -81,7 +79,6 @@ m_stopped(false)
 }
 
 CDVRPTRV3Controller::CDVRPTRV3Controller(const wxString& address, unsigned int port, bool txInvert, unsigned int modLevel, bool duplex, const wxString& callsign, unsigned int txDelay) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_connection(CT_NETWORK),
 m_usbPort(),
@@ -97,8 +94,7 @@ m_usb(NULL),
 m_network(NULL),
 m_buffer(NULL),
 m_txData(1000U),
-m_rx(false),
-m_stopped(false)
+m_rx(false)
 {
 	wxASSERT(!address.IsEmpty());
 	wxASSERT(port > 0U);
@@ -377,13 +373,6 @@ bool CDVRPTRV3Controller::writeData(const unsigned char* data, unsigned int leng
 unsigned int CDVRPTRV3Controller::getSpace()
 {
 	return m_txData.freeSpace() / 18U;
-}
-
-void CDVRPTRV3Controller::stop()
-{
-	m_stopped = true;
-
-	Wait();
 }
 
 bool CDVRPTRV3Controller::readSerial()

@@ -81,7 +81,6 @@ wxArrayString CDVRPTRV1Controller::getDevices()
 const unsigned int BUFFER_LENGTH = 200U;
 
 CDVRPTRV1Controller::CDVRPTRV1Controller(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, bool channel, unsigned int modLevel, unsigned int txDelay) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_port(port),
 m_path(path),
@@ -98,8 +97,7 @@ m_pktCounter(0U),
 m_rx(false),
 m_txSpace(0U),
 m_txEnabled(false),
-m_checksum(false),
-m_stopped(false)
+m_checksum(false)
 {
 	wxASSERT(!port.IsEmpty());
 
@@ -512,13 +510,6 @@ bool CDVRPTRV1Controller::writeData(const unsigned char* data, unsigned int leng
 unsigned int CDVRPTRV1Controller::getSpace()
 {
 	return m_txData.freeSpace() / 25U;
-}
-
-void CDVRPTRV1Controller::stop()
-{
-	m_stopped = true;
-
-	Wait();
 }
 
 bool CDVRPTRV1Controller::readVersion()

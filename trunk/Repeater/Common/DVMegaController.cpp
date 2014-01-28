@@ -84,7 +84,6 @@ wxArrayString CDVMegaController::getDevices()
 const unsigned int BUFFER_LENGTH = 200U;
 
 CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, bool rxInvert, bool txInvert, unsigned int txDelay) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_port(port),
 m_path(path),
@@ -100,8 +99,7 @@ m_pktCounter(0U),
 m_rx(false),
 m_txSpace(0U),
 m_txEnabled(false),
-m_checksum(false),
-m_stopped(false)
+m_checksum(false)
 {
 	wxASSERT(!port.IsEmpty());
 
@@ -109,7 +107,6 @@ m_stopped(false)
 }
 
 CDVMegaController::CDVMegaController(const wxString& port, const wxString& path, unsigned int txDelay, unsigned int frequency) :
-wxThread(wxTHREAD_JOINABLE),
 CModem(),
 m_port(port),
 m_path(path),
@@ -125,8 +122,7 @@ m_pktCounter(0U),
 m_rx(false),
 m_txSpace(0U),
 m_txEnabled(false),
-m_checksum(false),
-m_stopped(false)
+m_checksum(false)
 {
 	wxASSERT(!port.IsEmpty());
 	wxASSERT((frequency >= 144000000U && frequency <= 148000000U) ||
@@ -541,13 +537,6 @@ bool CDVMegaController::writeData(const unsigned char* data, unsigned int length
 unsigned int CDVMegaController::getSpace()
 {
 	return m_txData.freeSpace() / 25U;
-}
-
-void CDVMegaController::stop()
-{
-	m_stopped = true;
-
-	Wait();
 }
 
 bool CDVMegaController::readVersion()

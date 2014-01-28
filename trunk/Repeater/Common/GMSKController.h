@@ -27,7 +27,7 @@
 
 #include <wx/wx.h>
 
-class CGMSKController : public wxThread, public CModem {
+class CGMSKController : public CModem {
 public:
 	CGMSKController(USB_INTERFACE iface, unsigned int address, bool duplex);
 	virtual ~CGMSKController();
@@ -41,14 +41,11 @@ public:
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
 
-	virtual void stop();
-
 private:
 	IGMSKModem*                m_modem;
 	bool                       m_duplex;
 	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_txData;
-	bool                       m_stopped;
 };
 
 #endif
