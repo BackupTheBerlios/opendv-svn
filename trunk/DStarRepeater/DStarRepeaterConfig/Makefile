@@ -56,8 +56,9 @@ DStarRepeaterConfigDVRPTR3Set.o:	DStarRepeaterConfigDVRPTR3Set.cpp DStarRepeater
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigDVRPTR3Set.cpp
 
 DStarRepeaterConfigFrame.o:	DStarRepeaterConfigFrame.cpp DStarRepeaterConfigFrame.h DStarRepeaterConfigDefs.h DStarRepeaterConfigControllerSet.h \
-					DStarRepeaterConfigModemSet.h DStarRepeaterConfigTimesSet.h DStarRepeaterConfigCallsignSet.h ../Common/NetworkSet.h ../Common/BeaconSet.h \
-					../Common/AnnouncementSet.h ../Common/Control1Set.h ../Common/Control2Set.h ../Common/DStarRepeaterConfig.h ../Common/DStarDefines.h ../Common/Version.h
+					DStarRepeaterConfigModemSet.h DStarRepeaterConfigTimesSet.h DStarRepeaterConfigCallsignSet.h DStarRepeaterConfigNetworkSet.h \
+					DStarRepeaterConfigBeaconSet.h DStarRepeaterConfigAnnouncementSet.h DStarRepeaterConfigControl1Set.h DStarRepeaterConfigControl2Set.h \
+					../Common/DStarRepeaterConfig.h ../Common/DStarDefines.h ../Common/Version.h
 				$(CC) $(CFLAGS) -c DStarRepeaterConfigFrame.cpp
 
 DStarRepeaterConfigGMSKSet.o:	DStarRepeaterConfigGMSKSet.cpp DStarRepeaterConfigGMSKSet.h ../Common/DStarDefines.h
