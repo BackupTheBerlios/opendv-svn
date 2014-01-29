@@ -46,9 +46,8 @@ Section "Repeater Program Files" SecProgram
 
   SetOutPath "$INSTDIR"
 
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DStarRepeater.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DStarRepeaterConfig.exe"
-  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DummyRepeater.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DVAPNode.exe"
+  File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\DVRPTRRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\GMSKRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\SoundCardRepeater.exe"
   File "C:\Users\Jonathan\Documents\Visual Studio 2008\Projects\opendv\trunk\Repeater\Release\SplitRepeater.exe"
@@ -85,9 +84,8 @@ Section "Repeater Program Files" SecProgram
 
   ;Create start menu entry
   CreateDirectory "$SMPROGRAMS\Repeater"
-  CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater.lnk"          "$INSTDIR\DStarRepeater.exe"
-  CreateShortCut "$SMPROGRAMS\Repeater\D-Star Repeater Config.lnk"   "$INSTDIR\DStarRepeaterConfig.exe"
-  CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DummyRepeater.exe"
+  CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DVAPNode.exe"
+  CreateShortCut "$SMPROGRAMS\Repeater\Dummy Repeater.lnk"           "$INSTDIR\DVRPTRRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\GMSK Repeater.lnk"            "$INSTDIR\GMSKRepeater.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Parrot Controller.lnk"        "$INSTDIR\ParrotController.exe"
   CreateShortCut "$SMPROGRAMS\Repeater\Sound Card Repeater.lnk"      "$INSTDIR\SoundCardRepeater.exe"
@@ -111,8 +109,8 @@ Section "Uninstall"
   Delete "$SMPROGRAMS\Repeater\*.*"
   RMDir  "$SMPROGRAMS\Repeater"
 
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\D-Star Repeater"
-  DeleteRegKey /ifempty HKCU "Software\G4KLX\Dummy Repeater"
+  DeleteRegKey /ifempty HKCU "Software\G4KLX\DVAP Node"
+  DeleteRegKey /ifempty HKCU "Software\G4KLX\DVRPTR Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\GMSK Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Sound Card Repeater"
   DeleteRegKey /ifempty HKCU "Software\G4KLX\Split Repeater"

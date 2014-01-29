@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,45 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DVRPTRController_H
+#define	DVRPTRController_H
+
+#include "HeaderData.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+enum DATA_QUEUE_TYPE {
+	DQT_NONE,
+	DQT_HEADER,
+	DQT_DATA,
+	DQT_EOT,
+	DQT_LOST,
+	DQT_START
+};
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+class IDVRPTRController {
+public:
+	virtual bool open() = 0;
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140128 - DEBUG");
-#else
-const wxString VERSION = wxT("20140128");
+	virtual bool getPTT() const = 0;
+
+	virtual bool hasSpace() = 0;
+
+	virtual void purgeRX() = 0;
+	virtual void purgeTX() = 0;
+
+	virtual DATA_QUEUE_TYPE readQueue(unsigned char* data, unsigned int& length) = 0;
+
+	virtual bool writeHeader(const CHeaderData& header) = 0;
+	virtual bool writeData(const unsigned char* data, unsigned int length, bool end) = 0;
+
+	virtual void close() = 0;
+
+	virtual wxString getPath() const = 0;
+
+private:
+};
+
 #endif
 
-#endif

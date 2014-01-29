@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,34 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DVRPTRRepeaterD_H
+#define	DVRPTRRepeaterD_H
+
+#include "DVRPTRRepeaterThread.h"
+#include "DVRPTRRepeaterDefs.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDVRPTRRepeaterD {
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+public:
+	CDVRPTRRepeaterD(bool nolog, const wxString& logDir, const wxString& confDir, const wxString& audioDir, const wxString& name);
+	~CDVRPTRRepeaterD();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140128 - DEBUG");
-#else
-const wxString VERSION = wxT("20140128");
-#endif
+	bool init();
+
+	void run();
+
+private:
+	wxString               m_name;
+	bool                   m_nolog;
+	wxString               m_logDir;
+	wxString               m_confDir;
+	wxString               m_audioDir;
+	IDVRPTRRepeaterThread* m_thread;
+
+	bool createThread();
+};
 
 #endif

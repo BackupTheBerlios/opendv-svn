@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,35 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DVAPNodeDVAPSet_H
+#define	DVAPNodeDVAPSet_H
+
+#include "DVAPNodeDefs.h"
+#include "DStarDefines.h"
 
 #include <wx/wx.h>
+#include <wx/spinctrl.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDVAPNodeDVAPSet : public wxPanel {
+public:
+	CDVAPNodeDVAPSet(wxWindow* parent, int id, const wxString& title, const wxString& port, unsigned int frequency, int power, int squelch);
+	virtual ~CDVAPNodeDVAPSet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140128 - DEBUG");
-#else
-const wxString VERSION = wxT("20140128");
-#endif
+	virtual wxString     getPort() const;
+	virtual unsigned int getFrequency() const;
+	virtual int          getPower() const;
+	virtual int          getSquelch() const;
+
+private:
+	wxString    m_title;
+	wxChoice*   m_port;
+	wxChoice*   m_band;
+	wxTextCtrl* m_frequency;
+	wxSpinCtrl* m_power;
+	wxSpinCtrl* m_squelch;
+};
 
 #endif

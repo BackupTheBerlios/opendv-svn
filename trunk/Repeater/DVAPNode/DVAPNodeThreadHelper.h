@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,33 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DVAPNodeThreadHelper_H
+#define	DVAPNodeThreadHelper_H
+
+#include "DVAPNodeStatusData.h"
+#include "DVAPNodeThread.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDVAPNodeThreadHelper : public wxThread {
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+public:
+	CDVAPNodeThreadHelper(IDVAPNodeThread* thread);
+	virtual ~CDVAPNodeThreadHelper();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140128 - DEBUG");
-#else
-const wxString VERSION = wxT("20140128");
-#endif
+	virtual void start();
+
+	virtual void* Entry();
+
+	virtual void kill();
+
+	virtual void setLogging(bool logging, const wxString& dir);
+
+	virtual CDVAPNodeStatusData* getStatus();
+
+private:
+	IDVAPNodeThread* m_thread;
+};
 
 #endif

@@ -5,17 +5,13 @@
 
 include settings.mk
 
-all:	DStarRepeater/dstarrepeater DStarRepeaterConfig/dstarrepeaterconfig DummyRepeater/dummyrepeater \
-			GMSKRepeater/gmskrepeater SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
+all:	DVAPNode/dvapnode DVRPTRRepeater/dvrptrrepeater GMSKRepeater/gmskrepeater SoundCardRepeater/soundcardrepeater SplitRepeater/splitrepeater
 
-DStarRepeater/dstarrepeater:	Common/Common.a
-		make -C DStarRepeater
+DVAPNode/dvapnode:	Common/Common.a
+		make -C DVAPNode
 
-DStarRepeaterConfig/dstarrepeaterconfig:	Common/Common.a
-		make -C DStarRepeaterConfig
-
-DummyRepeater/dummyrepeater:	Common/Common.a
-		make -C DummyRepeater
+DVRPTRRepeater/dvrptrrepeater:	Common/Common.a
+		make -C DVRPTRRepeater
 
 GMSKRepeater/gmskrepeater:	Common/Common.a
 		make -C GMSKRepeater
@@ -32,9 +28,8 @@ Common/Common.a:
 install:	all
 		install -d -g bin -o root -m 0775 $(BINDIR)
 		make -C Data install
-		make -C DStarRepeater install
-		make -C DStarRepeaterConfig install
-		make -C DummyRepeater install
+		make -C DVAPNode install
+		make -C DVRPTRRepeater install
 		make -C GMSKRepeater install
 		make -C SoundCardRepeater install
 		make -C SplitRepeater install
@@ -42,9 +37,8 @@ install:	all
 clean:
 		rm -f core *~ *.bak
 		make -C Common clean
-		make -C DStarRepeater clean
-		make -C DStarRepeaterConfig clean
-		make -C DummyRepeater clean
+		make -C DVAPNode clean
+		make -C DVRPTRRepeater clean
 		make -C GMSKRepeater clean
 		make -C SoundCardRepeater clean
 		make -C SplitRepeater clean

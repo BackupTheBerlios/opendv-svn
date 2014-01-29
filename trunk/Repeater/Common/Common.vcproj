@@ -238,10 +238,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterConfig.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarScrambler.cpp"
 				>
 			</File>
@@ -254,23 +250,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DVDongleController.cpp"
+				RelativePath=".\DVRPTRControllerV1.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DVMegaController.cpp"
+				RelativePath=".\DVRPTRControllerV2.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DVRPTRV1Controller.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRV2Controller.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRV3Controller.cpp"
+				RelativePath=".\DVRPTRControllerV3.cpp"
 				>
 			</File>
 			<File
@@ -287,10 +275,6 @@
 			</File>
 			<File
 				RelativePath=".\FIRFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GMSKController.cpp"
 				>
 			</File>
 			<File
@@ -343,10 +327,6 @@
 			</File>
 			<File
 				RelativePath=".\MessageTextCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Modem.cpp"
 				>
 			</File>
 			<File
@@ -407,10 +387,6 @@
 			</File>
 			<File
 				RelativePath=".\SlowDataEncoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SoundCardController.cpp"
 				>
 			</File>
 			<File
@@ -552,10 +528,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarRepeaterConfig.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarScrambler.h"
 				>
 			</File>
@@ -568,23 +540,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DVDongleController.h"
+				RelativePath=".\DVRPTRController.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DVMegaController.h"
+				RelativePath=".\DVRPTRControllerV1.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DVRPTRV1Controller.h"
+				RelativePath=".\DVRPTRControllerV2.h"
 				>
 			</File>
 			<File
-				RelativePath=".\DVRPTRV2Controller.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DVRPTRV3Controller.h"
+				RelativePath=".\DVRPTRControllerV3.h"
 				>
 			</File>
 			<File
@@ -601,10 +569,6 @@
 			</File>
 			<File
 				RelativePath=".\FIRFilter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GMSKController.h"
 				>
 			</File>
 			<File
@@ -661,10 +625,6 @@
 			</File>
 			<File
 				RelativePath=".\MessageTextCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Modem.h"
 				>
 			</File>
 			<File
@@ -729,10 +689,6 @@
 			</File>
 			<File
 				RelativePath=".\SlowDataEncoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SoundCardController.h"
 				>
 			</File>
 			<File

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "CCITTChecksumReverse.h"
 #include "DVAPController.h"
 #include "DStarDefines.h"
-#include "Timer.h"
 
 const unsigned char DVAP_REQ_NAME[] = {0x04, 0x20, 0x01, 0x00};
 const unsigned int  DVAP_REQ_NAME_LEN = 4U;
@@ -123,23 +122,31 @@ const unsigned int MAX_RESPONSES = 20U;
 
 const unsigned int BUFFER_LENGTH = 200U;
 
+const unsigned char TAG_HEADER   = 0x00U;
+const unsigned char TAG_DATA     = 0x01U;
+const unsigned char TAG_DATA_END = 0x02U;
+
 CDVAPController::CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch) :
-CModem(),
+wxThread(wxTHREAD_JOINABLE),
 m_serial(port, SERIAL_230400),
 m_frequency(frequency),
 m_power(power),
 m_squelch(squelch),
+m_space(0U),
+m_ptt(false),
 m_squelchOpen(false),
 m_signal(0),
 m_buffer(NULL),
 m_streamId(0U),
 m_framePos(0U),
 m_seq(0U),
-m_txData(1000U)
+m_rxData(1000U),
+m_txData(1000U),
+m_stopped(false),
+m_mutex()
 {
 	wxASSERT(!port.IsEmpty());
-	wxASSERT((frequency >= 144000000U && frequency <= 148000000U) ||
-			 (frequency >= 420000000U && frequency <= 450000000U));
+	wxASSERT(frequency >= 144000000U && frequency <= 148000000U);
 	wxASSERT(power >= -12 && power <= 10);
 	wxASSERT(squelch >= -128 && squelch <= -45);
 
@@ -151,7 +158,7 @@ CDVAPController::~CDVAPController()
 	delete[] m_buffer;
 }
 
-bool CDVAPController::start()
+bool CDVAPController::open()
 {
 	bool res = m_serial.open();
 	if (!res)
@@ -205,7 +212,7 @@ bool CDVAPController::start()
 		return false;
 	}
 
-	res = startDVAP();
+	res = start();
 	if (!res) {
 		m_serial.close();
 		return false;
@@ -222,19 +229,7 @@ void* CDVAPController::Entry()
 {
 	wxLogMessage(wxT("Starting DVAP Controller thread"));
 
-	// Clock every 5ms-ish
-	CTimer pollTimer(200U, 2U);
-	pollTimer.start();
-
-	unsigned int space = 0U;
-
 	while (!m_stopped) {
-		// Poll the modem every 2s
-		if (pollTimer.hasExpired()) {
-			writePoll();
-			pollTimer.reset();
-		}
-
 		unsigned int length;
 		RESP_TYPE type = getResponse(m_buffer, length);
 
@@ -248,54 +243,59 @@ void* CDVAPController::Entry()
 			case RT_STATE:
 				m_signal      = int(m_buffer[4U]) - 256;
 				m_squelchOpen = m_buffer[5U] == 0x01U;
-				space         = m_buffer[6U];
+				m_space       = m_buffer[6U];
 				break;
 			case RT_PTT:
-				m_tx = m_buffer[4U] == 0x01U;	
+				m_ptt = m_buffer[4U] == 0x01U;	
 				break;
 			case RT_START:
 				break;
 			case RT_STOP:
 				wxLogWarning(wxT("DVAP has stopped, restarting"));
-				startDVAP();
+				start();
 				break;
 			case RT_HEADER: {
-					wxMutexLocker locker(m_mutex);
+					m_mutex.Lock();
 
-					unsigned char hdr[2U];
-					hdr[0U] = DSMTT_HEADER;
-					hdr[1U] = RADIO_HEADER_LENGTH_BYTES;
-					m_rxData.addData(hdr, 2U);
+					bool ret = m_rxData.hasSpace(RADIO_HEADER_LENGTH_BYTES + 2U);
+					if (!ret) {
+						wxLogMessage(wxT("Out of space in the DVAP RX queue"));
+					} else {
+						unsigned char hdr[2U];
+						hdr[0U] = TAG_HEADER;
+						hdr[1U] = RADIO_HEADER_LENGTH_BYTES;
+						m_rxData.addData(hdr, 2U);
+						m_rxData.addData(m_buffer + 6U, RADIO_HEADER_LENGTH_BYTES);
+					}
 
-					m_rxData.addData(m_buffer + 6U, RADIO_HEADER_LENGTH_BYTES);
+					m_mutex.Unlock();
 				}
 				break;
 			case RT_HEADER_ACK:
 				break;
 			case RT_GMSK_DATA: {
-					wxMutexLocker locker(m_mutex);
+					m_mutex.Lock();
 
-					bool end = (m_buffer[4U] & 0x40U) == 0x40U;
-					if (end) {
-						unsigned char hdr[2U];
-						hdr[0U] = DSMTT_EOT;
-						hdr[1U] = 0U;
-						m_rxData.addData(hdr, 2U);
+					bool ret = m_rxData.hasSpace(length - 4U);
+					if (!ret) {
+						wxLogMessage(wxT("Out of space in the DVAP RX queue"));
 					} else {
+						bool end = (m_buffer[4U] & 0x40U) == 0x40U;
 						unsigned char hdr[2U];
-						hdr[0U] = DSMTT_DATA;
+						hdr[0U] = end ? TAG_DATA_END : TAG_DATA;
 						hdr[1U] = length - 6U;
 						m_rxData.addData(hdr, 2U);
-
 						m_rxData.addData(m_buffer + 6U, length - 6U);
 					}
+
+					m_mutex.Unlock();
 				}
 				break;
 			case RT_FM_DATA:
 				wxLogWarning(wxT("The DVAP has gone into FM mode, restarting the DVAP"));
-				stopDVAP();
+				stop();
 				setModulation();
-				startDVAP();
+				start();
 				break;
 			default:
 				wxLogMessage(wxT("Unknown message"));
@@ -304,7 +304,7 @@ void* CDVAPController::Entry()
 		}
 
 		// Use the status packet every 20ms to trigger the sending of data to the DVAP
-		if (space > 0U && type == RT_STATE) {
+		if (m_space > 0U && type == RT_STATE) {
 			if (m_txData.hasData()) {
 				m_mutex.Lock();
 
@@ -322,22 +322,85 @@ void* CDVAPController::Entry()
 				if (ret != int(len))
 					wxLogWarning(wxT("Error when writing data to the modem"));
 
-				space--;
+				m_space--;
 			}
 		}
 
 		Sleep(5UL);
-
-		pollTimer.clock();
 	}
 
 	wxLogMessage(wxT("Stopping DVAP Controller thread"));
 
-	stopDVAP();
+	stop();
 
 	m_serial.close();
 
 	return NULL;
+}
+
+void CDVAPController::writePoll()
+{
+	wxMutexLocker locker(m_mutex);
+
+	m_serial.write(DVAP_ACK, DVAP_ACK_LEN);
+}
+
+void CDVAPController::purgeRX()
+{
+	wxMutexLocker locker(m_mutex);
+
+	m_rxData.clear();
+}
+
+void CDVAPController::purgeTX()
+{
+	wxMutexLocker locker(m_mutex);
+
+	m_txData.clear();
+}
+
+CHeaderData* CDVAPController::readHeader()
+{
+	wxMutexLocker locker(m_mutex);
+
+	if (m_rxData.isEmpty())
+		return NULL;
+
+	unsigned char hdr[2U];
+	m_rxData.getData(hdr, 2U);
+
+	unsigned char header[100U];
+	m_rxData.getData(header, hdr[1U]);
+
+	if (hdr[0U] != TAG_HEADER)
+		return NULL;
+
+	return new CHeaderData(header, RADIO_HEADER_LENGTH_BYTES, false);
+}
+
+int CDVAPController::readData(unsigned char* data, unsigned int length, bool& end)
+{
+	wxMutexLocker locker(m_mutex);
+
+	end = false;
+
+	if (m_rxData.isEmpty())
+		return -1;
+
+	unsigned char hdr[2U];
+	m_rxData.getData(hdr, 2U);
+
+	if (hdr[0U] != TAG_DATA && hdr[0U] != TAG_DATA_END) {
+		unsigned char buffer[100U];
+		m_rxData.getData(buffer, hdr[1U]);
+		return -1;
+	}
+
+	length = m_rxData.getData(data, hdr[1U]);
+
+	end = hdr[0U] == TAG_DATA_END;
+
+	return length;
 }
 
 bool CDVAPController::writeHeader(const CHeaderData& header)
@@ -438,9 +501,23 @@ bool CDVAPController::writeData(const unsigned char* data, unsigned int length, 
 	return true;
 }
 
-unsigned int CDVAPController::getSpace()
+void CDVAPController::close()
 {
-	return m_txData.freeSpace() / (DVAP_GMSK_DATA_LEN + 1U);
+	m_stopped = true;
+
+	Wait();
+}
+
+bool CDVAPController::hasSpace()
+{
+	wxMutexLocker locker(m_mutex);
+
+	return m_txData.hasSpace(55U);
+}
+
+bool CDVAPController::getPTT() const
+{
+	return m_ptt;
 }
 
 bool CDVAPController::getSquelch() const
@@ -451,11 +528,6 @@ bool CDVAPController::getSquelch() const
 int CDVAPController::getSignal() const
 {
 	return m_signal;
-}
-
-void CDVAPController::writePoll()
-{
-	m_serial.write(DVAP_ACK, DVAP_ACK_LEN);
 }
 
 bool CDVAPController::getName()
@@ -554,7 +626,7 @@ bool CDVAPController::getSerial()
 	return true;
 }
 
-bool CDVAPController::startDVAP()
+bool CDVAPController::start()
 {
 	unsigned int count = 0U;
 	unsigned int length;
@@ -582,7 +654,7 @@ bool CDVAPController::startDVAP()
 	return true;
 }
 
-bool CDVAPController::stopDVAP()
+bool CDVAPController::stop()
 {
 	unsigned int count = 0U;
 	unsigned int length;

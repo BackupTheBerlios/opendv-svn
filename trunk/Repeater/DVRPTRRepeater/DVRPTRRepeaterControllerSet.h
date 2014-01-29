@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,27 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DVRPTRRepeaterControllerSet_H
+#define	DVRPTRRepeaterControllerSet_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CDVRPTRRepeaterControllerSet : public wxPanel {
+public:
+	CDVRPTRRepeaterControllerSet(wxWindow* parent, int id, const wxString& title, const wxString& type, unsigned int time);
+	virtual ~CDVRPTRRepeaterControllerSet();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	virtual bool Validate();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140128 - DEBUG");
-#else
-const wxString VERSION = wxT("20140128");
-#endif
+	virtual wxString getType() const;
+
+	virtual unsigned int getTime() const;
+
+private:
+	wxString  m_title;
+	wxChoice* m_type;
+	wxSlider* m_time;
+};
 
 #endif

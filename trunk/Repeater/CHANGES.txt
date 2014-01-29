@@ -1935,3 +1935,9 @@ Fix endian-ness of the DVMEGA frequency command.
 
 Tweaks to the GMSK Modem controller in the D-Star Repeater.
 More work on buffering in the D-Star Repeater for all modem types.
+
+201401xx
+--------
+
+Reinstate the DVAP Node and DV-RPTR Repeater.
+Move the D-Star and Dummy Repeaters to their own packages.

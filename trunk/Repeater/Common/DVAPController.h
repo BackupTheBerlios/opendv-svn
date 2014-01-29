@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include "SerialDataController.h"
 #include "RingBuffer.h"
 #include "HeaderData.h"
-#include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
@@ -51,35 +50,51 @@ enum RESP_TYPE {
 	RT_FM_DATA
 };
 
-class CDVAPController : public CModem {
+class CDVAPController : public wxThread {
 public:
 	CDVAPController(const wxString& port, unsigned int frequency, int power, int squelch);
 	virtual ~CDVAPController();
 
 	virtual void* Entry();
 
-	virtual bool start();
+	virtual bool open();
 
-	virtual unsigned int getSpace();
+	virtual void writePoll();
 
+	virtual void purgeRX();
+	virtual void purgeTX();
+
+	virtual CHeaderData* readHeader();
+	virtual int readData(unsigned char* data, unsigned int length, bool& end);
+
+	virtual bool hasSpace();
+
+	virtual bool getPTT() const;
 	virtual bool getSquelch() const;
 	virtual int  getSignal() const;
 
 	virtual bool writeHeader(const CHeaderData& header);
 	virtual bool writeData(const unsigned char* data, unsigned int length, bool end);
 
+	virtual void close();
+
 private:
 	CSerialDataController      m_serial;
 	wxUint32                   m_frequency;
 	wxInt16                    m_power;
 	wxInt8                     m_squelch;
+	unsigned int               m_space;
+	bool                       m_ptt;
 	bool                       m_squelchOpen;
 	int                        m_signal;
 	unsigned char*             m_buffer;
 	wxUint16                   m_streamId;
 	wxUint8                    m_framePos;
 	wxUint8                    m_seq;
+	CRingBuffer<unsigned char> m_rxData;
 	CRingBuffer<unsigned char> m_txData;
+	bool                       m_stopped;
+	wxMutex                    m_mutex;
 
 	bool getName();
 	bool getFirmware();
@@ -92,10 +107,8 @@ private:
 	bool setPower();
 	bool setFrequency();
 
-	bool startDVAP();
-	bool stopDVAP();
-
-	void writePoll();
+	bool start();
+	bool stop();
 
 	void resync();
 

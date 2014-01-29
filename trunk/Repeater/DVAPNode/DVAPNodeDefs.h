@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,23 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	DVAPNodeDefs_H
+#define	DVAPNodeDefs_H
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+const wxString APPLICATION_NAME    = wxT("DVAP Node");
+const wxString LOG_BASE_NAME       = wxT("DVAPNode");
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
-
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140128 - DEBUG");
-#else
-const wxString VERSION = wxT("20140128");
+#if !defined(__WINDOWS__)
+const wxString CONFIG_FILE_NAME = wxT("dvapnode");
+const wxString LOG_DIR  = wxT("/var/log");
+const wxString CONF_DIR = wxT("/etc");
 #endif
 
+const wxString BLACKLIST_FILE_NAME = wxT("blacklist.dat");
+const wxString GREYLIST_FILE_NAME  = wxT("greylist.dat");
+
 #endif
+
