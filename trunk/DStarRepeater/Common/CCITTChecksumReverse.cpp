@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2009,2011 by Jonathan Naylor, G4KLX
+ *	Copyright (C) 2009,2011,2014 by Jonathan Naylor, G4KLX
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -66,15 +66,6 @@ void CCCITTChecksumReverse::update(const unsigned char* data, unsigned int lengt
 		m_crc16 = wxUint16(m_crc8[1U]) ^ ccittTab[m_crc8[0U] ^ data[i]];
 }
 
-void CCCITTChecksumReverse::update(const bool* data)
-{
-	wxASSERT(data != NULL);
-
-	unsigned short byte = CUtils::bitsToByte(data);
-
-	m_crc16 = wxUint16(m_crc8[1U]) ^ ccittTab[m_crc8[0U] ^ byte];
-}
-
 void CCCITTChecksumReverse::result(unsigned char* data)
 {
 	wxASSERT(data != NULL);
@@ -85,21 +76,6 @@ void CCCITTChecksumReverse::result(unsigned char* data)
 	data[1U] = m_crc8[1U];
 }
 
-void CCCITTChecksumReverse::result(bool* data)
-{
-	wxASSERT(data != NULL);
-
-	m_crc16 = ~m_crc16;
-
-	unsigned char mask = 0x80U;
-	for (unsigned int i = 0U; i < 8U; i++, mask >>= 1)
-		data[i + 0U] = (m_crc8[0U] & mask) ? true : false;
-
-	mask = 0x80U;
-	for (unsigned int i = 0U; i < 8U; i++, mask >>= 1)
-		data[i + 8U] = (m_crc8[1U] & mask) ? true : false;
-}
-
 bool CCCITTChecksumReverse::check(const unsigned char* data)
 {
 	wxASSERT(data != NULL);
@@ -108,21 +84,6 @@ bool CCCITTChecksumReverse::check(const unsigned char* data)
 	result(sum);
 
 	return sum[0U] == data[0U] && sum[1U] == data[1U];
-}
-
-bool CCCITTChecksumReverse::check(const bool* data)
-{
-	wxASSERT(data != NULL);
-
-	bool sum[16];
-	result(sum);
-
-	for (unsigned int i = 0U; i < 16U; i++) {
-		if (sum[i] != data[i])
-			return false;
-	}
-
-	return true;
 }
 
 void CCCITTChecksumReverse::reset()

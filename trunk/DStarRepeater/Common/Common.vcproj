@@ -190,14 +190,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarFECDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarFECEncoder.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarGMSKDemodulator.cpp"
 				>
 			</File>
@@ -206,15 +198,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarInterleaver.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfig.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarScrambler.cpp"
 				>
 			</File>
 			<File
@@ -290,10 +274,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LocatorTextCtrl.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LogEvent.cpp"
 				>
 			</File>
@@ -315,14 +295,6 @@
 			</File>
 			<File
 				RelativePath=".\PortTextCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\RadioHeaderDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\RadioHeaderEncoder.cpp"
 				>
 			</File>
 			<File
@@ -379,14 +351,6 @@
 			</File>
 			<File
 				RelativePath=".\Utils.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVFileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVFileWriter.cpp"
 				>
 			</File>
 		</Filter>
@@ -448,14 +412,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarFECDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarFECEncoder.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarGMSKDemodulator.h"
 				>
 			</File>
@@ -464,15 +420,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DStarInterleaver.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DStarRepeaterConfig.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DStarScrambler.h"
 				>
 			</File>
 			<File
@@ -548,10 +496,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LocatorTextCtrl.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LogEvent.h"
 				>
 			</File>
@@ -577,14 +521,6 @@
 			</File>
 			<File
 				RelativePath=".\PortTextCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\RadioHeaderDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\RadioHeaderEncoder.h"
 				>
 			</File>
 			<File
@@ -649,14 +585,6 @@
 			</File>
 			<File
 				RelativePath=".\Version.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVFileReader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WAVFileWriter.h"
 				>
 			</File>
 		</Filter>

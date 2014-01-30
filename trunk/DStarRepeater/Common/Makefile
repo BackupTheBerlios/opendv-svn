@@ -1,12 +1,12 @@
 all:		Common.a
 
 OBJS :=	AddressTextCtrl.o AMBEFEC.o AnnouncementUnit.o ArduinoController.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o \
-		DStarFECDecoder.o DStarFECEncoder.o DStarGMSKDemodulator.o DStarGMSKModulator.o DStarInterleaver.o DStarRepeaterConfig.o DStarScrambler.o DummyController.o \
+		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarRepeaterConfig.o DummyController.o \
 		DVAPController.o DVMegaController.o DVRPTRV1Controller.o DVRPTRV2Controller.o DVRPTRV3Controller.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
-		FIRFilter.o GMSKController.o GMSKModem.o GMSKModemLibUsb.o Golay.o HardwareController.o HeaderData.o K8055Controller.o LocatorTextCtrl.o LogEvent.o Logger.o \
-		MessageTextCtrl.o Modem.o OutputQueue.o PortTextCtrl.o RadioHeaderDecoder.o RadioHeaderEncoder.o RaspberryController.o RepeaterProtocolHandler.o \
+		FIRFilter.o GMSKController.o GMSKModem.o GMSKModemLibUsb.o Golay.o HardwareController.o HeaderData.o K8055Controller.o LogEvent.o Logger.o \
+		MessageTextCtrl.o Modem.o OutputQueue.o PortTextCtrl.o RaspberryController.o RepeaterProtocolHandler.o \
 		RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardController.o SoundCardReaderWriter.o \
-		TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o WAVFileReader.o WAVFileWriter.o
+		TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o
 
 Common.a:	$(OBJS)
 		ar rcs Common.a $(OBJS)
@@ -38,26 +38,14 @@ CCITTChecksum.o:	CCITTChecksum.cpp CCITTChecksum.h Utils.h
 CCITTChecksumReverse.o:	CCITTChecksumReverse.cpp CCITTChecksumReverse.h Utils.h
 		$(CC) $(CFLAGS) -c CCITTChecksumReverse.cpp
 
-DStarFECDecoder.o:	DStarFECDecoder.cpp DStarFECDecoder.h
-		$(CC) $(CFLAGS) -c DStarFECDecoder.cpp
-
-DStarFECEncoder.o:	DStarFECEncoder.cpp DStarFECEncoder.h
-		$(CC) $(CFLAGS) -c DStarFECEncoder.cpp
-
 DStarGMSKDemodulator.o:	DStarGMSKDemodulator.cpp DStarGMSKDemodulator.h FIRFilter.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c DStarGMSKDemodulator.cpp
 
 DStarGMSKModulator.o:	DStarGMSKModulator.cpp DStarGMSKModulator.h DStarDefines.h FIRFilter.h
 		$(CC) $(CFLAGS) -c DStarGMSKModulator.cpp
 
-DStarInterleaver.o:	DStarInterleaver.cpp DStarInterleaver.h DStarDefines.h
-		$(CC) $(CFLAGS) -c DStarInterleaver.cpp
-
 DStarRepeaterConfig.o:	DStarRepeaterConfig.cpp DStarRepeaterConfig.h DStarDefines.h
 		$(CC) $(CFLAGS) -c DStarRepeaterConfig.cpp
-
-DStarScrambler.o:	DStarScrambler.cpp DStarScrambler.h
-		$(CC) $(CFLAGS) -c DStarScrambler.cpp
 
 DummyController.o:	DummyController.cpp DummyController.h HardwareController.h
 		$(CC) $(CFLAGS) -c DummyController.cpp
@@ -115,9 +103,6 @@ HeaderData.o:	HeaderData.cpp HeaderData.h DStarDefines.h CCITTChecksumReverse.h
 K8055Controller.o:	K8055Controller.cpp K8055Controller.h HardwareController.h
 		$(CC) $(CFLAGS) -c K8055Controller.cpp
 
-LocatorTextCtrl.o:	LocatorTextCtrl.cpp LocatorTextCtrl.h RestrictedTextCtrl.h
-		$(CC) $(CFLAGS) -c LocatorTextCtrl.cpp
-
 LogEvent.o:	LogEvent.cpp LogEvent.h
 		$(CC) $(CFLAGS) -c LogEvent.cpp
 
@@ -135,14 +120,6 @@ OutputQueue.o:	OutputQueue.cpp OutputQueue.h RingBuffer.h HeaderData.h
 
 PortTextCtrl.o:	PortTextCtrl.cpp PortTextCtrl.h RestrictedTextCtrl.h
 		$(CC) $(CFLAGS) -c PortTextCtrl.cpp
-
-RadioHeaderDecoder.o:	RadioHeaderDecoder.cpp RadioHeaderDecoder.h DStarDefines.h RadioHeaderEncoder.h DStarInterleaver.h DStarFECDecoder.h DStarScrambler.h \
-						CCITTChecksumReverse.h HeaderData.h
-		$(CC) $(CFLAGS) -c RadioHeaderDecoder.cpp
-
-RadioHeaderEncoder.o:	RadioHeaderEncoder.cpp RadioHeaderEncoder.h DStarDefines.h DStarInterleaver.h DStarFECEncoder.h DStarScrambler.h CCITTChecksumReverse.h \
-						HeaderData.h
-		$(CC) $(CFLAGS) -c RadioHeaderEncoder.cpp
 
 RaspberryController.o:	RaspberryController.cpp RaspberryController.h HardwareController.h
 		$(CC) $(CFLAGS) -c RaspberryController.cpp
@@ -186,12 +163,6 @@ URIUSBController.o:	URIUSBController.cpp URIUSBController.h HardwareController.h
 
 Utils.o:	Utils.cpp Utils.h
 		$(CC) $(CFLAGS) -c Utils.cpp
-
-WAVFileReader.o:	WAVFileReader.cpp WAVFileReader.h
-		$(CC) $(CFLAGS) -c WAVFileReader.cpp
-
-WAVFileWriter.o:	WAVFileWriter.cpp WAVFileWriter.h
-		$(CC) $(CFLAGS) -c WAVFileWriter.cpp
 
 clean:
 		rm -f core Common.a *.o *~ *.bak
