@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ m_tryCount(0U),
 m_dcsId(0x00U),
 m_dcsSeq(0x00U),
 m_seqNo(0x00U),
-m_inactivityTimer(1000U, 2U),
+m_inactivityTimer(1000U, NETWORK_TIMEOUT),
 m_yourCall(),
 m_myCall1(),
 m_myCall2(),

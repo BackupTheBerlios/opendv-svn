@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ m_tempText(),
 m_reflector(),
 m_tempReflector(),
 m_hasTemporary(false),
-m_timer(1000U, 2U),			// 2 seconds
+m_timer(1000U, REPLY_TIME),
 m_data(NULL),
 m_in(0U),
 m_out(0U),

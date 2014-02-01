@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ m_tryTimer(1000U, 1U),
 m_tryCount(0U),
 m_dExtraId(0x00U),
 m_dExtraSeq(0x00U),
-m_inactivityTimer(1000U, 2U),
+m_inactivityTimer(1000U, NETWORK_TIMEOUT),
 m_header(NULL)
 {
 	wxASSERT(protoHandler != NULL);
@@ -87,7 +87,7 @@ m_tryTimer(1000U, 1U),
 m_tryCount(0U),
 m_dExtraId(0x00U),
 m_dExtraSeq(0x00U),
-m_inactivityTimer(1000U, 2U),
+m_inactivityTimer(1000U, NETWORK_TIMEOUT),
 m_header(NULL)
 {
 	wxASSERT(protoHandler != NULL);

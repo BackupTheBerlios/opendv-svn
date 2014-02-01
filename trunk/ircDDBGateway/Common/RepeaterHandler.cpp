@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ m_band2(band2),
 m_band3(band3),
 m_repeaterId(0x00U),
 m_busyId(0x00U),
-m_watchdogTimer(1000U, 2U),		// 2 seconds
+m_watchdogTimer(1000U, REPEATER_TIMEOUT),
 m_ddMode(false),
 m_ddCallsign(),
 m_queryTimer(1000U, 5U),		// 5 seconds

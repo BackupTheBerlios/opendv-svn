@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ CEchoUnit::CEchoUnit(IRepeaterCallback* handler, const wxString& callsign) :
 m_handler(handler),
 m_callsign(callsign),
 m_status(ES_IDLE),
-m_timer(1000U, 2U),			// 2 seconds
+m_timer(1000U, REPLY_TIME),
 m_header(NULL),
 m_data(NULL),
 m_in(0U),

@@ -1374,3 +1374,8 @@ Ignore new CCS message type.
 --------
 
 Fix DEXTRA_LINK compile issues in the StarNET Server.
+
+201402xx
+--------
+
+Reduce the network timeout from two to one seconds.

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011,2012,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -378,7 +378,7 @@ m_permanent(permanent),
 m_linkReflector(reflector),
 m_linkGateway(),
 m_linkStatus(LS_NONE),
-m_linkTimer(1000U, 2U),
+m_linkTimer(1000U, NETWORK_TIMEOUT),
 m_id(0x00U),
 m_groupTimer(1000U, groupTimeout * 60U),
 m_announceTimer(1000U, 2U * 60U),		// 2 minutes

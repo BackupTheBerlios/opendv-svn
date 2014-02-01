@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010,2011,2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ CG2Handler::CG2Handler(CRepeaterHandler* repeater, const in_addr& address, unsig
 m_repeater(repeater),
 m_address(address),
 m_id(id),
-m_inactivityTimer(1000U, 2U)
+m_inactivityTimer(1000U, NETWORK_TIMEOUT)
 {
 	m_inactivityTimer.start();
 }
