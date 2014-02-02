@@ -1,6 +1,9 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 TODOs
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+2014-01-18
+- create text-based configuration tool for dstarrepeater and for upgrades from repeater to dstarrepeater
+
 2013-11-21
 - install the dashboard to an existing path structure (apache or lighttpd (VK4TUX) or nanohttpd or tinyhttpd) 
 
