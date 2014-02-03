@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,20 +15,30 @@
  *   along with this program; if not, write to the Free Software
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
-#ifndef	Version_H
-#define	Version_H
+
+#ifndef	TextTransmit_H
+#define	TextTransmit_H
+
+#include "UDPReaderWriter.h"
+#include "HeaderData.h"
+#include "AMBEData.h"
 
 #include <wx/wx.h>
 
-const wxString VENDOR_NAME = wxT("G4KLX");
+class CTextTransmit {
+public:
+	CTextTransmit(const wxString& callsign, const wxString& text);
+	~CTextTransmit();
 
-const wxString SVNREV = wxT("$Revision$ on $Date$");
+	void run();
 
-#if defined(__WXDEBUG__)
-const wxString VERSION = wxT("20140101 - DEBUG");
-#else
-const wxString VERSION = wxT("20140101");
-#endif
+private:
+	CUDPReaderWriter m_socket;
+	wxString         m_callsign;
+	wxString         m_text;
+
+	bool sendHeader(const CHeaderData& header);
+	bool sendData(const CAMBEData& data);
+};
 
 #endif

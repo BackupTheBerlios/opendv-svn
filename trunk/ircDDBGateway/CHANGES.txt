@@ -1379,3 +1379,4 @@ Fix DEXTRA_LINK compile issues in the StarNET Server.
 --------
 
 Reduce the network timeout from two to one seconds.
+Added the text transmit program.
