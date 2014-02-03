@@ -26,7 +26,11 @@ const unsigned int BUFFER_LENGTH = 200U;
 
 const unsigned int  NIBBLE_BITS[] = {0U, 1U, 1U, 2U, 1U, 2U, 2U, 3U, 1U, 2U, 2U, 3U, 2U, 3U, 3U, 4U};
 
+const unsigned int DV_FRAME_LENGTH_BITS = DV_FRAME_LENGTH_BYTES * 8U;
+
 const unsigned int MAX_SYNC_BITS = 50U * DV_FRAME_LENGTH_BITS;
+
+const unsigned int FEC_SECTION_LENGTH_BITS = 660U;
 
 // D-Star bit order version of 0x55 0x55 0x55 0x55
 const wxUint32     BIT_SYNC_DATA = 0xAAAAAAAAU;

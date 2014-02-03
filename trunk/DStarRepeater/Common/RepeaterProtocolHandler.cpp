@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@
 const unsigned int BUFFER_LENGTH = 255U;
 
 CRepeaterProtocolHandler::CRepeaterProtocolHandler(const wxString& gatewayAddress, unsigned int gatewayPort, const wxString& localAddress, unsigned int localPort) :
-m_socket(gatewayAddress, gatewayPort, localAddress, localPort),
+m_socket(localAddress, localPort),
+m_address(),
+m_port(gatewayPort),
 m_outId(0U),
 m_outSeq(0U),
 m_type(NETWORK_NONE),
@@ -34,6 +36,8 @@ m_inId(0U),
 m_buffer(NULL),
 m_length(0U)
 {
+	m_address = CUDPReaderWriter::lookup(gatewayAddress);
+
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 
 	wxDateTime now = wxDateTime::UNow();
@@ -100,7 +104,7 @@ bool CRepeaterProtocolHandler::writeHeader(const CHeaderData& header)
 	return true;
 #else
 	for (unsigned int i = 0U; i < 2U; i++) {
-		bool ret = m_socket.write(buffer, 49U);
+		bool ret = m_socket.write(buffer, 49U, m_address, m_port);
 		if (!ret)
 			return false;
 	}
@@ -146,7 +150,7 @@ bool CRepeaterProtocolHandler::writeData(const unsigned char* data, unsigned int
 	CUtils::dump(wxT("Sending Data"), buffer, length + 9U);
 	return true;
 #else
-	return m_socket.write(buffer, length + 9U);
+	return m_socket.write(buffer, length + 9U, m_address, m_port);
 #endif
 }
 
@@ -199,7 +203,7 @@ bool CRepeaterProtocolHandler::writeBusyHeader(const CHeaderData& header)
 	CUtils::dump(wxT("Sending Busy Header"), buffer, 49U);
 	return true;
 #else
-	return m_socket.write(buffer, 49U);
+	return m_socket.write(buffer, 49U, m_address, m_port);
 #endif
 }
 
@@ -240,7 +244,7 @@ bool CRepeaterProtocolHandler::writeBusyData(const unsigned char* data, unsigned
 	CUtils::dump(wxT("Sending Busy Data"), buffer, length + 9U);
 	return true;
 #else
-	return m_socket.write(buffer, length + 9U);
+	return m_socket.write(buffer, length + 9U, m_address, m_port);
 #endif
 }
 
@@ -266,7 +270,7 @@ bool CRepeaterProtocolHandler::writePoll(const wxString& text)
 	CUtils::dump(wxT("Sending Poll"), buffer, 6U + length);
 	return true;
 #else
-	return m_socket.write(buffer, 6U + length);
+	return m_socket.write(buffer, 6U + length, m_address, m_port);
 #endif
 }
 
@@ -286,9 +290,18 @@ bool CRepeaterProtocolHandler::readPackets()
 	m_type = NETWORK_NONE;
 
 	// No more data?
-	int length = m_socket.read(m_buffer, BUFFER_LENGTH);
+	in_addr address;
+	unsigned int port;
+	int length = m_socket.read(m_buffer, BUFFER_LENGTH, address, port);
 	if (length <= 0)
 		return false;
+
+	// Check if the data is for us
+	if (m_address.s_addr != address.s_addr || m_port != port) {
+		wxLogMessage(wxT("Packet received from an invalid source, %08X != %08X and/or %u != %u"), m_address.s_addr, address.s_addr, m_port, port);
+		CUtils::dump(wxT("Data"), m_buffer, length);
+		return false;
+	}
 
 	m_length = length;
 

@@ -49,7 +49,7 @@ m_writeNum(0U),
 m_readNum(0U),
 m_radioSeqNo(0U),
 m_networkSeqNo(0U),
-m_watchdogTimer(1000U, 2U),			// 2s
+m_watchdogTimer(1000U, NETWORK_TIMEOUT),
 m_pollTimer(1000U, 60U),			// 60s
 m_statusTimer(1000U, 0U, 100U),		// 100ms
 m_heartbeatTimer(1000U, 1U),		// 1s

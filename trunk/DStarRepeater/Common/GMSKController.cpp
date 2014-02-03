@@ -186,8 +186,14 @@ void* CGMSKController::Entry()
 
 			if (writeLength > 0U) {
 				if (writeType == DSMTT_HEADER) {
-					// Check that the modem isn't still transmitting before sending the new header
 					TRISTATE tx = m_modem->getPTT();
+
+					if (m_tx && tx == STATE_TRUE) {
+						m_modem->setPTT(false);
+						m_tx = false;
+					}
+
+					// Check that the modem isn't still transmitting before sending the new header
 					if (tx == STATE_FALSE) {
 						// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
 						m_modem->writeHeader(writeBuffer, writeLength);

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009,2011,2012 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2011,2013 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,24 +34,24 @@
 
 class CUDPReaderWriter {
 public:
-	CUDPReaderWriter(const wxString& remoteAddress, unsigned int remotePort, const wxString& localAddress = wxEmptyString, unsigned int localPort = 0U);
+	CUDPReaderWriter(const wxString& address, unsigned int port);
 	~CUDPReaderWriter();
 
 	static in_addr lookup(const wxString& hostName);
 
 	bool open();
 
-	int  read(unsigned char* buffer, unsigned int length);
-	bool write(const unsigned char* buffer, unsigned int length);
+	int  read(unsigned char* buffer, unsigned int length, in_addr& address, unsigned int& port);
+	bool write(const unsigned char* buffer, unsigned int length, const in_addr& address, unsigned int port);
 
 	void close();
 
+	unsigned int getPort() const;
+
 private:
-	wxString       m_remoteAddress;
-	unsigned short m_remotePort;
-	wxString       m_localAddress;
-	unsigned short m_localPort;
-	sockaddr_in    m_remAddr;
+	wxString       m_address;
+	unsigned short m_port;
+	in_addr        m_addr;
 	int            m_fd;
 };
 

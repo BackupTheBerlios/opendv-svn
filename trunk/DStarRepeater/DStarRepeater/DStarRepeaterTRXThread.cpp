@@ -58,7 +58,7 @@ m_readNum(0U),
 m_radioSeqNo(0U),
 m_networkSeqNo(0U),
 m_timeoutTimer(1000U, 180U),		// 180s
-m_watchdogTimer(1000U, 2U),			// 2s
+m_watchdogTimer(1000U, NETWORK_TIMEOUT),
 m_pollTimer(1000U, 60U),			// 60s
 m_ackTimer(1000U, 0U, 500U),		// 0.5s
 m_status1Timer(1000U, 3U),			// 3s
