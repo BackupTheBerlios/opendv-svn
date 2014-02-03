@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 		wxTextFile file;
 		bool found = file.Open(filename);
 		if (!found) {
-			::fprintf(stderr, "texttransmit: unable to open file - %s, exiting\n", filename.c_str());
+			::fprintf(stderr, "texttransmit: unable to open the file, exiting\n");
 			::wxUninitialize();
 			return 1;
 		}

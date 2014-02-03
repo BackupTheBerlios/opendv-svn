@@ -1,4 +1,4 @@
-ircDDB Gateway - 20140101
+ircDDB Gateway - 20140203
 =========================
 
 20101010
@@ -1375,7 +1375,7 @@ Ignore new CCS message type.
 
 Fix DEXTRA_LINK compile issues in the StarNET Server.
 
-201402xx
+20140203
 --------
 
 Reduce the network timeout from two to one seconds.
