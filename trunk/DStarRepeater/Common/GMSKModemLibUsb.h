@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2010-2013 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2010-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #ifndef	GMSKModemLibUsb_H
 #define	GMSKModemLibUsb_H
 
-#include "HeaderData.h"
 #include "GMSKModem.h"
 #include "Utils.h"
 
@@ -38,18 +37,15 @@ public:
 
 	virtual bool open();
 
-	virtual CHeaderData* readHeader(bool& error);							// Old
-	virtual bool readHeader(unsigned char* header, unsigned int length);	// News
+	virtual bool readHeader(unsigned char* header, unsigned int length);
 	virtual int  readData(unsigned char* data, unsigned int length, bool& end);
 
 	virtual TRISTATE getPTT();
 	virtual void     setPTT(bool on);
 
-	virtual TRISTATE hasSpace();											// Old
-	virtual int      getSpace();											// New
+	virtual TRISTATE hasSpace();
 
-	virtual void writeHeader(const CHeaderData& header);					// Old
-	virtual void writeHeader(unsigned char* data, unsigned int length);		// New
+	virtual void writeHeader(unsigned char* data, unsigned int length);
 	virtual int  writeData(unsigned char* data, unsigned int length);
 
 	virtual void close();

@@ -82,13 +82,13 @@ ExternalController.o:	ExternalController.cpp ExternalController.h DStarDefines.h
 FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
 
-GMSKController.o:	GMSKController.cpp GMSKController.h Modem.h RingBuffer.h HeaderData.h Utils.h DStarDefines.h Timer.h GMSKModem.h GMSKModemLibUsb.h
+GMSKController.o:	GMSKController.cpp GMSKController.h Modem.h RingBuffer.h Utils.h DStarDefines.h Timer.h GMSKModem.h GMSKModemLibUsb.h
 		$(CC) $(CFLAGS) -c GMSKController.cpp
 
 GMSKModem.o:	GMSKModem.cpp GMSKModem.h
 		$(CC) $(CFLAGS) -c GMSKModem.cpp
 
-GMSKModemLibUsb.o:	GMSKModemLibUsb.cpp GMSKModemLibUsb.h GMSKModem.h HeaderData.h DStarDefines.h Utils.h
+GMSKModemLibUsb.o:	GMSKModemLibUsb.cpp GMSKModemLibUsb.h GMSKModem.h DStarDefines.h Utils.h
 		$(CC) $(CFLAGS) -c GMSKModemLibUsb.cpp
 
 Golay.o:	Golay.cpp Golay.h

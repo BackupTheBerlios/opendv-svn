@@ -159,74 +159,6 @@ bool CGMSKModemLibUsb::open()
 	return true;
 }
 
-CHeaderData* CGMSKModemLibUsb::readHeader(bool& error)
-{
-	error = false;
-
-	unsigned char header[RADIO_HEADER_LENGTH_BYTES * 2U];
-	unsigned int length = 0U;
-
-	while (length < RADIO_HEADER_LENGTH_BYTES) {
-		int ret = io(0xC0, GET_HEADER, 0, 0, (char*)(header + length), 8, USB_TIMEOUT);
-		if (ret < 0) {
-			wxString errorText(m_usbStrerror(), wxConvLocal);
-			wxLogMessage(wxT("GET_HEADER, ret: %d, err=%s"), ret, errorText.c_str());
-
-			if (ret == -19) {		// -ENODEV
-				error = true;
-				return NULL;
-			}
-
-			::wxMilliSleep(10UL);
-		} else if (ret == 0) {
-			if (length == 0U)
-				return NULL;
-
-			::wxMilliSleep(10UL);
-
-			char status;
-			int ret = io(0xC0, GET_AD_STATUS, 0, 0, &status, 1, USB_TIMEOUT);
-			if (ret < 0) {
-				wxString errorText(m_usbStrerror(), wxConvLocal);
-				wxLogMessage(wxT("GET_COS, ret: %d, err=%s"), ret, errorText.c_str());
-
-				if (ret == -19) {		// -ENODEV
-					error = true;
-					return NULL;
-				}
-
-				::wxMilliSleep(10UL);
-			} else if (ret > 0) {
-				if ((status & COS_OnOff) == COS_OnOff)
-					length = 0U;
-			}
-		} else {
-			length += ret;
-		}
-	}
-
-	char status;
-	int ret = io(0xC0, GET_AD_STATUS, 0, 0, &status, 1, USB_TIMEOUT);
-	if (ret < 0) {
-		wxString errorText(m_usbStrerror(), wxConvLocal);
-		wxLogMessage(wxT("GET_CRC, ret: %d, err=%s"), ret, errorText.c_str());
-
-		if (ret == -19) {		// -ENODEV
-			error = true;
-			return NULL;
-		}
-
-		return 0;
-	}
-
-	if ((status & CRC_ERROR) == CRC_ERROR) {
-		wxLogMessage(wxT("Header - CRC Error"));
-		return NULL;
-	}
-
-	return new CHeaderData(header, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
 bool CGMSKModemLibUsb::readHeader(unsigned char* header, unsigned int length)
 {
 	wxASSERT(header != NULL);
@@ -321,41 +253,6 @@ int CGMSKModemLibUsb::readData(unsigned char* data, unsigned int length, bool& e
 	return ret;
 }
 
-void CGMSKModemLibUsb::writeHeader(const CHeaderData& header)
-{
-	char myCall1[LONG_CALLSIGN_LENGTH];
-	char myCall2[SHORT_CALLSIGN_LENGTH];
-	char yourCall[LONG_CALLSIGN_LENGTH];
-	char rptCall1[LONG_CALLSIGN_LENGTH];
-	char rptCall2[LONG_CALLSIGN_LENGTH];
-
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		myCall1[i] = header.getMyCall1().GetChar(i);
-	for (unsigned int i = 0U; i < SHORT_CALLSIGN_LENGTH; i++)
-		myCall2[i] = header.getMyCall2().GetChar(i);
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		yourCall[i] = header.getYourCall().GetChar(i);
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		rptCall1[i] = header.getRptCall1().GetChar(i);
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		rptCall2[i] = header.getRptCall2().GetChar(i);
-
-	io(0x40, SET_MyCALL2,  0, 0, myCall2,  SHORT_CALLSIGN_LENGTH, USB_TIMEOUT);
-	io(0x40, SET_MyCALL,   0, 0, myCall1,  LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-	io(0x40, SET_YourCALL, 0, 0, yourCall, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-	io(0x40, SET_RPT1CALL, 0, 0, rptCall1, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-	io(0x40, SET_RPT2CALL, 0, 0, rptCall2, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-
-	char flags[3U];
-	flags[0U] = header.getFlag1();
-	flags[1U] = header.getFlag2();
-	flags[2U] = header.getFlag3();
-
-	io(0x40, SET_FLAGS, 0, 0, flags, 3, USB_TIMEOUT);
-
-	setPTT(true);
-}
-
 void CGMSKModemLibUsb::writeHeader(unsigned char* header, unsigned int length)
 {
 	wxASSERT(header != NULL);
@@ -383,22 +280,6 @@ TRISTATE CGMSKModemLibUsb::hasSpace()
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;
-}
-
-int CGMSKModemLibUsb::getSpace()
-{
-	unsigned char space;
-	int rc = io(0xC0, GET_REMAINSPACE, 0, 0, (char*)&space, 1, USB_TIMEOUT);
-	if (rc != 1) {
-		wxString errorText(m_usbStrerror(), wxConvLocal);
-		wxLogMessage(wxT("GET_REMAINSPACE, ret: %d, err=%s"), rc, errorText.c_str());
-		return -1;
-	}
-
-	if (m_brokenSpace)
-		return space > 0 ? 1 : 0;
-	else
-		return space / DV_FRAME_LENGTH_BYTES;
 }
 
 TRISTATE CGMSKModemLibUsb::getPTT()
@@ -595,66 +476,6 @@ bool CGMSKModemLibUsb::open()
 	return true;
 }
 
-CHeaderData* CGMSKModemLibUsb::readHeader(bool& error)
-{
-	error = false;
-
-	unsigned char header[RADIO_HEADER_LENGTH_BYTES * 2U];
-	unsigned int length = 0U;
-
-	while (length < RADIO_HEADER_LENGTH_BYTES) {
-		int ret = io(0xC0, GET_HEADER, 0, 0, header + length, 8, USB_TIMEOUT);
-		if (ret < 0) {
-			wxLogMessage(wxT("GET_HEADER, err=%d"), ret);
-
-			if (ret == LIBUSB_ERROR_NO_DEVICE) {
-				error = true;
-				return NULL;
-			}
-
-			::wxMilliSleep(10UL);
-		} else if (ret == 0) {
-			if (length == 0U)
-				return NULL;
-
-			::wxMilliSleep(10UL);
-
-			unsigned char status;
-			int ret = io(0xC0, GET_AD_STATUS, 0, 0, &status, 1, USB_TIMEOUT);
-			if (ret < 0) {
-				wxLogMessage(wxT("GET_COS, err=%d"), ret);
-
-				if (ret == LIBUSB_ERROR_NO_DEVICE) {
-					error = true;
-					return NULL;
-				}
-
-				::wxMilliSleep(10UL);
-			} else if (ret > 0) {
-				if ((status & COS_OnOff) == COS_OnOff)
-					length = 0U;
-			}
-		} else {
-			length += ret;
-		}
-	}
-
-	unsigned char status;
-	int ret = io(0xC0, GET_AD_STATUS, 0, 0, &status, 1, USB_TIMEOUT);
-	if (ret < 0) {
-		wxLogMessage(wxT("GET_CRC, err=%d"), ret);
-		error = true;
-		return NULL;
-	}
-
-	if ((status & CRC_ERROR) == CRC_ERROR) {
-		wxLogMessage(wxT("Header - CRC Error"));
-		return NULL;
-	}
-
-	return new CHeaderData(header, RADIO_HEADER_LENGTH_BYTES, false);
-}
-
 bool CGMSKModemLibUsb::readHeader(unsigned char* header, unsigned int length)
 {
 	wxASSERT(header != NULL);
@@ -743,41 +564,6 @@ int CGMSKModemLibUsb::readData(unsigned char* data, unsigned int length, bool& e
 	return ret;
 }
 
-void CGMSKModemLibUsb::writeHeader(const CHeaderData& header)
-{
-	unsigned char myCall1[LONG_CALLSIGN_LENGTH];
-	unsigned char myCall2[SHORT_CALLSIGN_LENGTH];
-	unsigned char yourCall[LONG_CALLSIGN_LENGTH];
-	unsigned char rptCall1[LONG_CALLSIGN_LENGTH];
-	unsigned char rptCall2[LONG_CALLSIGN_LENGTH];
-
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		myCall1[i] = header.getMyCall1().GetChar(i);
-	for (unsigned int i = 0U; i < SHORT_CALLSIGN_LENGTH; i++)
-		myCall2[i] = header.getMyCall2().GetChar(i);
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		yourCall[i] = header.getYourCall().GetChar(i);
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		rptCall1[i] = header.getRptCall1().GetChar(i);
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		rptCall2[i] = header.getRptCall2().GetChar(i);
-
-	io(0x40, SET_MyCALL2,  0, 0, myCall2,  SHORT_CALLSIGN_LENGTH, USB_TIMEOUT);
-	io(0x40, SET_MyCALL,   0, 0, myCall1,  LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-	io(0x40, SET_YourCALL, 0, 0, yourCall, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-	io(0x40, SET_RPT1CALL, 0, 0, rptCall1, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-	io(0x40, SET_RPT2CALL, 0, 0, rptCall2, LONG_CALLSIGN_LENGTH,  USB_TIMEOUT);
-
-	unsigned char flags[3U];
-	flags[0U] = header.getFlag1();
-	flags[1U] = header.getFlag2();
-	flags[2U] = header.getFlag3();
-
-	io(0x40, SET_FLAGS, 0, 0, flags, 3, USB_TIMEOUT);
-
-	setPTT(true);
-}
-
 void CGMSKModemLibUsb::writeHeader(unsigned char* header, unsigned int length)
 {
 	wxASSERT(header != NULL);
@@ -804,21 +590,6 @@ TRISTATE CGMSKModemLibUsb::hasSpace()
 		return STATE_TRUE;
 	else
 		return STATE_FALSE;
-}
-
-int CGMSKModemLibUsb::getSpace()
-{
-	unsigned char space;
-	int rc = io(0xC0, GET_REMAINSPACE, 0, 0, &space, 1, USB_TIMEOUT);
-	if (rc != 1) {
-		wxLogMessage(wxT("GET_REMAINSPACE, err=%d"), rc);
-		return -1;
-	}
-
-	if (m_brokenSpace)
-		return space > 0 ? 1 : 0;
-	else
-		return space / DV_FRAME_LENGTH_BYTES;
 }
 
 TRISTATE CGMSKModemLibUsb::getPTT()

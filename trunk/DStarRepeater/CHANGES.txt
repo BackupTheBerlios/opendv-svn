@@ -1941,3 +1941,8 @@ More work on buffering in the D-Star Repeater for all modem types.
 
 Move the D-Star Repeater to its own package.
 More GMSK Modem changes for better locking.
+
+201402xx
+--------
+
+GMSK Modem changes.

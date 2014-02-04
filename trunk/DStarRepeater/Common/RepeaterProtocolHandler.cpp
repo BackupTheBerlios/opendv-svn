@@ -51,6 +51,9 @@ CRepeaterProtocolHandler::~CRepeaterProtocolHandler()
 
 bool CRepeaterProtocolHandler::open()
 {
+	if (m_address.s_addr == INADDR_NONE)
+		return false;
+
 	return m_socket.open();
 }
 

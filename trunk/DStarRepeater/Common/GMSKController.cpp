@@ -96,50 +96,42 @@ void* CGMSKController::Entry()
 	unsigned char  readLength = 0U;
 	unsigned char* readBuffer = new unsigned char[DV_FRAME_LENGTH_BYTES];
 
-	unsigned int space = 0U;
-
 	while (!m_stopped) {
 		// Only receive when not transmitting or when in duplex mode
 		if (!m_tx || m_duplex) {
 			if (rx) {
-				// Don't start sending data until the header has been gone for 100ms or so
-				if (!dataTimer.isRunning() || dataTimer.hasExpired()) {
-					dataTimer.stop();
+				unsigned char buffer[GMSK_MODEM_DATA_LENGTH];
+				bool end;
+				int ret = m_modem->readData(buffer, GMSK_MODEM_DATA_LENGTH, end);
+				if (ret >= 0) {
+					// CUtils::dump(wxT("Read Data"), buffer, ret);
 
-					unsigned char buffer[GMSK_MODEM_DATA_LENGTH];
-					bool end;
-					int ret = m_modem->readData(buffer, GMSK_MODEM_DATA_LENGTH, end);
-					if (ret >= 0) {
-						// CUtils::dump(wxT("Read Data"), buffer, ret);
+					if (end) {
+						wxMutexLocker locker(m_mutex);
 
-						if (end) {
-							wxMutexLocker locker(m_mutex);
+						unsigned char data[2U];
+						data[0U] = DSMTT_EOT;
+						data[1U] = 0U;
+						m_rxData.addData(data, 2U);
 
-							unsigned char data[2U];
-							data[0U] = DSMTT_EOT;
-							data[1U] = 0U;
-							m_rxData.addData(data, 2U);
+						hdrTimer.start();
+						readLength = 0U;
+						rx = false;
+					} else {
+						for (int i = 0; i < ret; i++) {
+							readBuffer[readLength] = buffer[i];
 
-							dataTimer.stop();
-							hdrTimer.start();
-							readLength = 0U;
-							rx = false;
-						} else {
-							for (int i = 0; i < ret; i++) {
-								readBuffer[readLength] = buffer[i];
+							readLength++;
+							if (readLength >= DV_FRAME_LENGTH_BYTES) {
+								wxMutexLocker locker(m_mutex);
 
-								readLength++;
-								if (readLength >= DV_FRAME_LENGTH_BYTES) {
-									wxMutexLocker locker(m_mutex);
+								unsigned char data[2U];
+								data[0U] = DSMTT_DATA;
+								data[1U] = DV_FRAME_LENGTH_BYTES;
+								m_rxData.addData(data, 2U);
 
-									unsigned char data[2U];
-									data[0U] = DSMTT_DATA;
-									data[1U] = DV_FRAME_LENGTH_BYTES;
-									m_rxData.addData(data, 2U);
-
-									m_rxData.addData(readBuffer, DV_FRAME_LENGTH_BYTES);
-									readLength = 0U;
-								}
+								m_rxData.addData(readBuffer, DV_FRAME_LENGTH_BYTES);
+								readLength = 0U;
 							}
 						}
 					}
@@ -161,7 +153,6 @@ void* CGMSKController::Entry()
 
 						m_rxData.addData(buffer, RADIO_HEADER_LENGTH_BYTES - 2U);
 
-						dataTimer.start();
 						hdrTimer.stop();
 						readLength = 0U;
 						rx = true;
@@ -188,36 +179,33 @@ void* CGMSKController::Entry()
 				if (writeType == DSMTT_HEADER) {
 					TRISTATE tx = m_modem->getPTT();
 
-					if (m_tx && tx == STATE_TRUE) {
-						m_modem->setPTT(false);
-						m_tx = false;
-					}
-
 					// Check that the modem isn't still transmitting before sending the new header
 					if (tx == STATE_FALSE) {
 						// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
 						m_modem->writeHeader(writeBuffer, writeLength);
 						m_modem->setPTT(true);
+						dataTimer.start();
 						writeLength = 0U;
 						m_tx = true;
 					}
 				} else {
-					// Check for space if we don't have any
-					if (space == 0U) {
-						int ret = m_modem->getSpace();
-						space = ret > 0 ? ret : 0U;
-					}
+					// Don't start sending data until the header has been gone for 100ms or so
+					if (!dataTimer.isRunning() || dataTimer.hasExpired()) {
+						dataTimer.stop();
 
-					if (space > 0U) {
-						// CUtils::dump(wxT("Write Data"), writeBuffer, writeLength);
-						int ret = m_modem->writeData(writeBuffer, writeLength);
-						if (ret > 0) {
-							writeLength -= ret;
-							space--;
+						TRISTATE ret = m_modem->hasSpace();
 
-							if (writeType == DSMTT_EOT) {
-								m_modem->setPTT(false);
-								m_tx = false;
+						// Check that there is space in the modem buffer
+						if (ret == STATE_TRUE) {
+							// CUtils::dump(wxT("Write Data"), writeBuffer, writeLength);
+							int ret = m_modem->writeData(writeBuffer, writeLength);
+							if (ret > 0) {
+								writeLength -= ret;
+
+								if (writeType == DSMTT_EOT) {
+									m_modem->setPTT(false);
+									m_tx = false;
+								}
 							}
 						}
 					}
