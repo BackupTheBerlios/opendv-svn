@@ -304,13 +304,10 @@ IRCDDB_RESPONSE_TYPE IRCDDBApp::getReplyMessageType()
 	return IDRT_NONE;
 }
 
-
 IRCMessage* IRCDDBApp::getReplyMessage()
 {
 	return d->replyQ.getMessage();
 }
-
-
 
 void IRCDDBApp::startWork()
 {
@@ -1063,16 +1060,13 @@ static wxString getLastEntryTime(int tableID)
   return wxT("DBERROR");
 }
 
-
-static bool needsDatabaseUpdate( int tableID )
+static bool needsDatabaseUpdate(int tableID)
 {
-  return (tableID == 1);
+	return tableID == 1;
 }
-	
 	
 wxThread::ExitCode IRCDDBApp::Entry()
 {
-
   int sendlistTableID = 0;
 		
   while (!d->terminateThread)
@@ -1317,16 +1311,8 @@ wxThread::ExitCode IRCDDBApp::Entry()
 			
     }
 
-    wxThread::Sleep(1000);
-
-			
-			
-
-  } // while
+    Sleep(1000);
+  }
 
   return 0;
-} // Entry()
-	
-
-
-
+}

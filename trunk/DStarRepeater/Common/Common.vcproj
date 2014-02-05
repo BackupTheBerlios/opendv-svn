@@ -242,6 +242,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GatewayProtocolHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GMSKController.cpp"
 				>
 			</File>
@@ -461,6 +465,10 @@
 			</File>
 			<File
 				RelativePath=".\FIRFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GatewayProtocolHandler.h"
 				>
 			</File>
 			<File

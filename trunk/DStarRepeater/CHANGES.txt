@@ -1946,3 +1946,4 @@ More GMSK Modem changes for better locking.
 --------
 
 GMSK Modem changes.
+Improve the DVAP transmit handling.

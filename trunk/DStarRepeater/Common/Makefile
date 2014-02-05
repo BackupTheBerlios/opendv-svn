@@ -3,7 +3,7 @@ all:		Common.a
 OBJS :=	AddressTextCtrl.o AMBEFEC.o AnnouncementUnit.o ArduinoController.o BeaconUnit.o CallsignList.o CallsignTextCtrl.o CCITTChecksum.o CCITTChecksumReverse.o \
 		DStarGMSKDemodulator.o DStarGMSKModulator.o DStarRepeaterConfig.o DummyController.o \
 		DVAPController.o DVMegaController.o DVRPTRV1Controller.o DVRPTRV2Controller.o DVRPTRV3Controller.o DVTOOLFileReader.o DVTOOLFileWriter.o ExternalController.o \
-		FIRFilter.o GMSKController.o GMSKModem.o GMSKModemLibUsb.o Golay.o HardwareController.o HeaderData.o K8055Controller.o LogEvent.o Logger.o \
+		FIRFilter.o GatewayProtocolHandler.o GMSKController.o GMSKModem.o GMSKModemLibUsb.o Golay.o HardwareController.o HeaderData.o K8055Controller.o LogEvent.o Logger.o \
 		MessageTextCtrl.o Modem.o OutputQueue.o PortTextCtrl.o RaspberryController.o RepeaterProtocolHandler.o \
 		RestrictedTextCtrl.o SerialDataController.o SerialLineController.o SlowDataDecoder.o SlowDataEncoder.o SoundCardController.o SoundCardReaderWriter.o \
 		TCPReaderWriter.o Timer.o UDPReaderWriter.o URIUSBController.o Utils.o
@@ -81,6 +81,9 @@ ExternalController.o:	ExternalController.cpp ExternalController.h DStarDefines.h
 
 FIRFilter.o:	FIRFilter.cpp FIRFilter.h
 		$(CC) $(CFLAGS) -c FIRFilter.cpp
+
+GatewayProtocolHandler.o:	GatewayProtocolHandler.cpp GatewayProtocolHandler.h DStarDefines.h HeaderData.h UDPReaderWriter.h CCITTChecksumReverse.h Utils.h
+		$(CC) $(CFLAGS) -c GatewayProtocolHandler.cpp
 
 GMSKController.o:	GMSKController.cpp GMSKController.h Modem.h RingBuffer.h Utils.h DStarDefines.h Timer.h GMSKModem.h GMSKModemLibUsb.h
 		$(CC) $(CFLAGS) -c GMSKController.cpp

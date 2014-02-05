@@ -168,8 +168,9 @@ void* CGMSKController::Entry()
 			if (writeLength == 0U && m_txData.hasData()) {
 				wxMutexLocker locker(m_mutex);
 
-				unsigned char type = writeType;
+				unsigned char type;
 				m_txData.getData(&type, 1U);
+				writeType = DSMT_TYPE(type);
 
 				m_txData.getData(&writeLength, 1U);
 				m_txData.getData(writeBuffer, writeLength);

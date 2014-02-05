@@ -226,6 +226,9 @@ void* CDVAPController::Entry()
 	CTimer pollTimer(200U, 2U);
 	pollTimer.start();
 
+	unsigned char  writeLength = 0U;
+	unsigned char* writeBuffer = new unsigned char[BUFFER_LENGTH];
+
 	unsigned int space = 0U;
 
 	while (!m_stopped) {
@@ -305,23 +308,33 @@ void* CDVAPController::Entry()
 
 		// Use the status packet every 20ms to trigger the sending of data to the DVAP
 		if (space > 0U && type == RT_STATE) {
-			if (m_txData.hasData()) {
-				m_mutex.Lock();
+			if (writeLength == 0U && m_txData.hasData()) {
+				wxMutexLocker locker(m_mutex);
 
-				unsigned char len = 0U;
-				m_txData.getData(&len, 1U);
+				m_txData.getData(&writeLength, 1U);
+				m_txData.getData(writeBuffer, writeLength);
+			}
 
-				unsigned char data[100U];
-				m_txData.getData(data, len);
+			// Only send the header when the TX is off
+			if (!m_tx && writeLength == DVAP_HEADER_LEN) {
+				// CUtils::dump(wxT("Write Header"), writeBuffer, writeLength);
 
-				m_mutex.Unlock();
+				int ret = m_serial.write(writeBuffer, writeLength);
+				if (ret != int(writeLength))
+					wxLogWarning(wxT("Error when writing header to the modem"));
 
-				// CUtils::dump(wxT("Write"), data, len);
+				writeLength = 0U;
+				space--;
+			}
+			
+			if (writeLength == DVAP_GMSK_DATA_LEN) {
+				// CUtils::dump(wxT("Write Data"), writeBuffer, writeLength);
 
-				int ret = m_serial.write(data, len);
-				if (ret != int(len))
+				int ret = m_serial.write(writeBuffer, writeLength);
+				if (ret != int(writeLength))
 					wxLogWarning(wxT("Error when writing data to the modem"));
 
+				writeLength = 0U;
 				space--;
 			}
 		}
@@ -334,6 +347,8 @@ void* CDVAPController::Entry()
 	wxLogMessage(wxT("Stopping DVAP Controller thread"));
 
 	stopDVAP();
+
+	delete[] writeBuffer;
 
 	m_serial.close();
 

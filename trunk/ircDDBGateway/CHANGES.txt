@@ -1380,3 +1380,8 @@ Fix DEXTRA_LINK compile issues in the StarNET Server.
 
 Reduce the network timeout from two to one seconds.
 Added the text transmit program.
+
+201402xx
+--------
+
+Add IP address logging to the header logging.
