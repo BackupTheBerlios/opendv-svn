@@ -34,6 +34,7 @@
 #include "DVMegaController.h"
 #include "K8055Controller.h"
 #include "DummyController.h"
+#include "SplitController.h"
 #include "DStarRepeaterD.h"
 #include "DVAPController.h"
 #include "GMSKController.h"
@@ -397,6 +398,13 @@ bool CDStarRepeaterD::createThread()
 		config.getSoundCard(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
 		wxLogInfo(wxT("Sound Card, devices: %s:%s, invert: %d:%d, levels: %.2f:%.2f, tx delay: %u ms"), rxDevice.c_str(), txDevice.c_str(), int(rxInvert), int(txInvert), rxLevel, txLevel, txDelay);
 		modem = new CSoundCardController(rxDevice, txDevice, rxInvert, txInvert, rxLevel, txLevel, txDelay);
+	} else if (modemType.IsSameAs(wxT("Split"))) {
+		wxString localAddress, transmitter1Address, transmitter2Address, transmitter3Address, receiver1Address, receiver2Address, receiver3Address;
+		unsigned int localPort, transmitter1Port, transmitter2Port, transmitter3Port, receiver1Port, receiver2Port, receiver3Port;
+		unsigned int timeout;
+		config.getSplit(localAddress, localPort, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, transmitter3Address, transmitter3Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, receiver3Address, receiver3Port, timeout);
+		wxLogInfo(wxT("Split, local: %s:%u, transmitter1: %s:%u, transmitter2: %s:%u, transmitter3: %s:%u, receiver1: %s:%u, receiver2: %s:%u, receiver3: %s:%u, timeout: %u ms"), localAddress, localPort, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, transmitter3Address, transmitter3Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, receiver3Address, receiver3Port, timeout);
+		modem = new CSplitController(localAddress, localPort, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, transmitter3Address, transmitter3Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, receiver3Address, receiver3Port, timeout);
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());
 	}

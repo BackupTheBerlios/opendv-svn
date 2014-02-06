@@ -47,7 +47,7 @@ bool CGatewayProtocolHandler::open()
 	return m_socket.open();
 }
 
-bool CGatewayProtocolHandler::writeHeader(const CHeaderData& header, wxUint16 id, const in_addr& address, unsigned int port)
+bool CGatewayProtocolHandler::writeHeader(const unsigned char* header, wxUint16 id, const in_addr& address, unsigned int port)
 {
 	unsigned char buffer[50U];
 
@@ -63,29 +63,12 @@ bool CGatewayProtocolHandler::writeHeader(const CHeaderData& header, wxUint16 id
 
 	buffer[7] = 0U;
 
-	buffer[8]  = header.getFlag1();
-	buffer[9]  = header.getFlag2();
-	buffer[10] = header.getFlag3();
-
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[11 + i] = header.getRptCall1().GetChar(i);
-
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[19 + i] = header.getRptCall2().GetChar(i);
-
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[27 + i] = header.getYourCall().GetChar(i);
-
-	for (unsigned int i = 0U; i < LONG_CALLSIGN_LENGTH; i++)
-		buffer[35 + i] = header.getMyCall1().GetChar(i);
-
-	for (unsigned int i = 0U; i < SHORT_CALLSIGN_LENGTH; i++)
-		buffer[43 + i] = header.getMyCall2().GetChar(i);
+	::memcpy(buffer + 8U, header + 0U, RADIO_HEADER_LENGTH_BYTES - 2U);
 
 	// Get the checksum for the header
 	CCCITTChecksumReverse csum;
-	csum.update(buffer + 8U, 4U * LONG_CALLSIGN_LENGTH + SHORT_CALLSIGN_LENGTH + 3U);
-	csum.result(buffer + 47U);
+	csum.update(buffer + 8U, RADIO_HEADER_LENGTH_BYTES - 2U);
+	csum.result(buffer + 8U + RADIO_HEADER_LENGTH_BYTES - 2U);
 
 #if defined(DUMP_TX)
 	CUtils::dump(wxT("Sending Header"), buffer, 49U);
@@ -179,25 +162,30 @@ bool CGatewayProtocolHandler::readPackets(wxUint16& id, in_addr& address, unsign
 	return true;
 }
 
-CHeaderData* CGatewayProtocolHandler::readHeader()
+unsigned int CGatewayProtocolHandler::readHeader(unsigned char* buffer, unsigned int length)
 {
 	if (m_type != NETWORK_HEADER)
 		return NULL;
 
 	// If the checksum is 0xFFFF then we accept the header without testing the checksum
-	if (m_buffer[47U] == 0xFFU && m_buffer[48U] == 0xFFU)
-		return new CHeaderData(m_buffer + 8U, RADIO_HEADER_LENGTH_BYTES, false);
-
-	// Header checksum testing is enabled
-	CHeaderData* header = new CHeaderData(m_buffer + 8U, RADIO_HEADER_LENGTH_BYTES, true);
-
-	if (!header->isValid()) {
-		CUtils::dump(wxT("Header checksum failure from the Gateway"), m_buffer + 8U, RADIO_HEADER_LENGTH_BYTES);
-		delete header;
-		return NULL;
+	if (m_buffer[47U] == 0xFFU && m_buffer[48U] == 0xFFU) {
+		::memcpy(buffer, m_buffer + 8U, RADIO_HEADER_LENGTH_BYTES);
+		return RADIO_HEADER_LENGTH_BYTES;
 	}
 
-	return header;
+	// Get the checksum for the header
+	CCCITTChecksumReverse csum;
+	csum.update(buffer + 8U, RADIO_HEADER_LENGTH_BYTES - 2U);
+
+	bool check = csum.check(buffer + 8U + RADIO_HEADER_LENGTH_BYTES - 2U);
+	if (!check) {
+		CUtils::dump(wxT("Header checksum failure from the Gateway"), m_buffer + 8U, RADIO_HEADER_LENGTH_BYTES);
+		return 0U;
+	}
+
+	::memcpy(buffer, m_buffer + 8U, RADIO_HEADER_LENGTH_BYTES);
+
+	return RADIO_HEADER_LENGTH_BYTES;
 }
 
 unsigned int CGatewayProtocolHandler::readData(unsigned char* buffer, unsigned int length, wxUint8& seqNo)

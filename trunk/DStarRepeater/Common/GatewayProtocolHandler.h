@@ -21,7 +21,6 @@
 
 #include "UDPReaderWriter.h"
 #include "DStarDefines.h"
-#include "HeaderData.h"
 
 #include <wx/wx.h>
 
@@ -32,11 +31,11 @@ public:
 
 	bool open();
 
-	bool writeHeader(const CHeaderData& header, wxUint16 id, const in_addr& address, unsigned int port);
+	bool writeHeader(const unsigned char* header, wxUint16 id, const in_addr& address, unsigned int port);
 	bool writeData(const unsigned char* data, unsigned int length, wxUint16 id, wxUint8 seqNo, const in_addr& address, unsigned int port);
 
 	NETWORK_TYPE read(wxUint16& id, in_addr& address, unsigned int& port);
-	CHeaderData* readHeader();
+	unsigned int readHeader(unsigned char* data, unsigned int length);
 	unsigned int readData(unsigned char* data, unsigned int length, wxUint8& seqNo);
 
 	void close();

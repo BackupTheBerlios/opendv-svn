@@ -338,6 +338,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SplitController.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TCPReaderWriter.cpp"
 				>
 			</File>
@@ -569,6 +573,10 @@
 			</File>
 			<File
 				RelativePath=".\SoundCardReaderWriter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SplitController.h"
 				>
 			</File>
 			<File
