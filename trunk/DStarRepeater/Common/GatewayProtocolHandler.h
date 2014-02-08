@@ -36,7 +36,7 @@ public:
 
 	NETWORK_TYPE read(wxUint16& id, in_addr& address, unsigned int& port);
 	unsigned int readHeader(unsigned char* data, unsigned int length);
-	unsigned int readData(unsigned char* data, unsigned int length, wxUint8& seqNo);
+	unsigned int readData(unsigned char* data, unsigned int length, wxUint8& seqNo, unsigned int& errors);
 
 	void close();
 

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2011-2014 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2012-2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,10 +22,29 @@
 #include "GatewayProtocolHandler.h"
 #include "DStarDefines.h"
 #include "RingBuffer.h"
+#include "Timer.h"
 #include "Modem.h"
 #include "Utils.h"
 
 #include <wx/wx.h>
+
+class CAMBESlot {
+public:
+	CAMBESlot(unsigned int timeout);
+	~CAMBESlot();
+
+	void reset();
+
+	bool isFirst() const;
+
+	bool*          m_valid;
+	unsigned int   m_errors;
+	unsigned int   m_best;
+	unsigned char* m_ambe;
+	unsigned int   m_length;
+	bool*          m_end;
+	CTimer         m_timer;
+};
 
 class CSplitController : public CModem {
 public:
@@ -43,7 +62,6 @@ public:
 
 private:
 	CGatewayProtocolHandler    m_handler;
-	unsigned int               m_timeout;
 	in_addr                    m_tx1Address;
 	unsigned int               m_tx1Port;
 	in_addr                    m_tx2Address;
@@ -56,12 +74,22 @@ private:
 	unsigned int               m_rx2Port;
 	in_addr                    m_rx3Address;
 	unsigned int               m_rx3Port;
-	unsigned char*             m_buffer;
 	CRingBuffer<unsigned char> m_txData;
 	wxUint16                   m_outId;
 	wxUint8                    m_outSeq;
+	CTimer                     m_endTimer;
+	bool                       m_listening;
+	wxUint8                    m_seqNo;
+	unsigned char*             m_header;
+	wxUint16*                  m_id;
+	bool*                      m_valid;
+	CAMBESlot**                m_slots;
 
 	void transmit();
+	void receive();
+	void processHeader(unsigned int n, wxUint16 id, const unsigned char* header, unsigned int length);
+	void processAMBE(unsigned int n, wxUint16 id, const unsigned char* ambe, unsigned int length, wxUint8 seqNo, unsigned char errors);
+	bool isEnd(CAMBESlot* slot) const;
 };
 
 #endif

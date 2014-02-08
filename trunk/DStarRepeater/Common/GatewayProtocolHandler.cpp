@@ -188,7 +188,7 @@ unsigned int CGatewayProtocolHandler::readHeader(unsigned char* buffer, unsigned
 	return RADIO_HEADER_LENGTH_BYTES;
 }
 
-unsigned int CGatewayProtocolHandler::readData(unsigned char* buffer, unsigned int length, wxUint8& seqNo)
+unsigned int CGatewayProtocolHandler::readData(unsigned char* buffer, unsigned int length, wxUint8& seqNo, unsigned int& errors)
 {
 	if (m_type != NETWORK_DATA)
 		return 0U;
@@ -200,6 +200,8 @@ unsigned int CGatewayProtocolHandler::readData(unsigned char* buffer, unsigned i
 		dataLen = length;
 
 	seqNo = m_buffer[7U];
+
+	errors = m_buffer[8U];
 
 	::memcpy(buffer, m_buffer + 9U, dataLen);
 
