@@ -165,7 +165,7 @@ bool CGatewayProtocolHandler::readPackets(wxUint16& id, in_addr& address, unsign
 unsigned int CGatewayProtocolHandler::readHeader(unsigned char* buffer, unsigned int length)
 {
 	if (m_type != NETWORK_HEADER)
-		return NULL;
+		return 0U;
 
 	// If the checksum is 0xFFFF then we accept the header without testing the checksum
 	if (m_buffer[47U] == 0xFFU && m_buffer[48U] == 0xFFU) {

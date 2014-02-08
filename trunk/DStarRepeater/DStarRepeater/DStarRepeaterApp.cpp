@@ -459,7 +459,7 @@ void CDStarRepeaterApp::createThread()
 		unsigned int localPort, transmitter1Port, transmitter2Port, transmitter3Port, receiver1Port, receiver2Port, receiver3Port;
 		unsigned int timeout;
 		m_config->getSplit(localAddress, localPort, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, transmitter3Address, transmitter3Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, receiver3Address, receiver3Port, timeout);
-		wxLogInfo(wxT("Split, local: %s:%u, transmitter1: %s:%u, transmitter2: %s:%u, transmitter3: %s:%u, receiver1: %s:%u, receiver2: %s:%u, receiver3: %s:%u, timeout: %u ms"), localAddress, localPort, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, transmitter3Address, transmitter3Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, receiver3Address, receiver3Port, timeout);
+		wxLogInfo(wxT("Split, local: %s:%u, transmitter1: %s:%u, transmitter2: %s:%u, transmitter3: %s:%u, receiver1: %s:%u, receiver2: %s:%u, receiver3: %s:%u, timeout: %u ms"), localAddress.c_str(), localPort, transmitter1Address.c_str(), transmitter1Port, transmitter2Address.c_str(), transmitter2Port, transmitter3Address.c_str(), transmitter3Port, receiver1Address.c_str(), receiver1Port, receiver2Address.c_str(), receiver2Port, receiver3Address.c_str(), receiver3Port, timeout);
 		modem = new CSplitController(localAddress, localPort, transmitter1Address, transmitter1Port, transmitter2Address, transmitter2Port, transmitter3Address, transmitter3Port, receiver1Address, receiver1Port, receiver2Address, receiver2Port, receiver3Address, receiver3Port, timeout);
 	} else {
 		wxLogError(wxT("Unknown modem type: %s"), modemType.c_str());

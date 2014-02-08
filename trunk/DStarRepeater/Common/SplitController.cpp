@@ -22,14 +22,14 @@ const unsigned char DVRPTR_HEADER_LENGTH = 5U;
 
 const unsigned int BUFFER_LENGTH = 200U;
 
-CAMBESlot::CAMBESlot(unsigned int timeout) :
+CAMBESlot::CAMBESlot() :
 m_valid(NULL),
 m_errors(999U),
 m_best(99U),
 m_ambe(NULL),
 m_length(0U),
 m_end(NULL),
-m_timer(100U, 0U, timeout)
+m_timer(100U)
 {
 	m_ambe  = new unsigned char[DV_FRAME_MAX_LENGTH_BYTES];
 	m_valid = new bool[3U];
@@ -66,6 +66,7 @@ bool CAMBESlot::isFirst() const
 
 CSplitController::CSplitController(const wxString& localAddress, unsigned int localPort, const wxString& transmitter1Address, unsigned int transmitter1Port, const wxString& transmitter2Address, unsigned int transmitter2Port, const wxString& transmitter3Address, unsigned int transmitter3Port, const wxString& receiver1Address, unsigned int receiver1Port, const wxString& receiver2Address, unsigned int receiver2Port, const wxString& receiver3Address, unsigned int receiver3Port, unsigned int timeout) :
 CModem(),
+m_timeout(timeout),
 m_handler(localAddress, localPort),
 m_tx1Address(),
 m_tx1Port(transmitter1Port),
@@ -88,7 +89,8 @@ m_seqNo(0x00U),
 m_header(NULL),
 m_id(NULL),
 m_valid(NULL),
-m_slots(NULL)
+m_slots(NULL),
+m_headerSent(false)
 {
 	if (transmitter1Port > 0U)
 		m_tx1Address = CUDPReaderWriter::lookup(transmitter1Address);
@@ -114,9 +116,7 @@ m_slots(NULL)
 		m_id[i] = 0x00U;
 	}
 
-	m_slots = new CAMBESlot*[21U];
-	for (unsigned int i = 0U; i < 21U; i++)
-		m_slots[i] = new CAMBESlot(timeout);
+	m_slots = new CAMBESlot[21U];
 }
 
 CSplitController::~CSplitController()
@@ -124,9 +124,6 @@ CSplitController::~CSplitController()
 	delete[] m_header;
 	delete[] m_id;
 	delete[] m_valid;
-
-	for (unsigned int i = 0U; i < 21U; i++)
-		delete m_slots[i];
 	delete[] m_slots;
 }
 
@@ -266,8 +263,8 @@ void CSplitController::transmit()
 	if (!m_txData.hasData())
 		return;
 
-	unsigned char type;
-	unsigned char length;
+	unsigned char type = 0U;
+	unsigned char length = 0U;
 	unsigned char buffer[RADIO_HEADER_LENGTH_BYTES];
 
 	m_mutex.Lock();
@@ -373,27 +370,39 @@ void CSplitController::receive()
 
 	// Run the slot timers
 	for (unsigned int i = 0U; i < 21U; i++)
-		m_slots[i]->m_timer.clock();
+		m_slots[i].m_timer.clock();
 
 	// Check for expired timers
 	unsigned int slotNo = m_seqNo;
 	for (unsigned int i = 0U; i < 21U; i++) {
-		CAMBESlot* slot = m_slots[slotNo];
+		CAMBESlot& slot = m_slots[slotNo];
 
-		if (slot->m_timer.isRunning() && slot->m_timer.hasExpired()) {
+		if (slot.m_timer.isRunning() && slot.m_timer.hasExpired()) {
+			slot.m_timer.setTimeout(0U, 21U * DSTAR_FRAME_TIME_MS);
+
 			// Is there any data?
-			if (slot->m_length > 0U) {
-				m_mutex.Lock();
-				unsigned char data[2U];
-				data[0U] = DSMTT_DATA;
-				data[1U] = DV_FRAME_LENGTH_BYTES;
-				m_rxData.addData(data, 2U);
-				m_rxData.addData(slot->m_ambe, DV_FRAME_LENGTH_BYTES);
-				m_mutex.Unlock();
-
+			if (slot.m_length > 0U) {
 				// The last frame?
-				if (isEnd(slot)) {
+				if (!isEnd(slot)) {
 					wxMutexLocker locker(m_mutex);
+
+					if (!m_headerSent)
+						sendHeader();
+
+					unsigned char data[2U];
+					data[0U] = DSMTT_DATA;
+					data[1U] = DV_FRAME_LENGTH_BYTES;
+					m_rxData.addData(data, 2U);
+
+					m_rxData.addData(slot.m_ambe, DV_FRAME_LENGTH_BYTES);
+
+					slot.reset();
+				} else {
+					wxMutexLocker locker(m_mutex);
+
+					if (!m_headerSent)
+						sendHeader();
+
 					unsigned char data[2U];
 					data[0U] = DSMTT_EOT;
 					data[1U] = 0U;
@@ -401,24 +410,26 @@ void CSplitController::receive()
 
 					m_listening = true;
 					m_endTimer.stop();
-
 					return;
-				} else {
-					slot->reset();
 				}				
 			} else {
 				// Send a silence frame to the repeater
 				wxMutexLocker locker(m_mutex);
+
+				if (!m_headerSent)
+					sendHeader();
+
 				unsigned char data[2U];
 				data[0U] = DSMTT_DATA;
 				data[1U] = DV_FRAME_LENGTH_BYTES;
 				m_rxData.addData(data, 2U);
+
 				m_rxData.addData(NULL_FRAME_DATA_BYTES, DV_FRAME_LENGTH_BYTES);
 
-				slot->reset();
+				slot.reset();
 			}
 		} else {
-			break;
+			return;
 		}
 
 		slotNo++;
@@ -430,19 +441,14 @@ void CSplitController::receive()
 void CSplitController::processHeader(unsigned int n, wxUint16 id, const unsigned char* header, unsigned int length)
 {
 	if (m_listening) {
-		// Send the header to the repeater
-		m_mutex.Lock();
-		unsigned char data[2U];
-		data[0U] = DSMTT_HEADER;
-		data[1U] = RADIO_HEADER_LENGTH_BYTES - 2U;
-		m_rxData.addData(data, 2U);
-		m_rxData.addData(header, RADIO_HEADER_LENGTH_BYTES - 2U);
-		m_mutex.Unlock();
-
 		::memcpy(m_header, header, RADIO_HEADER_LENGTH_BYTES - 2U);
 
-		for (unsigned int i = 0U; i < 21U; i++)
-			m_slots[i]->reset();
+		// Reset the slots and start the timers
+		for (unsigned int i = 0U; i < 21U; i++) {
+			m_slots[i].reset();
+			m_slots[i].m_timer.setTimeout(0U, DSTAR_FRAME_TIME_MS + DSTAR_FRAME_TIME_MS * i + m_timeout);
+			m_slots[i].m_timer.start();
+		}
 
 		for (unsigned int i = 0U; i < 3U; i++) {
 			m_valid[i] = false;
@@ -451,8 +457,9 @@ void CSplitController::processHeader(unsigned int n, wxUint16 id, const unsigned
 		m_valid[n] = true;
 		m_id[n] = id;
 
-		m_seqNo = 0U;
-		m_listening = false;
+		m_seqNo      = 0U;
+		m_listening  = false;
+		m_headerSent = false;
 		m_endTimer.start();
 	} else {
 		m_valid[n] = ::memcmp(m_header, header, RADIO_HEADER_LENGTH_BYTES - 2U) == 0;
@@ -468,36 +475,66 @@ void CSplitController::processAMBE(unsigned int n, wxUint16 id, const unsigned c
 	if (!m_valid[n] || id != m_id[n])
 		return;
 
-	CAMBESlot* slot = m_slots[seqNo & 0x3FU];
+	// Mask out the control bits of the sequence number
+	unsigned char seqNo1 = seqNo & 0x1FU;
+
+	// Check for an out of order frame
+	unsigned char seqNo2 = m_seqNo;
+	unsigned char count = 0U;
+	while (seqNo1 != seqNo2) {
+		count++;
+
+		seqNo2++;
+		if (seqNo2 >= 21U)
+			seqNo2 = 0U;
+	}
+
+	if (count > 18U)
+		return;
+
+	CAMBESlot& slot = m_slots[seqNo & 0x3FU];
 
 	m_endTimer.reset();
 
-	slot->m_end[n]   = (seqNo & 0x40U) == 0x40U;
-	slot->m_valid[n] = true;
+	slot.m_end[n]   = (seqNo & 0x40U) == 0x40U;
+	slot.m_valid[n] = true;
 
-	// If the existing data is of a better quality....
-	if (slot->m_errors < errors)
+	// If the existing data is of a better quality and not an end packet
+	if (slot.m_errors < errors || slot.m_end[n])
 		return;
 
-	::memcpy(slot->m_ambe, ambe, length);
-	slot->m_length = length;
+	::memcpy(slot.m_ambe, ambe, length);
+	slot.m_length = length;
 
-	slot->m_errors = errors;
-	slot->m_best   = n;
+	slot.m_errors = errors;
+	slot.m_best   = n;
 }
 
-bool CSplitController::isEnd(CAMBESlot* slot) const
+bool CSplitController::isEnd(const CAMBESlot& slot) const
 {
 	bool hasNoEnd = false;
 	bool hasEnd   = false;
 
 	for (unsigned int i = 0U; i < 3U; i++) {
-		if (slot->m_valid[i] && slot->m_end[i])
+		if (slot.m_valid[i] && slot.m_end[i])
 			hasEnd = true;
 
-		if (slot->m_valid[i] && !slot->m_end[i])
+		if (slot.m_valid[i] && !slot.m_end[i])
 			hasNoEnd = true;
 	}
 
 	return hasEnd && !hasNoEnd;	
+}
+
+void CSplitController::sendHeader()
+{
+	// Assume that the caller has the mutex lock
+	unsigned char data[2U];
+	data[0U] = DSMTT_HEADER;
+	data[1U] = RADIO_HEADER_LENGTH_BYTES - 2U;
+	m_rxData.addData(data, 2U);
+
+	m_rxData.addData(m_header, RADIO_HEADER_LENGTH_BYTES - 2U);
+
+	m_headerSent = true;
 }

@@ -1,4 +1,4 @@
-Repeater - 20140129
+Repeater - 20140208
 ===================
 
 20090530
@@ -1942,7 +1942,7 @@ More work on buffering in the D-Star Repeater for all modem types.
 Move the D-Star Repeater to its own package.
 More GMSK Modem changes for better locking.
 
-201402xx
+20140208
 --------
 
 GMSK Modem changes.

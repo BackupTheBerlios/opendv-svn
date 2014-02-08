@@ -30,7 +30,7 @@
 
 class CAMBESlot {
 public:
-	CAMBESlot(unsigned int timeout);
+	CAMBESlot();
 	~CAMBESlot();
 
 	void reset();
@@ -62,6 +62,7 @@ public:
 
 private:
 	CGatewayProtocolHandler    m_handler;
+	unsigned int               m_timeout;
 	in_addr                    m_tx1Address;
 	unsigned int               m_tx1Port;
 	in_addr                    m_tx2Address;
@@ -83,13 +84,15 @@ private:
 	unsigned char*             m_header;
 	wxUint16*                  m_id;
 	bool*                      m_valid;
-	CAMBESlot**                m_slots;
+	CAMBESlot*                 m_slots;
+	bool                       m_headerSent;
 
 	void transmit();
 	void receive();
 	void processHeader(unsigned int n, wxUint16 id, const unsigned char* header, unsigned int length);
 	void processAMBE(unsigned int n, wxUint16 id, const unsigned char* ambe, unsigned int length, wxUint8 seqNo, unsigned char errors);
-	bool isEnd(CAMBESlot* slot) const;
+	bool isEnd(const CAMBESlot& slot) const;
+	void sendHeader();
 };
 
 #endif
